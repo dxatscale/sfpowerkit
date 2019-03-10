@@ -99,7 +99,7 @@
         "Metadata": "AuraDefinitionBundle",
         "isMetaDataAPISupported": true,
         "isSourceTrackingSupported": true,
-        "isUnlockedPackagingSupported": true
+        "isUnlockedPackagingSupported": false
     },
     {
         "Metadata": "AuthProvider",
@@ -321,7 +321,7 @@
         "Metadata": "CustomObject",
         "isMetaDataAPISupported": true,
         "isSourceTrackingSupported": true,
-        "isUnlockedPackagingSupported": true
+        "isUnlockedPackagingSupported": false
     },
     {
         "Metadata": "CustomObjectTranslation",
