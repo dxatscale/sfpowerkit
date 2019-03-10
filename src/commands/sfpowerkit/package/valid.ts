@@ -5,7 +5,7 @@ import { SfdxProject, SfdxError } from '@salesforce/core';
 import xml2js = require('xml2js');
 import util = require('util');
 import fs = require('fs-extra');
-import coverageJSON from '../../metadata.json';
+import coverageJSON from '../../../metadata.json';
 import rimraf = require('rimraf');
 import { integer } from '@oclif/parser/lib/flags';
 import { Analytics } from 'jsforce';
