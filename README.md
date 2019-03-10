@@ -5,7 +5,9 @@ Swiss Army toolset for Salesforce
 
 ## `sfpowerkit package:dependencies:install`
 
-Install dependencies of a package
+Install dependencies of a package. This makes installing all the dependencies for package a breeze
+
+Adapted from texei plugin, modified it for working with the new cli
 
 ```
 USAGE
@@ -45,7 +47,8 @@ _See code: [src\commands\package\dependencies\install.ts](https://github.com/azl
 
 ## `sfpowerkit package:valid`
 
-Validates a package to check whether it only contains valid metadata as per metadata coverage
+Validates a package(source) to check whether it only contains valid metadata as per metadata coverage.
+This is ultra useful in your local machine as well as during a pull request validation to prevent very cryptic error messages during package creation
 
 ```
 USAGE
