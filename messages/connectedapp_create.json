@@ -1,0 +1,6 @@
+{
+  "commandDescription": " Creates a connected app in the target org for JWT based authentication, Please note it only creates Connected App with All users may self authorize option, You would need to manually edit the policies to enable admin users are pre-approved and add your profile to this connected app",
+  "nameFlagDescription": "Name of the connected app to be created",
+  "certificateFlagDescription": "Filepath to the private certificate for the connected app to be created",
+  "emailFlagDescription": "Email of the connected app to be created"
+}

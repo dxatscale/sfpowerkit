@@ -27,16 +27,22 @@ export default class Valid extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    `$ sfdx hello:org --targetusername myOrg@example.com --targetdevhubusername devhub@org.com
-  Hello world! This is org: MyOrg and I will be around until Tue Mar 20 2018!
-  My hub org id is: 00Dxx000000001234
-  `,
-    `$ sfdx hello:org --name myname --targetusername myOrg@example.com
-  Hello myname! This is org: MyOrg and I will be around until Tue Mar 20 2018!
+  `$ sfdx sfpowerkit:package:valid -n testPackage
+  Now analyzing inspections
+Converting package testPackage
+Source was successfully converted to Metadata API format and written to the location: D:\projects\testPackage\temp_sfpowerkit\mdapi
+Elements supported included in your package testPackage are
+[
+  "AuraDefinitionBundle",
+  "CustomApplication",
+  "ApexClass",
+  "ContentAsset",
+  "WorkflowRule"
+]
   `
   ];
 
-  public static args = [{ name: 'file' }];
+ 
 
   protected static flagsConfig = {
     package: flags.string({ required: false, char: 'n', description: messages.getMessage('packageFlagDescription') }),
