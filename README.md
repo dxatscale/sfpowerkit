@@ -3,7 +3,7 @@ sfpowerkit
 
 Swiss Army toolset for Salesforce
 
-## `sfpowerkit package:dependencies:install`
+## `sfdx sfpowerkit:package:dependencies:install`
 
 Install dependencies of a package. This makes installing all the dependencies for package a breeze
 
@@ -11,7 +11,7 @@ Adapted from texei plugin, modified it for working with the new cli
 
 ```
 USAGE
-  $ sfpowerkit package:dependencies:install [-p <string>] [-k <string>] [-b <string>] [-w <string>] [-r] [-v <string>] 
+  $ sfdx sfpowerkit:package:dependencies:install [-p <string>] [-k <string>] [-b <string>] [-w <string>] [-r] [-v <string>] 
   [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
@@ -43,16 +43,16 @@ EXAMPLE
   $ sfpowerkit package:dependencies:install -u MyScratchOrg -v MyDevHub -k "1:MyPackage1Key 2: 3:MyPackage3Key" -b "DEV"
 ```
 
-_See code: [src\commands\package\dependencies\install.ts](https://github.com/azlam-abdulsalam/sfpowerkit/blob/v1.0.0/src\commands\package\dependencies\install.ts)_
+_See code: [src\commands\package\dependencies\install.ts](https://github.com/azlam-abdulsalam/sfpowerkit/blob/v1.0.0/src\commands\sfpowerkit\package\dependencies\install.ts)_
 
-## `sfpowerkit package:valid`
+## `sfdx sfpowerkit:package:valid`
 
 Validates a package(source) to check whether it only contains valid metadata as per metadata coverage.
 This is ultra useful in your local machine as well as during a pull request validation to prevent very cryptic error messages during package creation
 
 ```
 USAGE
-  $ sfpowerkit package:valid [-n <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+  $ sfdx sfpowerkit:package:valid [-n <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
   -n, --package=package                           the package to analyze
@@ -67,4 +67,47 @@ EXAMPLES
 
 ```
 
-_See code: [src\commands\package\valid.ts](https://github.com/azlam-abdulsalam/sfpowerkit/blob/v1.0.0/src\commands\package\valid.ts)_
+_See code: [src\commands\package\valid.ts](https://github.com/azlam-abdulsalam/sfpowerkit/blob/v1.0.0/src\commands\sfpowerkit\package\valid.ts)_
+
+## `sfdx sfpowerkit:org:connectedapp:create `
+
+Creates a connected app in the target org for JWT based authentication,
+Please note it only creates Connected App with All users may self authorize option, You would need to manually edit the policies to enable admin users are pre-approved and add your profile to this connected app
+It needs a web auth based login to create a JWT based token
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:connectedapp:create [-n <string>] [-c <string>] [-e <email>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+
+OPTIONS
+  -n,                          the label of the connected app toe be created
+  -c,                          the x509 formatted .crt file 
+  -e,                          the email to be used in while creating the connected app
+  -u                           username or alias for the target org; overrides default target org
+  --json                                          format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
+
+EXAMPLES
+  $ sfdx  sfpowerkit:org:connectedapp:create -u myOrg@example.com -n azurepipelines -c id_rsa -e azlam.abdulsalam@accentue.co
+  Running prepare script for D:\projects\sf_toolkit... done
+  Deploy connected app azurepipelines
+  1823 bytes written to C:\Users\Azlam\AppData\Local\Temp\mdapi.zip using 30.413ms
+   Deploying C:\Users\Azlam\AppData\Local\Temp\mdapi.zip...
+
+  === Result
+  Status:  Succeeded
+  jobid:  0Af0k00000RKRPqCAP
+  Completed:  2019-03-11T10:11:37.000Z
+  Component errors:  0
+  Components deployed:  1
+  Components total:  1
+  Tests errors:  0
+  Tests completed:  0
+  Tests total:  0
+  Check only: false
+
+
+```
+
+_See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/azlam-abdulsalam/sfpowerkit/blob/v1.1.1/src\commands\sfpowerkit\org\connectedapp\create.ts)_
+
