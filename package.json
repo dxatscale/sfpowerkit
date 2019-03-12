@@ -1,7 +1,7 @@
 {
   "name": "sfpowerkit",
   "description": "Swiss Army toolset for Salesforce",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "author": "Azlam Abdulsalam @azlamsalam",
   "bugs": "https://github.com/azlam-abdulsalam/sfpowerkit/issues",
   "dependencies": {
@@ -15,7 +15,9 @@
     "cli-ux": "^5.2.0",
     "fs-extra": "^7.0.1",
     "tslib": "1",
-    "xml2js": "^0.4.19"
+    "xml2js": "^0.4.19",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.7"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1",
@@ -53,6 +55,12 @@
     "topics": {
       "package": {
         "description": "Helper commands for unlocked package"
+      },
+      "org": {
+        "description": "Helper commands for org such as connectedapp, creation of sandbox etc"
+      },
+      "custommetadata": {
+        "description": "Import CustomMetadata from Excel"
       }
     },
     "devPlugins": [

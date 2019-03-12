@@ -1,0 +1,85 @@
+import { core, flags, SfdxCommand } from '@salesforce/command';
+import { AnyJson } from '@salesforce/ts-types';
+import fs = require('fs-extra');
+import request = require('request-promise-native');
+import rimraf = require('rimraf');
+
+
+
+
+
+
+
+
+// Initialize Messages with the current plugin directory
+core.Messages.importMessagesDirectory(__dirname);
+
+// Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
+// or any library that is using the messages framework can also be loaded this way.
+const messages = core.Messages.loadMessages('sfpowerkit', 'sandbox_create');
+
+export default class Create extends SfdxCommand {
+
+  public static description = messages.getMessage('commandDescription');
+
+  public static examples = [
+    `$ sfdx sfpowerkit:org:sandbox:create -d Testsandbox -l DEVELOPER -n test2 -u myOrg@example.com
+  Successfully Enqueued Creation of Sandbox
+  `
+  ];
+
+
+  protected static flagsConfig = {
+    name: flags.string({ required: true, char: 'n', description: messages.getMessage('nameFlagDescription') }),
+    description: flags.string({ required: true, char: 'd', description: messages.getMessage('descriptionFlagDescription') }),
+    licensetype: flags.string({ required: true, char: 'l',  options: ['DEVELOPER', 'DEVELOPER_PRO','PARTIAL','FULL'], description: messages.getMessage('licenseFlagDescription') }),
+    apexclass: flags.string({ required: false, char: 'a', default:'', description: messages.getMessage('apexClassFlagDescription') }),
+    clonefrom: flags.string({ required: false, char: 'f', default:'', description: messages.getMessage('cloneFromFlagDescripton') })
+  };
+
+  // Comment this out if your command does not require an org username
+  protected static requiresUsername = true;
+
+
+
+  public async run(): Promise<AnyJson> {
+
+    rimraf.sync('temp_sfpowerkit');
+
+    const conn = this.org.getConnection();
+
+    this.flags.apiversion = this.flags.apiversion || await conn.retrieveMaxApiVersion();
+
+    const uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/sobjects/SandboxInfo/`;
+
+    this.ux.log(`${this.flags.apexclass}  ${this.flags.clonefrom} `)
+
+    const result = await request({
+      method: 'post',
+      uri,
+      headers: {
+        Authorization: `Bearer ${conn.accessToken}`
+      },
+      body: {
+        AutoActivate: 'true',
+        SandboxName: `${this.flags.name}`,
+        Description: `${this.flags.description}`,
+        LicenseType: `${this.flags.licensetype}`,
+        ApexClassId: `${this.flags.apexclass}`,
+        SourceId: `${this.flags.clonefrom}`
+      },
+      json: true
+    });
+
+    
+    this.ux.log(result);
+
+    if (this.flags.outputfile) {
+      await fs.outputJSON(this.flags.outputfile, result);
+    }
+
+    rimraf.sync('temp_sfpowerkit');
+
+    return result;
+  }
+}

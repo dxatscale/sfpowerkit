@@ -79,6 +79,7 @@ It needs a web auth based login to create a JWT based token
 USAGE
   $ sfdx sfpowerkit:org:connectedapp:create [-n <string>] [-c <string>] [-e <email>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
+
 OPTIONS
   -n,                          the label of the connected app toe be created
   -c,                          the x509 formatted .crt file 
@@ -111,3 +112,28 @@ EXAMPLES
 
 _See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/azlam-abdulsalam/sfpowerkit/blob/v1.1.1/src\commands\sfpowerkit\org\connectedapp\create.ts)_
 
+
+## `sfdx sfpowerkit:org:sandbox:create `
+
+Creates a sandbox using the tooling api, ensure the user has the required permissions before using this command
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:sandbox:create -n <string> -d <string> -l <string> [-a <string>] [-f <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+
+OPTIONS
+  -a, --apexclass=apexclass                       A reference to the ID of an Apex class that runs after each copy of the sandbox
+  -d, --description=description                   (required) Description of the sandbox
+  -f, --clonefrom=clonefrom                       A reference to the ID of a SandboxInfo that serves as the source org for a cloned sandbox.
+  -l, --licensetype=licensetype                   (required) Type of the sandbox. Valid values are  DEVELOPER,DEVELOPER_PRO,PARTIAL,FULL
+  -n, --name=name                                 (required) Name of the sandbox
+  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
+  --apiversion=apiversion                         override the api version used for api requests made by this command
+  --json                                          format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:org:sandbox:create -d Testsandbox -l DEVELOPER -n test2 -u myOrg@example.com
+     Successfully Enqueued Creation of Sandbox
+```  
+_See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/azlam-abdulsalam/sfpowerkit/blob/v1.1.1/src\commands\sfpowerkit\org\sabdbox\create.ts)_

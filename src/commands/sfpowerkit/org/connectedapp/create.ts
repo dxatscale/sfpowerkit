@@ -142,7 +142,7 @@ export default class Create extends SfdxCommand {
 
 
 
-   // rimraf.sync('temp_sfpowerkit');
+   rimraf.sync('temp_sfpowerkit');
 
     return {}
   }
