@@ -3,6 +3,7 @@ import { AnyJson } from '@salesforce/ts-types';
 import fs = require('fs-extra');
 import request = require('request-promise-native');
 import rimraf = require('rimraf');
+import { SfdxError } from '@salesforce/core';
 
 
 
@@ -54,7 +55,34 @@ export default class Create extends SfdxCommand {
 
     this.ux.log(`${this.flags.apexclass}  ${this.flags.clonefrom} `)
 
-    const result = await request({
+    var sourceSandboxId:string='';
+    var result;
+
+    if(this.flags.clonefrom)
+    {
+     
+
+    const sourceSandboxId = await this.getSandboxId(conn, this.flags.clonefrom);
+
+     result = await request({
+      method: 'post',
+      uri,
+      headers: {
+        Authorization: `Bearer ${conn.accessToken}`
+      },
+      body: {
+        AutoActivate: 'true',
+        SandboxName: `${this.flags.name}`,
+        Description: `${this.flags.description}`,
+        ApexClassId: `${this.flags.apexclass}`,
+        SourceId: sourceSandboxId
+      },
+      json: true
+    });
+  }
+  else{
+
+    result = await request({
       method: 'post',
       uri,
       headers: {
@@ -65,14 +93,21 @@ export default class Create extends SfdxCommand {
         SandboxName: `${this.flags.name}`,
         Description: `${this.flags.description}`,
         LicenseType: `${this.flags.licensetype}`,
-        ApexClassId: `${this.flags.apexclass}`,
-        SourceId: `${this.flags.clonefrom}`
+        ApexClassId: `${this.flags.apexclass}`
       },
       json: true
     });
-
-    
+  }
+   
+    if(result.success)
+    {
+    this.ux.log(`Successfully Enqueued Creation of Sandbox`);
     this.ux.log(result);
+    }
+    else
+    {
+      throw new SfdxError("Unable to Create sandbox");
+    }
 
     if (this.flags.outputfile) {
       await fs.outputJSON(this.flags.outputfile, result);
@@ -81,5 +116,32 @@ export default class Create extends SfdxCommand {
     rimraf.sync('temp_sfpowerkit');
 
     return result;
+  }
+
+  public async getSandboxId(conn: core.Connection, name: string) {
+    
+    const query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=SELECT+Id,SandboxName+FROM+SandboxInfo+WHERE+SandboxName+in+('${name}')`;
+
+   // this.ux.log(`Query URI ${query_uri}`);
+
+    const sandbox_query_result = await request({
+      method: 'get',
+      url: query_uri,
+      headers: {
+        Authorization: `Bearer ${conn.accessToken}`
+      },
+      json: true
+    });
+
+   // this.ux.logJson(sandbox_query_result);
+
+    if(sandbox_query_result.records[0]==undefined)
+    throw new  SfdxError(`Unable to continue, Please check your sandbox name: ${name}`);
+
+    this.ux.log(`Fetched Sandbox Id for sandbox  ${name}  is ${sandbox_query_result.records[0].Id}`);
+ 
+
+    return sandbox_query_result.records[0].Id;
+
   }
 }

@@ -135,5 +135,33 @@ OPTIONS
 EXAMPLE
   $ sfdx sfpowerkit:org:sandbox:create -d Testsandbox -l DEVELOPER -n test2 -u myOrg@example.com
      Successfully Enqueued Creation of Sandbox
+     { id: '0GQ6F0000004IeDWAU',
+      success: true,
+      errors: [],
+      warnings: [],
+      infos: [] }
 ```  
-_See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/azlam-abdulsalam/sfpowerkit/blob/v1.1.1/src\commands\sfpowerkit\org\sabdbox\create.ts)_
+_See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/azlam-abdulsalam/sfpowerkit/blob/v1.3.0/src/commands\sfpowerkit\org\sabdbox\create.ts)_
+
+
+## `sfdx sfpowerkit:org:sandbox:refresh `
+
+Refresh a sandbox using the tooling api, ensure the user has the required permissions before using this command
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:sandbox:create -n <string> -d <string> -l <string> [-a <string>] [-f <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+
+OPTIONS
+  -f, --clonefrom=clonefrom                       A reference to the ID of a SandboxInfo that serves as the source org for a cloned sandbox.
+  -n, --name=name                                 (required) Name of the sandbox
+  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
+  --apiversion=apiversion                         override the api version used for api requests made by this command
+  --json                                          format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:org:sandbox:refresh -n test2 -u myOrg@example.com
+     Successfully Enqueued Refresh of Sandbox
+```  
+_See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/azlam-abdulsalam/sfpowerkit/blob/v1.3.0/src\commands\sfpowerkit\org\sabdbox\refresh.ts)_

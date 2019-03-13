@@ -1,0 +1,8 @@
+{
+  "commandDescription": "Refresh a sandbox using the tooling api, ensure the user has the required permissions before using this command",
+  "nameFlagDescription": "Name of the sandbox",
+  "descriptionFlagDescription": "Description of the sandbox",
+  "licenseFlagDescription": "Type of the sandbox. Valid values are  DEVELOPER,DEVELOPER_PRO,PARTIAL,FULL",
+  "apexClassFlagDescription": "A reference to the ID of an Apex class that runs after each copy of the sandbox",
+  "cloneFromFlagDescripton": "A reference to the ID of a SandboxInfo that serves as the source org for a cloned sandbox."
+}
