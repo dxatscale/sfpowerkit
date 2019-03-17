@@ -150,10 +150,10 @@ Refresh a sandbox using the tooling api, ensure the user has the required permis
 
 ```
 USAGE
-  $ sfdx sfpowerkit:org:sandbox:create -n <string> -d <string> -l <string> [-a <string>] [-f <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+  $ sfdx sfpowerkit:org:sandbox:create -n <string> -d <string>  [-f <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
-  -f, --clonefrom=clonefrom                       A reference to the ID of a SandboxInfo that serves as the source org for a cloned sandbox.
+  -f, --clonefrom=clonefrom                       Sandbox to be cloned from, if not set, it will be from production
   -n, --name=name                                 (required) Name of the sandbox
   -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
   --apiversion=apiversion                         override the api version used for api requests made by this command
@@ -165,3 +165,57 @@ EXAMPLE
      Successfully Enqueued Refresh of Sandbox
 ```  
 _See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/azlam-abdulsalam/sfpowerkit/blob/v1.3.0/src\commands\sfpowerkit\org\sabdbox\refresh.ts)_
+
+## `sfdx sfpowerkit:org:sandbox:info `
+
+Retrieves the status of a sandbox
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:sandbox:info -n <string> -s <boolean>  [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+
+OPTIONS
+  -s, --showonlylatest                            Show only the last record of the sandbox
+  -n, --name=name                                 (required) Name of the sandbox
+  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
+  --apiversion=apiversion                         override the api version used for api requests made by this command
+  --json                                          format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:org:sandbox:info -n test2 -u myOrg@example.com -s
+    [
+  {
+    "attributes": {
+      "type": "SandboxProcess",
+      "url": "/services/data/v45.0/tooling/sobjects/SandboxProcess/0GR6F0000004K7fWAE"
+    },
+    "Id": "0GR6F0000004K7fWAE",
+    "IsDeleted": false,
+    "CreatedDate": "2019-03-17T13:35:38.000+0000",
+    "CreatedById": "0056F00000AlYBWQA3",
+    "LastModifiedDate": "2019-03-17T13:48:44.000+0000",
+    "LastModifiedById": "0056F00000Ap9o6QAB",
+    "SystemModstamp": "2019-03-17T13:48:44.000+0000",
+    "SandboxInfoId": "0GQ6F0000004IdFWAU",
+    "SandboxName": "testsand",
+    "LicenseType": "DEVELOPER",
+    "TemplateId": null,
+    "HistoryDays": 0,
+    "CopyChatter": false,
+    "AutoActivate": true,
+    "StartDate": "2019-03-17T13:35:39.000+0000",
+    "EndDate": null,
+    "ActivatedDate": null,
+    "ActivatedById": null,
+    "RefreshAction": null,
+    "ApexClassId": null,
+    "Description": null,
+    "CopyProgress": 95,
+    "Status": "Activating",
+    "SandboxOrganization": "00D0p0000008dVo",
+    "SourceId": "0GQ6F0000000QJfWAM"
+  }
+]
+```  
+_See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/azlam-abdulsalam/sfpowerkit/blob/v1.3.0/src\commands\sfpowerkit\org\sabdbox\info.ts)_
