@@ -47,6 +47,8 @@ export default class Create extends SfdxCommand {
 
     rimraf.sync('temp_sfpowerkit');
 
+    await this.org.refreshAuth();
+
     const conn = this.org.getConnection();
 
     this.flags.apiversion = this.flags.apiversion || await conn.retrieveMaxApiVersion();

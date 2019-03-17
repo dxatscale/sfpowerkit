@@ -70,6 +70,8 @@ export default class Create extends SfdxCommand {
     rimraf.sync('temp_sfpowerkit');
 
 
+    await this.org.refreshAuth();
+
      // this.org is guaranteed because requiresUsername=true, as opposed to supportsUsername
      const username = this.org.getUsername();
      const pathToCertificate = this.flags.pathtocertificate.valueOf();
