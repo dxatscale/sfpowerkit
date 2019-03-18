@@ -1,9 +1,9 @@
 {
   "name": "sfpowerkit",
   "description": "Swiss Army toolset for Salesforce",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "author": "Azlam Abdulsalam @azlamsalam",
-  "bugs": "https://github.com/azlam-abdulsalam/sfpowerkit/issues",
+  "bugs": "https://github.com/azlamsalam/sfpowerkit/issues",
   "dependencies": {
     "@oclif/command": "1",
     "@oclif/config": "1",
@@ -45,7 +45,7 @@
     "/npm-shrinkwrap.json",
     "/oclif.manifest.json"
   ],
-  "homepage": "https://github.com/azlam-abdulsalam/sfpowerkit",
+  "homepage": "https://github.com/azlamsalam/sfpowerkit",
   "keywords": [
     "sfdx-plugin"
   ],
@@ -67,7 +67,7 @@
       "@oclif/plugin-help"
     ]
   },
-  "repository": "azlam-abdulsalam/sfpowerkit",
+  "repository": "azlamsalam/sfpowerkit",
   "scripts": {
     "postpack": "rimraf oclif.manifest.json npm-shrinkwrap.json",
     "posttest": "tslint -p test -t stylish",

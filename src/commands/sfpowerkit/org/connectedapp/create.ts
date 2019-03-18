@@ -44,7 +44,7 @@ export default class Create extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    `$ sfdx  sfpowerkit:org:connectedapp:create -u myOrg@example.com -n AzurePipelines -c id_rsa -e azlam.abdulsalam@accentue.com
+    `$ sfdx  sfpowerkit:org:connectedapp:create -u myOrg@example.com -n AzurePipelines -c id_rsa -e azlam.salamm@invalid.com
   Created Connected App AzurePipelines in Target Org
   `
   ];
@@ -146,7 +146,7 @@ export default class Create extends SfdxCommand {
 
    rimraf.sync('temp_sfpowerkit');
 
-    return {}
+    return  {'connectedapp.consumerkey': this.connectedapp_consumerKey };
   }
 
   public createConsumerKey() {
