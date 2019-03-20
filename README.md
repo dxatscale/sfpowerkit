@@ -1,18 +1,164 @@
 sfpowerkit
 ==========
 
-Swiss Army toolset for Salesforce
+Salesforce DevOps Helper Extensions
 
-## `sfdx sfpowerkit:package:dependencies:install`
+[![Version](https://img.shields.io/npm/v/sfpowerkit.svg)](https://npmjs.org/package/sfpowerkit)
+[![CircleCI](https://circleci.com/gh/azlamsalam/sfpowerkit/tree/master.svg?style=shield)](https://circleci.com/gh/azlamsalam/sfpowerkit/tree/master)
+[![Appveyor CI](https://ci.appveyor.com/api/projects/status/github/azlamsalam/sfpowerkit?branch=master&svg=true)](https://ci.appveyor.com/project/heroku/sfpowerkit/branch/master)
+[![Codecov](https://codecov.io/gh/azlamsalam/sfpowerkit/branch/master/graph/badge.svg)](https://codecov.io/gh/azlamsalam/sfpowerkit)
+[![Greenkeeper](https://badges.greenkeeper.io/azlamsalam/sfpowerkit.svg)](https://greenkeeper.io/)
+[![Known Vulnerabilities](https://snyk.io/test/github/azlamsalam/sfpowerkit/badge.svg)](https://snyk.io/test/github/azlamsalam/sfpowerkit)
+[![Downloads/week](https://img.shields.io/npm/dw/sfpowerkit.svg)](https://npmjs.org/package/sfpowerkit)
+[![License](https://img.shields.io/npm/l/sfpowerkit.svg)](https://github.com/azlamsalam/sfpowerkit/blob/master/package.json)
 
-Install dependencies of a package. This makes installing all the dependencies for package a breeze
+<!-- toc -->
 
-Adapted from texei plugin, modified it for working with the new cli
+<!-- tocstop -->
+
+<!-- commands -->
+* [`sfpowerkit <%= command.id %> -n <string> -c <filepath> -e <email> [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfpowerkit--commandid---n-string--c-filepath--e-email--u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfatal)
+* [`sfpowerkit <%= command.id %> -n <string> -d <string> -l <string> [-a <string>] [-f <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfpowerkit--commandid---n-string--d-string--l-string--a-string--f-string--u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfatal)
+* [`sfpowerkit <%= command.id %> -n <string> [-s] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfpowerkit--commandid---n-string--s--u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfatal)
+* [`sfpowerkit <%= command.id %> -n <string> [-f <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfpowerkit--commandid---n-string--f-string--u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfatal)
+* [`sfpowerkit <%= command.id %> [-p <string>] [-k <string>] [-b <string>] [-w <string>] [-r] [-v <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfpowerkit--commandid---p-string--k-string--b-string--w-string--r--v-string--u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfatal)
+* [`sfpowerkit <%= command.id %> [-n <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfpowerkit--commandid---n-string---json---loglevel-tracedebuginfowarnerrorfatal)
+
+## `sfpowerkit <%= command.id %> -n <string> -c <filepath> -e <email> [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
+
+Creates a connected app in the target org for JWT based authentication, Please note it only creates Connected App with All users may self authorize option, You would need to manually edit the policies to enable admin users are pre-approved and add your profile to this connected app
 
 ```
 USAGE
-  $ sfdx sfpowerkit:package:dependencies:install [-p <string>] [-k <string>] [-b <string>] [-w <string>] [-r] [-v <string>] 
-  [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+  $ sfpowerkit sfpowerkit:org:connectedapp:create -n <string> -c <filepath> -e <email> [-u <string>] [--apiversion 
+  <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+
+OPTIONS
+  -c, --pathtocertificate=pathtocertificate       (required) Filepath to the private certificate for the connected app
+                                                  to be created
+
+  -e, --email=email                               (required) Email of the connected app to be created
+
+  -n, --name=name                                 (required) Name of the connected app to be created
+
+  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
+
+  --apiversion=apiversion                         override the api version used for api requests made by this command
+
+  --json                                          format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx  sfpowerkit:org:connectedapp:create -u myOrg@example.com -n AzurePipelines -c id_rsa -e 
+  azlam.salamm@invalid.com
+     Created Connected App AzurePipelines in Target Org
+```
+
+_See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.4.4/src\commands\sfpowerkit\org\connectedapp\create.ts)_
+
+## `sfpowerkit <%= command.id %> -n <string> -d <string> -l <string> [-a <string>] [-f <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
+
+Creates a sandbox using the tooling api, ensure the user has the required permissions before using this command
+
+```
+USAGE
+  $ sfpowerkit sfpowerkit:org:sandbox:create -n <string> -d <string> -l <string> [-a <string>] [-f <string>] [-u 
+  <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+
+OPTIONS
+  -a, --apexclass=apexclass                               A reference to the ID of an Apex class that runs after each
+                                                          copy of the sandbox
+
+  -d, --description=description                           (required) Description of the sandbox
+
+  -f, --clonefrom=clonefrom                               A reference to the ID of a SandboxInfo that serves as the
+                                                          source org for a cloned sandbox.
+
+  -l, --licensetype=DEVELOPER|DEVELOPER_PRO|PARTIAL|FULL  (required) Type of the sandbox. Valid values are
+                                                          DEVELOPER,DEVELOPER_PRO,PARTIAL,FULL
+
+  -n, --name=name                                         (required) Name of the sandbox
+
+  -u, --targetusername=targetusername                     username or alias for the target org; overrides default target
+                                                          org
+
+  --apiversion=apiversion                                 override the api version used for api requests made by this
+                                                          command
+
+  --json                                                  format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal)          [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:org:sandbox:create -d Testsandbox -l DEVELOPER -n test2 -u myOrg@example.com
+     Successfully Enqueued Creation of Sandbox
+```
+
+_See code: [src\commands\sfpowerkit\org\sandbox\create.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.4.4/src\commands\sfpowerkit\org\sandbox\create.ts)_
+
+## `sfpowerkit <%= command.id %> -n <string> [-s] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
+
+Gets the status of a sandbox
+
+```
+USAGE
+  $ sfpowerkit sfpowerkit:org:sandbox:info -n <string> [-s] [-u <string>] [--apiversion <string>] [--json] [--loglevel 
+  trace|debug|info|warn|error|fatal]
+
+OPTIONS
+  -n, --name=name                                 (required) Name of the sandbox
+  -s, --showonlylatest                            Shows only the latest info of the sandbox record
+  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
+  --apiversion=apiversion                         override the api version used for api requests made by this command
+  --json                                          format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:org:sandbox:info -n test2  -u myOrg@example.com
+     Successfully Enqueued Refresh of Sandbox
+```
+
+_See code: [src\commands\sfpowerkit\org\sandbox\info.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.4.4/src\commands\sfpowerkit\org\sandbox\info.ts)_
+
+## `sfpowerkit <%= command.id %> -n <string> [-f <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
+
+Refresh a sandbox using the tooling api, ensure the user has the required permissions before using this command
+
+```
+USAGE
+  $ sfpowerkit sfpowerkit:org:sandbox:refresh -n <string> [-f <string>] [-u <string>] [--apiversion <string>] [--json] 
+  [--loglevel trace|debug|info|warn|error|fatal]
+
+OPTIONS
+  -f, --clonefrom=clonefrom                       A reference to the ID of a SandboxInfo that serves as the source org
+                                                  for a cloned sandbox.
+
+  -n, --name=name                                 (required) Name of the sandbox
+
+  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
+
+  --apiversion=apiversion                         override the api version used for api requests made by this command
+
+  --json                                          format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:org:sandbox:refresh -n test2  -f sitSandbox -u myOrg@example.com
+     Successfully Enqueued Refresh of Sandbox
+```
+
+_See code: [src\commands\sfpowerkit\org\sandbox\refresh.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.4.4/src\commands\sfpowerkit\org\sandbox\refresh.ts)_
+
+## `sfpowerkit <%= command.id %> [-p <string>] [-k <string>] [-b <string>] [-w <string>] [-r] [-v <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
+
+Install dependencies of a package
+
+```
+USAGE
+  $ sfpowerkit sfpowerkit:package:dependencies:install [-p <string>] [-k <string>] [-b <string>] [-w <string>] [-r] [-v 
+  <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
   -b, --branch=branch                              the package version’s branch
@@ -43,179 +189,36 @@ EXAMPLE
   $ sfpowerkit package:dependencies:install -u MyScratchOrg -v MyDevHub -k "1:MyPackage1Key 2: 3:MyPackage3Key" -b "DEV"
 ```
 
-_See code: [src\commands\package\dependencies\install.ts](https://github.com/azlam-abdulsalam/sfpowerkit/blob/v1.0.0/src\commands\sfpowerkit\package\dependencies\install.ts)_
+_See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.4.4/src\commands\sfpowerkit\package\dependencies\install.ts)_
 
-## `sfdx sfpowerkit:package:valid`
+## `sfpowerkit <%= command.id %> [-n <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
 
-Validates a package(source) to check whether it only contains valid metadata as per metadata coverage.
-This is ultra useful in your local machine as well as during a pull request validation to prevent very cryptic error messages during package creation
+Validates a package to check whether it only contains valid metadata as per metadata coverage
 
 ```
 USAGE
-  $ sfdx sfpowerkit:package:valid [-n <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+  $ sfpowerkit sfpowerkit:package:valid [-n <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
   -n, --package=package                           the package to analyze
   --json                                          format output as json
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
 
-EXAMPLES
-  $ sfdx package:valid -n dreamhouse
-     Analyzing dreamhous
-  
-  $ sfdx package:valid
-
-```
-
-_See code: [src\commands\package\valid.ts](https://github.com/azlam-abdulsalam/sfpowerkit/blob/v1.0.0/src\commands\sfpowerkit\package\valid.ts)_
-
-## `sfdx sfpowerkit:org:connectedapp:create `
-
-Creates a connected app in the target org for JWT based authentication,
-Please note it only creates Connected App with All users may self authorize option, You would need to manually edit the policies to enable admin users are pre-approved and add your profile to this connected app
-It needs a web auth based login to create a JWT based token
-
-```
-USAGE
-  $ sfdx sfpowerkit:org:connectedapp:create [-n <string>] [-c <string>] [-e <email>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
-
-
-OPTIONS
-  -n,                          the label of the connected app toe be created
-  -c,                          the x509 formatted .crt file 
-  -e,                          the email to be used in while creating the connected app
-  -u                           username or alias for the target org; overrides default target org
-  --json                                          format output as json
-  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
-
-EXAMPLES
-  $ sfdx  sfpowerkit:org:connectedapp:create -u myOrg@example.com -n azurepipelines -c id_rsa -e azlam.abdulsalam@accentue.co
-  Running prepare script for D:\projects\sf_toolkit... done
-  Deploy connected app azurepipelines
-  1823 bytes written to C:\Users\Azlam\AppData\Local\Temp\mdapi.zip using 30.413ms
-   Deploying C:\Users\Azlam\AppData\Local\Temp\mdapi.zip...
-
-  === Result
-  Status:  Succeeded
-  jobid:  0Af0k00000RKRPqCAP
-  Completed:  2019-03-11T10:11:37.000Z
-  Component errors:  0
-  Components deployed:  1
-  Components total:  1
-  Tests errors:  0
-  Tests completed:  0
-  Tests total:  0
-  Check only: false
-
-
-```
-
-_See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/azlam-abdulsalam/sfpowerkit/blob/v1.1.1/src\commands\sfpowerkit\org\connectedapp\create.ts)_
-
-
-## `sfdx sfpowerkit:org:sandbox:create `
-
-Creates a sandbox using the tooling api, ensure the user has the required permissions before using this command
-
-```
-USAGE
-  $ sfdx sfpowerkit:org:sandbox:create -n <string> -d <string> -l <string> [-a <string>] [-f <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
-
-OPTIONS
-  -a, --apexclass=apexclass                       A reference to the ID of an Apex class that runs after each copy of the sandbox
-  -d, --description=description                   (required) Description of the sandbox
-  -f, --clonefrom=clonefrom                       A reference to the ID of a SandboxInfo that serves as the source org for a cloned sandbox.
-  -l, --licensetype=licensetype                   (required) Type of the sandbox. Valid values are  DEVELOPER,DEVELOPER_PRO,PARTIAL,FULL
-  -n, --name=name                                 (required) Name of the sandbox
-  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
-  --apiversion=apiversion                         override the api version used for api requests made by this command
-  --json                                          format output as json
-  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
-
 EXAMPLE
-  $ sfdx sfpowerkit:org:sandbox:create -d Testsandbox -l DEVELOPER -n test2 -u myOrg@example.com
-     Successfully Enqueued Creation of Sandbox
-     { id: '0GQ6F0000004IeDWAU',
-      success: true,
-      errors: [],
-      warnings: [],
-      infos: [] }
-```  
-_See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/azlam-abdulsalam/sfpowerkit/blob/v1.3.0/src/commands\sfpowerkit\org\sabdbox\create.ts)_
-
-
-## `sfdx sfpowerkit:org:sandbox:refresh `
-
-Refresh a sandbox using the tooling api, ensure the user has the required permissions before using this command
-
+  $ sfdx sfpowerkit:package:valid -n testPackage
+     Now analyzing inspections
+  Converting package testPackage
+  Source was successfully converted to Metadata API format and written to the location: 
+  D:projects	estPackage	emp_sfpowerkitmdapi
+  Elements supported included in your package testPackage are
+  [
+     "AuraDefinitionBundle",
+     "CustomApplication",
+     "ApexClass",
+     "ContentAsset",
+     "WorkflowRule"
+  ]
 ```
-USAGE
-  $ sfdx sfpowerkit:org:sandbox:create -n <string> -d <string>  [-f <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
-OPTIONS
-  -f, --clonefrom=clonefrom                       Sandbox to be cloned from, if not set, it will be from production
-  -n, --name=name                                 (required) Name of the sandbox
-  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
-  --apiversion=apiversion                         override the api version used for api requests made by this command
-  --json                                          format output as json
-  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
-
-EXAMPLE
-  $ sfdx sfpowerkit:org:sandbox:refresh -n test2 -u myOrg@example.com
-     Successfully Enqueued Refresh of Sandbox
-```  
-_See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/azlam-abdulsalam/sfpowerkit/blob/v1.3.0/src\commands\sfpowerkit\org\sabdbox\refresh.ts)_
-
-## `sfdx sfpowerkit:org:sandbox:info `
-
-Retrieves the status of a sandbox
-
-```
-USAGE
-  $ sfdx sfpowerkit:org:sandbox:info -n <string> -s <boolean>  [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
-
-OPTIONS
-  -s, --showonlylatest                            Show only the last record of the sandbox
-  -n, --name=name                                 (required) Name of the sandbox
-  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
-  --apiversion=apiversion                         override the api version used for api requests made by this command
-  --json                                          format output as json
-  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
-
-EXAMPLE
-  $ sfdx sfpowerkit:org:sandbox:info -n test2 -u myOrg@example.com -s
-    [
-  {
-    "attributes": {
-      "type": "SandboxProcess",
-      "url": "/services/data/v45.0/tooling/sobjects/SandboxProcess/0GR6F0000004K7fWAE"
-    },
-    "Id": "0GR6F0000004K7fWAE",
-    "IsDeleted": false,
-    "CreatedDate": "2019-03-17T13:35:38.000+0000",
-    "CreatedById": "0056F00000AlYBWQA3",
-    "LastModifiedDate": "2019-03-17T13:48:44.000+0000",
-    "LastModifiedById": "0056F00000Ap9o6QAB",
-    "SystemModstamp": "2019-03-17T13:48:44.000+0000",
-    "SandboxInfoId": "0GQ6F0000004IdFWAU",
-    "SandboxName": "testsand",
-    "LicenseType": "DEVELOPER",
-    "TemplateId": null,
-    "HistoryDays": 0,
-    "CopyChatter": false,
-    "AutoActivate": true,
-    "StartDate": "2019-03-17T13:35:39.000+0000",
-    "EndDate": null,
-    "ActivatedDate": null,
-    "ActivatedById": null,
-    "RefreshAction": null,
-    "ApexClassId": null,
-    "Description": null,
-    "CopyProgress": 95,
-    "Status": "Activating",
-    "SandboxOrganization": "00D0p0000008dVo",
-    "SourceId": "0GQ6F0000000QJfWAM"
-  }
-]
-```  
-_See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/azlam-abdulsalam/sfpowerkit/blob/v1.3.0/src\commands\sfpowerkit\org\sabdbox\info.ts)_
+_See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.4.4/src\commands\sfpowerkit\package\valid.ts)_
+<!-- commandsstop -->

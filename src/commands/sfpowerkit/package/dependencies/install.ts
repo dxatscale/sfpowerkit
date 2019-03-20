@@ -1,3 +1,7 @@
+//Code is basically same from https://github.com/texei/texei-sfdx-plugin
+// Just updated it for the revised cli core 
+
+
 import {core, flags, SfdxCommand} from '@salesforce/command';
 import {JsonArray,JsonMap} from '@salesforce/ts-types';
 import { SfdxProject } from '@salesforce/core';
@@ -7,6 +11,8 @@ const packageIdPrefix = '0Ho';
 const packageVersionIdPrefix = '04t';
 const packageAliasesMap = [];
 const defaultWait = 60;
+
+
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -210,7 +216,8 @@ export default class Install extends SfdxCommand {
 
   private async getPackageVersionId(name, version) {
 
-    let packageId = messages.getMessage('invalidPackageName');
+    let packageId;
+
     // Keeping original name so that it can be used in error message if needed
     let packageName = name;
 
