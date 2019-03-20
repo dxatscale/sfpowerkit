@@ -18,6 +18,7 @@ Salesforce DevOps Helper Extensions
 
 <!-- commands -->
 * [`sfpowerkit <%= command.id %> -n <string> -c <filepath> -e <email> [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfpowerkit--commandid---n-string--c-filepath--e-email--u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfatal)
+* [`sfpowerkit <%= command.id %> [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfpowerkit--commandid---u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfatal)
 * [`sfpowerkit <%= command.id %> -n <string> -d <string> -l <string> [-a <string>] [-f <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfpowerkit--commandid---n-string--d-string--l-string--a-string--f-string--u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfatal)
 * [`sfpowerkit <%= command.id %> -n <string> [-s] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfpowerkit--commandid---n-string--s--u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfatal)
 * [`sfpowerkit <%= command.id %> -n <string> [-f <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfpowerkit--commandid---n-string--f-string--u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfatal)
@@ -57,6 +58,28 @@ EXAMPLE
 ```
 
 _See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.4.4/src\commands\sfpowerkit\org\connectedapp\create.ts)_
+
+## `sfpowerkit <%= command.id %> [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
+
+Gets the health details of an org
+
+```
+USAGE
+  $ sfpowerkit sfpowerkit:org:healthcheck [-u <string>] [--apiversion <string>] [--json] [--loglevel 
+  trace|debug|info|warn|error|fatal]
+
+OPTIONS
+  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
+  --apiversion=apiversion                         override the api version used for api requests made by this command
+  --json                                          format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:org:healthcheck  -u myOrg@example.com
+     Successfully Retrived the healthstatus of the org
+```
+
+_See code: [src\commands\sfpowerkit\org\healthcheck.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.4.4/src\commands\sfpowerkit\org\healthcheck.ts)_
 
 ## `sfpowerkit <%= command.id %> -n <string> -d <string> -l <string> [-a <string>] [-f <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
 
