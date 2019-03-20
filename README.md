@@ -23,6 +23,7 @@ Salesforce DevOps Helper Extensions
 * [`sfpowerkit <%= command.id %> -n <string> [-f <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfpowerkit--commandid---n-string--f-string--u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfatal)
 * [`sfpowerkit <%= command.id %> [-p <string>] [-k <string>] [-b <string>] [-w <string>] [-r] [-v <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfpowerkit--commandid---p-string--k-string--b-string--w-string--r--v-string--u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfatal)
 * [`sfpowerkit <%= command.id %> [-n <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfpowerkit--commandid---n-string---json---loglevel-tracedebuginfowarnerrorfatal)
+* [`sfpowerkit <%= command.id %> -x <filepath> [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfpowerkit--commandid---x-filepath---json---loglevel-tracedebuginfowarnerrorfatal)
 
 ## `sfpowerkit <%= command.id %> -n <string> -c <filepath> -e <email> [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
 
@@ -221,4 +222,24 @@ EXAMPLE
 ```
 
 _See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.4.4/src\commands\sfpowerkit\package\valid.ts)_
+
+## `sfpowerkit <%= command.id %> -x <filepath> [--json] [--loglevel trace|debug|info|warn|error|fatal]`
+
+Gets the status of a sandbox
+
+```
+USAGE
+  $ sfpowerkit sfpowerkit:source:profile:generate -x <filepath> [--json] [--loglevel trace|debug|info|warn|error|fatal]
+
+OPTIONS
+  -x, --name=name                                 (required) Name of the sandbox
+  --json                                          format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:source:profile:generate -x package.xml
+     Generated Admin Profile succesfully
+```
+
+_See code: [src\commands\sfpowerkit\source\profile\generate.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.4.4/src\commands\sfpowerkit\source\profile\generate.ts)_
 <!-- commandsstop -->
