@@ -1,7 +1,7 @@
 {
   "name": "sfpowerkit",
   "description": "Swiss Army toolset for Salesforce",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "author": "Azlam Abdulsalam @azlamsalam",
   "bugs": "https://github.com/azlamsalam/sfpowerkit/issues",
   "dependencies": {
@@ -71,8 +71,8 @@
   "scripts": {
     "postpack": "rimraf oclif.manifest.json npm-shrinkwrap.json",
     "posttest": "tslint -p test -t stylish",
-    "prepare": "rimraf lib && tsc -b && oclif-dev manifest && oclif-dev readme && npm shrinkwrap",
+    "prepare": "rimraf lib && tsc -b && oclif-dev manifest && npm shrinkwrap",
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
-    "version": "oclif-dev readme && git add README.md"
+    "version":"git add README.md"
   }
 }

@@ -37,7 +37,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\connectedapp\create.ts)_
 
-## `sfpowerkit sfpowerkit:org:healthcheck`
+## `sfpowerkit:org:healthcheck`
 
 Gets the health details of an org
 
@@ -59,7 +59,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\healthcheck.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\healthcheck.ts)_
 
-## `sfpowerkit sfpowerkit:org:sandbox:create`
+## `sfpowerkit:org:sandbox:create`
 
 Creates a sandbox using the tooling api, ensure the user has the required permissions before using this command
 
@@ -99,7 +99,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\sandbox\create.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\sandbox\create.ts)_
 
-## ` sfpowerkit sfpowerkit:org:sandbox:info`
+## ` sfpowerkit:org:sandbox:info`
 
 Gets the status of a sandbox
 
