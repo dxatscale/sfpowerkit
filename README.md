@@ -3,36 +3,14 @@ sfpowerkit
 
 Salesforce DevOps Helper Extensions
 
-[![Version](https://img.shields.io/npm/v/sfpowerkit.svg)](https://npmjs.org/package/sfpowerkit)
-[![CircleCI](https://circleci.com/gh/azlamsalam/sfpowerkit/tree/master.svg?style=shield)](https://circleci.com/gh/azlamsalam/sfpowerkit/tree/master)
-[![Appveyor CI](https://ci.appveyor.com/api/projects/status/github/azlamsalam/sfpowerkit?branch=master&svg=true)](https://ci.appveyor.com/project/heroku/sfpowerkit/branch/master)
-[![Codecov](https://codecov.io/gh/azlamsalam/sfpowerkit/branch/master/graph/badge.svg)](https://codecov.io/gh/azlamsalam/sfpowerkit)
-[![Greenkeeper](https://badges.greenkeeper.io/azlamsalam/sfpowerkit.svg)](https://greenkeeper.io/)
-[![Known Vulnerabilities](https://snyk.io/test/github/azlamsalam/sfpowerkit/badge.svg)](https://snyk.io/test/github/azlamsalam/sfpowerkit)
-[![Downloads/week](https://img.shields.io/npm/dw/sfpowerkit.svg)](https://npmjs.org/package/sfpowerkit)
-[![License](https://img.shields.io/npm/l/sfpowerkit.svg)](https://github.com/azlamsalam/sfpowerkit/blob/master/package.json)
 
-<!-- toc -->
-
-<!-- tocstop -->
-
-<!-- commands -->
-* [`sfpowerkit <%= command.id %> -n <string> -c <filepath> -e <email> [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfpowerkit--commandid---n-string--c-filepath--e-email--u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfatal)
-* [`sfpowerkit <%= command.id %> [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfpowerkit--commandid---u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfatal)
-* [`sfpowerkit <%= command.id %> -n <string> -d <string> -l <string> [-a <string>] [-f <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfpowerkit--commandid---n-string--d-string--l-string--a-string--f-string--u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfatal)
-* [`sfpowerkit <%= command.id %> -n <string> [-s] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfpowerkit--commandid---n-string--s--u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfatal)
-* [`sfpowerkit <%= command.id %> -n <string> [-f <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfpowerkit--commandid---n-string--f-string--u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfatal)
-* [`sfpowerkit <%= command.id %> [-p <string>] [-k <string>] [-b <string>] [-w <string>] [-r] [-v <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfpowerkit--commandid---p-string--k-string--b-string--w-string--r--v-string--u-string---apiversion-string---json---loglevel-tracedebuginfowarnerrorfatal)
-* [`sfpowerkit <%= command.id %> [-n <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfpowerkit--commandid---n-string---json---loglevel-tracedebuginfowarnerrorfatal)
-* [`sfpowerkit <%= command.id %> -x <filepath> [--json] [--loglevel trace|debug|info|warn|error|fatal]`](#sfpowerkit--commandid---x-filepath---json---loglevel-tracedebuginfowarnerrorfatal)
-
-## `sfpowerkit <%= command.id %> -n <string> -c <filepath> -e <email> [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
+## `sfpowerkit org:connectedapp:create`
 
 Creates a connected app in the target org for JWT based authentication, Please note it only creates Connected App with All users may self authorize option, You would need to manually edit the policies to enable admin users are pre-approved and add your profile to this connected app
 
 ```
 USAGE
-  $ sfpowerkit sfpowerkit:org:connectedapp:create -n <string> -c <filepath> -e <email> [-u <string>] [--apiversion 
+  $ sfdx sfpowerkit:org:connectedapp:create -n <string> -c <filepath> -e <email> [-u <string>] [--apiversion 
   <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
@@ -57,15 +35,15 @@ EXAMPLE
      Created Connected App AzurePipelines in Target Org
 ```
 
-_See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.4.4/src\commands\sfpowerkit\org\connectedapp\create.ts)_
+_See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\connectedapp\create.ts)_
 
-## `sfpowerkit <%= command.id %> [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
+## `sfpowerkit sfpowerkit:org:healthcheck`
 
 Gets the health details of an org
 
 ```
 USAGE
-  $ sfpowerkit sfpowerkit:org:healthcheck [-u <string>] [--apiversion <string>] [--json] [--loglevel 
+  $ sfdx sfpowerkit:org:healthcheck [-u <string>] [--apiversion <string>] [--json] [--loglevel 
   trace|debug|info|warn|error|fatal]
 
 OPTIONS
@@ -79,15 +57,15 @@ EXAMPLE
      Successfully Retrived the healthstatus of the org
 ```
 
-_See code: [src\commands\sfpowerkit\org\healthcheck.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.4.4/src\commands\sfpowerkit\org\healthcheck.ts)_
+_See code: [src\commands\sfpowerkit\org\healthcheck.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\healthcheck.ts)_
 
-## `sfpowerkit <%= command.id %> -n <string> -d <string> -l <string> [-a <string>] [-f <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
+## `sfpowerkit sfpowerkit:org:sandbox:create`
 
 Creates a sandbox using the tooling api, ensure the user has the required permissions before using this command
 
 ```
 USAGE
-  $ sfpowerkit sfpowerkit:org:sandbox:create -n <string> -d <string> -l <string> [-a <string>] [-f <string>] [-u 
+  $ sfdx sfpowerkit:org:sandbox:create -n <string> -d <string> -l <string> [-a <string>] [-f <string>] [-u 
   <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
@@ -119,15 +97,15 @@ EXAMPLE
      Successfully Enqueued Creation of Sandbox
 ```
 
-_See code: [src\commands\sfpowerkit\org\sandbox\create.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.4.4/src\commands\sfpowerkit\org\sandbox\create.ts)_
+_See code: [src\commands\sfpowerkit\org\sandbox\create.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\sandbox\create.ts)_
 
-## `sfpowerkit <%= command.id %> -n <string> [-s] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
+## ` sfpowerkit sfpowerkit:org:sandbox:info`
 
 Gets the status of a sandbox
 
 ```
 USAGE
-  $ sfpowerkit sfpowerkit:org:sandbox:info -n <string> [-s] [-u <string>] [--apiversion <string>] [--json] [--loglevel 
+  $ sfdx sfpowerkit:org:sandbox:info -n <string> [-s] [-u <string>] [--apiversion <string>] [--json] [--loglevel 
   trace|debug|info|warn|error|fatal]
 
 OPTIONS
@@ -143,15 +121,15 @@ EXAMPLE
      Successfully Enqueued Refresh of Sandbox
 ```
 
-_See code: [src\commands\sfpowerkit\org\sandbox\info.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.4.4/src\commands\sfpowerkit\org\sandbox\info.ts)_
+_See code: [src\commands\sfpowerkit\org\sandbox\info.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\sandbox\info.ts)_
 
-## `sfpowerkit <%= command.id %> -n <string> [-f <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
+## `sfpowerkit:org:sandbox:refresh`
 
 Refresh a sandbox using the tooling api, ensure the user has the required permissions before using this command
 
 ```
 USAGE
-  $ sfpowerkit sfpowerkit:org:sandbox:refresh -n <string> [-f <string>] [-u <string>] [--apiversion <string>] [--json] 
+  $ sfdx sfpowerkit:org:sandbox:refresh -n <string> [-f <string>] [-u <string>] [--apiversion <string>] [--json] 
   [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
@@ -173,15 +151,15 @@ EXAMPLE
      Successfully Enqueued Refresh of Sandbox
 ```
 
-_See code: [src\commands\sfpowerkit\org\sandbox\refresh.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.4.4/src\commands\sfpowerkit\org\sandbox\refresh.ts)_
+_See code: [src\commands\sfpowerkit\org\sandbox\refresh.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\sandbox\refresh.ts)_
 
-## `sfpowerkit <%= command.id %> [-p <string>] [-k <string>] [-b <string>] [-w <string>] [-r] [-v <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
+## `sfpowerkit:package:dependencies:install`
 
 Install dependencies of a package
 
 ```
 USAGE
-  $ sfpowerkit sfpowerkit:package:dependencies:install [-p <string>] [-k <string>] [-b <string>] [-w <string>] [-r] [-v 
+  $ sfdx sfpowerkit:package:dependencies:install [-p <string>] [-k <string>] [-b <string>] [-w <string>] [-r] [-v 
   <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
@@ -213,15 +191,15 @@ EXAMPLE
   $ sfpowerkit package:dependencies:install -u MyScratchOrg -v MyDevHub -k "1:MyPackage1Key 2: 3:MyPackage3Key" -b "DEV"
 ```
 
-_See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.4.4/src\commands\sfpowerkit\package\dependencies\install.ts)_
+_See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\package\dependencies\install.ts)_
 
-## `sfpowerkit <%= command.id %> [-n <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]`
+## `sfpowerkit:package:valid`
 
 Validates a package to check whether it only contains valid metadata as per metadata coverage
 
 ```
 USAGE
-  $ sfpowerkit sfpowerkit:package:valid [-n <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+  $ sfdx sfpowerkit:package:valid [-n <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
   -n, --package=package                           the package to analyze
@@ -244,25 +222,4 @@ EXAMPLE
   ]
 ```
 
-_See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.4.4/src\commands\sfpowerkit\package\valid.ts)_
-
-## `sfpowerkit <%= command.id %> -x <filepath> [--json] [--loglevel trace|debug|info|warn|error|fatal]`
-
-Gets the status of a sandbox
-
-```
-USAGE
-  $ sfpowerkit sfpowerkit:source:profile:generate -x <filepath> [--json] [--loglevel trace|debug|info|warn|error|fatal]
-
-OPTIONS
-  -x, --name=name                                 (required) Name of the sandbox
-  --json                                          format output as json
-  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
-
-EXAMPLE
-  $ sfdx sfpowerkit:source:profile:generate -x package.xml
-     Generated Admin Profile succesfully
-```
-
-_See code: [src\commands\sfpowerkit\source\profile\generate.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.4.4/src\commands\sfpowerkit\source\profile\generate.ts)_
-<!-- commandsstop -->
+_See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\package\valid.ts)_
