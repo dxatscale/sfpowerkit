@@ -39,7 +39,7 @@ _See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.c
 
 ## `sfpowerkit:org:healthcheck`
 
-Gets the health details of an org
+Gets the  health details of an org against the Salesforce baseline
 
 ```
 USAGE
@@ -82,8 +82,7 @@ OPTIONS
 
   -n, --name=name                                         (required) Name of the sandbox
 
-  -u, --targetusername=targetusername                     username or alias for the target org; overrides default target
-                                                          org
+  -u, --targetusername=targetusername                     Username for the Production Environment
 
   --apiversion=apiversion                                 override the api version used for api requests made by this
                                                           command
@@ -111,7 +110,7 @@ USAGE
 OPTIONS
   -n, --name=name                                 (required) Name of the sandbox
   -s, --showonlylatest                            Shows only the latest info of the sandbox record
-  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
+  -u, --targetusername=targetusername             Username for the Production Environment
   --apiversion=apiversion                         override the api version used for api requests made by this command
   --json                                          format output as json
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
@@ -138,7 +137,7 @@ OPTIONS
 
   -n, --name=name                                 (required) Name of the sandbox
 
-  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
+  -u, --targetusername=targetusername             Username for the Production Environment
 
   --apiversion=apiversion                         override the api version used for api requests made by this command
 

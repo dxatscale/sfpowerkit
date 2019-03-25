@@ -56,7 +56,7 @@ export default class Info extends SfdxCommand {
       await fs.outputJSON(this.flags.outputfile, result);
     }
 
-     this.ux.log(`Successfully Retrived Sandbox Details`);
+     this.ux.log(`Successfully Retrieved Sandbox Details`);
      this.ux.logJson(result);
  
 
