@@ -59,6 +59,30 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\healthcheck.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\healthcheck.ts)_
 
+# `sfpowerkit:org:orgcoverage`
+
+Gets the apex tests coverage of an org
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:orgcoverage [-u <string>] [--apiversion <string>] [--json] [--loglevel 
+  trace|debug|info|warn|error|fatal]
+
+OPTIONS
+  -u, --targetusername=targetusername             username or alias for the target org; 
+  --apiversion=apiversion                         override the api version used for api requests made by this command
+  --json                                          format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:org:orgcoverage  -u myOrg@example.com
+     Successfully Retrieved the Apex Test Coverage of the org 00D0k000000DmdpEAC
+     coverage:85
+```
+
+_See code: [src\commands\sfpowerkit\org\orgcoverage.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\orgcoverage.ts)_
+
+
 ## `sfpowerkit:org:sandbox:create`
 
 Creates a sandbox using the tooling api, ensure the user has the required permissions before using this command
