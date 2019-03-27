@@ -27,7 +27,8 @@ export default class Create extends SfdxCommand {
 
   protected static flagsConfig = {
     name: flags.string({ required: true, char: 'n', description: messages.getMessage('nameFlagDescription') }),
-    clonefrom: flags.string({ required: false, char: 'f', default: '', description: messages.getMessage('cloneFromFlagDescripton') })
+    clonefrom: flags.string({ required: false, char: 'f', default: '', description: messages.getMessage('cloneFromFlagDescripton') }),
+    licensetype: flags.string({ required: false, char: 'l',  options: ['DEVELOPER', 'DEVELOPER_PRO','PARTIAL','FULL'], description: messages.getMessage('licenseFlagDescription') }),
   };
 
   // Comment this out if your command does not require an org username
@@ -76,7 +77,8 @@ export default class Create extends SfdxCommand {
           Authorization: `Bearer ${conn.accessToken}`
         },
         body: {
-          AutoActivate: 'true'
+          AutoActivate: 'true',
+          LicenseType: `${this.flags.licensetype}`,
         },
         json: true
       });
@@ -89,8 +91,7 @@ export default class Create extends SfdxCommand {
     }
 
     this.ux.log(`Successfully Enqueued Refresh of Sandbox`);
-    this.ux.log(result);
- 
+
 
     rimraf.sync('temp_sfpowerkit');
 

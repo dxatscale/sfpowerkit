@@ -30,7 +30,6 @@ export default class Valid extends SfdxCommand {
   `$ sfdx sfpowerkit:package:valid -n testPackage
   Now analyzing inspections
 Converting package testPackage
-Source was successfully converted to Metadata API format and written to the location: D:\projects\testPackage\temp_sfpowerkit\mdapi
 Elements supported included in your package testPackage are
 [
   "AuraDefinitionBundle",
@@ -78,16 +77,12 @@ Elements supported included in your package testPackage are
 
         if (packageToBeScanned != undefined && packageToBeScanned === sf_package['package']) {
           this.ux.log("Package to be analyzed located");
-          //this.ux.logJson(sf_package.valueOf());
-          let result;
-          try {
-            result = await this.validate(sf_package);
-            break;
-          }
-          catch (e) {
-            this.clearDirectory();
-            this.ux.log("Error Occured Unable to analyze");
-          }
+          let result = await this.validate(sf_package);
+          result_store.push(result);
+            if (result.valid == false && !this.flags.json)
+            throw new SfdxError("Analysis Failed, Unsupported metadata present");
+          break;
+          
         }
 
       }
@@ -99,7 +94,6 @@ Elements supported included in your package testPackage are
       for (const sf_package of (packageDirectories as JsonArray)) {
         if (sf_package['package'] != undefined) {
           this.ux.log(`Now analyzing ${sf_package['package']}`);
-          //this.ux.logJson(sf_package.valueOf());
           let result;
           try {
             result = await this.validate(sf_package);
@@ -114,18 +108,25 @@ Elements supported included in your package testPackage are
       }
     }
 
-    result_store.forEach(element => {
 
-      if (element == 1)
+    if(!this.flags.json)
+    {
+    result_store.forEach(element => {
+      if (element.valid == false)
         throw new SfdxError("Analysis Failed, Unsupported metadata present")
 
     });
+  }
 
-
-    return { message: 'Analyzing succesfully completed' };
+   
+    return { packages: result_store };
   }
 
   public async  validate(packageToBeScanned: AnyJson) {
+
+    var sfdx_package = new SFDXPackage();
+
+    sfdx_package.packageName = packageToBeScanned['package']
 
     // Split arguments to use spawn
     const args = [];
@@ -157,45 +158,54 @@ Elements supported included in your package testPackage are
       const parseString = util.promisify(parser.parseString);
       const existing = await parseString(fs.readFileSync(targetFilename));
 
-      const unsupportedTypes = [];
-      const supportedTypes = [];
+ 
 
       for (const types of (existing.Package.types as JsonArray)) {
 
-
-
         if (coverageJSON.types[types['name']] != undefined)
           if (coverageJSON.types[types['name']].channels.unlockedPackagingWithoutNamespace)
-            supportedTypes.push(`${types['name']}`);
+          sfdx_package.supportedTypes.push(`${types['name']}`);
           else
-            unsupportedTypes.push(`${types['name']}`);
+          sfdx_package.unsupportedtypes.push(`${types['name']}`);
 
       }
-     
-      if(supportedTypes.length>0)
+
+
+      sfdx_package.processed=true;
+
+      if( sfdx_package.supportedTypes.length>0)
       {
       this.ux.log(`Elements supported included in your package ${packageToBeScanned['package']} are`);
-      this.ux.logJson(supportedTypes);
+      sfdx_package.supportedTypes.forEach(element => {
+      this.ux.log(element);
+      });
+      sfdx_package.valid = true;
       }
 
-      if (unsupportedTypes.length > 0) {
+      if (sfdx_package.unsupportedtypes.length > 0) {
         this.ux.log("Elements not supported are ");
-        this.ux.logJson(unsupportedTypes);
-        this.clearDirectory();
-        return 1;
+        sfdx_package.unsupportedtypes.forEach(element => {
+          this.ux.log(element);
+        });
+        sfdx_package.valid=false;
+        
       }
-    } else {
-      return 2;
-    }
+    } 
 
-
-
-    this.clearDirectory();
-    return 0;
+   return sfdx_package;
 
   }
 
   public async clearDirectory() {
     rimraf.sync('temp_sfpowerkit');
   }
+}
+
+export class SFDXPackage
+{
+  public unsupportedtypes = [];
+  public supportedTypes = [];
+  public packageName:string;
+  public valid:boolean;
+  public processed:boolean;
 }

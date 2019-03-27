@@ -19,7 +19,7 @@ export default class Info extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    `$ sfdx sfpowerkit:org:sandbox:info -n test2  -u myOrg@example.com
+    `$ sfdx sfpowerkit:org:sandbox:info -n test2  -u produser@example.com 
   Successfully Enqueued Refresh of Sandbox
   `
   ];
@@ -57,7 +57,9 @@ export default class Info extends SfdxCommand {
     }
 
      this.ux.log(`Successfully Retrieved Sandbox Details`);
-     this.ux.logJson(result);
+
+     if(!this.flags.json)
+        this.ux.logJson(result);
  
 
     rimraf.sync('temp_sfpowerkit');
