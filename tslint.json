@@ -3,6 +3,7 @@
   "rules": {
     "variable-name" : false,
     "no-angle-bracket-type-assertion" : false,
-    "no-string-based-set-timeout": false
+    "no-string-based-set-timeout": false,
+    "member-ordering":false,
   }
 }
