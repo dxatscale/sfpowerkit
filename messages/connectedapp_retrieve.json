@@ -1,0 +1,7 @@
+{
+  "commandDescription": "Retrieves the consumer key for a connected app, Useful after a sandbox refresh in a CD Environment",
+  "nameFlagDescription": "Name of the connected app to be retreived",
+  "usernameFlagDescription": "Username for the org",
+  "passwordFlagDescription": "Password for the org",
+  "securityTokenFlagDescription": "Security Token for the org"
+}
