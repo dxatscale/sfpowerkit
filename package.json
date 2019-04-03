@@ -19,7 +19,7 @@
     "request-promise-native": "^1.0.7",
     "tslib": "1",
     "xml2js": "^0.4.19",
-    "decompress": "^4.2.0"
+    "unzipper":"0.9.11"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1",
