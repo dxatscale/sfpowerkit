@@ -173,7 +173,7 @@ export default class Install extends SfdxCommand {
 
         // INSTALLATION KEY
         if (installationKeys && installationKeys[i]) {
-          args.push('--installationkey');
+          args.push('-k');
           args.push(`${installationKeys[i]}`);
         }
 
