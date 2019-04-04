@@ -26,17 +26,7 @@ const messages = core.Messages.loadMessages('sfpowerkit', 'connectedapp_retrieve
 
 export default class Retrieve extends SfdxCommand {
 
-
-
-
-
   public connectedapp_consumerKey: string;
-
-
-
-
-
-
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
@@ -50,49 +40,45 @@ export default class Retrieve extends SfdxCommand {
     name: flags.string({ required: true, char: 'n', description: messages.getMessage('nameFlagDescription') }),
     username: flags.string({ required: true, char: 'u', description: messages.getMessage('usernameFlagDescription') }),
     password: flags.string({ required: true, char: 'p', description: messages.getMessage('passwordFlagDescription') }),
-    securitytoken: flags.string({ required: false, char: 's', description: messages.getMessage('securityTokenFlagDescription')}),
-    url: flags.url({ required: false, char: 'r', description: messages.getMessage('securityTokenFlagDescription')}),
+    securitytoken: flags.string({ required: false, char: 's', description: messages.getMessage('securityTokenFlagDescription') }),
+    url: flags.url({ required: false, char: 'r', description: messages.getMessage('securityTokenFlagDescription') }),
   };
+
   loginUrl: string;
+  password: string;
 
-  // Comment this out if your command does not require an org username
-  //protected static requiresUsername = true;
-
-  // Comment this out if your command does not support a hub org username
-  // protected static supportsDevhubUsername = true;
-
-  // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
-  //protected static requiresProject = true;
-
-
+ 
   public async run(): Promise<AnyJson> {
 
     rimraf.sync('temp_sfpowerkit');
 
-    if(this.flags.url)
+    if (this.flags.url)
       this.loginUrl = this.flags.url;
     else
-      this.loginUrl ='https://test.salesforce.com'
+      this.loginUrl = 'https://test.salesforce.com'
 
+    if (this.flags.securitytoken)
+      this.password = this.flags.password.concat(this.flags.securitytoken);
+    else
+      this.password = this.flags.password;
 
 
     let conn = new Connection({
-      // you can change loginUrl to connect to sandbox or prerelease env.
       loginUrl: this.loginUrl
 
     });
 
 
 
-    await conn.login(this.flags.username, this.flags.password, function (err, userInfo) {
-      if (err) { return console.error(err); }
+    await conn.login(this.flags.username, this.password, function (err, userInfo) {
+      if (err) { throw new SfdxError("Unable to connect to the target org") }
     });
 
 
 
 
     let retrieveRequest = {
-      apiVersion: 45.0
+      apiVersion: '45.0'
     };
 
     retrieveRequest['singlePackage'] = true;
@@ -130,13 +116,13 @@ export default class Retrieve extends SfdxCommand {
 
 
       if (metadata_result.status == 'Pending') {
-      if(!this.flags.json)
-        this.ux.log(`Polling for metadata`)
+        if (!this.flags.json)
+          this.ux.log(`Polling for metadata`)
         await (this.delay(5000));
       }
       else {
-        
-       // this.ux.logJson(metadata_result);
+
+        // this.ux.logJson(metadata_result);
         break;
       }
     }
@@ -157,13 +143,13 @@ export default class Retrieve extends SfdxCommand {
     // if(!this.flags.json)
     // this.ux.log(`Checking for file ${resultFile}`);
 
-   // this.ux.log(path.resolve(resultFile));
+    // this.ux.log(path.resolve(resultFile));
     let retrieved_connectedapp;
 
     if (fs.existsSync(path.resolve(resultFile))) {
       const parser = new xml2js.Parser({ explicitArray: false });
       const parseString = util.promisify(parser.parseString);
-     
+
       retrieved_connectedapp = await parseString(fs.readFileSync(path.resolve(resultFile)));
       // if(!this.flags.json)
       // this.ux.logJson(retrieved_connectedapp);
@@ -193,12 +179,12 @@ export default class Retrieve extends SfdxCommand {
 
 const extract = (location: string) => {
   return new Promise((resolve, reject) => {
-      fs.createReadStream(`./${location}/unpackaged.zip`)
-          .pipe(unzipper.Extract({ path: `${location}` }))
-          .on('close', () => {
-              resolve();
-          })
-          .on('error', error => reject(error));
+    fs.createReadStream(`./${location}/unpackaged.zip`)
+      .pipe(unzipper.Extract({ path: `${location}` }))
+      .on('close', () => {
+        resolve();
+      })
+      .on('error', error => reject(error));
   });
 };
 
