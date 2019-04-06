@@ -69,6 +69,7 @@ EXAMPLE
   $ sfdx  sfpowerkit:org:connectedapp:retrieve -u azlam@sfdc.com -p Xasdax2w2 -n
   AzurePipelines
      Retrived AzurePipelines Consumer Key : XSD21Sd23123w21321
+```
 
 _See code: [src\commands\sfpowerkit\org\connectedapp\retrieve.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\connectedapp\retrieve.ts)_
 

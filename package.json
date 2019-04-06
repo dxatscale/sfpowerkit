@@ -1,7 +1,7 @@
 {
   "name": "sfpowerkit",
-  "description": "Swiss Army toolset for Salesforce",
-  "version": "1.8.0",
+  "description": "Salesforce DevOps Helper Extensions to use in CI/CD Pipelines",
+  "version": "1.8.5",
   "author": "Azlam Abdulsalam @azlamsalam",
   "bugs": "https://github.com/azlamsalam/sfpowerkit/issues",
   "dependencies": {
@@ -49,7 +49,11 @@
   ],
   "homepage": "https://github.com/azlamsalam/sfpowerkit",
   "keywords": [
-    "sfdx-plugin"
+    "sfdx-plugin",
+    "sfdx",
+    "plugin",
+    "salesforce",
+    "cli"
   ],
   "license": "MIT",
   "oclif": {
@@ -63,6 +67,9 @@
       },
       "sfpowerkit:custommetadata": {
         "description": "Import CustomMetadata from Excel"
+      },
+      "sfpowerkit":{
+        "description": "Salesforce DevOps Helper Extensions to use in CI/CD Pipelines"
       }
     },
     "devPlugins": [
