@@ -113,18 +113,18 @@ export default class Retrieve extends SfdxCommand {
         if (error) { return console.error(error); }
         metadata_result = result
       });
+      //this.ux.logJson(metadata_result);
 
-
-      if (metadata_result.status == 'Pending') {
+      if (metadata_result.status != 'Succeeded') {
         if (!this.flags.json)
           this.ux.log(`Polling for metadata`)
         await (this.delay(5000));
       }
       else {
-
-        // this.ux.logJson(metadata_result);
+       //this.ux.logJson(metadata_result);
         break;
       }
+      
     }
 
     if (!metadata_result.zipFile)
@@ -154,16 +154,15 @@ export default class Retrieve extends SfdxCommand {
       // if(!this.flags.json)
       // this.ux.logJson(retrieved_connectedapp);
       this.ux.log(`Retrieved ConnectedApp Succesfully  with Consumer Key : ${retrieved_connectedapp.ConnectedApp.oauthConfig.consumerKey}`);
+      return { 'connectedapp': retrieved_connectedapp.ConnectedApp};
+
     }
     else {
       throw new SfdxError("Unable to process")
 
     }
 
-    rimraf.sync('temp_sfpowerkit');
-
-    return { 'connectedapp': retrieved_connectedapp.ConnectedApp };
-
+  
 
   }
 
