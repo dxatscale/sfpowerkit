@@ -71,12 +71,8 @@ export default class Info extends SfdxCommand {
 
 
 
-    var query_uri;
-
-    if(this.flags.showonlylatest)
-     query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=SELECT+Id,SandboxName+FROM+SandboxProcess+WHERE+SandboxName+in+('${name}')+ORDER+BY+LastModifiedDate+DESC`;
-    else
-      query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=SELECT+Id,SandboxName+FROM+SandboxProcess+WHERE+SandboxName+in+('${name}')`;
+    var query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=SELECT+Id,SandboxName+FROM+SandboxProcess+WHERE+SandboxName+in+('${name}')+ORDER+BY+EndDate+DESC`;
+ 
 
     //this.ux.log(`Query URI ${query_uri}`);
 
