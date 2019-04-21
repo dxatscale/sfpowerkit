@@ -5,7 +5,9 @@
 import {core, flags, SfdxCommand} from '@salesforce/command';
 import {JsonArray,JsonMap} from '@salesforce/ts-types';
 import { SfdxProject } from '@salesforce/core';
+
 const spawn = require('child-process-promise').spawn;
+const exec = require('child-process-promise').exec;
 
 const packageIdPrefix = '0Ho';
 const packageVersionIdPrefix = '04t';
@@ -37,7 +39,9 @@ export default class Install extends SfdxCommand {
     installationkeys: flags.string({ char: 'k', required: false, description: 'installation key for key-protected packages (format is 1:MyPackage1Key 2: 3:MyPackage3Key... to allow some packages without installation key)'}),
     branch: flags.string( {char: 'b', required: false, description: 'the package version’s branch' }),
     wait: flags.string( {char: 'w', required: false, description: 'number of minutes to wait for installation status (also used for publishwait). Default is 10' }),
-    noprompt: flags.boolean( {char: 'r', required: false, description: 'allow Remote Site Settings and Content Security Policy websites to send or receive data without confirmation' })
+    noprompt: flags.boolean( {char: 'r', required: false, description: 'allow Remote Site Settings and Content Security Policy websites to send or receive data without confirmation' }),
+    updateall: flags.boolean( {char: 'o', required: false, description: 'Update all packages even if they are installed in the target org' }),
+    
   };
 
   // Comment this out if your command does not require an org username
@@ -69,6 +73,11 @@ export default class Install extends SfdxCommand {
         packageAliasesMap[key] = value;
       });
     }
+
+
+    //Validate Packages  installed in the target org
+    let installedpackages = await this.getInstalledPackages(username);
+
 
 
     let individualpackage = this.flags.individualpackage;
@@ -113,7 +122,13 @@ export default class Install extends SfdxCommand {
             }
           }
           else{
-            packagesToInstall.push( packageInfo ); 
+            if(this.flags.updateall)
+               packagesToInstall.push( packageInfo ); 
+            else
+            {
+              if(!installedpackages.includes(packageVersionId))
+                 packagesToInstall.push( packageInfo ); 
+            }
           }
 
          
@@ -210,6 +225,10 @@ export default class Install extends SfdxCommand {
         i++;
       }
     }
+    else
+    {
+      this.ux.log("\n \n Looks like there is nothing to be updated in this org");
+    }
 
     return { message: result };
   }
@@ -264,4 +283,28 @@ export default class Install extends SfdxCommand {
 
     return packageId;
   }
+
+  private async getInstalledPackages(targetOrg:string)
+  {
+    
+  var packages=[];
+   const output  =  await exec(`sfdx force:package:installed:list --targetusername ${targetOrg} --json`);
+  // this.ux.logJson(JSON.parse(output.stdout.toString()));
+     
+   var result = JSON.parse(output.stdout.toString());
+   result.result.forEach(element => {
+        //this.ux.logJson(element);
+        packages.push(element.SubscriberPackageVersionId);
+   });
+
+    if(packages.length>0)
+    {
+    this.ux.log(`Installed Packages in the org ${targetOrg}`);
+    this.ux.logJson(packages);
+    }
+
+    return packages;   
+  }
+
+
 }
