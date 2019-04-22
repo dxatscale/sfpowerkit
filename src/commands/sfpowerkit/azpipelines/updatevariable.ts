@@ -37,7 +37,7 @@ export default class UpdateVariable extends SfdxCommand {
   public async run(): Promise<AnyJson> {
 
    
-    var query_uri = `https://dev.azure.com/${this.flags.orgname}/${this.flags.projectname}/_apis/distributedtask/variablegroups/8?api-version=5.0-preview.1`;
+    var query_uri = `https://dev.azure.com/${this.flags.orgname}/${this.flags.projectname}/_apis/distributedtask/variablegroups/${this.flags.id}?api-version=5.0-preview.1`;
 
     //this.ux.log(`Query URI ${query_uri}`);
 
