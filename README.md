@@ -1,6 +1,9 @@
 sfpowerkit
 ==========
 
+[![Build status](https://dev.azure.com/azlamsalam/sfpowerkit/_apis/build/status/sfpowerkit-CI)](https://dev.azure.com/azlamsalam/sfpowerkit/_build/latest?definitionId=1)
+
+
 Salesforce DevOps Helper Extensions
 
 
