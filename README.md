@@ -77,6 +77,70 @@ EXAMPLE
 _See code: [src\commands\sfpowerkit\org\connectedapp\retrieve.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\connectedapp\retrieve.ts)_
 
 
+## `sfpowerkit:org:duplicaterule:deactivate`
+
+Deactivates a duplicate rule in the target org
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:duplicaterule:deactivate -n <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -n, --name=name                                 (required) Name of the duplicate rule
+
+  -u, --targetusername=targetusername              username or alias for the target org; overrides default target org
+
+  --json                                          format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this
+                                                  command invocation
+
+EXAMPLE
+    $ sfdx  sfpowerkit:org:duplicaterule:deactivate -n Account.CRM_Account_Rule_1 -u sandbox
+       Polling for Retrieval Status
+       Retrieved Duplicate Rule  with label : CRM Account Rule 2
+       Preparing Deactivation
+       Deploying Deactivated Rule with ID  0Af4Y000003OdTWSA0
+       Polling for Deployment Status
+       Polling for Deployment Status
+       Duplicate Rule CRM Account Rule 2 deactivated
+```
+
+_See code: [src\commands\sfpowerkit\org\duplicaterule\deactivate.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.9.9/src\commands\sfpowerkit\org\duplicaterule\deactivate.ts)_
+
+## `sfpowerkit:org:matchingrule:deactivate`
+
+Deactivates a matching rule in the target org, Please ensure all duplicate rules are deactivated before using this
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:matchingrule:deactivate -n <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -n, --name=name                                 (required) Name of the object
+  -u, --targetusername=targetusername              username or alias for the target org; overrides default target org
+
+  --json                                          format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this
+                                                  command invocation
+
+EXAMPLE
+    $ sfdx  sfpowerkit:org:matchingrule:deactivate -n Account -u sandbox
+       Polling for Retrieval Status
+       Retrieved Matching Rule  for Object : Account
+       Preparing Deactivation
+       Deploying Deactivated Matching Rule with ID  0Af4Y000003OePkSAK
+       Polling for Deployment Status
+       Polling for Deployment Status
+       Matching Rule for Account deactivated
+```
+
+_See code: [src\commands\sfpowerkit\org\matchingrule\deactivate.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.9.9/src\commands\sfpowerkit\org\matchingrule\deactivate.ts)_
+
+
 
 ## `sfpowerkit:org:healthcheck`
 

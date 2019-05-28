@@ -1,0 +1,4 @@
+{
+  "commandDescription": "Deactivates a duplicate rule in the target org",
+  "nameFlagDescription": "Name of the duplicate rule"
+}
