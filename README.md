@@ -141,6 +141,67 @@ EXAMPLE
 _See code: [src\commands\sfpowerkit\org\matchingrule\deactivate.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.9.9/src\commands\sfpowerkit\org\matchingrule\deactivate.ts)_
 
 
+## `sfpowerkit:org:trigger:deactivate`
+
+Deactivates a trigger in the target org
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:trigger:deactivate -n <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -n, --name=name                                 (required) Name of the ApexTrigger
+  -u, --targetusername=targetusername              username or alias for the target org; overrides default target org
+
+  --json                                          format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this
+                                                  command invocation
+
+EXAMPLE
+    $ sfdx  sfpowerkit:org:trigger:deactivate -n AccountTrigger -u sandbox
+    Polling for Retrieval Status
+    Preparing Deactivation
+    Deploying Deactivated ApexTrigger with ID  0Af4Y000003Q7GySAK
+    Polling for Deployment Status
+    Polling for Deployment Status
+    ApexTrigger AccountTrigger deactivated
+```
+
+_See code: [src\commands\sfpowerkit\org\trigger\deactivate.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.9.11/src\commands\sfpowerkit\org\trigger\deactivate.ts)_
+
+## `sfpowerkit:org:trigger:activate`
+
+Activates a trigger in the target org
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:trigger:activate -n <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -n, --name=name                                 (required) Name of the ApexTrigger
+  -u, --targetusername=targetusername              username or alias for the target org; overrides default target org
+
+  --json                                          format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this
+                                                  command invocation
+
+EXAMPLE
+    $ sfdx  sfpowerkit:org:trigger:deactivate -n AccountTrigger -u sandbox
+    Polling for Retrieval Status
+    Preparing Activation
+    Deploying Activated ApexTrigger with ID  0Af4Y000003Q7GySAK
+    Polling for Deployment Status
+    Polling for Deployment Status
+    ApexTrigger AccountTrigger Ativated
+```
+
+_See code: [src\commands\sfpowerkit\org\trigger\activate.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.9.11/src\commands\sfpowerkit\org\trigger\activate.ts)_
+
+
 
 ## `sfpowerkit:org:healthcheck`
 
