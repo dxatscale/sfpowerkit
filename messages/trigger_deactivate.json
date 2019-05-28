@@ -1,0 +1,4 @@
+{
+  "commandDescription": "Deactivates a trigger in the target org",
+  "nameFlagDescription": "Name of the trigger that has to be deactivated"
+}
