@@ -1,0 +1,4 @@
+{
+  "commandDescription": "Deactivates a matching rule in the target org",
+  "nameFlagDescription": "Name of the matching rule"
+}
