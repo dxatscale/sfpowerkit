@@ -21,23 +21,23 @@ core.Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages('sfpowerkit', 'duplicaterule_deactivate');
+const messages = core.Messages.loadMessages('sfpowerkit', 'duplicaterule_activate');
 
 
-export default class Deactivate extends SfdxCommand {
+export default class Activate extends SfdxCommand {
 
   public connectedapp_consumerKey: string;
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    `$ sfdx  sfpowerkit:org:duplicaterule:deactivate -n Account.CRM_Account_Rule_1 -u sandbox
+    `$ sfdx  sfpowerkit:org:duplicaterule:Activate -n Account.CRM_Account_Rule_1 -u sandbox
     Polling for Retrieval Status
     Retrieved Duplicate Rule  with label : CRM Account Rule 2
-    Preparing Deactivation
-    Deploying Deactivated Rule with ID  0Af4Y000003OdTWSA0
+    Preparing Activation
+    Deploying Activated Rule with ID  0Af4Y000003OdTWSA0
     Polling for Deployment Status
     Polling for Deployment Status
-    Duplicate Rule CRM Account Rule 2 deactivated
+    Duplicate Rule CRM Account Rule 2 Activated
   `
   ];
 
@@ -103,16 +103,16 @@ export default class Deactivate extends SfdxCommand {
       this.ux.log(`Retrieved Duplicate Rule  with label : ${retrieved_duplicaterule.DuplicateRule.masterLabel}`);
 
 
-      //Do Nothing if its already inactive
-      if(retrieved_duplicaterule.DuplicateRule.isActive === "false")
+      //Do Nothing if its already Active
+      if(retrieved_duplicaterule.DuplicateRule.isActive === "true")
       {
-        this.ux.log("Already Inactive, exiting");
+        this.ux.log("Already Active, exiting");
         return { 'status': 1 };
 
       } 
       //Deactivate Rule
-      this.ux.log(`Preparing Deactivation`);
-      retrieved_duplicaterule.DuplicateRule.isActive = "false";
+      this.ux.log(`Preparing Activation`);
+      retrieved_duplicaterule.DuplicateRule.isActive = "true";
       let builder = new xml2js.Builder();
       var xml = builder.buildObject(retrieved_duplicaterule);
       fs.writeFileSync(resultFile, xml);
@@ -137,9 +137,9 @@ export default class Deactivate extends SfdxCommand {
       let metadata_deploy_result: DeployResult = await this.checkDeploymentStatus(conn, deployId.id);
 
       if (!metadata_deploy_result.done)
-        throw new SfdxError("Unable to deploy the deactivated rule");
+        throw new SfdxError("Unable to deploy the Activated rule");
 
-      this.ux.log(`Duplicate Rule ${retrieved_duplicaterule.DuplicateRule.masterLabel} deactivated`);
+      this.ux.log(`Duplicate Rule ${retrieved_duplicaterule.DuplicateRule.masterLabel} Activated`);
 
      
       return { 'status': 1 };

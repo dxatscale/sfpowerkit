@@ -21,23 +21,23 @@ core.Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages('sfpowerkit', 'duplicaterule_deactivate');
+const messages = core.Messages.loadMessages('sfpowerkit', 'matchingrule_activate');
 
 
-export default class Deactivate extends SfdxCommand {
+export default class Activate extends SfdxCommand {
 
   public connectedapp_consumerKey: string;
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    `$ sfdx  sfpowerkit:org:duplicaterule:deactivate -n Account.CRM_Account_Rule_1 -u sandbox
+    `$ sfdx  sfpowerkit:org:matchingrules:activate -n Account -u sandbox
     Polling for Retrieval Status
-    Retrieved Duplicate Rule  with label : CRM Account Rule 2
-    Preparing Deactivation
-    Deploying Deactivated Rule with ID  0Af4Y000003OdTWSA0
+    Retrieved Matching Rule  for Object : Account
+    Preparing Activation
+    Deploying Activated Rule with ID  0Af4Y000003OdTWSA0
     Polling for Deployment Status
     Polling for Deployment Status
-    Duplicate Rule CRM Account Rule 2 deactivated
+    Matching Rule for  Account activated
   `
   ];
 
@@ -70,7 +70,7 @@ export default class Deactivate extends SfdxCommand {
 
     //Retrieve Duplicate Rule
     retrieveRequest['singlePackage'] = true;
-    retrieveRequest['unpackaged'] = { types: { name: 'DuplicateRule', members: this.flags.name } };
+    retrieveRequest['unpackaged'] = { types: { name: 'MatchingRules', members: this.flags.name } };
     conn.metadata.pollTimeout = 60;
     let retrievedId;
     await conn.metadata.retrieve(retrieveRequest, function (error, result: AsyncResult) {
@@ -83,13 +83,13 @@ export default class Deactivate extends SfdxCommand {
       throw new SfdxError("Unable to find the requested Duplicate Rule");
 
 
-    //Extract Duplicate Rule
+    //Extract Matching Rule
     var zipFileName = "temp_sfpowerkit/unpackaged.zip";
     fs.mkdirSync('temp_sfpowerkit');
     fs.writeFileSync(zipFileName, metadata_retrieve_result.zipFile, { encoding: 'base64' });
     await extract('temp_sfpowerkit');
     fs.unlinkSync(zipFileName);
-    let resultFile = `temp_sfpowerkit/duplicateRules/${this.flags.name}.duplicateRule`;
+    let resultFile = `temp_sfpowerkit/matchingRules/${this.flags.name}.matchingRule`;
 
 
 
@@ -97,24 +97,24 @@ export default class Deactivate extends SfdxCommand {
       const parser = new xml2js.Parser({ explicitArray: false });
       const parseString = util.promisify(parser.parseString);
 
-      let retrieved_duplicaterule = await parseString(fs.readFileSync(path.resolve(resultFile)));
+      let retrieve_matchingRule = await parseString(fs.readFileSync(path.resolve(resultFile)));
 
 
-      this.ux.log(`Retrieved Duplicate Rule  with label : ${retrieved_duplicaterule.DuplicateRule.masterLabel}`);
+      this.ux.log(`Retrieved Matching Rule  for Object : ${this.flags.name}`);
 
+     
 
-      //Do Nothing if its already inactive
-      if(retrieved_duplicaterule.DuplicateRule.isActive === "false")
-      {
-        this.ux.log("Already Inactive, exiting");
-        return { 'status': 1 };
-
-      } 
       //Deactivate Rule
-      this.ux.log(`Preparing Deactivation`);
-      retrieved_duplicaterule.DuplicateRule.isActive = "false";
+      this.ux.log(`Preparing Activation`);
+      retrieve_matchingRule.MatchingRules.matchingRules.forEach(element => {
+        element.ruleStatus="Active";
+      });
+      
+    
+
+     
       let builder = new xml2js.Builder();
-      var xml = builder.buildObject(retrieved_duplicaterule);
+      var xml = builder.buildObject(retrieve_matchingRule);
       fs.writeFileSync(resultFile, xml);
 
 
@@ -125,28 +125,27 @@ export default class Deactivate extends SfdxCommand {
 
       //Deploy Rule
       conn.metadata.pollTimeout = 300;
-      let deployId: AsyncResult;
-
+      let deployId:AsyncResult;
+      
       var zipStream = fs.createReadStream(zipFile);
-      await conn.metadata.deploy(zipStream, { rollbackOnError: true, singlePackage: true }, function (error, result: AsyncResult) {
+      await conn.metadata.deploy(zipStream, { rollbackOnError: true, singlePackage: true }, function (error, result: AsyncResult)
+      {
         if (error) { return console.error(error); }
         deployId = result;
       });
-
-      this.ux.log(`Deploying Deactivated Rule with ID  ${deployId.id}`);
+      
+      this.ux.log(`Deploying Activated Matching Rule with ID  ${deployId.id}`);
       let metadata_deploy_result: DeployResult = await this.checkDeploymentStatus(conn, deployId.id);
 
       if (!metadata_deploy_result.done)
-        throw new SfdxError("Unable to deploy the deactivated rule");
+       throw new SfdxError("Unable to deploy the activated matching rule");
 
-      this.ux.log(`Duplicate Rule ${retrieved_duplicaterule.DuplicateRule.masterLabel} deactivated`);
-
-     
+       this.ux.log(`Matching Rule for ${this.flags.name} activated`);
       return { 'status': 1 };
 
     }
     else {
-      throw new SfdxError("Duplicate Rule not found in the org")
+      throw new SfdxError("Matching Rule not found in the org")
 
     }
 
@@ -170,7 +169,7 @@ export default class Deactivate extends SfdxCommand {
         metadata_result = result
       });
 
-
+  
       if (!metadata_result.done) {
         this.ux.log(`Polling for Deployment Status`)
         await (this.delay(5000));
@@ -193,7 +192,7 @@ export default class Deactivate extends SfdxCommand {
         metadata_result = result
       });
 
-      if (metadata_result.done === "false") {
+      if (metadata_result.done === "false" ) {
 
         this.ux.log(`Polling for Retrieval Status`)
         await (this.delay(5000));

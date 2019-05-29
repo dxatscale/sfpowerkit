@@ -1,0 +1,4 @@
+{
+  "commandDescription": "Activates a matching rule in the target org",
+  "nameFlagDescription": "Name of the object that has the matching rule"
+}
