@@ -137,7 +137,7 @@ export default class Deactivate extends SfdxCommand {
       this.ux.log(`Deploying Deactivated Matching Rule with ID  ${deployId.id}`);
       let metadata_deploy_result: DeployResult = await this.checkDeploymentStatus(conn, deployId.id);
 
-      if (!metadata_deploy_result.done)
+      if (!metadata_deploy_result.success)
        throw new SfdxError("Unable to deploy the deactivated matching rule");
 
        this.ux.log(`Matching Rule for ${this.flags.name} deactivated`);
