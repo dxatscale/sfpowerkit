@@ -134,7 +134,7 @@ export default class Activate extends SfdxCommand {
       this.ux.log(`Deploying Activated ApexTrigger with ID  ${deployId.id}`);
       let metadata_deploy_result: DeployResult = await this.checkDeploymentStatus(conn, deployId.id);
 
-      if (!metadata_deploy_result.done)
+      if (!metadata_deploy_result.success)
        throw new SfdxError("Unable to deploy the Activated Apex Trigger");
 
        this.ux.log(`ApexTrigger ${this.flags.name} Activated`);

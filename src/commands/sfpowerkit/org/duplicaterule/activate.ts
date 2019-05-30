@@ -136,7 +136,7 @@ export default class Activate extends SfdxCommand {
       this.ux.log(`Deploying Deactivated Rule with ID  ${deployId.id}`);
       let metadata_deploy_result: DeployResult = await this.checkDeploymentStatus(conn, deployId.id);
 
-      if (!metadata_deploy_result.done)
+      if (!metadata_deploy_result.success)
         throw new SfdxError("Unable to deploy the Activated rule");
 
       this.ux.log(`Duplicate Rule ${retrieved_duplicaterule.DuplicateRule.masterLabel} Activated`);
