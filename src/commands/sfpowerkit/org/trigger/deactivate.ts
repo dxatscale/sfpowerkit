@@ -13,6 +13,8 @@ var jsforce = require('jsforce');
 var path = require('path')
 var unzipper = require('unzipper')
 var archiver = require('archiver');
+import { checkRetrievalStatus } from '../../../../shared/checkRetrievalStatus';
+import { checkDeploymentStatus } from '../../../../shared/checkDeploymentStatus';
 
 
 
@@ -77,7 +79,7 @@ export default class Deactivate extends SfdxCommand {
       retrievedId = result.id;
     });
 
-    let metadata_retrieve_result = await this.checkRetrievalStatus(conn, retrievedId);
+    let metadata_retrieve_result = await checkRetrievalStatus(conn, retrievedId);
     if (!metadata_retrieve_result.zipFile)
       throw new SfdxError("Unable to find the requested Trigger");
 
@@ -133,7 +135,7 @@ export default class Deactivate extends SfdxCommand {
       });
       
       this.ux.log(`Deploying Deactivated ApexTrigger with ID  ${deployId.id}`);
-      let metadata_deploy_result: DeployResult = await this.checkDeploymentStatus(conn, deployId.id);
+      let metadata_deploy_result: DeployResult = await checkDeploymentStatus(conn, deployId.id);
 
       if (!metadata_deploy_result.success)
        throw new SfdxError("Unable to deploy the deactivated Apex Trigger");
@@ -150,60 +152,6 @@ export default class Deactivate extends SfdxCommand {
 
 
   }
-
-  public async  delay(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-
-  private async checkDeploymentStatus(conn: Connection, retrievedId: string): Promise<DeployResult> {
-    let metadata_result;
-
-    while (true) {
-      await conn.metadata.checkDeployStatus(retrievedId, true, function (error, result) {
-        if (error) {
-          return console.error(error);
-        }
-        metadata_result = result
-      });
-
-  
-      if (!metadata_result.done) {
-        this.ux.log(`Polling for Deployment Status`)
-        await (this.delay(5000));
-      }
-      else {
-        break;
-      }
-
-    }
-    return metadata_result;
-  }
-
-
-  private async checkRetrievalStatus(conn: Connection, retrievedId: string) {
-    let metadata_result
-
-    while (true) {
-      await conn.metadata.checkRetrieveStatus(retrievedId, function (error, result) {
-        if (error) { return console.error(error); }
-        metadata_result = result
-      });
-
-      if (metadata_result.done === "false" ) {
-
-        this.ux.log(`Polling for Retrieval Status`)
-        await (this.delay(5000));
-      }
-      else {
-        //this.ux.logJson(metadata_result);
-        break;
-      }
-
-    }
-    return metadata_result;
-  }
-
 
 }
 
