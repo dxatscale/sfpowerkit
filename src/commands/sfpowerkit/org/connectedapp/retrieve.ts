@@ -12,6 +12,8 @@ import util = require('util');
 var jsforce = require('jsforce');
 var path = require('path')
 var unzipper = require('unzipper')
+import { checkRetrievalStatus } from '../../../../shared/checkRetrievalStatus';
+
 
 
 
@@ -103,39 +105,19 @@ export default class Retrieve extends SfdxCommand {
     // console.log(retrievedId);
 
 
-    let metadata_result;
-    let count = 0
 
-    while (true) {
+    let metadata_retrieve_result = await checkRetrievalStatus(conn, retrievedId);
+    if (!metadata_retrieve_result.zipFile)
+      throw new SfdxError("Unable to find the requested ConnectedApp");
 
-      count++;
-      await conn.metadata.checkRetrieveStatus(retrievedId, function (error, result: RetrieveResult) {
-        if (error) { return console.error(error); }
-        metadata_result = result
-      });
-      //this.ux.logJson(metadata_result);
 
-      if (metadata_result.status != 'Succeeded') {
-        if (!this.flags.json)
-          this.ux.log(`Polling for metadata`)
-        await (this.delay(5000));
-      }
-      else {
-       //this.ux.logJson(metadata_result);
-        break;
-      }
-      
-    }
-
-    if (!metadata_result.zipFile)
-      throw new SfdxError("Unable to find the requested connectedapp");
-
+    
 
     var zipFileName = "temp_sfpowerkit/unpackaged.zip";
 
 
     fs.mkdirSync('temp_sfpowerkit');
-    fs.writeFileSync(zipFileName, metadata_result.zipFile, { encoding: 'base64' });
+    fs.writeFileSync(zipFileName, metadata_retrieve_result.zipFile, { encoding: 'base64' });
 
     await extract('temp_sfpowerkit');
 
@@ -165,13 +147,6 @@ export default class Retrieve extends SfdxCommand {
   
 
   }
-
-
-
-  public async  delay(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
 
 
 }
