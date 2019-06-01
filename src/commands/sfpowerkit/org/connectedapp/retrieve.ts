@@ -11,8 +11,8 @@ import util = require('util');
 // tslint:disable-next-line:ordered-imports
 var jsforce = require('jsforce');
 var path = require('path')
-var unzipper = require('unzipper')
 import { checkRetrievalStatus } from '../../../../shared/checkRetrievalStatus';
+import { extract } from '../../../../shared/extract';
 
 
 
@@ -151,15 +151,5 @@ export default class Retrieve extends SfdxCommand {
 
 }
 
-const extract = (location: string) => {
-  return new Promise((resolve, reject) => {
-    fs.createReadStream(`./${location}/unpackaged.zip`)
-      .pipe(unzipper.Extract({ path: `${location}` }))
-      .on('close', () => {
-        resolve();
-      })
-      .on('error', error => reject(error));
-  });
-};
 
 

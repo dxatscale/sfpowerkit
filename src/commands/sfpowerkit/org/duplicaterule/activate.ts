@@ -11,10 +11,11 @@ import util = require('util');
 // tslint:disable-next-line:ordered-imports
 var jsforce = require('jsforce');
 var path = require('path')
-var unzipper = require('unzipper')
-var archiver = require('archiver');
 import { checkRetrievalStatus } from '../../../../shared/checkRetrievalStatus';
 import { checkDeploymentStatus } from '../../../../shared/checkDeploymentStatus';
+import { extract } from '../../../../shared/extract';
+import { zipDirectory } from '../../../../shared/zipDirectory';
+
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -133,7 +134,7 @@ export default class Activate extends SfdxCommand {
         deployId = result;
       });
 
-      this.ux.log(`Deploying Deactivated Rule with ID  ${deployId.id}`);
+      this.ux.log(`Deploying Activated Rule with ID  ${deployId.id}`);
       let metadata_deploy_result: DeployResult = await checkDeploymentStatus(conn, deployId.id);
 
       if (!metadata_deploy_result.success)
@@ -156,34 +157,6 @@ export default class Activate extends SfdxCommand {
 
 
 }
-
-const extract = (location: string) => {
-  return new Promise((resolve, reject) => {
-    fs.createReadStream(`./${location}/unpackaged.zip`)
-      .pipe(unzipper.Extract({ path: `${location}` }))
-      .on('close', () => {
-        resolve();
-      })
-      .on('error', error => reject(error));
-  });
-};
-
-const zipDirectory = (source, out) => {
-  const archive = archiver('zip', { zlib: { level: 9 } });
-  const stream = fs.createWriteStream(out);
-
-  return new Promise((resolve, reject) => {
-    archive
-      .directory(source, false)
-      .on('error', err => reject(err))
-      .pipe(stream)
-      ;
-
-    stream.on('close', () => resolve());
-    archive.finalize();
-  });
-};
-
 
 
 
