@@ -14,7 +14,7 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages('sfpowerkit', 'sandbox_refresh');
 
-export default class Create extends SfdxCommand {
+export default class Refresh extends SfdxCommand {
 
   public static description = messages.getMessage('commandDescription');
 

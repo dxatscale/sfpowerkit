@@ -342,6 +342,32 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\sandbox\refresh.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\sandbox\refresh.ts)_
 
+
+## `sfpowerkit:org:scratchorg:usage`
+
+Gets the active count of scratch org by users in a devhub
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:scratchorg:usage -v <string> 
+  [--loglevel trace|debug|info|warn|error|fatal]
+
+OPTIONS
+  -v, --targetdevhubusername=targetdevhubusername  (required) username or alias for the dev hub org; overrides default dev hub org
+
+
+EXAMPLE
+  $ sfdx sfpowerkit:org:scratchorg:usage -v devhub
+    SCRATCH_ORGS_USED  NAME
+    ─────────────────  ─────────────────
+    2                  XYZ
+    2                  JFK
+    Total number of records retrieved: 4.
+```
+
+_See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.9.16/src\commands\sfpowerkit\org\scratchorg\usage.ts)_
+
+
 ## `sfpowerkit:package:dependencies:install`
 
 Install dependencies of a package
