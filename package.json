@@ -1,7 +1,7 @@
 {
   "name": "sfpowerkit",
   "description": "Salesforce DevOps Helper Extensions to use in CI/CD Pipelines",
-  "version": "1.9.18",
+  "version": "1.9.19",
   "author": "Azlam Abdulsalam @azlamsalam",
   "bugs": "https://github.com/azlamsalam/sfpowerkit/issues",
   "dependencies": {
