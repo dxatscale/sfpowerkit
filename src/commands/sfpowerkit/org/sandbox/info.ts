@@ -67,7 +67,7 @@ export default class Info extends SfdxCommand {
     return result;
   }
 
-  public async getSandboxInfo(conn: core.Connection, name: string) {
+  private async getSandboxInfo(conn: core.Connection, name: string) {
 
 
 
@@ -98,7 +98,7 @@ export default class Info extends SfdxCommand {
   }
 
 
-  public async  processSandboxInfo(sandboxRecords,conn,isShowOnlyLatest) {
+  private async  processSandboxInfo(sandboxRecords,conn,isShowOnlyLatest) {
     
     var result=[];
 
@@ -111,7 +111,7 @@ export default class Info extends SfdxCommand {
     return result;
   }
 
-  public async getDetailedSandboxInfo(sandboxInfoUl:string,conn: core.Connection) {
+  private async getDetailedSandboxInfo(sandboxInfoUl:string,conn: core.Connection) {
 
 
     const query_uri = `${conn.instanceUrl}${sandboxInfoUl}`;

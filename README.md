@@ -225,7 +225,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\healthcheck.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\healthcheck.ts)_
 
-# `sfpowerkit:org:orgcoverage`
+## `sfpowerkit:org:orgcoverage`
 
 Gets the apex tests coverage of an org
 
@@ -358,10 +358,13 @@ OPTIONS
 
 EXAMPLE
   $ sfdx sfpowerkit:org:scratchorg:usage -v devhub
-    SCRATCH_ORGS_USED  NAME
+    Active Scratch Orgs Remaining: 42 out of 100
+    Daily Scratch Orgs Remaining: 171 out of 200
+
+    IN_USE             SIGNUPEMAIL
     ─────────────────  ─────────────────
-    2                  XYZ
-    2                  JFK
+    2                  XYZ@KYZ.COM
+    2                  JFK@KYZ.COM
     Total number of records retrieved: 4.
 ```
 
