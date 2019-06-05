@@ -255,7 +255,7 @@ Creates a sandbox using the tooling api, ensure the user has the required permis
 
 ```
 USAGE
-  $ sfdx sfpowerkit:org:sandbox:create -n <string> -d <string> -l <string> [-a <string>] [-f <string>] [-u 
+  $ sfdx sfpowerkit:org:sandbox:create -n <string> -d <string> -l <string> [-a <string>] [-f <string>] [-v 
   <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
@@ -272,7 +272,7 @@ OPTIONS
 
   -n, --name=name                                         (required) Name of the sandbox
 
-  -u, --targetusername=targetusername                     Username for the Production Environment
+  -v, --targetdevhubusername=targetdevhubusername         (required) username or alias for the dev hub org; overrides default dev hub org
 
   --apiversion=apiversion                                 override the api version used for api requests made by this
                                                           command
@@ -282,7 +282,7 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal)          [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx sfpowerkit:org:sandbox:create -d Testsandbox -l DEVELOPER -n test2 -u myOrg@example.com
+  $ sfdx sfpowerkit:org:sandbox:create -d Testsandbox -l DEVELOPER -n test2 -v myOrg@example.com
      Successfully Enqueued Creation of Sandbox
 ```
 
@@ -294,13 +294,13 @@ Gets the status of a sandbox
 
 ```
 USAGE
-  $ sfdx sfpowerkit:org:sandbox:info -n <string> [-s] [-u <string>] [--apiversion <string>] [--json] [--loglevel 
+  $ sfdx sfpowerkit:org:sandbox:info -n <string> [-s] [-v <string>] [--apiversion <string>] [--json] [--loglevel 
   trace|debug|info|warn|error|fatal]
 
 OPTIONS
   -n, --name=name                                 (required) Name of the sandbox
   -s, --showonlylatest                            Shows only the latest info of the sandbox record
-  -u, --targetusername=targetusername             Username for the Production Environment
+  -v, --targetdevhubusername=targetdevhubusername (required) username or alias for the dev hub org; overrides default dev hub org
   --apiversion=apiversion                         override the api version used for api requests made by this command
   --json                                          format output as json
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
@@ -318,7 +318,7 @@ Refresh a sandbox using the tooling api, ensure the user has the required permis
 
 ```
 USAGE
-  $ sfdx sfpowerkit:org:sandbox:refresh -n <string> [-f <string>] [-u <string>] [--apiversion <string>] [--json] 
+  $ sfdx sfpowerkit:org:sandbox:refresh -n <string> [-f <string>] [-v <string>] [--apiversion <string>] [--json] 
   [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
@@ -327,7 +327,7 @@ OPTIONS
 
   -n, --name=name                                 (required) Name of the sandbox
 
-  -u, --targetusername=targetusername             Username for the Production Environment
+  -v, --targetdevhubusername=targetdevhubusername  (required) username or alias for the dev hub org; overrides default dev hub org
 
   --apiversion=apiversion                         override the api version used for api requests made by this command
 

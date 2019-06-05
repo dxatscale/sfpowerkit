@@ -38,8 +38,9 @@ export default class Create extends SfdxCommand {
     clonefrom: flags.string({ required: false, char: 'f', default:'', description: messages.getMessage('cloneFromFlagDescripton') })
   };
 
-  // Comment this out if your command does not require an org username
-  protected static requiresUsername = true;
+  // Comment this out if your command does not require a hub org username
+  protected static requiresDevhubUsername = true;
+
 
 
 
@@ -47,9 +48,9 @@ export default class Create extends SfdxCommand {
 
     rimraf.sync('temp_sfpowerkit');
 
-    await this.org.refreshAuth();
+    await this.hubOrg.refreshAuth();
 
-    const conn = this.org.getConnection();
+    const conn = this.hubOrg.getConnection();
 
     this.flags.apiversion = this.flags.apiversion || await conn.retrieveMaxApiVersion();
 
