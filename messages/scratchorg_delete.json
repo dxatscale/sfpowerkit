@@ -1,0 +1,4 @@
+{
+  "commandDescription": "Gets the active count of scratch org by users in a devhub",
+  "emailFlagDescription": "Email of the user account that has created the scratch org"
+}

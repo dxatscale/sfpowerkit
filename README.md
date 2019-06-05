@@ -371,6 +371,32 @@ EXAMPLE
 _See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.9.16/src\commands\sfpowerkit\org\scratchorg\usage.ts)_
 
 
+## `sfpowerkit:org:scratchorg:delete`
+
+Delete the scratch org for a paritcular user
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:scratchorg:delete -v <string>  -e <string>
+  [--loglevel trace|debug|info|warn|error|fatal]
+
+OPTIONS
+  -v, --targetdevhubusername=targetdevhubusername  (required) username or alias for the dev hub org; overrides default dev hub org
+  
+  -e, --email=email                                (required) Email of the user account's whose scratch org to be deleted
+
+
+EXAMPLE
+  $ sfdx sfpowerkit:org:scratchorg:delete  -e xyz@kyz.com -v devhub
+    Found Scratch Org Ids for user xyz@kyz.com
+    2AS6F000000XbxVWAS
+    Deleting Scratch Orgs
+    Deleted Scratch Org 2AS6F000000XbxVWAS
+```
+
+_See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.9.16/src\commands\sfpowerkit\org\scratchorg\usage.ts)_
+
+
 ## `sfpowerkit:package:dependencies:install`
 
 Install dependencies of a package
