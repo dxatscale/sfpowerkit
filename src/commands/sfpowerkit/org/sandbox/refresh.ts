@@ -19,7 +19,7 @@ export default class Refresh extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    `$ sfdx sfpowerkit:org:sandbox:refresh -n test2  -f sitSandbox -u myOrg@example.com
+    `$ sfdx sfpowerkit:org:sandbox:refresh -n test2  -f sitSandbox -v myOrg@example.com
   Successfully Enqueued Refresh of Sandbox
   `
   ];
@@ -31,8 +31,11 @@ export default class Refresh extends SfdxCommand {
     licensetype: flags.string({ required: false, char: 'l',  options: ['DEVELOPER', 'DEVELOPER_PRO','PARTIAL','FULL'], description: messages.getMessage('licenseFlagDescription') }),
   };
 
-  // Comment this out if your command does not require an org username
-  protected static requiresUsername = true;
+
+
+    // Comment this out if your command does not require a hub org username
+    protected static requiresDevhubUsername = true;
+
 
 
 
@@ -40,9 +43,9 @@ export default class Refresh extends SfdxCommand {
 
     rimraf.sync('temp_sfpowerkit');
 
-    await this.org.refreshAuth();
+    await this.hubOrg.refreshAuth();
 
-    const conn = this.org.getConnection();
+    const conn = this.hubOrg.getConnection();
 
     this.flags.apiversion = this.flags.apiversion || await conn.retrieveMaxApiVersion();
 

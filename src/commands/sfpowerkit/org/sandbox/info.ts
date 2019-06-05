@@ -19,7 +19,7 @@ export default class Info extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    `$ sfdx sfpowerkit:org:sandbox:info -n test2  -u produser@example.com 
+    `$ sfdx sfpowerkit:org:sandbox:info -n test2  -v produser@example.com 
   Successfully Enqueued Refresh of Sandbox
   `
   ];
@@ -30,8 +30,8 @@ export default class Info extends SfdxCommand {
     showonlylatest: flags.boolean({ required: false, char: 's', default:false, description: messages.getMessage('showOnlyLatestFlagDescription')}),
   };
 
-  // Comment this out if your command does not require an org username
-  protected static requiresUsername = true;
+  // Comment this out if your command does not require a hub org username
+  protected static requiresDevhubUsername = true;
 
 
 
@@ -43,9 +43,9 @@ export default class Info extends SfdxCommand {
     //   authInfo: await AuthInfo.create({ username: `${this.org.getUsername()}` })
     // });
 
-     await this.org.refreshAuth();
+     await this.hubOrg.refreshAuth();
 
-     const conn = this.org.getConnection();
+     const conn = this.hubOrg.getConnection();
 
     this.flags.apiversion = this.flags.apiversion || await conn.retrieveMaxApiVersion();
 
