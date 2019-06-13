@@ -4,6 +4,9 @@ sfpowerkit
 [![NPM](https://img.shields.io/npm/v/sfpowerkit.svg)](https://www.npmjs.com/package/sfpowerkit)
 
 
+[![Build status](https://dev.azure.com/cloudfirstanz/SFPowerkit/_apis/build/status/SFPowerkit-CI)](https://dev.azure.com/cloudfirstanz/SFPowerkit/_build/latest?definitionId=5)
+
+
 
 Salesforce DevOps Helper Extensions
 
