@@ -66,8 +66,8 @@
       "sfpowerkit:org": {
         "description": "Helper commands for org such as connectedapp, creation of sandbox etc"
       },
-      "sfpowerkit:custommetadata": {
-        "description": "Import CustomMetadata from Excel"
+      "sfpowerkit:auth": {
+        "description": "Authorisation Related Commands"
       },
       "sfpowerkit": {
         "description": "Salesforce DevOps Helper Extensions to use in CI/CD Pipelines"
