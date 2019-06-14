@@ -1,0 +1,9 @@
+{
+  "commandDescription": "Login to an org using a username/password",
+  "usernameFlagDescription": "Username for the org",
+  "passwordFlagDescription": "Password for the org",
+  "securityTokenFlagDescription": "Security Token for the org",
+  "urlFlagDescription": "URL of the instance to be authenticated, Defaults to Test URL",
+  "aliasFlagDescription": "Alias ofthe org"
+  
+}

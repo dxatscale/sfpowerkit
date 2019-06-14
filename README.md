@@ -11,6 +11,41 @@ sfpowerkit
 Salesforce DevOps Helper Extensions
 
 
+## `sfpowerkit auth:login`
+
+Allows to authenticate against an org using username/password and Security Token.  Security Token requirement
+can be removed by ensuring the particular user profile is allowed to connect to Salesforce from different IP 
+ranges.
+
+```
+USAGE
+  $ sfdx sfpowerkit:auth:login -u <string> -p <string>  [-s <string>] [ -r <url> ]  [-a <string>]  [--apiversion 
+  <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+
+OPTIONS
+  -u, --username=username                         (required) Username of the org
+
+  -e, --email=email                               (required) Password of the org
+
+  -r, --url=url                                    URL of the org, by default it points to test.salesforce.com
+
+  -s  --securitytoken=securitytoken               Security Token for this particular user
+
+  -a, --alias=alias                               alias for the target org
+
+  --apiversion=apiversion                         override the api version used for api requests made by this command
+
+  --json                                          format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $  sfdx  sfpowerkit:auth:login -u azlam@sfdc.com -p Xasdax2w2  -a prod
+     Authorized to azlam@sfdc.com
+   
+```
+
+
 ## `sfpowerkit org:connectedapp:create`
 
 Creates a connected app in the target org for JWT based authentication, Please note it only creates Connected App with All users may self authorize option, You would need to manually edit the policies to enable admin users are pre-approved and add your profile to this connected app
