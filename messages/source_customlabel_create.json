@@ -1,0 +1,12 @@
+{
+
+  "commandDescription": " Creates a custom label in the target org  ⚡⚡⚡",
+  "fullnameFlagDescription": "Name of the custom label",
+  "valueFlagDescription": "Value of the custom label",
+
+  "categoriesFlagDescription": "Comma Separated Category Values",
+  "languageFlagDescription": "Language of the custom label (Default: en_US)",
+  "protectedFlagDescription": "Protected State of the custom label (Default: false)",
+  "shortdescriptionFlagDescription": "Short Description of the custom label"
+
+}
