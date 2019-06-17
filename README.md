@@ -45,7 +45,7 @@ EXAMPLE
 
 ## `sfpowerkit org:connectedapp:create`
 
-Creates a connected app in the target org for JWT based authentication, Please note it only creates Connected App with All users may self authorize option, You would need to manually edit the policies to enable admin users are pre-approved and add your profile to this connected app
+Creates a connected app in the target org for JWT based authentication, Please note it only creates Connected App with All users may self authorize option, You would need to manually edit the policies to enable admin users are pre-approved and add your profile to this connected app. API, Web and RefreshToken Scope are added to every app that is being created.
 
 ```
 USAGE
@@ -80,7 +80,7 @@ _See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.c
 
 ## `sfpowerkit org:connectedapp:retrieve`
 
-Useful if you want to retreive a connected app key especially for the CI/CD system after a sandbox refresh. Pass the username and password of the target environment from which the sandbox was cloned. 
+Useful if you want to retreive a connected app key especially in  CI/CD system after a sandbox refresh. Use the auth command to login to the sandbox and then use this command. Use JSON format if you want to retrieve the entire metadata of the connected app, Without the json flag, it only displays the key
 
 ```
 USAGE
@@ -90,14 +90,6 @@ USAGE
 OPTIONS
   -n, --name=name                                 (required) Name of the connected app to be
                                                   retreived
-
-  -p, --password=password                         (required) Password for the org
-
-  -r, --url=url                                   Security Token for the org
-
-  -s, --securitytoken=securitytoken               Security Token for the org
-
-  -u, --username=username                         (required) Username for the org
 
   --json                                          format output as json
 
