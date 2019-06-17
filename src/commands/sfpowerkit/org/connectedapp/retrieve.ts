@@ -32,49 +32,27 @@ export default class Retrieve extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    `$ sfdx  sfpowerkit:org:connectedapp:retrieve -u azlam@sfdc.com -p Xasdax2w2 -n AzurePipelines
+    `$ sfdx  sfpowerkit:org:connectedapp:retrieve -n AzurePipelines -u azlam@sfdc.com 
   Retrived AzurePipelines Consumer Key : XSD21Sd23123w21321
   `
   ];
 
+    // Comment this out if your command does not require an org username
+    protected static requiresUsername = true;
+
 
   protected static flagsConfig = {
     name: flags.string({ required: true, char: 'n', description: messages.getMessage('nameFlagDescription') }),
-    username: flags.string({ required: true, char: 'u', description: messages.getMessage('usernameFlagDescription') }),
-    password: flags.string({ required: true, char: 'p', description: messages.getMessage('passwordFlagDescription') }),
-    securitytoken: flags.string({ required: false, char: 's', description: messages.getMessage('securityTokenFlagDescription') }),
-    url: flags.url({ required: false, char: 'r', description: messages.getMessage('securityTokenFlagDescription') }),
   };
 
-  loginUrl: string;
-  password: string;
+ 
 
  
   public async run(): Promise<AnyJson> {
 
     rimraf.sync('temp_sfpowerkit');
 
-    if (this.flags.url)
-      this.loginUrl = this.flags.url;
-    else
-      this.loginUrl = 'https://test.salesforce.com'
-
-    if (this.flags.securitytoken)
-      this.password = this.flags.password.concat(this.flags.securitytoken);
-    else
-      this.password = this.flags.password;
-
-
-    let conn = new Connection({
-      loginUrl: this.loginUrl
-
-    });
-
-
-
-    await conn.login(this.flags.username, this.password, function (err, userInfo) {
-      if (err) { throw new SfdxError("Unable to connect to the target org") }
-    });
+    
 
 
 
@@ -88,6 +66,12 @@ export default class Retrieve extends SfdxCommand {
 
     // if(!this.flags.json)
     // this.ux.logJson(retrieveRequest);
+
+    await this.org.refreshAuth();
+
+    const conn = this.org.getConnection();
+
+   this.flags.apiversion = this.flags.apiversion || await conn.retrieveMaxApiVersion();
 
 
     conn.metadata.pollTimeout = 60;
