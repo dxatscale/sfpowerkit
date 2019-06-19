@@ -492,7 +492,10 @@ EXAMPLE
      "WorkflowRule"
   ]
 
-## `sfpowerkit:source:apextestsuite:convert`
+```
+_See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\package\valid.ts)_
+
+ ## `sfpowerkit:source:apextestsuite:convert`
 
 Converts an apex test suite to its consituent apex classes as a single line separated by commas, so that it can be used for metadata
 api deployment
@@ -514,5 +517,3 @@ EXAMPLE
   $  sfdx  sfpowerkit:source:apextestsuite:convert -n MyApexTestSuite 
     "ABC2,ABC1Test"    
 ```
-
-_See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\package\valid.ts)_
