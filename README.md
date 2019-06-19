@@ -84,8 +84,7 @@ Useful if you want to retreive a connected app key especially in  CI/CD system a
 
 ```
 USAGE
-  $ sfdx sfpowerkit:org:connectedapp:retrieve -n <string> -u <string> -p <string> [-s
-  <string>] [-r <url>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+  $ sfdx sfpowerkit:org:connectedapp:retrieve -n <string> [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
   -n, --name=name                                 (required) Name of the connected app to be
