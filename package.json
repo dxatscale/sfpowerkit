@@ -69,6 +69,9 @@
       "sfpowerkit:auth": {
         "description": "Authorisation Related Commands"
       },
+      "sfpowerkit:source": {
+        "description": "Commands that work on the source"
+      },
       "sfpowerkit": {
         "description": "Salesforce DevOps Helper Extensions to use in CI/CD Pipelines"
       }
