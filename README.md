@@ -491,6 +491,28 @@ EXAMPLE
      "ContentAsset",
      "WorkflowRule"
   ]
+
+## `sfpowerkit:source:apextestsuite:convert`
+
+Converts an apex test suite to its consituent apex classes as a single line separated by commas, so that it can be used for metadata
+api deployment
+
+```
+USAGE
+  $ sfdx  sfpowerkit:source:apextestsuite:convert  -n <string> [  -p <string> ] [  -o <string> ] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+
+OPTIONS
+  -n, --name=name                                 (required) the name of the apextestsuite (the file name minus the apex test suite)
+  -p, --package=package                           [default:picks up the default package] The package where the apex test suite exists
+  -o, --pathoverride=pathoverride                 [default:/main/default] Use this if your path to test suite is in a different folder location
+                                                   within the package directory
+
+  --json                                          format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $  sfdx  sfpowerkit:source:apextestsuite:convert -n MyApexTestSuite 
+    "ABC2,ABC1Test"    
 ```
 
 _See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\package\valid.ts)_
