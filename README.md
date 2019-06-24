@@ -74,7 +74,7 @@ EXAMPLE
      Created Connected App AzurePipelines in Target Org
 ```
 
-_See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\connectedapp\create.ts)_
+_See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/connectedapp/create.ts)_
 
 
 
@@ -101,7 +101,7 @@ EXAMPLE
      Retrived AzurePipelines Consumer Key : XSD21Sd23123w21321
 ```
 
-_See code: [src\commands\sfpowerkit\org\connectedapp\retrieve.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\connectedapp\retrieve.ts)_
+_See code: [src\commands\sfpowerkit\org\connectedapp\retrieve.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/connectedapp/retrieve.ts)_
 
 
 ## `sfpowerkit:org:duplicaterule:deactivate`
@@ -134,7 +134,7 @@ EXAMPLE
        Duplicate Rule CRM Account Rule 2 deactivated
 ```
 
-_See code: [src\commands\sfpowerkit\org\duplicaterule\deactivate.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.9.9/src\commands\sfpowerkit\org\duplicaterule\deactivate.ts)_
+_See code: [src\commands\sfpowerkit\org\duplicaterule\deactivate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/deactivate.ts)_
 
 ## `sfpowerkit:org:matchingrule:deactivate`
 
@@ -165,7 +165,7 @@ EXAMPLE
        Matching Rule for Account deactivated
 ```
 
-_See code: [src\commands\sfpowerkit\org\matchingrule\deactivate.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.9.9/src\commands\sfpowerkit\org\matchingrule\deactivate.ts)_
+_See code: [src\commands\sfpowerkit\org\matchingrule\deactivate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/matchingrule/deactivate.ts)_
 
 
 ## `sfpowerkit:org:trigger:deactivate`
@@ -196,7 +196,7 @@ EXAMPLE
     ApexTrigger AccountTrigger deactivated
 ```
 
-_See code: [src\commands\sfpowerkit\org\trigger\deactivate.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.9.11/src\commands\sfpowerkit\org\trigger\deactivate.ts)_
+_See code: [src\commands\sfpowerkit\org\trigger\deactivate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/trigger/deactivate.ts)_
 
 ## `sfpowerkit:org:trigger:activate`
 
@@ -226,7 +226,7 @@ EXAMPLE
     ApexTrigger AccountTrigger Ativated
 ```
 
-_See code: [src\commands\sfpowerkit\org\trigger\activate.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.9.11/src\commands\sfpowerkit\org\trigger\activate.ts)_
+_See code: [src\commands\sfpowerkit\org\trigger\activate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/trigger/activate.ts)_
 
 
 
@@ -250,7 +250,7 @@ EXAMPLE
      Successfully Retrived the healthstatus of the org
 ```
 
-_See code: [src\commands\sfpowerkit\org\healthcheck.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\healthcheck.ts)_
+_See code: [src\commands\sfpowerkit\org\healthcheck.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/healthcheck.ts)_
 
 ## `sfpowerkit:org:orgcoverage`
 
@@ -273,7 +273,7 @@ EXAMPLE
      coverage:85
 ```
 
-_See code: [src\commands\sfpowerkit\org\orgcoverage.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\orgcoverage.ts)_
+_See code: [src\commands\sfpowerkit\org\orgcoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/orgcoverage.ts)_
 
 
 ## `sfpowerkit:org:sandbox:create`
@@ -313,7 +313,7 @@ EXAMPLE
      Successfully Enqueued Creation of Sandbox
 ```
 
-_See code: [src\commands\sfpowerkit\org\sandbox\create.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\sandbox\create.ts)_
+_See code: [src\commands\sfpowerkit\org\sandbox\create.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/sandbox/create.ts)_
 
 ## ` sfpowerkit:org:sandbox:info`
 
@@ -337,7 +337,7 @@ EXAMPLE
      Successfully Enqueued Refresh of Sandbox
 ```
 
-_See code: [src\commands\sfpowerkit\org\sandbox\info.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\sandbox\info.ts)_
+_See code: [src\commands\sfpowerkit\org\sandbox\info.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/sandbox/info.ts)_
 
 ## `sfpowerkit:org:sandbox:refresh`
 
@@ -367,7 +367,7 @@ EXAMPLE
      Successfully Enqueued Refresh of Sandbox
 ```
 
-_See code: [src\commands\sfpowerkit\org\sandbox\refresh.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\sandbox\refresh.ts)_
+_See code: [src\commands\sfpowerkit\org\sandbox\refresh.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/sandbox/refresh.ts)_
 
 
 ## `sfpowerkit:org:scratchorg:usage`
@@ -395,7 +395,7 @@ EXAMPLE
     Total number of records retrieved: 4.
 ```
 
-_See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.9.16/src\commands\sfpowerkit\org\scratchorg\usage.ts)_
+_See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/scratchorg/usage.ts)_
 
 
 ## `sfpowerkit:org:scratchorg:delete`
@@ -421,7 +421,7 @@ EXAMPLE
     Deleted Scratch Org 2AS6F000000XbxVWAS
 ```
 
-_See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.9.16/src\commands\sfpowerkit\org\scratchorg\usage.ts)_
+_See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/scratchorg/usage.ts)_
 
 
 ## `sfpowerkit:package:dependencies:install`
@@ -462,7 +462,7 @@ EXAMPLE
   $ sfpowerkit package:dependencies:install -u MyScratchOrg -v MyDevHub -k "1:MyPackage1Key 2: 3:MyPackage3Key" -b "DEV"
 ```
 
-_See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\package\dependencies\install.ts)_
+_See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/dependencies/install.ts)_
 
 ## `sfpowerkit:package:valid`
 
@@ -493,7 +493,7 @@ EXAMPLE
   ]
 
 ```
-_See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\package\valid.ts)_
+_See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/valid.ts)_
 
  ## `sfpowerkit:source:apextestsuite:convert`
 
