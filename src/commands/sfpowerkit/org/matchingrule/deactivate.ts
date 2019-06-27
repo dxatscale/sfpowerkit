@@ -1,5 +1,5 @@
 
-import { AnyJson } from '@salesforce/ts-types';
+import { AnyJson, isJsonArray } from '@salesforce/ts-types';
 import fs from 'fs-extra';
 import { core, flags, SfdxCommand } from '@salesforce/command';
 import rimraf = require('rimraf');
@@ -81,7 +81,7 @@ export default class Deactivate extends SfdxCommand {
 
     let metadata_retrieve_result = await checkRetrievalStatus(conn, retrievedId);
     if (!metadata_retrieve_result.zipFile)
-      throw new SfdxError("Unable to find the requested Duplicate Rule");
+      throw new SfdxError("Unable to find the requested Matching Rule");
 
 
     //Extract Matching Rule
@@ -107,10 +107,15 @@ export default class Deactivate extends SfdxCommand {
 
       //Deactivate Rule
       this.ux.log(`Preparing Deactivation`);
-      retrieve_matchingRule.MatchingRules.matchingRules.forEach(element => {
-        element.ruleStatus="Inactive";
-      });
-      
+
+      if (isJsonArray(retrieve_matchingRule.MatchingRules.matchingRules)) {
+        retrieve_matchingRule.MatchingRules.matchingRules.forEach(element => {
+          element.ruleStatus = "Inactive";
+        });
+      } else
+      {
+        retrieve_matchingRule.MatchingRules.matchingRules.ruleStatus="Inactive";
+      }
     
 
      
