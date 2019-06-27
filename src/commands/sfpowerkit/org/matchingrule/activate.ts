@@ -105,7 +105,7 @@ export default class Activate extends SfdxCommand {
       this.ux.log(`Retrieved Matching Rule  for Object : ${this.flags.name}`);
 
 
-
+  
       //Deactivate Rule
       this.ux.log(`Preparing Activation`);
       if (isJsonArray(retrieve_matchingRule.MatchingRules.matchingRules)) {
