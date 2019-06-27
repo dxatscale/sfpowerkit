@@ -1,5 +1,5 @@
 
-import { AnyJson } from '@salesforce/ts-types';
+import { AnyJson, isJsonArray } from '@salesforce/ts-types';
 import fs from 'fs-extra';
 import { core, flags, SfdxCommand } from '@salesforce/command';
 import rimraf = require('rimraf');
@@ -70,10 +70,10 @@ export default class Activate extends SfdxCommand {
 
 
 
-    //Retrieve Duplicate Rule
+    //Retrieve Matching Rule
     retrieveRequest['singlePackage'] = true;
     retrieveRequest['unpackaged'] = { types: { name: 'MatchingRules', members: this.flags.name } };
-    conn.metadata.pollTimeout = 60;
+    conn.metadata.pollTimeout = 600000;
     let retrievedId;
     await conn.metadata.retrieve(retrieveRequest, function (error, result: AsyncResult) {
       if (error) { return console.error(error); }
@@ -82,7 +82,7 @@ export default class Activate extends SfdxCommand {
 
     let metadata_retrieve_result = await checkRetrievalStatus(conn, retrievedId);
     if (!metadata_retrieve_result.zipFile)
-      throw new SfdxError("Unable to find the requested Duplicate Rule");
+      throw new SfdxError("Unable to find the requested Matching Rule");
 
 
     //Extract Matching Rule
@@ -104,17 +104,22 @@ export default class Activate extends SfdxCommand {
 
       this.ux.log(`Retrieved Matching Rule  for Object : ${this.flags.name}`);
 
-     
+
 
       //Deactivate Rule
       this.ux.log(`Preparing Activation`);
-      retrieve_matchingRule.MatchingRules.matchingRules.forEach(element => {
-        element.ruleStatus="Active";
-      });
-      
-    
+      if (isJsonArray(retrieve_matchingRule.MatchingRules.matchingRules)) {
+        retrieve_matchingRule.MatchingRules.matchingRules.forEach(element => {
+          element.ruleStatus = "Active";
+        });
+      } else
+      {
+        retrieve_matchingRule.MatchingRules.matchingRules.ruleStatus="Active";
+      }
 
-     
+
+
+
       let builder = new xml2js.Builder();
       var xml = builder.buildObject(retrieve_matchingRule);
       fs.writeFileSync(resultFile, xml);
@@ -127,22 +132,21 @@ export default class Activate extends SfdxCommand {
 
       //Deploy Rule
       conn.metadata.pollTimeout = 300;
-      let deployId:AsyncResult;
-      
+      let deployId: AsyncResult;
+
       var zipStream = fs.createReadStream(zipFile);
-      await conn.metadata.deploy(zipStream, { rollbackOnError: true, singlePackage: true }, function (error, result: AsyncResult)
-      {
+      await conn.metadata.deploy(zipStream, { rollbackOnError: true, singlePackage: true }, function (error, result: AsyncResult) {
         if (error) { return console.error(error); }
         deployId = result;
       });
-      
+
       this.ux.log(`Deploying Activated Matching Rule with ID  ${deployId.id}`);
       let metadata_deploy_result: DeployResult = await checkDeploymentStatus(conn, deployId.id);
 
       if (!metadata_deploy_result.success)
-       throw new SfdxError("Unable to deploy the activated matching rule");
+        throw new SfdxError("Unable to deploy the activated matching rule");
 
-       this.ux.log(`Matching Rule for ${this.flags.name} activated`);
+      this.ux.log(`Matching Rule for ${this.flags.name} activated`);
       return { 'status': 1 };
 
     }
@@ -157,7 +161,7 @@ export default class Activate extends SfdxCommand {
 
 
 
- 
+
 
 }
 
