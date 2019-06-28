@@ -53,7 +53,6 @@ export default class OrgWideEmail extends SfdxCommand {
 
     this.ux.log("Creating email " + orgWideAddressObj.Address);
 
-    console.log("Rever version")
     let response = await this.org.getConnection().request({
       method: "POST",
       headers: {
