@@ -16,7 +16,7 @@ export default class OrgWideEmail extends SfdxCommand {
   );
 
   public static examples = [
-    `$ sfdx ancforce:testdate:orgwideemail --username scratchOrg --address email_addres --displayname "Test Address" --allprofile
+    `$ sfdx sfpowerkit:org:orgwideemail:create --username scratchOrg --address email_addres --displayname "Test Address" --allprofile
   `
   ];
 
@@ -24,12 +24,12 @@ export default class OrgWideEmail extends SfdxCommand {
     address: flags.string({
       char: "a",
       description: messages.getMessage("orgWideEmailAddressDescription"),
-      required: false
+      required: true
     }),
     displayname: flags.string({
       char: "n",
       description: messages.getMessage("orgWideEmailDisplaynameDescription"),
-      required: false
+      required: true
     }),
     allprofile: flags.boolean({
       char: "p",
@@ -39,9 +39,8 @@ export default class OrgWideEmail extends SfdxCommand {
   };
   protected static requiresUsername = true;
 
-
   public async run(): Promise<any> {
-
+    const apiversion = await this.org.getConnection().retrieveMaxApiVersion();
     const address: string = this.flags.address;
     const displayname: string = this.flags.displayname;
     var allprofile = this.flags.allprofile ? true : false;
@@ -54,24 +53,27 @@ export default class OrgWideEmail extends SfdxCommand {
 
     this.ux.log("Creating email " + orgWideAddressObj.Address);
 
+    console.log("Rever version")
     let response = await this.org.getConnection().request({
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      url: "/services/data/v44.0/sobjects/OrgWideEmailAddress",
+      url: "/services/data/v"+apiversion+"/sobjects/OrgWideEmailAddress",
       body: JSON.stringify(orgWideAddressObj)
     });
-    if(response['success']){
-      let username=this.org.getUsername()
-      this.ux.log(`Org wide email created with Id ${response['id']} `)
-      this.ux.log(`Run the folowing command to verify it `)
-      this.ux.log(`sfdx sfpowerkit:org:orgwideemail:verify -i ${response['id']} -u ${username}`)
-    }
-    else{
-      this.ux.error("Errors occured during org wide email creation ")
-      response['errors'].forEach(error => {
-        this.ux.error(error)
+
+    if (response["success"]) {
+      let username = this.org.getUsername();
+      this.ux.log(`Org wide email created with Id ${response["id"]} `);
+      this.ux.log(`Run the folowing command to verify it `);
+      this.ux.log(
+        `sfdx sfpowerkit:org:orgwideemail:verify -i ${response["id"]} -u ${username}`
+      );
+    } else {
+      this.ux.error("Errors occured during org wide email creation ");
+      response["errors"].forEach(error => {
+        this.ux.error(error);
       });
     }
 

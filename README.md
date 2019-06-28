@@ -168,6 +168,64 @@ EXAMPLE
 _See code: [src\commands\sfpowerkit\org\matchingrule\deactivate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/matchingrule/deactivate.ts)_
 
 
+## `sfpowerkit:org:orgwideemail:create`
+
+Create organisation wide email address
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:orgwideemail:create -a <string> -n <string>  [-p] [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -a, --address=emailaddress                      (required) Email Address
+  -n, --displayname=displayname                   (required) Display name of the org wide email
+  -p, --allprofile                                (Optional) Specify if the orgwide email is available for all profile
+  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
+
+  --json                                          format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this
+                                                  command invocation
+
+EXAMPLE
+    $ sfdx  sfpowerkit:org:orgwideemail:create -a test@example.com -n TestEmail -p -u sandbox
+      Creating email test@example.com
+      Org wide email created with Id 0D20E00000003wtSAA
+      Run the folowing command to verify it
+      sfdx sfpowerkit:org:orgwideemail:verify -i 0D20E00000003wtSAA -u test-qvoqbs1ofjd0@example.com
+```
+
+_See code: [src\commands\sfpowerkit\org\orgwideemail\create.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/orgwideemail/create.ts)_
+
+
+## `sfpowerkit:org:orgwideemail:verify`
+
+Verify organisation wide email address
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:orgwideemail:verify -i <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -i, --emailid=emailid                           (required) Org Wide Email Id
+  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
+
+  --json                                          format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this
+                                                  command invocation
+
+EXAMPLE
+    $ sfdx  sfpowerkit:org:orgwideemail:verify -i 0D20E00000003wtSAA -u sandbox
+      Verify email 0D21l0000008QgYCAU
+      Org wide email address verified
+```
+
+_See code: [src\commands\sfpowerkit\org\orgwideemail\verify.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/orgwideemail/verify.ts)_
+
+
 ## `sfpowerkit:org:trigger:deactivate`
 
 Deactivates a trigger in the target org
