@@ -174,11 +174,11 @@ Create organisation wide email address
 
 ```
 USAGE
-  $ sfdx sfpowerkit:org:orgwideemail:create -a <string> -n <string>  [-p] [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  $ sfdx sfpowerkit:org:orgwideemail:create -e <email> -n <string>  [-p] [-u <string>] [--apiversion <string>] [--json] [--loglevel
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -a, --address=emailaddress                      (required) Email Address
+  -e, --address=emailaddress                      (required) Email Address
   -n, --displayname=displayname                   (required) Display name of the org wide email
   -p, --allprofile                                (Optional) Specify if the orgwide email is available for all profile
   -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
@@ -189,7 +189,7 @@ OPTIONS
                                                   command invocation
 
 EXAMPLE
-    $ sfdx  sfpowerkit:org:orgwideemail:create -a test@example.com -n TestEmail -p -u sandbox
+    $ sfdx  sfpowerkit:org:orgwideemail:create -e test@example.com -n TestEmail -p -u sandbox
       Creating email test@example.com
       Org wide email created with Id 0D20E00000003wtSAA
       Run the folowing command to verify it
