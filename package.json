@@ -1,7 +1,7 @@
 {
   "name": "sfpowerkit",
   "description": "Salesforce DevOps Helper Extensions",
-  "version": "1.9.27",
+  "version": "1.9.28",
   "author": "Azlam Abdulsalam @azlam-abdulsalam",
   "bugs": "https://github.com/accenture/sfpowerkit/issues",
   "dependencies": {
