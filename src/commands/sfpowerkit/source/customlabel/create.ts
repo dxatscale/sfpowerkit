@@ -33,7 +33,7 @@ export default class Create extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    `$ sfdx  sfpowerkit:source:customlabel:create -u fancyScratchOrg1 -n FlashError -v "Memory leaks aren't for the faint hearted" -s wow
+    `$ sfdx  sfpowerkit:source:customlabel:create -u fancyScratchOrg1 -n FlashError -v "Memory leaks aren't for the faint hearted" -s "A flashing error"
   Created CustomLabel FlashError in Target Org
   `
   ];
@@ -51,7 +51,6 @@ export default class Create extends SfdxCommand {
       char: 'v',
       description: messages.getMessage('valueFlagDescription')
     }),
-
     categories: flags.string({
       required: false,
       char: 'c',
@@ -71,6 +70,12 @@ export default class Create extends SfdxCommand {
       required: true,
       char: 's',
       description: messages.getMessage('shortdescriptionFlagDescription')
+    }),
+
+    ignorenamespace: flags.boolean({
+      char: 'i',
+      default: false,
+      description: messages.getMessage('ignorenamespaceFlagDescription')
     }),
 
   };
@@ -93,12 +98,19 @@ export default class Create extends SfdxCommand {
     // this.org is guaranteed because requiresUsername=true, as opposed to supportsUsername
     const username = this.org.getUsername();
 
-    this.customlabel_fullname = this.flags.fullname;
+    // Gives first value in url after https protocol
+    const orgShortName = this.org.getConnection().baseUrl()
+                                      .replace("https://","")
+                                      .split(/[\.]/)[0]
+                                      .replace(/[^A-Za-z0-9]/g, '');
+
+    this.customlabel_fullname = (this.flags.ignorenamespace) ? this.flags.fullname : `${orgShortName}_${this.flags.fullname}`;
     this.customlabel_value = this.flags.value;
 
     this.customlabel_categories = this.flags.categories || null;
     this.customlabel_language = this.flags.language || this.customlabel_language;
     this.customlabel_protected = this.flags.language || this.customlabel_protected;
+
     this.customlabel_shortdescription = this.flags.shortdescription;
 
     var customlabels_metadata: string = `<?xml version="1.0" encoding="UTF-8"?>
