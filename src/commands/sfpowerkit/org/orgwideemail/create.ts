@@ -16,13 +16,16 @@ export default class OrgWideEmail extends SfdxCommand {
   );
 
   public static examples = [
-    `$ sfdx sfpowerkit:org:orgwideemail:create --username scratchOrg --address email_addres --displayname "Test Address" --allprofile
-  `
+    `sfdx sfpowerkit:org:orgwideemail:create -e testuser@test.com  -u scratch1 -n "Test Address" -p
+     Creating email azlam.abdulsalam@accenture.com
+     Org wide email created with Id 0D2210000004DidCAE
+     Run the folowing command to verify it
+    sfdx sfpowerkit:org:orgwideemail:verify -i 0D2210000004DidCAE -u test-jkomdylblorj@example.com  `
   ];
 
   protected static flagsConfig: FlagsConfig = {
-    address: flags.string({
-      char: "a",
+    address: flags.email({
+      char: "e",
       description: messages.getMessage("orgWideEmailAddressDescription"),
       required: true
     }),

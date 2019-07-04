@@ -1,4 +1,4 @@
 {
-  "orgWideEmailVerifyCommandDescription": "Verify orgWide Email Address",
+  "orgWideEmailVerifyCommandDescription": "Verify an already created orgWide Email Address",
   "orgWideEmailIdDescription": "Id of the Org Wide address email to verify"
 }
