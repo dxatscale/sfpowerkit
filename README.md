@@ -575,3 +575,30 @@ EXAMPLE
   $  sfdx  sfpowerkit:source:apextestsuite:convert -n MyApexTestSuite 
     "ABC2,ABC1Test"    
 ```
+
+ ## `sfpowerkit:source:customlabel:clean`
+
+Removes the namespace from the custom labels
+
+```
+USAGE
+  $ sfdx sfpowerkit:source:customlabel:clean -p <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel 
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -p, --path=path                                                                   (required) Path to the CustomLabels.labels-meta.xml file
+
+  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default 
+                                                                                    target org
+
+  --apiversion=apiversion                                                           override the api version used for api requests made by this 
+                                                                                    command
+
+  --json                                                                            format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx  sfpowerkit:source:customlabel:clean -p path/to/customlabelfile.xml
+       Cleaned The Custom Labels
+```
