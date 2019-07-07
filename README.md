@@ -495,3 +495,44 @@ EXAMPLE
 ```
 
 _See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\package\valid.ts)_
+
+### `sfpowerkit:source:customlabel:create`
+
+Creates a custom label (with default namespace) with parameters
+
+```
+USAGE
+  $ sfdx sfpowerkit:source:customlabel:create -n <string> -v <string> -s <string> [-c <string>] [-l <string>] [-p <string>] [-i] [-u <string>] 
+  [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -c, --categories=categories                                                       Comma Separated Category Values
+
+  -i, --ignorenamespace                                                             Ignores the addition of the namespace into the fullname 
+                                                                                    (API Name)
+
+  -l, --language=language                                                           Language of the custom label (Default: en_US)
+
+  -n, --fullname=fullname                                                           (required) Name of the custom label (API Name)
+
+  -p, --protected=protected                                                         Protected State of the custom label (Default: false)
+
+  -s, --shortdescription=shortdescription                                           (required) Short Description of the custom label
+
+  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default 
+                                                                                    target org
+
+  -v, --value=value                                                                 (required) Value of the custom label
+
+  --apiversion=apiversion                                                           override the api version used for api requests made by this 
+                                                                                    command
+
+  --json                                                                            format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx  sfpowerkit:source:customlabel:create -u fancyScratchOrg1 -n FlashError -v "Memory leaks aren't for the faint hearted" -s "A flashing 
+  error"
+     Created CustomLabel FlashError in Target Org
+```
