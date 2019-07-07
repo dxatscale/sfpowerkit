@@ -145,6 +145,7 @@ Elements supported included in your package testPackage are
 
 
     // INSTALL PACKAGE
+    this.ux.log(`Utilizing Version of the metadata coverage ${coverageJSON.versions.selected}`)
     this.ux.log(`Converting package ${packageToBeScanned['package']}`);
 
 

@@ -74,7 +74,7 @@ EXAMPLE
      Created Connected App AzurePipelines in Target Org
 ```
 
-_See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\connectedapp\create.ts)_
+_See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/connectedapp/create.ts)_
 
 
 
@@ -84,13 +84,12 @@ Useful if you want to retreive a connected app key especially in  CI/CD system a
 
 ```
 USAGE
-  $ sfdx sfpowerkit:org:connectedapp:retrieve -n <string> -u <string> -p <string> [-s
-  <string>] [-r <url>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+  $ sfdx sfpowerkit:org:connectedapp:retrieve -n <string> -u <string>  [-r <url>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
   -n, --name=name                                 (required) Name of the connected app to be
                                                   retreived
-
+  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org                     
   --json                                          format output as json
 
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this
@@ -102,7 +101,7 @@ EXAMPLE
      Retrived AzurePipelines Consumer Key : XSD21Sd23123w21321
 ```
 
-_See code: [src\commands\sfpowerkit\org\connectedapp\retrieve.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\connectedapp\retrieve.ts)_
+_See code: [src\commands\sfpowerkit\org\connectedapp\retrieve.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/connectedapp/retrieve.ts)_
 
 
 ## `sfpowerkit:org:duplicaterule:deactivate`
@@ -135,7 +134,7 @@ EXAMPLE
        Duplicate Rule CRM Account Rule 2 deactivated
 ```
 
-_See code: [src\commands\sfpowerkit\org\duplicaterule\deactivate.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.9.9/src\commands\sfpowerkit\org\duplicaterule\deactivate.ts)_
+_See code: [src\commands\sfpowerkit\org\duplicaterule\deactivate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/deactivate.ts)_
 
 ## `sfpowerkit:org:matchingrule:deactivate`
 
@@ -166,7 +165,65 @@ EXAMPLE
        Matching Rule for Account deactivated
 ```
 
-_See code: [src\commands\sfpowerkit\org\matchingrule\deactivate.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.9.9/src\commands\sfpowerkit\org\matchingrule\deactivate.ts)_
+_See code: [src\commands\sfpowerkit\org\matchingrule\deactivate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/matchingrule/deactivate.ts)_
+
+
+## `sfpowerkit:org:orgwideemail:create`
+
+Create organisation wide email address
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:orgwideemail:create -e <email> -n <string>  [-p] [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -e, --address=emailaddress                      (required) Email Address
+  -n, --displayname=displayname                   (required) Display name of the org wide email
+  -p, --allprofile                                (Optional) Specify if the orgwide email is available for all profile
+  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
+
+  --json                                          format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this
+                                                  command invocation
+
+EXAMPLE
+    $ sfdx  sfpowerkit:org:orgwideemail:create -e test@example.com -n TestEmail -p -u sandbox
+      Creating email test@example.com
+      Org wide email created with Id 0D20E00000003wtSAA
+      Run the folowing command to verify it
+      sfdx sfpowerkit:org:orgwideemail:verify -i 0D20E00000003wtSAA -u test-qvoqbs1ofjd0@example.com
+```
+
+_See code: [src\commands\sfpowerkit\org\orgwideemail\create.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/orgwideemail/create.ts)_
+
+
+## `sfpowerkit:org:orgwideemail:verify`
+
+Verify organisation wide email address
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:orgwideemail:verify -i <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -i, --emailid=emailid                           (required) Org Wide Email Id
+  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
+
+  --json                                          format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this
+                                                  command invocation
+
+EXAMPLE
+    $ sfdx  sfpowerkit:org:orgwideemail:verify -i 0D20E00000003wtSAA -u sandbox
+      Verify email 0D21l0000008QgYCAU
+      Org wide email address verified
+```
+
+_See code: [src\commands\sfpowerkit\org\orgwideemail\verify.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/orgwideemail/verify.ts)_
 
 
 ## `sfpowerkit:org:trigger:deactivate`
@@ -197,7 +254,7 @@ EXAMPLE
     ApexTrigger AccountTrigger deactivated
 ```
 
-_See code: [src\commands\sfpowerkit\org\trigger\deactivate.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.9.11/src\commands\sfpowerkit\org\trigger\deactivate.ts)_
+_See code: [src\commands\sfpowerkit\org\trigger\deactivate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/trigger/deactivate.ts)_
 
 ## `sfpowerkit:org:trigger:activate`
 
@@ -227,7 +284,7 @@ EXAMPLE
     ApexTrigger AccountTrigger Ativated
 ```
 
-_See code: [src\commands\sfpowerkit\org\trigger\activate.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.9.11/src\commands\sfpowerkit\org\trigger\activate.ts)_
+_See code: [src\commands\sfpowerkit\org\trigger\activate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/trigger/activate.ts)_
 
 
 
@@ -251,7 +308,7 @@ EXAMPLE
      Successfully Retrived the healthstatus of the org
 ```
 
-_See code: [src\commands\sfpowerkit\org\healthcheck.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\healthcheck.ts)_
+_See code: [src\commands\sfpowerkit\org\healthcheck.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/healthcheck.ts)_
 
 ## `sfpowerkit:org:orgcoverage`
 
@@ -274,7 +331,7 @@ EXAMPLE
      coverage:85
 ```
 
-_See code: [src\commands\sfpowerkit\org\orgcoverage.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\orgcoverage.ts)_
+_See code: [src\commands\sfpowerkit\org\orgcoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/orgcoverage.ts)_
 
 
 ## `sfpowerkit:org:sandbox:create`
@@ -314,7 +371,7 @@ EXAMPLE
      Successfully Enqueued Creation of Sandbox
 ```
 
-_See code: [src\commands\sfpowerkit\org\sandbox\create.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\sandbox\create.ts)_
+_See code: [src\commands\sfpowerkit\org\sandbox\create.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/sandbox/create.ts)_
 
 ## ` sfpowerkit:org:sandbox:info`
 
@@ -338,7 +395,7 @@ EXAMPLE
      Successfully Enqueued Refresh of Sandbox
 ```
 
-_See code: [src\commands\sfpowerkit\org\sandbox\info.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\sandbox\info.ts)_
+_See code: [src\commands\sfpowerkit\org\sandbox\info.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/sandbox/info.ts)_
 
 ## `sfpowerkit:org:sandbox:refresh`
 
@@ -368,7 +425,7 @@ EXAMPLE
      Successfully Enqueued Refresh of Sandbox
 ```
 
-_See code: [src\commands\sfpowerkit\org\sandbox\refresh.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\org\sandbox\refresh.ts)_
+_See code: [src\commands\sfpowerkit\org\sandbox\refresh.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/sandbox/refresh.ts)_
 
 
 ## `sfpowerkit:org:scratchorg:usage`
@@ -396,7 +453,7 @@ EXAMPLE
     Total number of records retrieved: 4.
 ```
 
-_See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.9.16/src\commands\sfpowerkit\org\scratchorg\usage.ts)_
+_See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/scratchorg/usage.ts)_
 
 
 ## `sfpowerkit:org:scratchorg:delete`
@@ -422,7 +479,7 @@ EXAMPLE
     Deleted Scratch Org 2AS6F000000XbxVWAS
 ```
 
-_See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.9.16/src\commands\sfpowerkit\org\scratchorg\usage.ts)_
+_See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/scratchorg/usage.ts)_
 
 
 ## `sfpowerkit:package:dependencies:install`
@@ -463,7 +520,7 @@ EXAMPLE
   $ sfpowerkit package:dependencies:install -u MyScratchOrg -v MyDevHub -k "1:MyPackage1Key 2: 3:MyPackage3Key" -b "DEV"
 ```
 
-_See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\package\dependencies\install.ts)_
+_See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/dependencies/install.ts)_
 
 ## `sfpowerkit:package:valid`
 
@@ -492,9 +549,9 @@ EXAMPLE
      "ContentAsset",
      "WorkflowRule"
   ]
-```
 
-_See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/azlamsalam/sfpowerkit/blob/v1.5.0/src\commands\sfpowerkit\package\valid.ts)_
+```
+_See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/valid.ts)_
 
 ### `sfpowerkit:source:customlabel:create`
 
@@ -535,4 +592,26 @@ EXAMPLE
   $ sfdx  sfpowerkit:source:customlabel:create -u fancyScratchOrg1 -n FlashError -v "Memory leaks aren't for the faint hearted" -s "A flashing 
   error"
      Created CustomLabel FlashError in Target Org
+```
+
+### `sfpowerkit:source:apextestsuite:convert`
+
+Converts an apex test suite to its consituent apex classes as a single line separated by commas, so that it can be used for metadata api deployment
+
+```
+USAGE
+  $ sfdx  sfpowerkit:source:apextestsuite:convert  -n <string> [  -p <string> ] [  -o <string> ] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+
+OPTIONS
+  -n, --name=name                                 (required) the name of the apextestsuite (the file name minus the apex test suite)
+  -p, --package=package                           [default:picks up the default package] The package where the apex test suite exists
+  -o, --pathoverride=pathoverride                 [default:/main/default] Use this if your path to test suite is in a different folder location
+                                                   within the package directory
+
+  --json                                          format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $  sfdx  sfpowerkit:source:apextestsuite:convert -n MyApexTestSuite 
+    "ABC2,ABC1Test"    
 ```

@@ -1,7 +1,7 @@
 {
   "name": "sfpowerkit",
   "description": "Salesforce DevOps Helper Extensions",
-  "version": "1.9.23",
+  "version": "1.9.28",
   "author": "Azlam Abdulsalam @azlam-abdulsalam",
   "bugs": "https://github.com/accenture/sfpowerkit/issues",
   "dependencies": {
@@ -68,6 +68,9 @@
       },
       "sfpowerkit:auth": {
         "description": "Authorisation Related Commands"
+      },
+      "sfpowerkit:source": {
+        "description": "Commands that work on the source"
       },
       "sfpowerkit": {
         "description": "Salesforce DevOps Helper Extensions to use in CI/CD Pipelines"
