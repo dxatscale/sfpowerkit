@@ -1,0 +1,15 @@
+{
+
+  "commandDescription": " Creates a custom label in the target org  ⚡⚡⚡",
+
+  "fullnameFlagDescription": "Name of the custom label (API Name)",
+  "valueFlagDescription": "Value of the custom label",
+
+  "categoriesFlagDescription": "Comma Separated Category Values",
+  "languageFlagDescription": "Language of the custom label (Default: en_US)",
+  "protectedFlagDescription": "Protected State of the custom label (Default: false)",
+  "shortdescriptionFlagDescription": "Short Description of the custom label",
+
+  "ignorenamespaceFlagDescription": "Ignores the addition of the namespace into the fullname (API Name)"
+
+}

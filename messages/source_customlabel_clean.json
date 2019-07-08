@@ -1,0 +1,4 @@
+{
+  "commandDescription": "Removes the namespace from the custom labels",
+  "pathFlagDescription": "Path to the CustomLabels.labels-meta.xml file"
+}
