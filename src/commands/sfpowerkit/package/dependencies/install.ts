@@ -295,12 +295,25 @@ export default class Install extends SfdxCommand {
    result.result.forEach(element => {
         //this.ux.logJson(element);
         packages.push(element.SubscriberPackageVersionId);
+        
    });
 
     if(packages.length>0)
     {
     this.ux.log(`Installed Packages in the org ${targetOrg}`);
-    this.ux.logJson(packages);
+
+    const output = [];
+
+    for (const field of result.result) {
+      const rewritten = {
+        name: field.SubscriberPackageName,
+        package_version_id: field.SubscriberPackageVersionId,
+        versionNumber: field.SubscriberPackageVersionNumber
+      };
+      output.push(rewritten);
+    }
+
+    this.ux.table(output,  ['name', 'package_version_id', 'versionNumber']);
     }
 
     return packages;   
