@@ -663,8 +663,17 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $  sfdx sfpowerkit:project:diff --diffFile DiffFileName --encoding EncodingOfFile --output OutputFolder  
   $  sfdx sfpowerkit:project:diff --revisionfrom revisionfrom --revisionto revisionto --output OutputFolder  
+  {
+  "status": 0,
+  "result": {
+    "deleted": [],
+    "addedEdited": [
+      "scripts\\Alias.sh",
+      "sfdx-project.json",
+    ]
+   }
+  }
 ```
 
  
