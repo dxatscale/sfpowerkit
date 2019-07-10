@@ -284,40 +284,31 @@ export default class Install extends SfdxCommand {
     return packageId;
   }
 
-  private async getInstalledPackages(targetOrg:string)
-  {
+    private async getInstalledPackages(targetOrg:string){
     
-  var packages=[];
-   const output  =  await exec(`sfdx force:package:installed:list --targetusername ${targetOrg} --json`);
-  // this.ux.logJson(JSON.parse(output.stdout.toString()));
-     
-   var result = JSON.parse(output.stdout.toString());
-   result.result.forEach(element => {
-        //this.ux.logJson(element);
-        packages.push(element.SubscriberPackageVersionId);
-        
-   });
-
-    if(packages.length>0)
-    {
-    this.ux.log(`Installed Packages in the org ${targetOrg}`);
-
-    const output = [];
-
-    for (const field of result.result) {
-      const rewritten = {
-        name: field.SubscriberPackageName,
-        package_version_id: field.SubscriberPackageVersionId,
-        versionNumber: field.SubscriberPackageVersionNumber
-      };
-      output.push(rewritten);
+        let packages=[];
+        let installedPackagesQuery = 'SELECT Id, SubscriberPackageId, SubscriberPackage.NamespacePrefix, SubscriberPackage.Name, ' +
+            'SubscriberPackageVersion.Id, SubscriberPackageVersion.Name, SubscriberPackageVersion.MajorVersion, SubscriberPackageVersion.MinorVersion, ' +
+            'SubscriberPackageVersion.PatchVersion, SubscriberPackageVersion.BuildNumber FROM InstalledSubscriberPackage ' +
+            'ORDER BY SubscriberPackageId';
+        const conn = this.org.getConnection();
+        await conn.tooling.query(installedPackagesQuery).then(queryResult => {
+            const records = queryResult.records;
+            if (records && records.length > 0) {
+                this.ux.log(`Installed Packages in the org ${targetOrg}`);
+                const output = [];
+                records.forEach(record => {
+                    packages.push(record.SubscriberPackageVersionId);             
+                    output.push({
+                        name: record.SubscriberPackage.Name,
+                        package_version_name: record.SubscriberPackageVersion.Name,
+                        package_version_id: record.SubscriberPackageVersion.Id,
+                        versionNumber: `${record.SubscriberPackageVersion.MajorVersion}.${record.SubscriberPackageVersion.MinorVersion}.${record.SubscriberPackageVersion.PatchVersion}.${record.SubscriberPackageVersion.BuildNumber}`
+                    });
+                });
+                this.ux.table(output, ['name', 'package_version_name', 'package_version_id', 'versionNumber']);
+            }
+        });  
+        return packages;
     }
-
-    this.ux.table(output,  ['name', 'package_version_id', 'versionNumber']);
-    }
-
-    return packages;   
-  }
-
-
 }
