@@ -41,7 +41,7 @@ export default class Install extends SfdxCommand {
     wait: flags.string( {char: 'w', required: false, description: 'number of minutes to wait for installation status (also used for publishwait). Default is 10' }),
     noprompt: flags.boolean( {char: 'r', required: false, description: 'allow Remote Site Settings and Content Security Policy websites to send or receive data without confirmation' }),
     updateall: flags.boolean( {char: 'o', required: false, description: 'Update all packages even if they are installed in the target org' }),
-    apexcompileall: flags.boolean(  {char: 'a', required: false, description: 'Compile the whole apex in the org not just the package, by default only the compilation of the package is triggered' } )
+    apexcompileonlypackage: flags.boolean(  {char: 'a', required: false, description: 'Compile the apex only in the package, by default only the compilation of the apex in the entire org is triggered' } )
     
   };
 
@@ -205,7 +205,7 @@ export default class Install extends SfdxCommand {
           args.push('--noprompt');
         }
         
-        if(!this.flags.apexcompileall)
+        if(this.flags.apexcompileonlypackage)
         {
           args.push('-a')
           args.push(`package`);
