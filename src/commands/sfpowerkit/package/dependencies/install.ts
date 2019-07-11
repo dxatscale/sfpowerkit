@@ -41,6 +41,7 @@ export default class Install extends SfdxCommand {
     wait: flags.string( {char: 'w', required: false, description: 'number of minutes to wait for installation status (also used for publishwait). Default is 10' }),
     noprompt: flags.boolean( {char: 'r', required: false, description: 'allow Remote Site Settings and Content Security Policy websites to send or receive data without confirmation' }),
     updateall: flags.boolean( {char: 'o', required: false, description: 'Update all packages even if they are installed in the target org' }),
+    apexcompileonlypackage: flags.boolean(  {char: 'a', required: false, description: 'Compile the apex only in the package, by default only the compilation of the apex in the entire org is triggered' } )
     
   };
 
@@ -203,9 +204,15 @@ export default class Install extends SfdxCommand {
         if (this.flags.noprompt) {
           args.push('--noprompt');
         }
+        
+        if(this.flags.apexcompileonlypackage)
+        {
+          args.push('-a')
+          args.push(`package`);
+        }
 
-        // INSTALL PACKAGE
-        // TODO: How to add a debug flag or write to sfdx.log with --loglevel ?
+
+        
         this.ux.log(`Installing package ${packageInfo.packageVersionId} : ${packageInfo.dependentPackage}${ packageInfo.versionNumber === undefined ? '' : ' ' + packageInfo.versionNumber }`);
         
         

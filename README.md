@@ -489,7 +489,7 @@ Install dependencies of a package
 ```
 USAGE
   $ sfdx sfpowerkit:package:dependencies:install [-p <string>] [-k <string>] [-b <string>] [-w <string>] [-r] [-v 
-  <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+  <string>] [-a] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
   -b, --branch=branch                              the package version’s branch
@@ -510,6 +510,8 @@ OPTIONS
   -w, --wait=wait                                  number of minutes to wait for installation status (also used for
                                                    publishwait). Default is 10
 
+  -a, --apexcompileonlypackage=apexcompileonlypackage  Compile the apex only in the package, by default only the
+                                                    compilation of the apex in the entire org is triggered  
   --apiversion=apiversion                          override the api version used for api requests made by this command
 
   --json                                           format output as json
