@@ -305,12 +305,12 @@ export default class Install extends SfdxCommand {
                 this.ux.log(`Installed Packages in the org ${targetOrg}`);
                 const output = [];
                 records.forEach(record => {
-                    packages.push(record.SubscriberPackageVersionId);             
+                    packages.push(record['SubscriberPackageVersionId']);             
                     output.push({
-                        name: record.SubscriberPackage.Name,
-                        package_version_name: record.SubscriberPackageVersion.Name,
-                        package_version_id: record.SubscriberPackageVersion.Id,
-                        versionNumber: `${record.SubscriberPackageVersion.MajorVersion}.${record.SubscriberPackageVersion.MinorVersion}.${record.SubscriberPackageVersion.PatchVersion}.${record.SubscriberPackageVersion.BuildNumber}`
+                        name: record['SubscriberPackage']['Name'],
+                        package_version_name: record['SubscriberPackageVersion']['Name'],
+                        package_version_id: record['SubscriberPackageVersion']['Id'],
+                        versionNumber: `${record['SubscriberPackageVersion']['MajorVersion']}.${record['SubscriberPackageVersion']['MinorVersion']}.${record['SubscriberPackageVersion']['PatchVersion']}.${record['SubscriberPackageVersion']['BuildNumber']}`
                     });
                 });
                 this.ux.table(output, ['name', 'package_version_name', 'package_version_id', 'versionNumber']);
