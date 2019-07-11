@@ -305,7 +305,7 @@ export default class Install extends SfdxCommand {
                 this.ux.log(`Installed Packages in the org ${targetOrg}`);
                 const output = [];
                 records.forEach(record => {
-                    packages.push(record['SubscriberPackageVersionId']);             
+                    packages.push(record['SubscriberPackageVersion']['Id']);             
                     output.push({
                         name: record['SubscriberPackage']['Name'],
                         package_version_name: record['SubscriberPackageVersion']['Name'],
