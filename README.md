@@ -524,6 +524,36 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/dependencies/install.ts)_
 
+
+## `sfpowerkit:package:applypatch`
+
+Retrieves and applies the patch, Useful after a package upgrade in a CD Environmen
+
+```
+USAGE
+USAGE
+  $ sfdx sfpowerkit:package:applypatch -n <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -n, --name=name                                                                   (required) Name of the static resource to be patched
+  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx  sfpowerkit:package:applypatch -n customer_picklist -u sandbox
+  Preparing Patch
+  Deploying Patch with ID  0Af4Y000003Q7GySAK
+  Polling for Deployment Status
+  Polling for Deployment Status
+  Patch customer_picklist Deployed successfully.
+```
+
+_See code: [src\commands\sfpowerkit\package\applypatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/applypatch.ts)_
+
+
 ## `sfpowerkit:package:valid`
 
 Validates a package to check whether it only contains valid metadata as per metadata coverage
@@ -645,6 +675,30 @@ EXAMPLE
   $  sfdx  sfpowerkit:source:apextestsuite:convert -n MyApexTestSuite 
     "ABC2,ABC1Test"    
 ```
+
+## `sfpowerkit:source:picklist:generatepatch`
+
+Search picklist fields inside project and create a static resource file with picklist fields, used to solve the picklist upgrade issue in dx unlock package
+
+```
+USAGE
+  $ sfdx sfpowerkit:source:picklist:generatepatch [-p <string>] [-d <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -d, --objectsdir=objectsdir                                                       Path for Objects folder located in project
+  -p, --package=package                                                             Name of the package to generate the picklist patch
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx  sfpowerkit:source:picklist:generate -p Core -d src/core/main/default/objects/
+  Scanning for fields of type picklist
+  Found 30 fields of type picklist
+  Source was successfully converted to Metadata API format and written to the location: .../temp_sfpowerkit/mdapi
+  Generatign static resource file : src/core/main/default/staticresources/Core_picklist.resource-meta.xml
+```
+_See code: [src\commands\sfpowerkit\source\picklist\generatepatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/picklist/generatepatch.ts)_
+
 
 ## `sfpowerkit:project:diff`
 

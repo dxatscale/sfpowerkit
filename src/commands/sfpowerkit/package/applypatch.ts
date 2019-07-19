@@ -13,17 +13,14 @@ var jsforce = require('jsforce');
 var path = require('path');
 import { checkRetrievalStatus } from '../../../shared/checkRetrievalStatus';
 import { checkDeploymentStatus } from '../../../shared/checkDeploymentStatus';
-
-
-
+import { extract } from '../../../shared/extract';
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages('sfpowerkit', 'trigger_activate');
-
+const messages = core.Messages.loadMessages('sfpowerkit', 'package_applypatch');
 
 export default class Applypatch extends SfdxCommand {
 
@@ -32,21 +29,18 @@ export default class Applypatch extends SfdxCommand {
 
   public static examples = [
     `$ sfdx  sfpowerkit:package:applypatch -n customer_picklist -u sandbox
-    Polling for Retrieval Status
     Preparing Patch
     Deploying Patch with ID  0Af4Y000003Q7GySAK
     Polling for Deployment Status
     Polling for Deployment Status
-    Patch customer_picklist Deployed
+    Patch customer_picklist Deployed successfully.
   `
   ];
-
 
   protected static flagsConfig = {
     name: flags.string({ required: true, char: 'n', description: messages.getMessage('nameFlagDescription') }),
 
   };
-
 
   // Comment this out if your command does not require an org username
   protected static requiresUsername = true;
@@ -54,7 +48,6 @@ export default class Applypatch extends SfdxCommand {
   public async run(): Promise<AnyJson> {
 
     rimraf.sync('temp_sfpowerkit');
-
 
     //Connect to the org
     await this.org.refreshAuth();
@@ -64,7 +57,6 @@ export default class Applypatch extends SfdxCommand {
     let retrieveRequest = {
       apiVersion: apiversion
     };
-
 
     //Retrieve Duplicate Rule
     retrieveRequest['singlePackage'] = true;
@@ -80,53 +72,46 @@ export default class Applypatch extends SfdxCommand {
     if (!metadata_retrieve_result.zipFile)
       throw new SfdxError("Unable to find the requested Static Resource");
 
-
     //Retrieve Patch
     this.ux.log(`Preparing Patch`);
     var zipFileName = "temp_sfpowerkit/unpackaged.zip";
     fs.mkdirSync('temp_sfpowerkit');
     fs.writeFileSync(zipFileName, metadata_retrieve_result.zipFile, { encoding: 'base64' });
-    
-
 
     if (fs.existsSync(path.resolve(zipFileName))) {
-     
-      //Deploy Trigger
+
+      await extract('temp_sfpowerkit');
+      fs.unlinkSync(zipFileName);
+
+      let resultFile = `temp_sfpowerkit/staticresources/${this.flags.name}.resource`;
+
+      fs.copyFileSync(resultFile, `temp_sfpowerkit/unpackaged.zip`);
+
+      //Deploy patch using mdapi
       conn.metadata.pollTimeout = 300;
-      let deployId:AsyncResult;
-      
+      let deployId: AsyncResult;
+
       var zipStream = fs.createReadStream(zipFileName);
-      await conn.metadata.deploy(zipStream, { rollbackOnError: true, singlePackage: true }, function (error, result: AsyncResult)
-      {
+      await conn.metadata.deploy(zipStream, { rollbackOnError: true, singlePackage: true }, function (error, result: AsyncResult) {
         if (error) { return console.error(error); }
         deployId = result;
       });
-      
+
       this.ux.log(`Deploying Patch with ID  ${deployId.id}`);
       let metadata_deploy_result: DeployResult = await checkDeploymentStatus(conn, deployId.id);
 
       if (!metadata_deploy_result.success)
-       throw new SfdxError("Unable to deploy the Patch");
+        throw new SfdxError("Unable to deploy the Patch");
 
-       this.ux.log(`Patch ${this.flags.name} Deployed`);
+      this.ux.log(`Patch ${this.flags.name} Deployed successfully.`);
+      rimraf.sync('temp_sfpowerkit');
       return { 'status': 1 };
 
     }
     else {
       throw new SfdxError("Patch not found in the org")
-
     }
-
-
 
   }
 
-
-
-
 }
-
-
-
-
-

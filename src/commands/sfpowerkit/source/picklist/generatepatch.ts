@@ -1,15 +1,32 @@
-
-import { AnyJson, JsonArray, asJsonArray } from '@salesforce/ts-types';
+import {
+  AnyJson,
+  JsonArray,
+  asJsonArray
+} from '@salesforce/ts-types';
 import fs from 'fs-extra';
-import { core, flags, SfdxCommand } from '@salesforce/command';
+import {
+  core,
+  flags,
+  SfdxCommand
+} from '@salesforce/command';
 import rimraf = require('rimraf');
-import { SfdxError, SfdxProject } from '@salesforce/core';
+import {
+  SfdxError,
+  SfdxProject
+} from '@salesforce/core';
 import xml2js = require('xml2js');
 import util = require('util');
-import { getPackageInfo, getDefaultPackageInfo } from '../../../../shared/getPackageInfo';
-import { searchFilesInDirectory } from '../../../../shared/searchFilesInDirectory';
+import {
+  getPackageInfo,
+  getDefaultPackageInfo
+} from '../../../../shared/getPackageInfo';
+import {
+  searchFilesInDirectory
+} from '../../../../shared/searchFilesInDirectory';
 import DiffUtil from "../../../../shared/diffutils";
-import { zipDirectory } from "../../../../shared/zipDirectory"
+import {
+  zipDirectory
+} from "../../../../shared/zipDirectory"
 
 var path = require('path');
 const spawn = require('child-process-promise').spawn;
@@ -20,9 +37,7 @@ core.Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages('sfpowerkit', 'apextestsuite_convert');
-
-
+const messages = core.Messages.loadMessages('sfpowerkit', 'source_picklist_generatepatch');
 
 
 export default class Generatepatch extends SfdxCommand {
@@ -33,23 +48,22 @@ export default class Generatepatch extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    `$ sfdx  sfpowerkit:source:picklist:generate -p Core 
-     Scanning for fields with picklist fields
-     Found 30 fields with picklist type
-     Generatign static resource file core_picklist.zip
+    `$ sfdx  sfpowerkit:source:picklist:generate -p Core -d src/core/main/default/objects/
+     Scanning for fields of type picklist
+     Found 30 fields of type picklist
+     Source was successfully converted to Metadata API format and written to the location: .../temp_sfpowerkit/mdapi
+     Generatign static resource file : src/core/main/default/staticresources/Core_picklist.resource-meta.xml
   `
   ];
 
-
   protected static flagsConfig = {
-    package: flags.string({ required: false, char: 'p', description: messages.getMessage('packageFlagDescription') }),
+    package: flags.string({required: false, char: 'p', description: messages.getMessage('packageFlagDescription') }),
+    objectsdir: flags.string({required: false, char: 'd', description: messages.getMessage('objectDirFlagDescription') }),
   };
-
-
-
 
   public async run(): Promise<AnyJson> {
 
+    //clean any existing temp sf powerkit source folder
     rimraf.sync('temp_sfpowerkit');
 
     // Getting Project config
@@ -62,23 +76,31 @@ export default class Generatepatch extends SfdxCommand {
       packageToBeUsed = getPackageInfo(projectJson, this.flags.package);
     else {
       packageToBeUsed = getDefaultPackageInfo(projectJson);
-      this.ux.logJson(packageToBeUsed.package);
     }
 
+    //set objects directory
+    let objectsDirPath;
+    if (this.flags.objectsdir)
+      objectsDirPath =  this.flags.objectsdir;
+    else {
+      objectsDirPath = packageToBeUsed.path + `/main/default/objects/`;
+    }
 
-    let customFieldsWithPicklist: any[] = searchFilesInDirectory(packageToBeUsed.path + `/main/default/objects/`, '<type>Picklist</type>', '.xml');
+    this.ux.log("Scanning for fields of type picklist");
 
-    if (customFieldsWithPicklist.length > 0) {
+    let customFieldsWithPicklist: any[] = searchFilesInDirectory(objectsDirPath, '<type>Picklist</type>', '.xml');
+
+    if (customFieldsWithPicklist && customFieldsWithPicklist.length > 0) {
+
+      this.ux.log("Found "+ `${customFieldsWithPicklist.length}` +" fields of type picklist");
+
       let diffUtils = new DiffUtil('0', '0');
-      this.ux.logJson(customFieldsWithPicklist);
 
       fs.mkdirSync('temp_sfpowerkit');
 
       customFieldsWithPicklist.forEach(file => {
         diffUtils.copyFile(file, 'temp_sfpowerkit');
       });
-
-
 
       var sfdx_project_json: string = `{
         "packageDirectories": [
@@ -91,7 +113,6 @@ export default class Generatepatch extends SfdxCommand {
         "sourceApiVersion": "46.0"
       }`
 
-      this.ux.log(sfdx_project_json);
       fs.outputFileSync('temp_sfpowerkit/sfdx-project.json', sfdx_project_json);
 
       //Convert to mdapi
@@ -101,14 +122,14 @@ export default class Generatepatch extends SfdxCommand {
       args.push(`${packageToBeUsed.path}`);
       args.push('-d');
       args.push(`mdapi`);
-      await spawn('sfdx', args, { stdio: 'inherit', cwd: 'temp_sfpowerkit' });
-
-
+      await spawn('sfdx', args, {
+        stdio: 'inherit',
+        cwd: 'temp_sfpowerkit'
+      });
 
       //Generate zip file
       var zipFile = 'temp_sfpowerkit/' + `${packageToBeUsed.package}` + '_picklist.zip';
       await zipDirectory('temp_sfpowerkit/mdapi', zipFile);
-
 
       //Create Static Resource Directory if not exist
       let dir = packageToBeUsed.path + `/main/default/staticresources/`;
@@ -117,7 +138,6 @@ export default class Generatepatch extends SfdxCommand {
       }
       fs.copyFileSync(zipFile, packageToBeUsed.path + `/main/default/staticresources/${packageToBeUsed.package}_picklist.zip`);
 
-
       //Store it to static resources
       var metadata: string = `<?xml version="1.0" encoding="UTF-8"?>
       <StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
@@ -125,24 +145,19 @@ export default class Generatepatch extends SfdxCommand {
           <contentType>application/zip</contentType>
       </StaticResource>`
       let targetmetadatapath = packageToBeUsed.path + `/main/default/staticresources/${packageToBeUsed.package}_picklist.resource-meta.xml`;
+
+      this.ux.log("Generatign static resource file : "+ `${targetmetadatapath}` );
+
       fs.outputFileSync(targetmetadatapath, metadata);
 
-
-
+      //clean temp sf powerkit source folder
+      rimraf.sync('temp_sfpowerkit');
+    }
+    else {
+      this.ux.log("No fields with type picklist found");
     }
 
-
-
-
     return 0;
-
   }
 
-
-
-
-
 }
-
-
-
