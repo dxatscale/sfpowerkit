@@ -48,7 +48,7 @@ export default class Generatepatch extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    `$ sfdx  sfpowerkit:source:picklist:generate -p Core -d src/core/main/default/objects/
+    `$ sfdx sfpowerkit:source:picklist:generatepatch -p Core -d src/core/main/default/objects/
      Scanning for fields of type picklist
      Found 30 fields of type picklist
      Source was successfully converted to Metadata API format and written to the location: .../temp_sfpowerkit/mdapi
