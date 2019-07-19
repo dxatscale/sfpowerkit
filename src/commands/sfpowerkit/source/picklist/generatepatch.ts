@@ -60,8 +60,7 @@ export default class Generatepatch extends SfdxCommand {
     let packageToBeUsed;
     if (this.flags.package)
       packageToBeUsed = getPackageInfo(projectJson, this.flags.package);
-    else
-    {
+    else {
       packageToBeUsed = getDefaultPackageInfo(projectJson);
       this.ux.logJson(packageToBeUsed.package);
     }
@@ -79,9 +78,9 @@ export default class Generatepatch extends SfdxCommand {
         diffUtils.copyFile(file, 'temp_sfpowerkit');
       });
 
-      
 
-      var sfdx_project_json:string = `{
+
+      var sfdx_project_json: string = `{
         "packageDirectories": [
           {
             "path": "${packageToBeUsed.path}",
@@ -93,33 +92,40 @@ export default class Generatepatch extends SfdxCommand {
       }`
 
       this.ux.log(sfdx_project_json);
-      fs.outputFileSync('temp_sfpowerkit/sfdx-project.json',sfdx_project_json);
+      fs.outputFileSync('temp_sfpowerkit/sfdx-project.json', sfdx_project_json);
 
       //Convert to mdapi
       const args = [];
-     args.push('force:source:convert');
-     args.push('-r');
-     args.push(`${packageToBeUsed.path}`);
-     args.push('-d');
-     args.push(`mdapi`);
-      await spawn('sfdx', args,  { stdio: 'inherit',   cwd: 'temp_sfpowerkit'} );
+      args.push('force:source:convert');
+      args.push('-r');
+      args.push(`${packageToBeUsed.path}`);
+      args.push('-d');
+      args.push(`mdapi`);
+      await spawn('sfdx', args, { stdio: 'inherit', cwd: 'temp_sfpowerkit' });
 
 
 
       //Generate zip file
-      var zipFile = 'temp_sfpowerkit/'+`${packageToBeUsed.package}`+'_picklist.zip';
+      var zipFile = 'temp_sfpowerkit/' + `${packageToBeUsed.package}` + '_picklist.zip';
       await zipDirectory('temp_sfpowerkit/mdapi', zipFile);
+
+
+      //Create Static Resource Directory if not exist
+      let dir = packageToBeUsed.path + `/main/default/staticresources/`;
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir);
+      }
       fs.copyFileSync(zipFile, packageToBeUsed.path + `/main/default/staticresources/${packageToBeUsed.package}_picklist.zip`);
 
 
       //Store it to static resources
-      var metadata:string = `<?xml version="1.0" encoding="UTF-8"?>
+      var metadata: string = `<?xml version="1.0" encoding="UTF-8"?>
       <StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
           <cacheControl>Public</cacheControl>
           <contentType>application/zip</contentType>
       </StaticResource>`
       let targetmetadatapath = packageToBeUsed.path + `/main/default/staticresources/${packageToBeUsed.package}_picklist.resource-meta.xml`;
-      fs.outputFileSync(targetmetadatapath,metadata);
+      fs.outputFileSync(targetmetadatapath, metadata);
 
 
 
