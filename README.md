@@ -694,7 +694,7 @@ EXAMPLE
   Scanning for fields of type picklist
   Found 30 fields of type picklist
   Source was successfully converted to Metadata API format and written to the location: .../temp_sfpowerkit/mdapi
-  Generatign static resource file : src/core/main/default/staticresources/Core_picklist.resource-meta.xml
+  Generating static resource file : src/core/main/default/staticresources/Core_picklist.resource-meta.xml
 ```
 _See code: [src\commands\sfpowerkit\source\picklist\generatepatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/picklist/generatepatch.ts)_
 
