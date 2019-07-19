@@ -531,7 +531,6 @@ Retrieves and applies the patch, Useful after a package upgrade in a CD Environm
 
 ```
 USAGE
-USAGE
   $ sfdx sfpowerkit:package:applypatch -n <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
