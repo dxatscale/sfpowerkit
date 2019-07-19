@@ -12,6 +12,7 @@ import DiffUtil from "../../../../shared/diffutils";
 import { zipDirectory } from "../../../../shared/zipDirectory"
 
 var path = require('path');
+const spawn = require('child-process-promise').spawn;
 
 
 // Initialize Messages with the current plugin directory
@@ -24,7 +25,7 @@ const messages = core.Messages.loadMessages('sfpowerkit', 'apextestsuite_convert
 
 
 
-export default class Generate extends SfdxCommand {
+export default class Generatepatch extends SfdxCommand {
 
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   protected static requiresProject = true;
@@ -60,14 +61,10 @@ export default class Generate extends SfdxCommand {
     if (this.flags.package)
       packageToBeUsed = getPackageInfo(projectJson, this.flags.package);
     else
+    {
       packageToBeUsed = getDefaultPackageInfo(projectJson);
-
-
-
-    //Check for the apextestsuite in the path
-    // let apextestsuite_file_path = packageToBeUsed.path + `/main/default/testsuites/${this.flags.name}.testSuite-meta.xml`;
-    // if(this.flags.pathOverride)
-    // apextestsuite_file_path = packageToBeUsed.path +  this.flags.pathOverride + `/testsuites/${this.flags.name}.testSuite-meta.xml`;
+      this.ux.logJson(packageToBeUsed.package);
+    }
 
 
     let customFieldsWithPicklist: any[] = searchFilesInDirectory(packageToBeUsed.path + `/main/default/objects/`, '<type>Picklist</type>', '.xml');
@@ -82,22 +79,49 @@ export default class Generate extends SfdxCommand {
         diffUtils.copyFile(file, 'temp_sfpowerkit');
       });
 
-    
+      
 
-      var zipFile = 'temp_sfpowerkit/'+`${this.flags.package}`+'_picklist.zip';
-      await zipDirectory('temp_sfpowerkit', zipFile);
-      fs.copyFileSync(zipFile, packageToBeUsed.path + `/main/default/staticresources/${this.flags.package}_picklist.zip`);
+      var sfdx_project_json:string = `{
+        "packageDirectories": [
+          {
+            "path": "${packageToBeUsed.path}",
+            "default": true
+          }
+        ],
+        "namespace": "",
+        "sourceApiVersion": "46.0"
+      }`
+
+      this.ux.log(sfdx_project_json);
+      fs.outputFileSync('temp_sfpowerkit/sfdx-project.json',sfdx_project_json);
+
+      //Convert to mdapi
+      const args = [];
+     args.push('force:source:convert');
+     args.push('-r');
+     args.push(`${packageToBeUsed.path}`);
+     args.push('-d');
+     args.push(`mdapi`);
+      await spawn('sfdx', args,  { stdio: 'inherit',   cwd: 'temp_sfpowerkit'} );
 
 
+
+      //Generate zip file
+      var zipFile = 'temp_sfpowerkit/'+`${packageToBeUsed.package}`+'_picklist.zip';
+      await zipDirectory('temp_sfpowerkit/mdapi', zipFile);
+      fs.copyFileSync(zipFile, packageToBeUsed.path + `/main/default/staticresources/${packageToBeUsed.package}_picklist.zip`);
+
+
+      //Store it to static resources
       var metadata:string = `<?xml version="1.0" encoding="UTF-8"?>
       <StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
           <cacheControl>Public</cacheControl>
           <contentType>application/zip</contentType>
       </StaticResource>`
-
-
-      let targetmetadatapath = packageToBeUsed.path + `/main/default/staticresources/${this.flags.package}_picklist.resource-meta.xml`;
+      let targetmetadatapath = packageToBeUsed.path + `/main/default/staticresources/${packageToBeUsed.package}_picklist.resource-meta.xml`;
       fs.outputFileSync(targetmetadatapath,metadata);
+
+
 
     }
 
