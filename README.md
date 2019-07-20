@@ -690,13 +690,38 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx  sfpowerkit:source:picklist:generate -p Core -d src/core/main/default/objects/
+  $ sfdx sfpowerkit:source:picklist:generatepatch -p Core -d src/core/main/default/objects/
   Scanning for fields of type picklist
   Found 30 fields of type picklist
   Source was successfully converted to Metadata API format and written to the location: .../temp_sfpowerkit/mdapi
   Generating static resource file : src/core/main/default/staticresources/Core_picklist.resource-meta.xml
 ```
 _See code: [src\commands\sfpowerkit\source\picklist\generatepatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/picklist/generatepatch.ts)_
+
+
+## `sfpowerkit:source:permissionset:generatepatch`
+
+Search permissionsets inside project and create a static resource file with permissionsets, used to solve the recordtype assignment upgrade issue in dx unlock package
+
+```
+USAGE
+  $ sfdx sfpowerkit:source:permissionset:generatepatch [-p <string>] [-d <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -d, --permsetdir=permsetdir                                                       Path for permissionset folder located in project
+  -p, --package=package                                                             Name of the package to generate the permissionset patch
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:source:permissionset:generatepatch -p Core -d src/core/main/default/permissionsets
+  Scanning for permissionsets
+  Found 30 permissionsets
+  Source was successfully converted to Metadata API format and written to the location: .../temp_sfpowerkit/mdapi
+  Generating static resource file : src/core/main/default/staticresources/Core_permissionsets.resource-meta.xml
+```
+_See code: [src\commands\sfpowerkit\source\permissionset\generatepatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/permissionset/generatepatch.ts)_
 
 
 ## `sfpowerkit:project:diff`

@@ -21,7 +21,7 @@ import {
   getDefaultPackageInfo
 } from '../../../../shared/getPackageInfo';
 import {
-  searchFilesInDirectory
+  getFilesInDirectory
 } from '../../../../shared/searchFilesInDirectory';
 import DiffUtil from "../../../../shared/diffutils";
 import {
@@ -37,7 +37,7 @@ core.Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages('sfpowerkit', 'source_picklist_generatepatch');
+const messages = core.Messages.loadMessages('sfpowerkit', 'source_permissionset_generatepatch');
 
 
 export default class Generatepatch extends SfdxCommand {
@@ -48,17 +48,17 @@ export default class Generatepatch extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    `$ sfdx sfpowerkit:source:picklist:generatepatch -p Core -d src/core/main/default/objects/
-     Scanning for fields of type picklist
-     Found 30 fields of type picklist
+    `$ sfdx sfpowerkit:source:permissionset:generatepatch -p Core -d src/core/main/default/permissionsets
+     Scanning for permissionsets
+     Found 30 permissionsets
      Source was successfully converted to Metadata API format and written to the location: .../temp_sfpowerkit/mdapi
-     Generating static resource file : src/core/main/default/staticresources/Core_picklist.resource-meta.xml
+     Generating static resource file : src/core/main/default/staticresources/Core_permissionsets.resource-meta.xml
   `
   ];
 
   protected static flagsConfig = {
     package: flags.string({required: false, char: 'p', description: messages.getMessage('packageFlagDescription') }),
-    objectsdir: flags.string({required: false, char: 'd', description: messages.getMessage('objectDirFlagDescription') }),
+    permsetdir: flags.string({required: false, char: 'd', description: messages.getMessage('permsetDirFlagDescription') }),
   };
 
   public async run(): Promise<AnyJson> {
@@ -78,27 +78,27 @@ export default class Generatepatch extends SfdxCommand {
       packageToBeUsed = getDefaultPackageInfo(projectJson);
     }
 
-    //set objects directory
-    let objectsDirPath;
-    if (this.flags.objectsdir)
-      objectsDirPath =  this.flags.objectsdir;
+    //set permset directory
+    let permsetDirPath;
+    if (this.flags.permsetdir)
+      permsetDirPath =  this.flags.permsetdir;
     else {
-      objectsDirPath = packageToBeUsed.path + `/main/default/objects/`;
+      permsetDirPath = packageToBeUsed.path + `/main/default/permissionsets/`;
     }
 
-    this.ux.log("Scanning for fields of type picklist");
+    this.ux.log("Scanning for Permissionsets");
 
-    let customFieldsWithPicklist: any[] = searchFilesInDirectory(objectsDirPath, '<type>Picklist</type>', '.xml');
+    let permissionsetList: any[] = getFilesInDirectory(permsetDirPath , '.xml');
+    
+    if (permissionsetList && permissionsetList.length > 0) {
 
-    if (customFieldsWithPicklist && customFieldsWithPicklist.length > 0) {
-
-      this.ux.log("Found "+ `${customFieldsWithPicklist.length}` +" fields of type picklist");
+      this.ux.log("Found "+ `${permissionsetList.length}` +" Permissionsets");
 
       let diffUtils = new DiffUtil('0', '0');
 
       fs.mkdirSync('temp_sfpowerkit');
 
-      customFieldsWithPicklist.forEach(file => {
+      permissionsetList.forEach(file => {
         diffUtils.copyFile(file, 'temp_sfpowerkit');
       });
 
@@ -128,7 +128,7 @@ export default class Generatepatch extends SfdxCommand {
       });
 
       //Generate zip file
-      var zipFile = 'temp_sfpowerkit/' + `${packageToBeUsed.package}` + '_picklist.zip';
+      var zipFile = 'temp_sfpowerkit/' + `${packageToBeUsed.package}` + '_permissionsets.zip';
       await zipDirectory('temp_sfpowerkit/mdapi', zipFile);
 
       //Create Static Resource Directory if not exist
@@ -136,7 +136,7 @@ export default class Generatepatch extends SfdxCommand {
       if (!fs.existsSync(dir)) {
         fs.mkdirSync(dir);
       }
-      fs.copyFileSync(zipFile, packageToBeUsed.path + `/main/default/staticresources/${packageToBeUsed.package}_picklist.zip`);
+      fs.copyFileSync(zipFile, packageToBeUsed.path + `/main/default/staticresources/${packageToBeUsed.package}_permissionsets.zip`);
 
       //Store it to static resources
       var metadata: string = `<?xml version="1.0" encoding="UTF-8"?>
@@ -144,7 +144,7 @@ export default class Generatepatch extends SfdxCommand {
           <cacheControl>Public</cacheControl>
           <contentType>application/zip</contentType>
       </StaticResource>`
-      let targetmetadatapath = packageToBeUsed.path + `/main/default/staticresources/${packageToBeUsed.package}_picklist.resource-meta.xml`;
+      let targetmetadatapath = packageToBeUsed.path + `/main/default/staticresources/${packageToBeUsed.package}_permissionsets.resource-meta.xml`;
 
       this.ux.log("Generating static resource file : "+ `${targetmetadatapath}` );
 
@@ -154,7 +154,7 @@ export default class Generatepatch extends SfdxCommand {
       rimraf.sync('temp_sfpowerkit');
     }
     else {
-      this.ux.log("No fields with type picklist found");
+      this.ux.log("No permissionsets found");
     }
 
     return 0;
