@@ -28,7 +28,7 @@ export default class Applypatch extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    `$ sfdx  sfpowerkit:package:applypatch -n customer_picklist -u sandbox
+    `$ sfdx sfpowerkit:package:applypatch -n customer_picklist -u sandbox
     Preparing Patch
     Deploying Patch with ID  0Af4Y000003Q7GySAK
     Polling for Deployment Status
@@ -39,7 +39,6 @@ export default class Applypatch extends SfdxCommand {
 
   protected static flagsConfig = {
     name: flags.string({ required: true, char: 'n', description: messages.getMessage('nameFlagDescription') }),
-
   };
 
   // Comment this out if your command does not require an org username
@@ -109,7 +108,7 @@ export default class Applypatch extends SfdxCommand {
 
     }
     else {
-      throw new SfdxError("Patch not found in the org")
+      this.ux.log("Patch not found in the org");
     }
 
   }

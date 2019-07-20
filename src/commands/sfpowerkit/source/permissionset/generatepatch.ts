@@ -53,6 +53,7 @@ export default class Generatepatch extends SfdxCommand {
      Found 30 permissionsets
      Source was successfully converted to Metadata API format and written to the location: .../temp_sfpowerkit/mdapi
      Generating static resource file : src/core/main/default/staticresources/Core_permissionsets.resource-meta.xml
+     Patch Core_permissionsets generated successfully.
   `
   ];
 
@@ -149,6 +150,8 @@ export default class Generatepatch extends SfdxCommand {
       this.ux.log("Generating static resource file : "+ `${targetmetadatapath}` );
 
       fs.outputFileSync(targetmetadatapath, metadata);
+
+      this.ux.log(`Patch ${packageToBeUsed.package}_permissionsets generated successfully.`);
 
       //clean temp sf powerkit source folder
       rimraf.sync('temp_sfpowerkit');
