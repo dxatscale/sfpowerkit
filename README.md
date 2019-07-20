@@ -695,6 +695,7 @@ EXAMPLE
   Found 30 fields of type picklist
   Source was successfully converted to Metadata API format and written to the location: .../temp_sfpowerkit/mdapi
   Generating static resource file : src/core/main/default/staticresources/Core_picklist.resource-meta.xml
+  Patch Core_picklist generated successfully.
 ```
 _See code: [src\commands\sfpowerkit\source\picklist\generatepatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/picklist/generatepatch.ts)_
 
@@ -720,6 +721,7 @@ EXAMPLE
   Found 30 permissionsets
   Source was successfully converted to Metadata API format and written to the location: .../temp_sfpowerkit/mdapi
   Generating static resource file : src/core/main/default/staticresources/Core_permissionsets.resource-meta.xml
+  Patch Core_permissionsets generated successfully.
 ```
 _See code: [src\commands\sfpowerkit\source\permissionset\generatepatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/permissionset/generatepatch.ts)_
 
