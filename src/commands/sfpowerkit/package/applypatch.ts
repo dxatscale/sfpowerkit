@@ -77,7 +77,7 @@ export default class Applypatch extends SfdxCommand {
     fs.mkdirSync('temp_sfpowerkit');
     fs.writeFileSync(zipFileName, metadata_retrieve_result.zipFile, { encoding: 'base64' });
 
-    if (fs.existsSync(path.resolve(zipFileName))) {
+    if ( fs.existsSync(path.resolve(zipFileName))) {
 
       await extract('temp_sfpowerkit');
       fs.unlinkSync(zipFileName);
@@ -108,7 +108,7 @@ export default class Applypatch extends SfdxCommand {
 
     }
     else {
-      this.ux.log(`Patch ${this.flags.name} not found in the org`);
+      throw new SfdxError("Patch not found in the org")
     }
 
   }
