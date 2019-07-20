@@ -21,7 +21,7 @@ import {
   getDefaultPackageInfo
 } from '../../../../shared/getPackageInfo';
 import {
-  getFilesInDirectory
+  searchFilesInDirectory
 } from '../../../../shared/searchFilesInDirectory';
 import DiffUtil from "../../../../shared/diffutils";
 import {
@@ -89,7 +89,7 @@ export default class Generatepatch extends SfdxCommand {
 
     this.ux.log("Scanning for Permissionsets");
 
-    let permissionsetList: any[] = getFilesInDirectory(permsetDirPath , '.xml');
+    let permissionsetList: any[] = searchFilesInDirectory(permsetDirPath , '</PermissionSet>' ,'.xml');
     
     if (permissionsetList && permissionsetList.length > 0) {
 
