@@ -108,7 +108,7 @@ export default class Applypatch extends SfdxCommand {
 
     }
     else {
-      this.ux.log("Patch not found in the org");
+      this.ux.log(`Patch ${this.flags.name} not found in the org`);
     }
 
   }
