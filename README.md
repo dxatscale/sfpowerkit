@@ -677,7 +677,7 @@ EXAMPLE
 
 ## `sfpowerkit:source:picklist:generatepatch`
 
-Search picklist fields inside project and create a static resource file with picklist fields, used to solve the picklist upgrade issue in dx unlock package
+Search picklist fields from Standatd/ custom objects inside project and create a static resource file with picklist fields, used to solve the picklist upgrade issue in dx unlock package. Custom metadata picklist fields will be ignored. 
 
 ```
 USAGE

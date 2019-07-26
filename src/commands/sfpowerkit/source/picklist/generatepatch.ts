@@ -103,6 +103,7 @@ export default class Generatepatch extends SfdxCommand {
         diffUtils.copyFile(file, 'temp_sfpowerkit');
       });
 
+      // sfdx project json file running force source command  
       var sfdx_project_json: string = `{
         "packageDirectories": [
           {
@@ -115,6 +116,11 @@ export default class Generatepatch extends SfdxCommand {
       }`
 
       fs.outputFileSync('temp_sfpowerkit/sfdx-project.json', sfdx_project_json);
+
+      //force ignore file to ignore custom metadata
+      var forceIgnoreFile: string = `*__mdt/`;
+
+      fs.outputFileSync('temp_sfpowerkit/.forceignore', forceIgnoreFile);
 
       //Convert to mdapi
       const args = [];
