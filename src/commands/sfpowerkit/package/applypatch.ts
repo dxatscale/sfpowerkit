@@ -67,48 +67,55 @@ export default class Applypatch extends SfdxCommand {
       retrievedId = result.id;
     });
 
+    //Retrieve Patch
     let metadata_retrieve_result = await checkRetrievalStatus(conn, retrievedId);
     if (!metadata_retrieve_result.zipFile)
       throw new SfdxError("Unable to find the requested Static Resource");
 
-    //Retrieve Patch
-    this.ux.log(`Preparing Patch`);
+    //adding to temp_sfpowerkit folder
     var zipFileName = "temp_sfpowerkit/unpackaged.zip";
     fs.mkdirSync('temp_sfpowerkit');
     fs.writeFileSync(zipFileName, metadata_retrieve_result.zipFile, { encoding: 'base64' });
 
-    if ( fs.existsSync(path.resolve(zipFileName))) {
+    if (fs.existsSync(path.resolve(zipFileName))) {
 
       await extract('temp_sfpowerkit');
       fs.unlinkSync(zipFileName);
 
       let resultFile = `temp_sfpowerkit/staticresources/${this.flags.name}.resource`;
 
-      fs.copyFileSync(resultFile, `temp_sfpowerkit/unpackaged.zip`);
+      if (fs.existsSync(path.resolve(resultFile))) {
+        this.ux.log(`Preparing Patch`);
+        fs.copyFileSync(resultFile, `temp_sfpowerkit/unpackaged.zip`);
 
-      //Deploy patch using mdapi
-      conn.metadata.pollTimeout = 300;
-      let deployId: AsyncResult;
+        //Deploy patch using mdapi
+        conn.metadata.pollTimeout = 300;
+        let deployId: AsyncResult;
 
-      var zipStream = fs.createReadStream(zipFileName);
-      await conn.metadata.deploy(zipStream, { rollbackOnError: true, singlePackage: true }, function (error, result: AsyncResult) {
-        if (error) { return console.error(error); }
-        deployId = result;
-      });
+        var zipStream = fs.createReadStream(zipFileName);
+        await conn.metadata.deploy(zipStream, { rollbackOnError: true, singlePackage: true }, function (error, result: AsyncResult) {
+          if (error) { return console.error(error); }
+          deployId = result;
+        });
 
-      this.ux.log(`Deploying Patch with ID  ${deployId.id}`);
-      let metadata_deploy_result: DeployResult = await checkDeploymentStatus(conn, deployId.id);
+        this.ux.log(`Deploying Patch with ID  ${deployId.id}`);
+        let metadata_deploy_result: DeployResult = await checkDeploymentStatus(conn, deployId.id);
 
-      if (!metadata_deploy_result.success)
-        throw new SfdxError("Unable to deploy the Patch");
+        if (!metadata_deploy_result.success)
+          throw new SfdxError("Unable to deploy the Patch");
 
-      this.ux.log(`Patch ${this.flags.name} Deployed successfully.`);
-      rimraf.sync('temp_sfpowerkit');
-      return { 'status': 1 };
-
+        this.ux.log(`Patch ${this.flags.name} Deployed successfully.`);
+        rimraf.sync('temp_sfpowerkit');
+        return { 'status': 1 };
+      }
+      else {
+        this.ux.log(`Patch ${this.flags.name} not found in the org`);
+        rimraf.sync('temp_sfpowerkit');
+      }
     }
     else {
-      throw new SfdxError("Patch not found in the org")
+      this.ux.log(`Patch ${this.flags.name} not found in the org`);
+      rimraf.sync('temp_sfpowerkit');
     }
 
   }
