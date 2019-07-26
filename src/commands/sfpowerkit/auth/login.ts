@@ -30,7 +30,7 @@ export default class Login extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    `$ sfdx  sfpowerkit:auth:login -u azlam@sfdc.com -p Xasdax2w2  -a prod
+    `$ sfdx sfpowerkit:auth:login -u azlam@sfdc.com -p Xasdax2w2  -a prod
       Authorized to azlam@sfdc.com
   `
   ];

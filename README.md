@@ -37,7 +37,7 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $  sfdx  sfpowerkit:auth:login -u azlam@sfdc.com -p Xasdax2w2  -a prod
+  $  sfdx sfpowerkit:auth:login -u azlam@sfdc.com -p Xasdax2w2  -a prod
      Authorized to azlam@sfdc.com
    
 ```
@@ -69,7 +69,7 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx  sfpowerkit:org:connectedapp:create -u myOrg@example.com -n AzurePipelines -c id_rsa -e 
+  $ sfdx sfpowerkit:org:connectedapp:create -u myOrg@example.com -n AzurePipelines -c id_rsa -e 
   azlam.salamm@invalid.com
      Created Connected App AzurePipelines in Target Org
 ```
@@ -96,7 +96,7 @@ OPTIONS
                                                   command invocation
 
 EXAMPLE
-  $ sfdx  sfpowerkit:org:connectedapp:retrieve -u azlam@sfdc.com -p Xasdax2w2 -n
+  $ sfdx sfpowerkit:org:connectedapp:retrieve -u azlam@sfdc.com -p Xasdax2w2 -n
   AzurePipelines
      Retrived AzurePipelines Consumer Key : XSD21Sd23123w21321
 ```
@@ -124,7 +124,7 @@ OPTIONS
                                                   command invocation
 
 EXAMPLE
-    $ sfdx  sfpowerkit:org:duplicaterule:deactivate -n Account.CRM_Account_Rule_1 -u sandbox
+    $ sfdx sfpowerkit:org:duplicaterule:deactivate -n Account.CRM_Account_Rule_1 -u sandbox
        Polling for Retrieval Status
        Retrieved Duplicate Rule  with label : CRM Account Rule 2
        Preparing Deactivation
@@ -155,7 +155,7 @@ OPTIONS
                                                   command invocation
 
 EXAMPLE
-    $ sfdx  sfpowerkit:org:matchingrule:deactivate -n Account -u sandbox
+    $ sfdx sfpowerkit:org:matchingrule:deactivate -n Account -u sandbox
        Polling for Retrieval Status
        Retrieved Matching Rule  for Object : Account
        Preparing Deactivation
@@ -189,7 +189,7 @@ OPTIONS
                                                   command invocation
 
 EXAMPLE
-    $ sfdx  sfpowerkit:org:orgwideemail:create -e test@example.com -n TestEmail -p -u sandbox
+    $ sfdx sfpowerkit:org:orgwideemail:create -e test@example.com -n TestEmail -p -u sandbox
       Creating email test@example.com
       Org wide email created with Id 0D20E00000003wtSAA
       Run the folowing command to verify it
@@ -218,7 +218,7 @@ OPTIONS
                                                   command invocation
 
 EXAMPLE
-    $ sfdx  sfpowerkit:org:orgwideemail:verify -i 0D20E00000003wtSAA -u sandbox
+    $ sfdx sfpowerkit:org:orgwideemail:verify -i 0D20E00000003wtSAA -u sandbox
       Verify email 0D21l0000008QgYCAU
       Org wide email address verified
 ```
@@ -245,7 +245,7 @@ OPTIONS
                                                   command invocation
 
 EXAMPLE
-    $ sfdx  sfpowerkit:org:trigger:deactivate -n AccountTrigger -u sandbox
+    $ sfdx sfpowerkit:org:trigger:deactivate -n AccountTrigger -u sandbox
     Polling for Retrieval Status
     Preparing Deactivation
     Deploying Deactivated ApexTrigger with ID  0Af4Y000003Q7GySAK
@@ -275,7 +275,7 @@ OPTIONS
                                                   command invocation
 
 EXAMPLE
-    $ sfdx  sfpowerkit:org:trigger:deactivate -n AccountTrigger -u sandbox
+    $ sfdx sfpowerkit:org:trigger:deactivate -n AccountTrigger -u sandbox
     Polling for Retrieval Status
     Preparing Activation
     Deploying Activated ApexTrigger with ID  0Af4Y000003Q7GySAK
@@ -542,7 +542,7 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx  sfpowerkit:package:applypatch -n customer_picklist -u sandbox
+  $ sfdx sfpowerkit:package:applypatch -n customer_picklist -u sandbox
   Preparing Patch
   Deploying Patch with ID  0Af4Y000003Q7GySAK
   Polling for Deployment Status
@@ -620,7 +620,7 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx  sfpowerkit:source:customlabel:create -u fancyScratchOrg1 -n FlashError -v "Memory leaks aren't for the faint hearted" -s "A flashing 
+  $ sfdx sfpowerkit:source:customlabel:create -u fancyScratchOrg1 -n FlashError -v "Memory leaks aren't for the faint hearted" -s "A flashing 
   error"
      Created CustomLabel FlashError in Target Org
 ```
@@ -648,7 +648,7 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx  sfpowerkit:source:customlabel:clean -p path/to/customlabelfile.xml
+  $ sfdx sfpowerkit:source:customlabel:clean -p path/to/customlabelfile.xml
        Cleaned The Custom Labels
 ``
 ```
@@ -659,7 +659,7 @@ Converts an apex test suite to its consituent apex classes as a single line sepa
 
 ```
 USAGE
-  $ sfdx  sfpowerkit:source:apextestsuite:convert  -n <string> [  -p <string> ] [  -o <string> ] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+  $ sfdx sfpowerkit:source:apextestsuite:convert  -n <string> [  -p <string> ] [  -o <string> ] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
   -n, --name=name                                 (required) the name of the apextestsuite (the file name minus the apex test suite)
@@ -671,7 +671,7 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $  sfdx  sfpowerkit:source:apextestsuite:convert -n MyApexTestSuite 
+  $  sfdx sfpowerkit:source:apextestsuite:convert -n MyApexTestSuite 
     "ABC2,ABC1Test"    
 ```
 
@@ -732,7 +732,7 @@ Generate a subset of the project base on a diff file generated by a git diff --r
 ```
 
 USAGE
-  $ sfdx  sfpowerkit:project:diff  -d <string> [-f <string>] [  -e <string> ] [  -r <string> ] [  -t <string> ] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+  $ sfdx sfpowerkit:project:diff  -d <string> [-f <string>] [  -e <string> ] [  -r <string> ] [  -t <string> ] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
   -d, --output=output                             (required) the output dir where the files will be placed
