@@ -33,7 +33,7 @@ export default class Deactivate extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    `$ sfdx  sfpowerkit:org:trigger:deactivate -n AccountTrigger -u sandbox
+    `$ sfdx sfpowerkit:org:trigger:deactivate -n AccountTrigger -u sandbox
     Polling for Retrieval Status
     Preparing Deactivation
     Deploying Deactivated ApexTrigger with ID  0Af4Y000003Q7GySAK

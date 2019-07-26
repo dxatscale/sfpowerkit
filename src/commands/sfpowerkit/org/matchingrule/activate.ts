@@ -32,7 +32,7 @@ export default class Activate extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    `$ sfdx  sfpowerkit:org:matchingrules:activate -n Account -u sandbox
+    `$ sfdx sfpowerkit:org:matchingrules:activate -n Account -u sandbox
     Polling for Retrieval Status
     Retrieved Matching Rule  for Object : Account
     Preparing Activation

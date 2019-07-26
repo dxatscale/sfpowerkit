@@ -28,7 +28,7 @@ export default class Clean extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    `$ sfdx  sfpowerkit:source:customlabel:clean -p path/to/customlabelfile.xml
+    `$ sfdx sfpowerkit:source:customlabel:clean -p path/to/customlabelfile.xml
     Cleaned The Custom Labels
 `
   ];
