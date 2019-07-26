@@ -32,7 +32,7 @@ export default class Activate extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    `$ sfdx  sfpowerkit:org:trigger:activate -n AccountTrigger -u sandbox
+    `$ sfdx sfpowerkit:org:trigger:activate -n AccountTrigger -u sandbox
     Polling for Retrieval Status
     Preparing Activation
     Deploying Activated ApexTrigger with ID  0Af4Y000003Q7GySAK

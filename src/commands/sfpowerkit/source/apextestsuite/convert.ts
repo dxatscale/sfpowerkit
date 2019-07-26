@@ -28,7 +28,7 @@ export default class Convert extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    `$ sfdx  sfpowerkit:source:apextestsuite:convert -n MyApexTestSuite 
+    `$ sfdx sfpowerkit:source:apextestsuite:convert -n MyApexTestSuite 
     "ABC2,ABC1Test"    
   `
   ];

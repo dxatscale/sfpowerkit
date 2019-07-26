@@ -33,7 +33,7 @@ export default class Deactivate extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    `$ sfdx  sfpowerkit:org:duplicaterule:deactivate -n Account.CRM_Account_Rule_1 -u sandbox
+    `$ sfdx sfpowerkit:org:duplicaterule:deactivate -n Account.CRM_Account_Rule_1 -u sandbox
     Polling for Retrieval Status
     Retrieved Duplicate Rule  with label : CRM Account Rule 2
     Preparing Deactivation
