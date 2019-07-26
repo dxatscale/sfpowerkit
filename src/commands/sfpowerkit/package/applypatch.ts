@@ -109,12 +109,12 @@ export default class Applypatch extends SfdxCommand {
         return { 'status': 1 };
       }
       else {
-        this.ux.log("Patch not found in the org")
+        this.ux.log(`Patch ${this.flags.name} not found in the org`);
         rimraf.sync('temp_sfpowerkit');
       }
     }
     else {
-      this.ux.log("Patch not found in the org")
+      this.ux.log(`Patch ${this.flags.name} not found in the org`);
       rimraf.sync('temp_sfpowerkit');
     }
 
