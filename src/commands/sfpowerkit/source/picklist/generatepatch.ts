@@ -10,6 +10,7 @@ import { searchFilesInDirectory } from '../../../../shared/searchFilesInDirector
 import DiffUtil from "../../../../shared/diffutils";
 import { zipDirectory } from "../../../../shared/zipDirectory"
 import { getSafe } from '../../../../shared/getSafe';
+import { runInThisContext } from 'vm';
 
 var path = require('path');
 const spawn = require('child-process-promise').spawn;
@@ -78,8 +79,10 @@ export default class Generatepatch extends SfdxCommand {
 
       this.ux.log("Found " + `${customFieldsWithPicklist.length}` + " fields of type picklist");
 
-      let diffUtils = new DiffUtil('0', '0');
+      this.ux.log('Processing and adding the following fields to patch');
 
+      let diffUtils = new DiffUtil('0', '0');
+        
       
       let count=0;
       for (const file of customFieldsWithPicklist) {
@@ -95,6 +98,7 @@ export default class Generatepatch extends SfdxCommand {
            if(!String(file).includes('__mdt\\fields'))
            {
            count++;
+           this.ux.log(file);
            diffUtils.copyFile(file, 'temp_sfpowerkit');
            }
         }
