@@ -1,32 +1,15 @@
-import {
-  AnyJson,
-  JsonArray,
-  asJsonArray
-} from '@salesforce/ts-types';
+import { AnyJson, JsonArray, asJsonArray } from '@salesforce/ts-types';
 import fs from 'fs-extra';
-import {
-  core,
-  flags,
-  SfdxCommand
-} from '@salesforce/command';
+import { core, flags, SfdxCommand } from '@salesforce/command';
 import rimraf = require('rimraf');
-import {
-  SfdxError,
-  SfdxProject
-} from '@salesforce/core';
+import { SfdxError, SfdxProject } from '@salesforce/core';
 import xml2js = require('xml2js');
 import util = require('util');
-import {
-  getPackageInfo,
-  getDefaultPackageInfo
-} from '../../../../shared/getPackageInfo';
-import {
-  searchFilesInDirectory
-} from '../../../../shared/searchFilesInDirectory';
+import { getPackageInfo, getDefaultPackageInfo } from '../../../../shared/getPackageInfo';
+import { searchFilesInDirectory } from '../../../../shared/searchFilesInDirectory';
 import DiffUtil from "../../../../shared/diffutils";
-import {
-  zipDirectory
-} from "../../../../shared/zipDirectory"
+import { zipDirectory } from "../../../../shared/zipDirectory"
+import { getSafe } from '../../../../shared/getSafe';
 
 var path = require('path');
 const spawn = require('child-process-promise').spawn;
@@ -58,8 +41,8 @@ export default class Generatepatch extends SfdxCommand {
   ];
 
   protected static flagsConfig = {
-    package: flags.string({required: false, char: 'p', description: messages.getMessage('packageFlagDescription') }),
-    objectsdir: flags.string({required: false, char: 'd', description: messages.getMessage('objectDirFlagDescription') }),
+    package: flags.string({ required: false, char: 'p', description: messages.getMessage('packageFlagDescription') }),
+    objectsdir: flags.string({ required: false, char: 'd', description: messages.getMessage('objectDirFlagDescription') }),
   };
 
   public async run(): Promise<AnyJson> {
@@ -82,7 +65,7 @@ export default class Generatepatch extends SfdxCommand {
     //set objects directory
     let objectsDirPath;
     if (this.flags.objectsdir)
-      objectsDirPath =  this.flags.objectsdir;
+      objectsDirPath = this.flags.objectsdir;
     else {
       objectsDirPath = packageToBeUsed.path + `/main/default/objects/`;
     }
@@ -93,15 +76,32 @@ export default class Generatepatch extends SfdxCommand {
 
     if (customFieldsWithPicklist && customFieldsWithPicklist.length > 0) {
 
-      this.ux.log("Found "+ `${customFieldsWithPicklist.length}` +" fields of type picklist");
+      this.ux.log("Found " + `${customFieldsWithPicklist.length}` + " fields of type picklist");
 
       let diffUtils = new DiffUtil('0', '0');
 
-      fs.mkdirSync('temp_sfpowerkit');
+      
+      let count=0;
+      for (const file of customFieldsWithPicklist) {
 
-      customFieldsWithPicklist.forEach(file => {
-        diffUtils.copyFile(file, 'temp_sfpowerkit');
-      });
+        
+        const parser = new xml2js.Parser({ explicitArray: false });
+        const parseString = util.promisify(parser.parseString);
+        let field_metadata = await parseString(fs.readFileSync(path.resolve(file)));
+        let controllingField:string = getSafe(()=>field_metadata.CustomField.valueSet.controllingField,undefined);
+        if(controllingField == undefined  || controllingField.endsWith('__c'))
+        {
+ 
+           if(!String(file).includes('__mdt\\fields'))
+           {
+           count++;
+           diffUtils.copyFile(file, 'temp_sfpowerkit');
+           }
+        }
+      }
+
+      this.ux.log(`Added  ${count} fields of field type picklist into patch after'removing fields that have standardvalue sets as controlling type and picklist fields in cmdt objects`);
+
 
       // sfdx project json file running force source command  
       var sfdx_project_json: string = `{
@@ -153,7 +153,7 @@ export default class Generatepatch extends SfdxCommand {
       </StaticResource>`
       let targetmetadatapath = packageToBeUsed.path + `/main/default/staticresources/${packageToBeUsed.package}_picklist.resource-meta.xml`;
 
-      this.ux.log("Generating static resource file : "+ `${targetmetadatapath}` );
+      this.ux.log("Generating static resource file : " + `${targetmetadatapath}`);
 
       fs.outputFileSync(targetmetadatapath, metadata);
 
