@@ -1,5 +1,6 @@
 {
   "commandDescription": "Search picklist fields inside project and create a static resource file with picklist fields, used to solve the picklist upgrade issue in dx unlock package",
   "packageFlagDescription": "Name of the package to generate the picklist patch",
-  "objectDirFlagDescription": "Path for Objects folder located in project"
+  "objectDirFlagDescription": "Path for Objects folder located in project",
+  "fixStandardValueSetDescription":"Consider patching for standard value set controlled picklists, Warning: This modifies the source code in your package"
 }
