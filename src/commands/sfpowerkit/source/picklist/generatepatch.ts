@@ -46,10 +46,26 @@ export default class Generatepatch extends SfdxCommand {
     objectsdir: flags.string({ required: false, char: 'd', description: messages.getMessage('objectDirFlagDescription') }),
   };
 
+  private static dummpyPickListMetadata: string =
+    `{
+    "restricted": "true",
+    "valueSetDefinition": {
+      "sorted": "false",
+      "value": {
+        "fullName": "dummy_sfpowerkit",
+        "default": "false",
+        "label": "dummy_sfpowerkit"
+      }
+    }
+  }`;
+
   public async run(): Promise<AnyJson> {
 
     //clean any existing temp sf powerkit source folder
     rimraf.sync('temp_sfpowerkit');
+
+
+    //
 
     // Getting Project config
     const project = await SfdxProject.resolve();
@@ -82,31 +98,51 @@ export default class Generatepatch extends SfdxCommand {
       this.ux.log('Processing and adding the following fields to patch');
 
       let diffUtils = new DiffUtil('0', '0');
-        
-      
-      let count=0;
+
+
+      let in_patch_count = 0;
+      let modified_source_count=0;
       for (const file of customFieldsWithPicklist) {
 
-        
+
+      
+
         const parser = new xml2js.Parser({ explicitArray: false });
         const parseString = util.promisify(parser.parseString);
         let field_metadata = await parseString(fs.readFileSync(path.resolve(file)));
-        let controllingField:string = getSafe(()=>field_metadata.CustomField.valueSet.controllingField,undefined);
-        if(controllingField == undefined  || controllingField.endsWith('__c'))
-        {
- 
-           if(!String(file).includes('__mdt\\fields'))
-           {
-           count++;
-           this.ux.log(file);
-           diffUtils.copyFile(file, 'temp_sfpowerkit');
-           }
+
+       
+    
+        let controllingField:string =   (field_metadata.CustomField.valueSet || {}).controllingField;
+        
+        //Skip mdt pick fields as its non upgradeable if owned by a package
+        if (!String(file).includes('__mdt\\fields')) {
+
+          in_patch_count++;
+          this.ux.log("Copied Original to Patch:         " + file);
+          diffUtils.copyFile(file, 'temp_sfpowerkit');
+
+         //A controlling field with a standarad value set, patch source and copy original to patch
+          if (controllingField!=undefined && !controllingField.endsWith('__c')) {
+
+            modified_source_count++;
+           
+            let builder = new xml2js.Builder();
+            field_metadata.CustomField.valueSet = JSON.parse(Generatepatch.dummpyPickListMetadata);
+            var xml = builder.buildObject(field_metadata);
+            fs.writeFileSync(file, xml);
+            this.ux.log("Modified Original in Packaging:         " + file);
+          }
+
+
         }
+
       }
 
-      this.ux.log(`Added  ${count} fields of field type picklist into patch after'removing fields that have standardvalue sets as controlling type and picklist fields in cmdt objects`);
+      this.ux.log(`Added  ${in_patch_count} fields of field type picklist into patch after'removing fields picklist fields in cmdt objects`);
+      this.ux.log(`Added  ${modified_source_count} fields of field type picklist that have standard value sets as controlling types`);
 
-
+ 
       // sfdx project json file running force source command  
       var sfdx_project_json: string = `{
         "packageDirectories": [
