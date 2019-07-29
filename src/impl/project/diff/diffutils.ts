@@ -7,13 +7,21 @@ import * as xml2js from "xml2js";
 import * as path from "path";
 import * as fs from "fs";
 import * as glob from "glob";
-import * as copydir from "copy-dir";
+import {
+  SOURCE_EXTENSION_REGEX,
+  MetadataInfoUtils,
+  METADATA_INFO
+} from "../../../shared/metadataInfo";
+import FileUtils from "../../../shared/fileutils";
 
-const pairStatResources = "staticresources";
+const pairStatResources = METADATA_INFO.StaticResource.directoryName;
 const pairStatResourcesRegExp = new RegExp(pairStatResources);
-const pairAuaraRegExp = new RegExp("aura");
+const pairAuaraRegExp = new RegExp(
+  METADATA_INFO.AuraDefinitionBundle.directoryName
+);
 
 const deleteNotSupported = ["RecordType"];
+const LWC_IGNORE_FILES = ["jsconfig.json", ".eslintrc.json"];
 
 export interface DiffFile {
   deleted: string[];
@@ -82,11 +90,23 @@ export default class DiffUtil {
       await this.createDestructiveChanges(deletedFiles, outputFolder);
     }
 
+    try {
+      this.copyFile(".forceignore", outputFolder);
+    } catch (e) {
+      if (e.code !== "EPERM") {
+        throw e;
+      }
+    }
+    try {
+      this.copyFile("sfdx-project.json", outputFolder);
+    } catch (e) {
+      if (e.code !== "EPERM") {
+        throw e;
+      }
+    }
     return diffFile;
   }
   public parseContent(fileContents): DiffFile {
-    //const startRegEx = /^:|^$/;
-    //const statusRegEx = /^[A]$|^[M]$/;
     const statusRegEx = /\sA\t|\sM\t|\sD\t/;
     const renamedRegEx = /\sR[0-9]{3}\t|\sC[0-9]{3}\t/;
     const tabRegEx = /\t/;
@@ -135,6 +155,13 @@ export default class DiffUtil {
     let copyOutputFolder = outputFolder;
     if (filePath.startsWith(".")) {
       // exclude technical files such as .gitignore or .forceignore
+      fs.copyFileSync(filePath, outputFolder);
+      return;
+    }
+
+    let fileName= path.parse(filePath).base;
+    //exclude lwc ignored files
+    if(LWC_IGNORE_FILES.includes(fileName)){
       return;
     }
 
@@ -156,21 +183,21 @@ export default class DiffUtil {
       }
     }
 
-    let fileName = filePathParts[filePathParts.length - 1].replace('"', "");
-
-    let fileNameParts = fileName.split(".");
-    let pattern = fileNameParts[0] + ".*";
-    if (fileName.includes("quickAction-meta.xml")) {
-      pattern = fileName.replace("quickAction-meta.xml", "*");
+    //let fileName = filePathParts[filePathParts.length - 1].replace('"', "");
+    let associatedFilePattern = "";
+    if (SOURCE_EXTENSION_REGEX.test(filePath)) {
+      associatedFilePattern = filePath.replace(SOURCE_EXTENSION_REGEX, ".*");
+    } else {
+      let extension = path.parse(filePath).ext;
+      associatedFilePattern = filePath.replace(extension, ".*");
     }
-    var associatedFilePattern = filePath.replace(fileName, pattern);
-    var files = glob.sync(associatedFilePattern);
-    for (var i = 0; i < files.length; i++) {
+    let files = glob.sync(associatedFilePattern);
+    for (let i = 0; i < files.length; i++) {
       if (fs.lstatSync(files[i]).isDirectory() == false) {
-        var oneFilePath = path.join(".", files[i]);
-        var oneFilePathParts = oneFilePath.split(path.sep);
+        let oneFilePath = path.join(".", files[i]);
+        let oneFilePathParts = oneFilePath.split(path.sep);
         fileName = oneFilePathParts[oneFilePathParts.length - 1];
-        var outputPath = path.join(outputFolder, fileName);
+        let outputPath = path.join(outputFolder, fileName);
         fs.copyFileSync(files[i], outputPath);
       }
     }
@@ -179,10 +206,11 @@ export default class DiffUtil {
       filePath.endsWith("Translation-meta.xml") &&
       filePath.indexOf("globalValueSet") < 0
     ) {
-      var parentFolder = filePathParts[filePathParts.length - 2];
-      var objectTranslation = parentFolder + ".objectTranslation-meta.xml";
-      var outputPath = path.join(outputFolder, objectTranslation);
-      var sourceFile = filePath.replace(fileName, objectTranslation);
+      let parentFolder = filePathParts[filePathParts.length - 2];
+      let objectTranslation =
+        parentFolder + METADATA_INFO.CustomObjectTranslation.sourceExtension;
+      let outputPath = path.join(outputFolder, objectTranslation);
+      let sourceFile = filePath.replace(fileName, objectTranslation);
       if (fs.existsSync(sourceFile) == true) {
         fs.copyFileSync(sourceFile, outputPath);
       }
@@ -197,13 +225,16 @@ export default class DiffUtil {
       for (let i = 0; i < filePathParts.length; i++) {
         outputFolder = path.join(outputFolder, filePathParts[i]);
         srcFolder = path.join(srcFolder, filePathParts[i]);
-        if (filePathParts[i] === "staticresources") {
+        if (filePathParts[i] === METADATA_INFO.StaticResource.directoryName) {
           let fileOrDirname = filePathParts[i + 1];
           let fileOrDirnameParts = fileOrDirname.split(".");
           srcFolder = path.join(srcFolder, fileOrDirnameParts[0]);
           outputFolder = path.join(outputFolder, fileOrDirnameParts[0]);
-          resourceFile = srcFolder + ".resource-meta.xml";
-          staticRecourceRoot = outputFolder + ".resource-meta.xml";
+          resourceFile =
+            srcFolder + METADATA_INFO.StaticResource.sourceExtension;
+          METADATA_INFO.StaticResource.sourceExtension;
+          staticRecourceRoot =
+            outputFolder + METADATA_INFO.StaticResource.sourceExtension;
           if (fs.existsSync(srcFolder)) {
             if (fs.existsSync(outputFolder) == false) {
               fs.mkdirSync(outputFolder);
@@ -213,7 +244,7 @@ export default class DiffUtil {
         }
       }
       if (fs.existsSync(srcFolder)) {
-        copydir.sync(srcFolder, outputFolder);
+        FileUtils.copyRecursiveSync(srcFolder, outputFolder);
       }
       if (fs.existsSync(resourceFile)) {
         fs.copyFileSync(resourceFile, staticRecourceRoot);
@@ -226,7 +257,7 @@ export default class DiffUtil {
       for (let i = 0; i < filePathParts.length; i++) {
         outputFolder = path.join(outputFolder, filePathParts[i]);
         srcFolder = path.join(srcFolder, filePathParts[i]);
-        if (filePathParts[i] === "aura") {
+        if (filePathParts[i] === "aura" || filePathParts[i] === "lwc") {
           let fileOrDirname = filePathParts[i + 1];
           let fileOrDirnameParts = fileOrDirname.split(".");
           srcFolder = path.join(srcFolder, fileOrDirnameParts[0]);
@@ -241,7 +272,7 @@ export default class DiffUtil {
         }
       }
       if (fs.existsSync(srcFolder)) {
-        copydir.sync(srcFolder, outputFolder);
+        FileUtils.copyRecursiveSync(srcFolder, outputFolder);
       }
     }
   }
@@ -257,7 +288,7 @@ export default class DiffUtil {
       let filePath = filePaths[i];
       let parsedPath = path.parse(filePath);
       let filename = parsedPath.base;
-      let name = MetadataFiles.getNameOfTypes(filename);
+      let name = MetadataInfoUtils.getMetadataName(filename);
       if (name) {
         if (!MetadataFiles.isCustomMetadata(filePath, name)) {
           // avoid to generate destructive for Standard Components
@@ -265,8 +296,7 @@ export default class DiffUtil {
           continue;
         }
         let member = MetadataFiles.getMemberNameFromFilepath(filePath, name);
-
-        if (name === "CustomField") {
+        if (name === METADATA_INFO.CustomField.xmlName) {
           let isFormular = await this.isFormularField(filePath);
           if (isFormular) {
             destrucObjPre = this.buildDestructiveTypeObj(
