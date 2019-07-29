@@ -229,7 +229,8 @@ export default class Generatepatch extends SfdxCommand {
               modified_source_count++;
 
               let builder = new xml2js.Builder();
-              field_metadata.CustomField.valueSet = JSON.parse(Generatepatch.dummpyPickListMetadata);
+              delete field_metadata.CustomField.valueSet.controllingField ;
+              delete field_metadata.CustomField.valueSet.valueSettings;
               var xml = builder.buildObject(field_metadata);
               fs.writeFileSync(file, xml);
               this.ux.log("Modified Original in Packaging:         " + file);
@@ -279,10 +280,10 @@ export default class Generatepatch extends SfdxCommand {
         const parser = new xml2js.Parser({ explicitArray: false });
         const parseString = util.promisify(parser.parseString);
         let recordtype_metadata = await parseString(fs.readFileSync(path.resolve(file)));
-        in_patch_count++;
+
         this.ux.log("Copied Original to Patch:         " + file);
         diffUtils.copyFile(file, 'temp_sfpowerkit');
-        recordtype_metadata.RecordType.picklistValues = undefined;
+        delete recordtype_metadata.RecordType.picklistValues;
 
         let builder = new xml2js.Builder();
         var xml = builder.buildObject(recordtype_metadata);
@@ -331,7 +332,6 @@ export default class Generatepatch extends SfdxCommand {
         let businessProcess_metadata = await parseString(fs.readFileSync(path.resolve(file)));
 
 
-        in_patch_count++;
         this.ux.log("Copied Original to Patch:         " + file);
         diffUtils.copyFile(file, 'temp_sfpowerkit');
         businessProcess_metadata.BusinessProcess.values = [];
