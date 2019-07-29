@@ -169,7 +169,7 @@ export default class Generatepatch extends SfdxCommand {
     this.ux.log(`Patch ${packageToBeUsed.package}_picklist generated successfully.`);
 
     //clean temp sf powerkit source folder
-   // rimraf.sync('temp_sfpowerkit');
+    rimraf.sync('temp_sfpowerkit');
     return 0;
   }
 
