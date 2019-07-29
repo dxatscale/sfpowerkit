@@ -1,6 +1,7 @@
 import { core, SfdxCommand, FlagsConfig, flags } from "@salesforce/command";
 import DiffUtil from "../../../shared/diffutils";
 import * as path from 'path'
+import { SfPowerKit } from "../../../shared/sfpowerkit";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -54,6 +55,7 @@ export default class Diff extends SfdxCommand {
   protected static requiresProject = true;
 
   public async run(): Promise<any> {
+    SfPowerKit.ux=this.ux;
     const diffFile: string = this.flags.difffile;
     let encoding: string = this.flags.encoding;
     const outputFolder: string = this.flags.output;
