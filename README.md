@@ -681,15 +681,14 @@ Search picklist fields from Standatd/ custom objects inside project and generate
 
 ```
 USAGE
-  $ sfdx sfpowerkit:source:picklist:generatepatch [-p <string>] [-d <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+  $ sfdx sfpowerkit:source:picklist:generatepatch [-p <string>] [-d <string>] [-f <boolean>]  [-r <boolean>] 
 
 OPTIONS
   -d, --objectsdir=objectsdir                                                       Path for Objects folder located in project
   -p, --package=package                                                             Name of the package to generate the picklist 
   patch
-  -f, --fixstandardvalueset                                                         Consider patching for standard value set controlled picklists, Warning: This modifies the source code in your package by removing references to standardvalueset from the particular picklist.
-  --json                                                                            format output as json
-  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+  -f, --fixstandardvalueset                                                         Consider patching for standard value set controlled picklists, Warning: This modifies the source code in your package by removing references to standardvalueset from the particular picklist.                      
+  -r, --fixrecordtypes                                                               Consider patching for standard value set in RecordTypes, Warning: This modifies the source code in your package
 
 EXAMPLE
     sfdx sfpowerkit:source:picklist:generatepatch -p sfpowerkit_test -d force-app/main/default/objects/ -f
