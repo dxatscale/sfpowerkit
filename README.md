@@ -677,32 +677,25 @@ EXAMPLE
 
 ## `sfpowerkit:source:picklist:generatepatch`
 
-Search picklist fields from Standatd/ custom objects inside project and generate a static resource file with picklist fields, used to solve the picklist upgrade issue in dx unlock package as well as issue with utilizing standard value set as the controlling picklist field. Custom metadata picklist fields will be ignored. 
+Search picklist fields from Standatd/ custom objects inside project and create a static resource file with picklist fields, used to solve the picklist upgrade issue in dx unlock package. Custom metadata picklist fields will be ignored. 
 
 ```
 USAGE
-  $ sfdx sfpowerkit:source:picklist:generatepatch [-p <string>] [-d <string>] [-f <boolean>]  [-r <boolean>] 
+  $ sfdx sfpowerkit:source:picklist:generatepatch [-p <string>] [-d <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
   -d, --objectsdir=objectsdir                                                       Path for Objects folder located in project
-  -p, --package=package                                                             Name of the package to generate the picklist 
-  patch
-  -f, --fixstandardvalueset                                                         Consider patching for standard value set controlled picklists, Warning: This modifies the source code in your package by removing references to standardvalueset from the particular picklist.                      
-  -r, --fixrecordtypes                                                               Consider patching for standard value set in RecordTypes, Warning: This modifies the source code in your package
+  -p, --package=package                                                             Name of the package to generate the picklist patch
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-    sfdx sfpowerkit:source:picklist:generatepatch -p sfpowerkit_test -d force-app/main/default/objects/ -f
-    Scanning for fields of type picklist
-    Found 2 fields of type picklist
-    Processing and adding the following fields to patch
-    Copied Original to Patch:         force-app\main\default\objects\Case\fields\test_standard2__c.field-meta.xml
-    Modified Original in Packaging:         force-app\main\default\objects\Case\fields\test_standard2__c.field-meta.xml
-    Copied Original to Patch:         force-app\main\default\objects\Case\fields\test_standard__c.field-meta.xml
-    Added  2 fields of field type picklist into patch after'removing fields picklist fields in cmdt objects
-    Added  1 fields of field type picklist that have standard value sets as controlling types
-    Source was successfully converted to Metadata API format and written to the location: C:\Projects\sfpowerkit_test\temp_sfpowerkit\mdapi
-    Generating static resource file : force-app/main/default/staticresources/sfpowerkit_test_picklist.resource-meta.xml
-    Patch sfpowerkit_test_picklist generated successfully.
+  $ sfdx sfpowerkit:source:picklist:generatepatch -p Core -d src/core/main/default/objects/
+  Scanning for fields of type picklist
+  Found 30 fields of type picklist
+  Source was successfully converted to Metadata API format and written to the location: .../temp_sfpowerkit/mdapi
+  Generating static resource file : src/core/main/default/staticresources/Core_picklist.resource-meta.xml
+  Patch Core_picklist generated successfully.
 ```
 _See code: [src\commands\sfpowerkit\source\picklist\generatepatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/picklist/generatepatch.ts)_
 
@@ -765,4 +758,76 @@ EXAMPLE
   }
 ```
 
- 
+## `sfpowerkit:profile:sync`
+
+retrieve profiles from the salesforce org with all their configurations. Run this command preferably again the production org. Use the merge equivalent again other type of orgs.
+```
+
+USAGE
+  $ sfdx sfpowerkit:profile:sync [-f <array>] [-n <array>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -f, --folder=folder                             comma separated list of folders to scan for profiles. If ommited, all folders in the package directories will be used.
+  -n, --profilelist=profilelist                   comma separated list of profiles. If ommited, all the profiles found in the folder(s) will be synchronized
+  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
+  --apiversion=apiversion                         override the api version used for api requests made by this command
+  --json                                          format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLES
+  $ sfdx sfpowerkit:source:profile:sync -u prod
+  $ sfdx sfpowerkit:source:profile:sync  -f force-app -n "My Profile" -r -u prod
+  $ sfdx sfpowerkit:source:profile:sync  -f "module1, module2, module3" -n "My Profile1, My profile2"  -u prod
+```
+_See code: [src\commands\sfpowerkit\profile\sync.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/sync.ts)_
+
+
+## `sfpowerkit:profile:reconcile`
+
+cleanup profile configurations to make them compatible with the target org.
+```
+
+USAGE
+  $ sfdx sfpowerkit:profile:reconcile [-f <array>] [-n <array>] [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -f, --folder=folder                               the folders to Scan. You can provide a comma separated list of folder. If ommited, the folders listed in the package directories will be used.
+  -n, --profilelist=profilelist                     the profile names that will be reconcile. if ommited, all the profiles components will be reconciled.
+  -u, --targetusername=targetusername               username or alias for the target org; overrides default target org
+  --apiversion=apiversion                           override the api version used for api requests made by this command
+  --json                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLES
+  $ sfdx sfpowerkit:profile:reconcile  --folder force-app
+  $ sfdx sfpowerkit:profile:reconcile  --folder force-app,module2,module3 -u sandbox
+  $ sfdx sfpowerkit:profile:reconcile  -u myscratchorg
+```
+
+## `sfpowerkit:profile:merge`
+
+retrieve profiles from a development environment and merge it with the profile configurations
+```
+
+USAGE
+  $ sfdx sfpowerkit:profile:merge [-f <array>] [-n <array>] [-m <array>] [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -f, --folder=folder                                 comma separated list of folders to scan for profiles. If ommited, the folders in the packageDirectories configuration will be used.
+  -m, --metadata=metadata                             comma separated list of metadata for which the permissions will be retrieved.
+  -n, --profilelist=profilelist                       comma separated list of profiles. If ommited, all the profiles found in the folder(s) will be merged
+  -u, --targetusername=targetusername                 username or alias for the target org; overrides default target org
+
+  --apiversion=apiversion                             override the api version used for api requests made by this command
+
+  --json                                              format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLES
+  $ sfdx sfpowerkit:profile:merge -u sandbox
+  $ sfdx sfpowerkit:profile:merge -f force-app -n "My Profile" -r -u sandbox
+  $ sfdx sfpowerkit:profile:merge -f "module1, module2, module3" -n "My Profile1, My profile2"  -u sandbox
+```

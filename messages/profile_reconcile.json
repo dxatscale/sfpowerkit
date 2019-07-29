@@ -1,0 +1,5 @@
+{
+  "commandDescription": "cleanup profile configurations to make them compatible with the target org.",
+  "folderFlagDescription": "the folders to Scan. You can provide a comma separated list of folder. If ommited, the folders listed in the package directories will be used.",
+  "nameFlagDescription": "the profile names that will be reconcile. if ommited, all the profiles components will be reconciled."
+}
