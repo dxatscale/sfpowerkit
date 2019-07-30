@@ -10,8 +10,9 @@ import {
   getDefaultPackageInfo
 } from "../../../../shared/getPackageInfo";
 import { searchFilesInDirectory } from "../../../../shared/searchFilesInDirectory";
-import DiffUtil from "../../../../impl/project/diff/diffutils";
+
 import { zipDirectory } from "../../../../shared/zipDirectory";
+import DiffUtil from "../../../../impl/project/diff/diffutils";
 
 var path = require("path");
 const spawn = require("child-process-promise").spawn;
@@ -129,52 +130,59 @@ export default class Generatepatch extends SfdxCommand {
 
     fs.outputFileSync("temp_sfpowerkit/.forceignore", forceIgnoreFile);
 
-    //Convert to mdapi
-    const args = [];
-    args.push("force:source:convert");
-    args.push("-r");
-    args.push(`${packageToBeUsed.path}`);
-    args.push("-d");
-    args.push(`mdapi`);
-    await spawn("sfdx", args, {
-      stdio: "inherit",
-      cwd: "temp_sfpowerkit"
-    });
+    if (
+      fs.existsSync(path.resolve(`temp_sfpowerkit/${packageToBeUsed.path}`))
+    ) {
+      //Convert to mdapi
+      const args = [];
+      args.push("force:source:convert");
+      args.push("-r");
+      args.push(`${packageToBeUsed.path}`);
+      args.push("-d");
+      args.push(`mdapi`);
+      await spawn("sfdx", args, {
+        stdio: "inherit",
+        cwd: "temp_sfpowerkit"
+      });
 
-    //Generate zip file
-    var zipFile =
-      "temp_sfpowerkit/" + `${packageToBeUsed.package}` + "_picklist.zip";
-    await zipDirectory("temp_sfpowerkit/mdapi", zipFile);
+      //Generate zip file
+      var zipFile =
+        "temp_sfpowerkit/" + `${packageToBeUsed.package}` + "_picklist.zip";
+      await zipDirectory("temp_sfpowerkit/mdapi", zipFile);
 
-    //Create Static Resource Directory if not exist
-    let dir = packageToBeUsed.path + `/main/default/staticresources/`;
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir);
+      //Create Static Resource Directory if not exist
+      let dir = packageToBeUsed.path + `/main/default/staticresources/`;
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir);
+      }
+      fs.copyFileSync(
+        zipFile,
+        packageToBeUsed.path +
+          `/main/default/staticresources/${packageToBeUsed.package}_picklist.zip`
+      );
+
+      //Store it to static resources
+      var metadata: string = `<?xml version="1.0" encoding="UTF-8"?>
+        <StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
+            <cacheControl>Public</cacheControl>
+            <contentType>application/zip</contentType>
+        </StaticResource>`;
+      let targetmetadatapath =
+        packageToBeUsed.path +
+        `/main/default/staticresources/${packageToBeUsed.package}_picklist.resource-meta.xml`;
+
+      this.ux.log(
+        "Generating static resource file : " + `${targetmetadatapath}`
+      );
+
+      fs.outputFileSync(targetmetadatapath, metadata);
+
+      this.ux.log(
+        `Patch ${packageToBeUsed.package}_picklist generated successfully.`
+      );
+    } else {
+      this.ux.log(`No picklist or recordtype found to create a Patch `);
     }
-    fs.copyFileSync(
-      zipFile,
-      packageToBeUsed.path +
-        `/main/default/staticresources/${packageToBeUsed.package}_picklist.zip`
-    );
-
-    //Store it to static resources
-    var metadata: string = `<?xml version="1.0" encoding="UTF-8"?>
-      <StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
-          <cacheControl>Public</cacheControl>
-          <contentType>application/zip</contentType>
-      </StaticResource>`;
-    let targetmetadatapath =
-      packageToBeUsed.path +
-      `/main/default/staticresources/${packageToBeUsed.package}_picklist.resource-meta.xml`;
-
-    this.ux.log("Generating static resource file : " + `${targetmetadatapath}`);
-
-    fs.outputFileSync(targetmetadatapath, metadata);
-
-    this.ux.log(
-      `Patch ${packageToBeUsed.package}_picklist generated successfully.`
-    );
-
     //clean temp sf powerkit source folder
     rimraf.sync("temp_sfpowerkit");
     return 0;
