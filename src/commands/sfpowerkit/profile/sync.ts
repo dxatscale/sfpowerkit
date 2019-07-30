@@ -44,33 +44,30 @@ export default class Sync extends SfdxCommand {
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   protected static requiresProject = true;
   public async run(): Promise<any> {
-    SfPowerKit.ux=this.ux;
+    SfPowerKit.ux = this.ux;
 
     let argFolder: string = this.flags.folder;
     let argProfileList: string[] = this.flags.profilelist;
 
-    var folders: string[] = [];
-    if (_.isNil(argFolder) || argFolder === "") {
+    let folders: string[] = [];
+    if (_.isNil(argFolder) || argFolder.length === 0) {
       const dxProject = await SfdxProject.resolve();
       const project = await dxProject.retrieveSfdxProjectJson();
 
-      let packages = project.get("packageDirectories") as any[] || [];
+      let packages = (project.get("packageDirectories") as any[]) || [];
       packages.forEach(element => {
-        
         folders.push(element.path);
-        if(element.default){
-          SfPowerKit.defaultFolder=element.path;
+        if (element.default) {
+          SfPowerKit.defaultFolder = element.path;
         }
-      
       });
+    } else {
+      SfPowerKit.defaultFolder = argFolder[0];
     }
 
     const profileUtils = new AcnProfileUtils(this.org);
 
-    let syncPofles = await profileUtils.sync(
-      folders,
-      argProfileList || []
-    );
+    let syncPofles = await profileUtils.sync(folders, argProfileList || []);
 
     return syncPofles;
   }

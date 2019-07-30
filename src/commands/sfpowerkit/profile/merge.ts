@@ -109,6 +109,8 @@ export default class Merge extends SfdxCommand {
           SfPowerKit.defaultFolder = element.path;
         }
       });
+    } else {
+      SfPowerKit.defaultFolder = argFolder[0];
     }
 
     const profileUtils = new AcnProfileUtils(this.org);
