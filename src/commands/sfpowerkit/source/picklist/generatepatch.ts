@@ -55,18 +55,6 @@ export default class Generatepatch extends SfdxCommand {
 
   };
 
-  private static dummpyPickListMetadata: string =
-    `{
-    "restricted": "true",
-    "valueSetDefinition": {
-      "sorted": "false",
-      "value": {
-        "fullName": "dummy_sfpowerkit",
-        "default": "false",
-        "label": "dummy_sfpowerkit"
-      }
-    }
-  }`;
 
   public async run(): Promise<AnyJson> {
 
