@@ -58,6 +58,9 @@ export default class Sync extends SfdxCommand {
       packages.forEach(element => {
         
         folders.push(element.path);
+        if(element.default){
+          SfPowerKit.defaultFolder=element.path;
+        }
       
       });
     }

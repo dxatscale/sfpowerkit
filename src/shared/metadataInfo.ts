@@ -1,7 +1,7 @@
-import metadataInfoJSON from "../metadatainfo.json";
+import parseJson from "@salesforce/kit"
 import * as _ from "lodash";
-import { SfPowerKit } from "./sfpowerkit";
-import * as path from 'path'
+import * as path from 'path';
+import * as fs from 'fs';
 
 export const SOURCE_EXTENSION_REGEX = /\.[a-zA-Z]+-meta\.xml/;
 const SPLITED_TYPES = {
@@ -94,6 +94,9 @@ export interface MetadataInfo {
 export class MetadataInfoUtils {
   static loadMetadataInfo(): MetadataInfo {
     let metadataInfo: MetadataInfo = {};
+    let resourcePAth= path.join(__dirname,'..','..', 'resources', 'metadatainfo.json')
+    const fileData = fs.readFileSync(resourcePAth, 'utf8');
+    let metadataInfoJSON= JSON.parse(fileData);
     metadataInfoJSON.metadataObjects.forEach(metadata => {
       let metadataDescribe = metadata as MetadataDescribe;
       if(_.isNil(metadata.suffix)){

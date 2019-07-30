@@ -62,6 +62,9 @@ export default class Reconcile extends SfdxCommand {
       let packages = (project.get("packageDirectories") as any[]) || [];
       packages.forEach(element => {
         argFolder.push(element.path);
+        if(element.default){
+          SfPowerKit.defaultFolder=element.path;
+        }
       });
     }
 

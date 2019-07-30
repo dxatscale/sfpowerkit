@@ -13,9 +13,7 @@ core.Messages.importMessagesDirectory(__dirname);
 const messages = core.Messages.loadMessages("sfpowerkit", "profile_merge");
 
 export default class Merge extends SfdxCommand {
-  public static description = messages.getMessage(
-    "commandDescription"
-  );
+  public static description = messages.getMessage("commandDescription");
 
   public static examples = [
     `$ sfdx sfpowerkit:profile:merge -u sandbox`,
@@ -31,21 +29,17 @@ export default class Merge extends SfdxCommand {
       char: "f",
       description: messages.getMessage("folderFlagDescription"),
       required: false,
-      map: (f:string) => f.trim()
+      map: (f: string) => f.trim()
     }),
     profilelist: flags.array({
       char: "n",
-      description: messages.getMessage(
-        "profileListFlagDescription"
-      ),
+      description: messages.getMessage("profileListFlagDescription"),
       required: false,
       map: (n: string) => n.trim()
     }),
     metadata: flags.array({
       char: "m",
-      description: messages.getMessage(
-        "metadataFlagDescription"
-      ),
+      description: messages.getMessage("metadataFlagDescription"),
       required: false,
       delimiter: ",",
       map: (val: string) => {
@@ -68,7 +62,7 @@ export default class Merge extends SfdxCommand {
   protected static requiresProject = true;
   public async run(): Promise<any> {
     // tslint:disable-line:no-any
-    SfPowerKit.ux=this.ux;
+    SfPowerKit.ux = this.ux;
 
     let argFolder = this.flags.folder;
     let argProfileList = this.flags.profilelist;
@@ -103,16 +97,19 @@ export default class Merge extends SfdxCommand {
       }
     }
 
-    if (_.isNil(argFolder) || argFolder.length===0) {
-      argFolder=[]
+    if (_.isNil(argFolder) || argFolder.length === 0) {
+      argFolder = [];
       const dxProject = await SfdxProject.resolve();
       const project = await dxProject.retrieveSfdxProjectJson();
 
       let packages = (project.get("packageDirectories") as any[]) || [];
       packages.forEach(element => {
         argFolder.push(element.path);
+        if (element.default) {
+          SfPowerKit.defaultFolder = element.path;
+        }
       });
-    } 
+    }
 
     const profileUtils = new AcnProfileUtils(this.org);
 

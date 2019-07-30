@@ -684,7 +684,7 @@ export default class AcnProfileUtils extends AcnBaseUtils<ProfileTooling> {
 
         await this.writeProfile(profileObj, filePath);
 
-        SfPowerKit.ux.log("Profile " + profileObj.fullName+ " merged");
+        SfPowerKit.ux.log("Profile " + profileObj.fullName + " merged");
         profileList.push(profileObj.fullName);
       }
       profileListToReturn.push(...profileList);
@@ -1052,7 +1052,7 @@ export default class AcnProfileUtils extends AcnBaseUtils<ProfileTooling> {
   private async getMetadataComponents(
     profileNames: string[]
   ): Promise<string[]> {
-    let metadataFiles = METADATA_INFO.Profile.files;
+    let metadataFiles = METADATA_INFO.Profile.files || [];
     if (profileNames && profileNames.length > 0) {
       metadataFiles = [];
       for (var i = 0; i < profileNames.length; i++) {
@@ -1069,9 +1069,16 @@ export default class AcnProfileUtils extends AcnBaseUtils<ProfileTooling> {
         }
       }
     } else {
-      let profilePath = path.join(process.cwd(), "force-app");
+      let profilePath = path.join(
+        process.cwd(),
+        SfPowerKit.defaultFolder, "profiles"
+      );
       if (metadataFiles && metadataFiles.length > 0) {
         profilePath = path.dirname(metadataFiles[0]);
+      }
+      else{
+        //create folder structure
+        FileUtils.mkDirByPathSync(profilePath);
       }
       SfPowerKit.ux.log(
         "Load new profiles from server and generate a path for future save"
@@ -1126,7 +1133,7 @@ export default class AcnProfileUtils extends AcnBaseUtils<ProfileTooling> {
     srcFolders: string[],
     profileList: string[]
   ): Promise<string[]> {
-    let result:string[]=[];
+    let result: string[] = [];
     this.metadataFiles = new MetadataFiles();
     srcFolders.forEach(srcFolder => {
       let normalizedPath = path.join(process.cwd(), srcFolder);
@@ -1134,9 +1141,9 @@ export default class AcnProfileUtils extends AcnBaseUtils<ProfileTooling> {
     });
 
     profileList = profileList.map(element => {
-        return element + METADATA_INFO.Profile.sourceExtension;
+      return element + METADATA_INFO.Profile.sourceExtension;
     });
-    
+
     await this.loadSupportedPermissions();
     for (let count = 0; count < METADATA_INFO.Profile.files.length; count++) {
       let profileComponent = METADATA_INFO.Profile.files[count];
@@ -1189,7 +1196,9 @@ export default class AcnProfileUtils extends AcnBaseUtils<ProfileTooling> {
           //Remove permission that are not present in the target org
           profileObj.userPermissions = profileObj.userPermissions.filter(
             permission => {
-              let supported = this.supportedPermissions.includes(permission.name);
+              let supported = this.supportedPermissions.includes(
+                permission.name
+              );
               return supported;
             }
           );
