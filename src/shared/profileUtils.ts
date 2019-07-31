@@ -1053,53 +1053,69 @@ export default class AcnProfileUtils extends AcnBaseUtils<ProfileTooling> {
     profileNames: string[]
   ): Promise<string[]> {
     let metadataFiles = METADATA_INFO.Profile.files || [];
+    //generate path for new profiles
+    let profilePath = path.join(
+      process.cwd(),
+      SfPowerKit.defaultFolder,
+      "profiles"
+    );
+    if (metadataFiles && metadataFiles.length > 0) {
+      profilePath = path.dirname(metadataFiles[0]);
+    } else {
+      //create folder structure
+      FileUtils.mkDirByPathSync(profilePath);
+    }
+
     if (profileNames && profileNames.length > 0) {
       metadataFiles = [];
-      for (var i = 0; i < profileNames.length; i++) {
-        var profileName = profileNames[i];
-        for (var j = 0; j < METADATA_INFO.Profile.files.length; j++) {
-          var profileComponent = METADATA_INFO.Profile.files[j];
-          var oneName = path.basename(
+      for (let i = 0; i < profileNames.length; i++) {
+        let profileName = profileNames[i];
+        let found = false;
+        for (let j = 0; j < METADATA_INFO.Profile.files.length; j++) {
+          let profileComponent = METADATA_INFO.Profile.files[j];
+          let oneName = path.basename(
             profileComponent,
             METADATA_INFO.Profile.sourceExtension
           );
           if (profileName === oneName) {
             metadataFiles.push(profileComponent);
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          //Query the profile from the server
+          let profiles = await this.getProfilesMetadata(this.conn);
+          for (let k = 0; k < profiles.length; k++) {
+            if (profiles[k] === profileName) {
+              metadataFiles.push(
+                path.join(
+                  profilePath,
+                  profiles[k] + METADATA_INFO.Profile.sourceExtension
+                )
+              );
+              break;
+            }
           }
         }
       }
     } else {
-      let profilePath = path.join(
-        process.cwd(),
-        SfPowerKit.defaultFolder, "profiles"
-      );
-      if (metadataFiles && metadataFiles.length > 0) {
-        profilePath = path.dirname(metadataFiles[0]);
-      }
-      else{
-        //create folder structure
-        FileUtils.mkDirByPathSync(profilePath);
-      }
       SfPowerKit.ux.log(
         "Load new profiles from server and generate a path for future save"
       );
-
-      const query =
-        "Select  Profile.Id, Profile.Name From PermissionSet WHERE Iscustom = true and ProfileId !=null";
-
       // Query the org
-      const result = await this.conn.query<PermissionSetSObject>(query);
-      if (result.records && result.records.length > 0) {
-        let newProfiles = result.records.filter(profileObj => {
+      const profiles = await this.getProfilesMetadata(this.conn);
+      if (profiles && profiles.length > 0) {
+        let newProfiles = profiles.filter(profileObj => {
           let found = false;
-          for (var i = 0; i < metadataFiles.length; i++) {
-            var profileComponent = metadataFiles[i];
-            var oneName = path.basename(
+          for (let i = 0; i < metadataFiles.length; i++) {
+            let profileComponent = metadataFiles[i];
+            let oneName = path.basename(
               profileComponent,
               METADATA_INFO.Profile.sourceExtension
             );
             //escape some caracters
-            let onlineName = profileObj.Profile.Name.replace("'", "%27");
+            let onlineName = profileObj.replace("'", "%27");
             onlineName = onlineName.replace("/", "%2F");
             if (onlineName === oneName) {
               found = true;
@@ -1110,13 +1126,12 @@ export default class AcnProfileUtils extends AcnBaseUtils<ProfileTooling> {
         });
         if (newProfiles && newProfiles.length > 0) {
           SfPowerKit.ux.log("New profiles founds");
-          for (var i = 0; i < newProfiles.length; i++) {
-            SfPowerKit.ux.log(newProfiles[i].Profile.Name);
+          for (let i = 0; i < newProfiles.length; i++) {
+            SfPowerKit.ux.log(newProfiles[i]);
             metadataFiles.push(
               path.join(
                 profilePath,
-                newProfiles[i].Profile.Name +
-                  METADATA_INFO.Profile.sourceExtension
+                newProfiles[i] + METADATA_INFO.Profile.sourceExtension
               )
             );
           }
@@ -1128,7 +1143,6 @@ export default class AcnProfileUtils extends AcnBaseUtils<ProfileTooling> {
     metadataFiles = metadataFiles.sort();
     return Promise.resolve(metadataFiles);
   }
-
   public async reconcile(
     srcFolders: string[],
     profileList: string[]
@@ -1578,5 +1592,28 @@ export default class AcnProfileUtils extends AcnBaseUtils<ProfileTooling> {
       return profiles[0];
     }
     return undefined;
+  }
+
+  public async getProfilesMetadata(conn: any): Promise<string[]> {
+    var types = [{ type: "Profile", folder: null }];
+    //let metadata = await conn.metadata.list(types);
+    // console.log(metadata);
+    const apiversion = await this.org.getConnection().retrieveMaxApiVersion();
+    let toReturn: Promise<string[]> = new Promise<string[]>(
+      (resolve, reject) => {
+        conn.metadata.list(types, apiversion, function(err, metadata) {
+          if (err) {
+            return reject(err);
+          }
+          let profileNames = [];
+          for (let i = 0; i < metadata.length; i++) {
+            profileNames.push(metadata[i].fullName);
+          }
+          resolve(profileNames);
+        });
+      }
+    );
+
+    return toReturn;
   }
 }

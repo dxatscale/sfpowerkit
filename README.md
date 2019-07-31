@@ -655,7 +655,7 @@ EXAMPLE
 
 ## `sfpowerkit:source:apextestsuite:convert`
 
-Converts an apex test suite to its consituent apex classes as a single line separated by commas, so that it can be used for metadata api deployment
+Converts an apex test suite to its consituent apex classes as a single line separated by commas, so that it can be used along with metadata validate only deployment
 
 ```
 USAGE
@@ -677,25 +677,32 @@ EXAMPLE
 
 ## `sfpowerkit:source:picklist:generatepatch`
 
-Search picklist fields from Standatd/ custom objects inside project and create a static resource file with picklist fields, used to solve the picklist upgrade issue in dx unlock package. Custom metadata picklist fields will be ignored. 
+Search picklist fields from Standatd/ custom objects inside project and generate a static resource file with picklist fields, used to solve the picklist upgrade issue in dx unlock package as well as issue with utilizing standard value set as the controlling picklist field. Custom metadata picklist fields will be ignored. 
 
 ```
 USAGE
-  $ sfdx sfpowerkit:source:picklist:generatepatch [-p <string>] [-d <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+  $ sfdx sfpowerkit:source:picklist:generatepatch [-p <string>] [-d <string>] [-f <boolean>]  [-r <boolean>] 
 
 OPTIONS
   -d, --objectsdir=objectsdir                                                       Path for Objects folder located in project
-  -p, --package=package                                                             Name of the package to generate the picklist patch
-  --json                                                                            format output as json
-  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+  -p, --package=package                                                             Name of the package to generate the picklist 
+  patch
+  -f, --fixstandardvalueset                                                         Consider patching for standard value set controlled picklists, Warning: This modifies the source code in your package by removing references to standardvalueset from the particular picklist.                      
+  -r, --fixrecordtypes                                                               Consider patching for standard value set in RecordTypes, Warning: This modifies the source code in your package
 
 EXAMPLE
-  $ sfdx sfpowerkit:source:picklist:generatepatch -p Core -d src/core/main/default/objects/
-  Scanning for fields of type picklist
-  Found 30 fields of type picklist
-  Source was successfully converted to Metadata API format and written to the location: .../temp_sfpowerkit/mdapi
-  Generating static resource file : src/core/main/default/staticresources/Core_picklist.resource-meta.xml
-  Patch Core_picklist generated successfully.
+    sfdx sfpowerkit:source:picklist:generatepatch -p sfpowerkit_test -d force-app/main/default/objects/ -f
+    Scanning for fields of type picklist
+    Found 2 fields of type picklist
+    Processing and adding the following fields to patch
+    Copied Original to Patch:         force-app\main\default\objects\Case\fields\test_standard2__c.field-meta.xml
+    Modified Original in Packaging:         force-app\main\default\objects\Case\fields\test_standard2__c.field-meta.xml
+    Copied Original to Patch:         force-app\main\default\objects\Case\fields\test_standard__c.field-meta.xml
+    Added  2 fields of field type picklist into patch after'removing fields picklist fields in cmdt objects
+    Added  1 fields of field type picklist that have standard value sets as controlling types
+    Source was successfully converted to Metadata API format and written to the location: C:\Projects\sfpowerkit_test\temp_sfpowerkit\mdapi
+    Generating static resource file : force-app/main/default/staticresources/sfpowerkit_test_picklist.resource-meta.xml
+    Patch sfpowerkit_test_picklist generated successfully.
 ```
 _See code: [src\commands\sfpowerkit\source\picklist\generatepatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/picklist/generatepatch.ts)_
 
@@ -758,7 +765,7 @@ EXAMPLE
   }
 ```
 
-## `sfpowerkit:profile:sync`
+ ## `sfpowerkit:profile:sync`
 
 retrieve profiles from the salesforce org with all their configurations. Run this command preferably again the production org. Use the merge equivalent again other type of orgs.
 ```
@@ -804,6 +811,7 @@ EXAMPLES
   $ sfdx sfpowerkit:profile:reconcile  --folder force-app,module2,module3 -u sandbox
   $ sfdx sfpowerkit:profile:reconcile  -u myscratchorg
 ```
+_See code: [src\commands\sfpowerkit\profile\reconcile.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/reconcile.ts)_
 
 ## `sfpowerkit:profile:merge`
 
@@ -831,3 +839,4 @@ EXAMPLES
   $ sfdx sfpowerkit:profile:merge -f force-app -n "My Profile" -r -u sandbox
   $ sfdx sfpowerkit:profile:merge -f "module1, module2, module3" -n "My Profile1, My profile2"  -u sandbox
 ```
+_See code: [src\commands\sfpowerkit\profile\merge.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/merge.ts)_
