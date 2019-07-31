@@ -743,9 +743,10 @@ EXAMPLE
 ## `sfpowerkit:source:picklist:generatepatch`
 
 This command generates a patch in the format of a metadata packed together as a static resource with the intent of solving the following issues.
-1. Changes to piclist values are not updated in the target org through a unlocked package upgrade.
+1. Changes to picklist values are not updated in the target org through a unlocked package upgrade.
 2. Standard Value are non packageable, hence any picklist that has a modified standardvalueset as the controlling field will fail to package, The optional fixstandardvalueset flag will strip of the controlling field and puts the original code into the patch
 3. Fix for business process and recordtype, that depend on a modified standard valueset and fail to package.
+
 These command is to be run just before the package:version: create command and any changes made by the command should not be committed to the repo. Once a patch is generated and the package is installed in the target org, run the apply patch command tofix the above issues.
 
 
