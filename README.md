@@ -106,7 +106,7 @@ _See code: [src\commands\sfpowerkit\org\connectedapp\retrieve.ts](https://github
 
 ## `sfpowerkit:org:duplicaterule:deactivate`
 
-Deactivates a duplicate rule in the target org
+Deactivates a duplicate rule in the target org. Deactivate active rules before pushing the changes to the target org
 
 ```
 USAGE
@@ -135,6 +135,40 @@ EXAMPLE
 ```
 
 _See code: [src\commands\sfpowerkit\org\duplicaterule\deactivate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/deactivate.ts)_
+
+
+## `sfpowerkit:org:duplicaterule:activate`
+
+Activates a matching rule in the target org
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:duplicaterule:activate -n <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -n, --name=name                                 (required) Name of the duplicate rule
+
+  -u, --targetusername=targetusername              username or alias for the target org; overrides default target org
+
+  --json                                          format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this
+                                                  command invocation
+
+EXAMPLE
+   $ sfdx sfpowerkit:org:duplicaterule:activate -n Account.CRM_Account_Rule_1 -u sandbox
+    Polling for Retrieval Status
+    Retrieved Duplicate Rule  with label : CRM Account Rule 2
+    Preparing Activation
+    Deploying Activated Rule with ID  0Af4Y000003OdTWSA0
+    Polling for Deployment Status
+    Polling for Deployment Status
+    Duplicate Rule CRM Account Rule 2 Activated
+```
+
+_See code: [src\commands\sfpowerkit\org\duplicaterule\activate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/activate.ts)_
+
 
 ## `sfpowerkit:org:matchingrule:deactivate`
 
@@ -167,6 +201,37 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\matchingrule\deactivate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/matchingrule/deactivate.ts)_
 
+
+## `sfpowerkit:org:matchingrule:activate`
+
+Activates a matching rule in the target org, Please ensure all duplicate rules are activated before using this
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:matchingrule:activate -n <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -n, --name=name                                 (required) Name of the object
+  -u, --targetusername=targetusername              username or alias for the target org; overrides default target org
+
+  --json                                          format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this
+                                                  command invocation
+
+EXAMPLE
+   $ sfdx sfpowerkit:org:matchingrules:activate -n Account -u sandbox
+    Polling for Retrieval Status
+    Retrieved Matching Rule  for Object : Account
+    Preparing Activation
+    Deploying Activated Rule with ID  0Af4Y000003OdTWSA0
+    Polling for Deployment Status
+    Polling for Deployment Status
+    Matching Rule for  Account activated
+```
+
+_See code: [src\commands\sfpowerkit\org\matchingrule\activate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/matchingrule/activate.ts)_
 
 ## `sfpowerkit:org:orgwideemail:create`
 
