@@ -37,7 +37,7 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $  sfdx  sfpowerkit:auth:login -u azlam@sfdc.com -p Xasdax2w2  -a prod
+  $  sfdx sfpowerkit:auth:login -u azlam@sfdc.com -p Xasdax2w2  -a prod
      Authorized to azlam@sfdc.com
    
 ```
@@ -69,7 +69,7 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx  sfpowerkit:org:connectedapp:create -u myOrg@example.com -n AzurePipelines -c id_rsa -e 
+  $ sfdx sfpowerkit:org:connectedapp:create -u myOrg@example.com -n AzurePipelines -c id_rsa -e 
   azlam.salamm@invalid.com
      Created Connected App AzurePipelines in Target Org
 ```
@@ -96,7 +96,7 @@ OPTIONS
                                                   command invocation
 
 EXAMPLE
-  $ sfdx  sfpowerkit:org:connectedapp:retrieve -u azlam@sfdc.com -p Xasdax2w2 -n
+  $ sfdx sfpowerkit:org:connectedapp:retrieve -u azlam@sfdc.com -p Xasdax2w2 -n
   AzurePipelines
      Retrived AzurePipelines Consumer Key : XSD21Sd23123w21321
 ```
@@ -124,7 +124,7 @@ OPTIONS
                                                   command invocation
 
 EXAMPLE
-    $ sfdx  sfpowerkit:org:duplicaterule:deactivate -n Account.CRM_Account_Rule_1 -u sandbox
+    $ sfdx sfpowerkit:org:duplicaterule:deactivate -n Account.CRM_Account_Rule_1 -u sandbox
        Polling for Retrieval Status
        Retrieved Duplicate Rule  with label : CRM Account Rule 2
        Preparing Deactivation
@@ -155,7 +155,7 @@ OPTIONS
                                                   command invocation
 
 EXAMPLE
-    $ sfdx  sfpowerkit:org:matchingrule:deactivate -n Account -u sandbox
+    $ sfdx sfpowerkit:org:matchingrule:deactivate -n Account -u sandbox
        Polling for Retrieval Status
        Retrieved Matching Rule  for Object : Account
        Preparing Deactivation
@@ -189,7 +189,7 @@ OPTIONS
                                                   command invocation
 
 EXAMPLE
-    $ sfdx  sfpowerkit:org:orgwideemail:create -e test@example.com -n TestEmail -p -u sandbox
+    $ sfdx sfpowerkit:org:orgwideemail:create -e test@example.com -n TestEmail -p -u sandbox
       Creating email test@example.com
       Org wide email created with Id 0D20E00000003wtSAA
       Run the folowing command to verify it
@@ -218,7 +218,7 @@ OPTIONS
                                                   command invocation
 
 EXAMPLE
-    $ sfdx  sfpowerkit:org:orgwideemail:verify -i 0D20E00000003wtSAA -u sandbox
+    $ sfdx sfpowerkit:org:orgwideemail:verify -i 0D20E00000003wtSAA -u sandbox
       Verify email 0D21l0000008QgYCAU
       Org wide email address verified
 ```
@@ -245,7 +245,7 @@ OPTIONS
                                                   command invocation
 
 EXAMPLE
-    $ sfdx  sfpowerkit:org:trigger:deactivate -n AccountTrigger -u sandbox
+    $ sfdx sfpowerkit:org:trigger:deactivate -n AccountTrigger -u sandbox
     Polling for Retrieval Status
     Preparing Deactivation
     Deploying Deactivated ApexTrigger with ID  0Af4Y000003Q7GySAK
@@ -275,7 +275,7 @@ OPTIONS
                                                   command invocation
 
 EXAMPLE
-    $ sfdx  sfpowerkit:org:trigger:deactivate -n AccountTrigger -u sandbox
+    $ sfdx sfpowerkit:org:trigger:deactivate -n AccountTrigger -u sandbox
     Polling for Retrieval Status
     Preparing Activation
     Deploying Activated ApexTrigger with ID  0Af4Y000003Q7GySAK
@@ -524,6 +524,35 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/dependencies/install.ts)_
 
+
+## `sfpowerkit:package:applypatch`
+
+Retrieves and applies the patch, Useful after a package upgrade in a CD Environmen
+
+```
+USAGE
+  $ sfdx sfpowerkit:package:applypatch -n <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -n, --name=name                                                                   (required) Name of the static resource to be patched
+  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:package:applypatch -n customer_picklist -u sandbox
+  Preparing Patch
+  Deploying Patch with ID  0Af4Y000003Q7GySAK
+  Polling for Deployment Status
+  Polling for Deployment Status
+  Patch customer_picklist Deployed successfully.
+```
+
+_See code: [src\commands\sfpowerkit\package\applypatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/applypatch.ts)_
+
+
 ## `sfpowerkit:package:valid`
 
 Validates a package to check whether it only contains valid metadata as per metadata coverage
@@ -591,7 +620,7 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx  sfpowerkit:source:customlabel:create -u fancyScratchOrg1 -n FlashError -v "Memory leaks aren't for the faint hearted" -s "A flashing 
+  $ sfdx sfpowerkit:source:customlabel:create -u fancyScratchOrg1 -n FlashError -v "Memory leaks aren't for the faint hearted" -s "A flashing 
   error"
      Created CustomLabel FlashError in Target Org
 ```
@@ -619,7 +648,7 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx  sfpowerkit:source:customlabel:clean -p path/to/customlabelfile.xml
+  $ sfdx sfpowerkit:source:customlabel:clean -p path/to/customlabelfile.xml
        Cleaned The Custom Labels
 ``
 ```
@@ -630,7 +659,7 @@ Converts an apex test suite to its consituent apex classes as a single line sepa
 
 ```
 USAGE
-  $ sfdx  sfpowerkit:source:apextestsuite:convert  -n <string> [  -p <string> ] [  -o <string> ] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+  $ sfdx sfpowerkit:source:apextestsuite:convert  -n <string> [  -p <string> ] [  -o <string> ] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
   -n, --name=name                                 (required) the name of the apextestsuite (the file name minus the apex test suite)
@@ -642,9 +671,67 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $  sfdx  sfpowerkit:source:apextestsuite:convert -n MyApexTestSuite 
+  $  sfdx sfpowerkit:source:apextestsuite:convert -n MyApexTestSuite 
     "ABC2,ABC1Test"    
 ```
+
+## `sfpowerkit:source:picklist:generatepatch`
+
+Search picklist fields from Standatd/ custom objects inside project and generate a static resource file with picklist fields, used to solve the picklist upgrade issue in dx unlock package as well as issue with utilizing standard value set as the controlling picklist field. Custom metadata picklist fields will be ignored. 
+
+```
+USAGE
+  $ sfdx sfpowerkit:source:picklist:generatepatch [-p <string>] [-d <string>] [-f <boolean>]  [-r <boolean>] 
+
+OPTIONS
+  -d, --objectsdir=objectsdir                                                       Path for Objects folder located in project
+  -p, --package=package                                                             Name of the package to generate the picklist 
+  patch
+  -f, --fixstandardvalueset                                                         Consider patching for standard value set controlled picklists, Warning: This modifies the source code in your package by removing references to standardvalueset from the particular picklist.                      
+  -r, --fixrecordtypes                                                               Consider patching for standard value set in RecordTypes, Warning: This modifies the source code in your package
+
+EXAMPLE
+    sfdx sfpowerkit:source:picklist:generatepatch -p sfpowerkit_test -d force-app/main/default/objects/ -f
+    Scanning for fields of type picklist
+    Found 2 fields of type picklist
+    Processing and adding the following fields to patch
+    Copied Original to Patch:         force-app\main\default\objects\Case\fields\test_standard2__c.field-meta.xml
+    Modified Original in Packaging:         force-app\main\default\objects\Case\fields\test_standard2__c.field-meta.xml
+    Copied Original to Patch:         force-app\main\default\objects\Case\fields\test_standard__c.field-meta.xml
+    Added  2 fields of field type picklist into patch after'removing fields picklist fields in cmdt objects
+    Added  1 fields of field type picklist that have standard value sets as controlling types
+    Source was successfully converted to Metadata API format and written to the location: C:\Projects\sfpowerkit_test\temp_sfpowerkit\mdapi
+    Generating static resource file : force-app/main/default/staticresources/sfpowerkit_test_picklist.resource-meta.xml
+    Patch sfpowerkit_test_picklist generated successfully.
+```
+_See code: [src\commands\sfpowerkit\source\picklist\generatepatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/picklist/generatepatch.ts)_
+
+
+## `sfpowerkit:source:permissionset:generatepatch`
+
+Search permissionsets inside project and create a static resource file with permissionsets, used to solve the recordtype assignment upgrade issue in dx unlock package
+
+```
+USAGE
+  $ sfdx sfpowerkit:source:permissionset:generatepatch [-p <string>] [-d <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -d, --permsetdir=permsetdir                                                       Path for permissionset folder located in project
+  -p, --package=package                                                             Name of the package to generate the permissionset patch
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:source:permissionset:generatepatch -p Core -d src/core/main/default/permissionsets
+  Scanning for permissionsets
+  Found 30 permissionsets
+  Source was successfully converted to Metadata API format and written to the location: .../temp_sfpowerkit/mdapi
+  Generating static resource file : src/core/main/default/staticresources/Core_permissionsets.resource-meta.xml
+  Patch Core_permissionsets generated successfully.
+```
+_See code: [src\commands\sfpowerkit\source\permissionset\generatepatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/permissionset/generatepatch.ts)_
+
 
 ## `sfpowerkit:project:diff`
 
@@ -652,7 +739,7 @@ Generate a subset of the project base on a diff file generated by a git diff --r
 ```
 
 USAGE
-  $ sfdx  sfpowerkit:project:diff  -d <string> [-f <string>] [  -e <string> ] [  -r <string> ] [  -t <string> ] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+  $ sfdx sfpowerkit:project:diff  -d <string> [-f <string>] [  -e <string> ] [  -r <string> ] [  -t <string> ] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
   -d, --output=output                             (required) the output dir where the files will be placed

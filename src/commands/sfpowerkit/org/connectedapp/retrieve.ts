@@ -32,7 +32,7 @@ export default class Retrieve extends SfdxCommand {
   public static description = messages.getMessage('commandDescription');
 
   public static examples = [
-    `$ sfdx  sfpowerkit:org:connectedapp:retrieve -n AzurePipelines -u azlam@sfdc.com 
+    `$ sfdx sfpowerkit:org:connectedapp:retrieve -n AzurePipelines -u azlam@sfdc.com 
   Retrived AzurePipelines Consumer Key : XSD21Sd23123w21321
   `
   ];
