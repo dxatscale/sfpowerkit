@@ -742,7 +742,12 @@ EXAMPLE
 
 ## `sfpowerkit:source:picklist:generatepatch`
 
-Search picklist fields from Standatd/ custom objects inside project and generate a static resource file with picklist fields, used to solve the picklist upgrade issue in dx unlock package as well as issue with utilizing standard value set as the controlling picklist field. Custom metadata picklist fields will be ignored. 
+This command generates a patch in the format of a metadata packed together as a static resource with the intent of solving the following issues.
+1. Changes to piclist values are not updated in the target org through a unlocked package upgrade.
+2. Standard Value are non packageable, hence any picklist that has a modified standardvalueset as the controlling field will fail to package, The optional fixstandardvalueset flag will strip of the controlling field and puts the original code into the patch
+3. Fix for business process and recordtype, that depend on a modified standard valueset and fail to package.
+These command is to be run just before the package:version: create command and any changes made by the command should not be committed to the repo. Once a patch is generated and the package is installed in the target org, run the apply patch command tofix the above issues.
+
 
 ```
 USAGE
@@ -753,7 +758,7 @@ OPTIONS
   -p, --package=package                                                             Name of the package to generate the picklist 
   patch
   -f, --fixstandardvalueset                                                         Consider patching for standard value set controlled picklists, Warning: This modifies the source code in your package by removing references to standardvalueset from the particular picklist.                      
-  -r, --fixrecordtypes                                                               Consider patching for standard value set in RecordTypes, Warning: This modifies the source code in your package
+  -r, --fixrecordtypes                                                          Consider patching for standard value set in RecordTypes, Warning: This modifies the source code in your package
 
 EXAMPLE
     sfdx sfpowerkit:source:picklist:generatepatch -p sfpowerkit_test -d force-app/main/default/objects/ -f
