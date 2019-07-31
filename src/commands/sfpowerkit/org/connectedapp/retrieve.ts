@@ -35,7 +35,7 @@ export default class Retrieve extends SfdxCommand {
     `$ sfdx sfpowerkit:org:connectedapp:retrieve -n AzurePipelines -u azlam@sfdc.com 
   Retrived AzurePipelines Consumer Key : XSD21Sd23123w21321
   `
-  ];
+  ]
 
     // Comment this out if your command does not require an org username
     protected static requiresUsername = true;
@@ -90,7 +90,7 @@ export default class Retrieve extends SfdxCommand {
 
 
 
-    let metadata_retrieve_result = await checkRetrievalStatus(conn, retrievedId);
+    let metadata_retrieve_result = await checkRetrievalStatus(conn, retrievedId,!this.flags.json);
     if (!metadata_retrieve_result.zipFile)
       throw new SfdxError("Unable to find the requested ConnectedApp");
 
