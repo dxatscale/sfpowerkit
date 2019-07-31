@@ -655,7 +655,7 @@ EXAMPLE
 
 ## `sfpowerkit:source:apextestsuite:convert`
 
-Converts an apex test suite to its consituent apex classes as a single line separated by commas, so that it can be used for metadata api deployment
+Converts an apex test suite to its consituent apex classes as a single line separated by commas, so that it can be used along with metadata validate only deployment
 
 ```
 USAGE
