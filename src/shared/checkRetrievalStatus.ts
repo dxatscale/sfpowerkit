@@ -2,7 +2,7 @@ import { Connection, DeployResult } from "jsforce";
 import { delay } from '../shared/delay';
 
 
-export async function checkRetrievalStatus(conn: Connection, retrievedId: string) {
+export async function checkRetrievalStatus(conn: Connection, retrievedId: string, isToBeLoggedToConsole:boolean=true) {
     let metadata_result
 
     while (true) {
@@ -13,6 +13,7 @@ export async function checkRetrievalStatus(conn: Connection, retrievedId: string
 
       if (metadata_result.done === "false" ) {
 
+        if(isToBeLoggedToConsole)
         console.log(`Polling for Retrieval Status`)
         await delay(5000);
       }
