@@ -592,7 +592,8 @@ _See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://git
 
 ## `sfpowerkit:package:applypatch`
 
-Retrieves and applies the patch, Useful after a package upgrade in a CD Environmen
+Retrieves and applies the patch, This command is exclusively used to apply the patched created by the generatepatch command, see source: picklist:generatepatch and source:permissionset:generatepatch. The command will download the static reource (collection of patched metadata) from the target org, unzips and apply to the target org using mdapi
+
 
 ```
 USAGE
@@ -620,7 +621,7 @@ _See code: [src\commands\sfpowerkit\package\applypatch.ts](https://github.com/Ac
 
 ## `sfpowerkit:package:valid`
 
-Validates a package to check whether it only contains valid metadata as per metadata coverage
+Validates a package directory to check whether it only contains valid metadata as per metadata coverage
 
 ```
 USAGE
