@@ -2,28 +2,29 @@ import { core, SfdxCommand, flags, FlagsConfig } from "@salesforce/command";
 
 import { SfdxProject } from "@salesforce/core";
 import _ from "lodash";
-import AcnProfileUtils from "../../../profile_utils/profileUtils";
-import { SfPowerKit } from "../../../shared/sfpowerkit";
+import AcnProfileUtils from "../../../../profile_utils/profileUtils";
+import { SfPowerKit } from "../../../../shared/sfpowerkit";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages("sfpowerkit", "profile_sync");
+const messages = core.Messages.loadMessages("sfpowerkit", "profile_reconcile");
 
-export default class Sync extends SfdxCommand {
+export default class Reconcile extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:source:profile:sync -u prod`,
-    `$ sfdx sfpowerkit:source:profile:sync  -f force-app -n "My Profile" -r -u prod`,
-    `$ sfdx sfpowerkit:source:profile:sync  -f "module1, module2, module3" -n "My Profile1, My profile2"  -u prod`
+    `$ sfdx sfpowerkit:source:profile:reconcile  --folder force-app`,
+    `$ sfdx sfpowerkit:source:profile:reconcile  --folder force-app,module2,module3 -u sandbox`,
+    `$ sfdx sfpowerkit:source:profile:reconcile  -u myscratchorg`
   ];
 
-  //public static args = [{ name: 'file' }];
+  //public static args = [{name: 'file'}];
 
   protected static flagsConfig: FlagsConfig = {
+    // flag with a value (-n, --name=VALUE)
     folder: flags.array({
       char: "f",
       description: messages.getMessage("folderFlagDescription"),
@@ -32,31 +33,35 @@ export default class Sync extends SfdxCommand {
     }),
     profilelist: flags.array({
       char: "n",
-      description: messages.getMessage("profileListFlagDescription"),
+      description: messages.getMessage("nameFlagDescription"),
       required: false,
-      map: (p: string) => p.trim()
+      map: (n: string) => n.trim()
     })
   };
 
   // Comment this out if your command does not require an org username
   protected static requiresUsername = true;
 
+  // Comment this out if your command does not support a hub org username
+  //protected static supportsDevhubUsername = true;
+
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
-  protected static requiresProject = true;
+  //protected static requiresProject = false;
   public async run(): Promise<any> {
+    // tslint:disable-line:no-any
     SfPowerKit.ux = this.ux;
 
-    let argFolder: string = this.flags.folder;
-    let argProfileList: string[] = this.flags.profilelist;
+    let argFolder = this.flags.folder;
+    let argProfileList = this.flags.profilelist;
 
-    let folders: string[] = [];
     if (_.isNil(argFolder) || argFolder.length === 0) {
+      argFolder = [];
       const dxProject = await SfdxProject.resolve();
       const project = await dxProject.retrieveSfdxProjectJson();
 
       let packages = (project.get("packageDirectories") as any[]) || [];
       packages.forEach(element => {
-        folders.push(element.path);
+        argFolder.push(element.path);
         if (element.default) {
           SfPowerKit.defaultFolder = element.path;
         }
@@ -65,10 +70,13 @@ export default class Sync extends SfdxCommand {
       SfPowerKit.defaultFolder = argFolder[0];
     }
 
-    const profileUtils = new AcnProfileUtils(this.org);
+    var profileUtils = new AcnProfileUtils(this.org);
+    var reconcileProfiles = await profileUtils.reconcile(
+      argFolder,
+      argProfileList || []
+    );
 
-    let syncPofles = await profileUtils.sync(folders, argProfileList || []);
-
-    return syncPofles;
+    // Return an object to be displayed with --json
+    return { ReconciledProfile: reconcileProfiles };
   }
 }

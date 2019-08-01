@@ -1,9 +1,9 @@
 import { core, SfdxCommand, flags, FlagsConfig } from "@salesforce/command";
 
 import { SfdxProject, SfdxError } from "@salesforce/core";
-import AcnProfileUtils from "../../../profile_utils/profileUtils";
+import AcnProfileUtils from "../../../../profile_utils/profileUtils";
 import _ from "lodash";
-import { SfPowerKit } from "../../../shared/sfpowerkit";
+import { SfPowerKit } from "../../../../shared/sfpowerkit";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -16,9 +16,9 @@ export default class Merge extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:profile:merge -u sandbox`,
-    `$ sfdx sfpowerkit:profile:merge -f force-app -n "My Profile" -r -u sandbox`,
-    `$ sfdx sfpowerkit:profile:merge -f "module1, module2, module3" -n "My Profile1, My profile2"  -u sandbox`
+    `$ sfdx sfpowerkit:source:profile:merge -u sandbox`,
+    `$ sfdx sfpowerkit:source:profile:merge -f force-app -n "My Profile" -r -u sandbox`,
+    `$ sfdx sfpowerkit:source:profile:merge -f "module1, module2, module3" -n "My Profile1, My profile2"  -u sandbox`
   ];
 
   //public static args = [{ name: 'file' }];

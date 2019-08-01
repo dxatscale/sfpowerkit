@@ -837,13 +837,13 @@ EXAMPLE
   }
 ```
 
- ## `sfpowerkit:profile:sync`
+ ## `sfpowerkit:source:profile:sync`
 
 retrieve profiles from the salesforce org with all their configurations. Run this command preferably again the production org. Use the merge equivalent again other type of orgs.
 ```
 
 USAGE
-  $ sfdx sfpowerkit:profile:sync [-f <array>] [-n <array>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+  $ sfdx sfpowerkit:source:profile:sync [-f <array>] [-n <array>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
   -f, --folder=folder                             comma separated list of folders to scan for profiles. If ommited, all folders in the package directories will be used.
@@ -861,13 +861,13 @@ EXAMPLES
 _See code: [src\commands\sfpowerkit\profile\sync.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/sync.ts)_
 
 
-## `sfpowerkit:profile:reconcile`
+## `sfpowerkit:source:profile:reconcile`
 
 cleanup profile configurations to make them compatible with the target org.
 ```
 
 USAGE
-  $ sfdx sfpowerkit:profile:reconcile [-f <array>] [-n <array>] [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  $ sfdx sfpowerkit:source:profile:reconcile [-f <array>] [-n <array>] [-u <string>] [--apiversion <string>] [--json] [--loglevel
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
@@ -879,19 +879,19 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
 EXAMPLES
-  $ sfdx sfpowerkit:profile:reconcile  --folder force-app
-  $ sfdx sfpowerkit:profile:reconcile  --folder force-app,module2,module3 -u sandbox
-  $ sfdx sfpowerkit:profile:reconcile  -u myscratchorg
+  $ sfdx sfpowerkit:source:profile:reconcile  --folder force-app
+  $ sfdx sfpowerkit:source:profile:reconcile  --folder force-app,module2,module3 -u sandbox
+  $ sfdx sfpowerkit:source:profile:reconcile  -u myscratchorg
 ```
 _See code: [src\commands\sfpowerkit\profile\reconcile.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/reconcile.ts)_
 
-## `sfpowerkit:profile:merge`
+## `sfpowerkit:source:profile:merge`
 
 retrieve profiles from a development environment and merge it with the profile configurations
 ```
 
 USAGE
-  $ sfdx sfpowerkit:profile:merge [-f <array>] [-n <array>] [-m <array>] [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  $ sfdx sfpowerkit:source:profile:merge [-f <array>] [-n <array>] [-m <array>] [-u <string>] [--apiversion <string>] [--json] [--loglevel
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
@@ -907,8 +907,8 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
 EXAMPLES
-  $ sfdx sfpowerkit:profile:merge -u sandbox
-  $ sfdx sfpowerkit:profile:merge -f force-app -n "My Profile" -r -u sandbox
-  $ sfdx sfpowerkit:profile:merge -f "module1, module2, module3" -n "My Profile1, My profile2"  -u sandbox
+  $ sfdx sfpowerkit:source:profile:merge -u sandbox
+  $ sfdx sfpowerkit:source:profile:merge -f force-app -n "My Profile" -r -u sandbox
+  $ sfdx sfpowerkit:source:profile:merge -f "module1, module2, module3" -n "My Profile1, My profile2"  -u sandbox
 ```
 _See code: [src\commands\sfpowerkit\profile\merge.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/merge.ts)_
