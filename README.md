@@ -106,7 +106,7 @@ _See code: [src\commands\sfpowerkit\org\connectedapp\retrieve.ts](https://github
 
 ## `sfpowerkit:org:duplicaterule:deactivate`
 
-Deactivates a duplicate rule in the target org
+Deactivates a duplicate rule in the target org. Deactivate active rules before pushing the changes to the target org
 
 ```
 USAGE
@@ -135,6 +135,40 @@ EXAMPLE
 ```
 
 _See code: [src\commands\sfpowerkit\org\duplicaterule\deactivate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/deactivate.ts)_
+
+
+## `sfpowerkit:org:duplicaterule:activate`
+
+Activates a matching rule in the target org
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:duplicaterule:activate -n <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -n, --name=name                                 (required) Name of the duplicate rule
+
+  -u, --targetusername=targetusername              username or alias for the target org; overrides default target org
+
+  --json                                          format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this
+                                                  command invocation
+
+EXAMPLE
+   $ sfdx sfpowerkit:org:duplicaterule:activate -n Account.CRM_Account_Rule_1 -u sandbox
+    Polling for Retrieval Status
+    Retrieved Duplicate Rule  with label : CRM Account Rule 2
+    Preparing Activation
+    Deploying Activated Rule with ID  0Af4Y000003OdTWSA0
+    Polling for Deployment Status
+    Polling for Deployment Status
+    Duplicate Rule CRM Account Rule 2 Activated
+```
+
+_See code: [src\commands\sfpowerkit\org\duplicaterule\activate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/activate.ts)_
+
 
 ## `sfpowerkit:org:matchingrule:deactivate`
 
@@ -167,6 +201,37 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\matchingrule\deactivate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/matchingrule/deactivate.ts)_
 
+
+## `sfpowerkit:org:matchingrule:activate`
+
+Activates a matching rule in the target org, Please ensure all duplicate rules are activated before using this
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:matchingrule:activate -n <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -n, --name=name                                 (required) Name of the object
+  -u, --targetusername=targetusername              username or alias for the target org; overrides default target org
+
+  --json                                          format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this
+                                                  command invocation
+
+EXAMPLE
+   $ sfdx sfpowerkit:org:matchingrules:activate -n Account -u sandbox
+    Polling for Retrieval Status
+    Retrieved Matching Rule  for Object : Account
+    Preparing Activation
+    Deploying Activated Rule with ID  0Af4Y000003OdTWSA0
+    Polling for Deployment Status
+    Polling for Deployment Status
+    Matching Rule for  Account activated
+```
+
+_See code: [src\commands\sfpowerkit\org\matchingrule\activate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/matchingrule/activate.ts)_
 
 ## `sfpowerkit:org:orgwideemail:create`
 
@@ -527,7 +592,8 @@ _See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://git
 
 ## `sfpowerkit:package:applypatch`
 
-Retrieves and applies the patch, Useful after a package upgrade in a CD Environmen
+Retrieves and applies the patch, This command is exclusively used to apply the patched created by the generatepatch command, see source: picklist:generatepatch and source:permissionset:generatepatch. The command will download the static reource (collection of patched metadata) from the target org, unzips and apply to the target org using mdapi
+
 
 ```
 USAGE
@@ -555,7 +621,7 @@ _See code: [src\commands\sfpowerkit\package\applypatch.ts](https://github.com/Ac
 
 ## `sfpowerkit:package:valid`
 
-Validates a package to check whether it only contains valid metadata as per metadata coverage
+Validates a package directory to check whether it only contains valid metadata as per metadata coverage
 
 ```
 USAGE
@@ -677,7 +743,13 @@ EXAMPLE
 
 ## `sfpowerkit:source:picklist:generatepatch`
 
-Search picklist fields from Standatd/ custom objects inside project and generate a static resource file with picklist fields, used to solve the picklist upgrade issue in dx unlock package as well as issue with utilizing standard value set as the controlling picklist field. Custom metadata picklist fields will be ignored. 
+This command generates a patch in the format of a metadata packed together as a static resource with the intent of solving the following issues.
+1. Changes to picklist values are not updated in the target org through a unlocked package upgrade.
+2. Standard Value are non packageable, hence any picklist that has a modified standardvalueset as the controlling field will fail to package, The optional fixstandardvalueset flag will strip of the controlling field and puts the original code into the patch
+3. Fix for business process and recordtype, that depend on a modified standard valueset and fail to package.
+
+These command is to be run just before the package:version: create command and any changes made by the command should not be committed to the repo. Once a patch is generated and the package is installed in the target org, run the apply patch command tofix the above issues.
+
 
 ```
 USAGE
@@ -688,7 +760,7 @@ OPTIONS
   -p, --package=package                                                             Name of the package to generate the picklist 
   patch
   -f, --fixstandardvalueset                                                         Consider patching for standard value set controlled picklists, Warning: This modifies the source code in your package by removing references to standardvalueset from the particular picklist.                      
-  -r, --fixrecordtypes                                                               Consider patching for standard value set in RecordTypes, Warning: This modifies the source code in your package
+  -r, --fixrecordtypes                                                          Consider patching for standard value set in RecordTypes, Warning: This modifies the source code in your package
 
 EXAMPLE
     sfdx sfpowerkit:source:picklist:generatepatch -p sfpowerkit_test -d force-app/main/default/objects/ -f
