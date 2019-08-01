@@ -2,7 +2,7 @@ import BaseUtils from "./baseUtils";
 import { ApexClass } from "./schema";
 import { Org } from "@salesforce/core";
 import _ from "lodash";
-import { METADATA_INFO } from "./metadataInfo";
+import { METADATA_INFO } from "../shared/metadataInfo";
 
 const QUERY = "Select Id, Name, NameSpacePrefix From ApexClass ";
 export default class ClassUtils extends BaseUtils<ApexClass> {

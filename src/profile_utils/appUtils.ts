@@ -2,7 +2,7 @@ import BaseUtils from "./baseUtils";
 import { CustomApplication } from "./schema";
 import { Org } from "@salesforce/core";
 import _ from "lodash";
-import { METADATA_INFO } from "./metadataInfo";
+import { METADATA_INFO } from "../shared/metadataInfo";
 
 const QUERY =
   "Select Id, NamespacePrefix, DeveloperName, Label From CustomApplication ";

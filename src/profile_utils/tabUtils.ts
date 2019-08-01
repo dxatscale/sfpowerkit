@@ -1,7 +1,7 @@
 import BaseUtils from "./baseUtils";
 import { TabDefinition } from "./schema";
 import { Org } from "@salesforce/core";
-import { METADATA_INFO } from "./metadataInfo";
+import { METADATA_INFO } from "../shared/metadataInfo";
 import _ from "lodash";
 
 const QUERY =

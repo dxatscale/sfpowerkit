@@ -5,7 +5,7 @@ import {
   MetadataDescribe,
   SOURCE_EXTENSION_REGEX
 } from "./metadataInfo";
-import FileUtils from "./fsutils";
+import FileUtils from "../profile_utils/fsutils";
 import _ from "lodash";
 
 export default class MetadataFiles {

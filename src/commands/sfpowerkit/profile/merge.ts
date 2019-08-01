@@ -1,7 +1,7 @@
 import { core, SfdxCommand, flags, FlagsConfig } from "@salesforce/command";
 
 import { SfdxProject, SfdxError } from "@salesforce/core";
-import AcnProfileUtils from "../../../shared/profileUtils";
+import AcnProfileUtils from "../../../profile_utils/profileUtils";
 import _ from "lodash";
 import { SfPowerKit } from "../../../shared/sfpowerkit";
 

@@ -1,7 +1,7 @@
 import BaseUtils from "./baseUtils";
 import { EntityDefinition } from "./schema";
 import { Org } from "@salesforce/core";
-import { METADATA_INFO } from "./metadataInfo";
+import { METADATA_INFO } from "../shared/metadataInfo";
 import _ from "lodash";
 
 const QUERY =

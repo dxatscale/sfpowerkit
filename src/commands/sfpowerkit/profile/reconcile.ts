@@ -2,7 +2,7 @@ import { core, SfdxCommand, flags, FlagsConfig } from "@salesforce/command";
 
 import { SfdxProject } from "@salesforce/core";
 import _ from "lodash";
-import AcnProfileUtils from "../../../shared/profileUtils";
+import AcnProfileUtils from "../../../profile_utils/profileUtils";
 import { SfPowerKit } from "../../../shared/sfpowerkit";
 
 // Initialize Messages with the current plugin directory

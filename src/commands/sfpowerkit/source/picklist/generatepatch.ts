@@ -9,8 +9,7 @@ import { getPackageInfo, getDefaultPackageInfo } from '../../../../shared/getPac
 import { searchFilesInDirectory } from '../../../../shared/searchFilesInDirectory';
 import DiffUtil from "../../../../shared/diffutils";
 import { zipDirectory } from "../../../../shared/zipDirectory"
-import { getSafe } from '../../../../shared/getSafe';
-import { runInThisContext } from 'vm';
+
 
 var path = require('path');
 const spawn = require('child-process-promise').spawn;

@@ -2,7 +2,7 @@ import BaseUtils from "./baseUtils";
 import { ApexPage } from "./schema";
 import { Org } from "@salesforce/core";
 import _ from "lodash";
-import { METADATA_INFO } from "./metadataInfo";
+import { METADATA_INFO } from "../shared/metadataInfo";
 
 const QUERY = "Select Id, Name, NameSpacePrefix From ApexPage";
 export default class PageUtils extends BaseUtils<ApexPage> {

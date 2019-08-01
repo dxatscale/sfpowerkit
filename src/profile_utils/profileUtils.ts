@@ -12,7 +12,7 @@ import Profile, {
   PermissionSetSObject,
   ProfileCustomPermissions
 } from "./schema";
-import MetadataFiles from "./metadataFiles";
+import MetadataFiles from "../shared/metadataFiles";
 import { Connection, Org } from "@salesforce/core";
 import { MetadataInfo } from "jsforce";
 import UserPermissionUtils from "./userPermissionUtils";
@@ -22,8 +22,8 @@ import * as path from "path";
 import xml2js = require("xml2js");
 import { ProfileTooling } from "./schema";
 import AcnBaseUtils from "./baseUtils";
-import { SfPowerKit } from "./sfpowerkit";
-import { METADATA_INFO } from "./metadataInfo";
+import { SfPowerKit } from "../shared/sfpowerkit";
+import { METADATA_INFO } from "../shared/metadataInfo";
 import _ from "lodash";
 import UserLicenceUtils from "./userLicenseUtils";
 import AppUtils from "./appUtils";

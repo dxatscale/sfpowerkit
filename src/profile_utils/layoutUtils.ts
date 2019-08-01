@@ -2,7 +2,7 @@ import BaseUtils from "./baseUtils";
 import { Layout } from "./schema";
 import EntityDefinitionUtils from "./entityDefinitionUtils";
 import { Org } from "@salesforce/core";
-import { METADATA_INFO } from "./metadataInfo";
+import { METADATA_INFO } from "../shared/metadataInfo";
 import _ from "lodash";
 
 const QUERY = "SELECT Id, Name, EntityDefinitionId, NamespacePrefix From Layout ";
