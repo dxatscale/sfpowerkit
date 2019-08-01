@@ -7,7 +7,7 @@ import * as xml2js from "xml2js";
 import * as path from "path";
 import * as fs from "fs";
 import * as glob from "glob";
-import * as  copydir  from "copy-dir";
+import * as copydir from "copy-dir";
 
 const pairStatResources = "staticresources";
 const pairStatResourcesRegExp = new RegExp(pairStatResources);

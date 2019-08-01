@@ -447,6 +447,10 @@
       "version": "11.13.17",
       "dev": true
     },
+    "@types/normalize-package-data": {
+      "version": "2.4.0",
+      "dev": true
+    },
     "@types/sinon": {
       "version": "7.0.13"
     },
@@ -535,6 +539,10 @@
     },
     "arr-union": {
       "version": "3.1.0",
+      "dev": true
+    },
+    "array-differ": {
+      "version": "2.1.0",
       "dev": true
     },
     "array-from": {
@@ -755,6 +763,24 @@
       "version": "1.0.1",
       "dev": true
     },
+    "caller-callsite": {
+      "version": "2.0.0",
+      "dev": true,
+      "requires": {
+        "callsites": "^2.0.0"
+      }
+    },
+    "caller-path": {
+      "version": "2.0.0",
+      "dev": true,
+      "requires": {
+        "caller-callsite": "^2.0.0"
+      }
+    },
+    "callsites": {
+      "version": "2.0.0",
+      "dev": true
+    },
     "camelcase": {
       "version": "5.3.1",
       "dev": true
@@ -821,6 +847,10 @@
     },
     "chownr": {
       "version": "1.1.2",
+      "dev": true
+    },
+    "ci-info": {
+      "version": "2.0.0",
       "dev": true
     },
     "class-utils": {
@@ -1026,6 +1056,16 @@
     },
     "core-util-is": {
       "version": "1.0.2"
+    },
+    "cosmiconfig": {
+      "version": "5.2.1",
+      "dev": true,
+      "requires": {
+        "import-fresh": "^2.0.0",
+        "is-directory": "^0.3.1",
+        "js-yaml": "^3.13.1",
+        "parse-json": "^4.0.0"
+      }
     },
     "crc": {
       "version": "3.8.0",
@@ -1337,16 +1377,25 @@
       "dev": true
     },
     "execa": {
-      "version": "0.10.0",
+      "version": "1.0.0",
       "dev": true,
       "requires": {
         "cross-spawn": "^6.0.0",
-        "get-stream": "^3.0.0",
+        "get-stream": "^4.0.0",
         "is-stream": "^1.1.0",
         "npm-run-path": "^2.0.0",
         "p-finally": "^1.0.0",
         "signal-exit": "^3.0.0",
         "strip-eof": "^1.0.0"
+      },
+      "dependencies": {
+        "get-stream": {
+          "version": "4.1.0",
+          "dev": true,
+          "requires": {
+            "pump": "^3.0.0"
+          }
+        }
       }
     },
     "expand-brackets": {
@@ -1609,6 +1658,10 @@
       "version": "2.0.0",
       "dev": true
     },
+    "get-stdin": {
+      "version": "7.0.0",
+      "dev": true
+    },
     "get-stream": {
       "version": "3.0.0",
       "dev": true
@@ -1680,6 +1733,10 @@
         "slash": "^2.0.0"
       },
       "dependencies": {
+        "ignore": {
+          "version": "4.0.6",
+          "dev": true
+        },
         "pify": {
           "version": "4.0.1",
           "dev": true
@@ -1797,6 +1854,29 @@
         "sshpk": "^1.7.0"
       }
     },
+    "husky": {
+      "version": "3.0.2",
+      "dev": true,
+      "requires": {
+        "chalk": "^2.4.2",
+        "cosmiconfig": "^5.2.1",
+        "execa": "^1.0.0",
+        "get-stdin": "^7.0.0",
+        "is-ci": "^2.0.0",
+        "opencollective-postinstall": "^2.0.2",
+        "pkg-dir": "^4.2.0",
+        "please-upgrade-node": "^3.1.1",
+        "read-pkg": "^5.1.1",
+        "run-node": "^1.0.0",
+        "slash": "^3.0.0"
+      },
+      "dependencies": {
+        "slash": {
+          "version": "3.0.0",
+          "dev": true
+        }
+      }
+    },
     "hyperlinker": {
       "version": "1.0.0"
     },
@@ -1804,8 +1884,22 @@
       "version": "1.1.13"
     },
     "ignore": {
-      "version": "4.0.6",
+      "version": "3.3.10",
       "dev": true
+    },
+    "import-fresh": {
+      "version": "2.0.0",
+      "dev": true,
+      "requires": {
+        "caller-path": "^2.0.0",
+        "resolve-from": "^3.0.0"
+      },
+      "dependencies": {
+        "resolve-from": {
+          "version": "3.0.0",
+          "dev": true
+        }
+      }
     },
     "imurmurhash": {
       "version": "0.1.4"
@@ -1854,6 +1948,13 @@
       "version": "1.1.4",
       "dev": true
     },
+    "is-ci": {
+      "version": "2.0.0",
+      "dev": true,
+      "requires": {
+        "ci-info": "^2.0.0"
+      }
+    },
     "is-data-descriptor": {
       "version": "1.0.0",
       "dev": true,
@@ -1885,6 +1986,10 @@
           "dev": true
         }
       }
+    },
+    "is-directory": {
+      "version": "0.3.1",
+      "dev": true
     },
     "is-extendable": {
       "version": "0.1.1",
@@ -2149,6 +2254,10 @@
         "invert-kv": "^2.0.0"
       }
     },
+    "lines-and-columns": {
+      "version": "1.1.6",
+      "dev": true
+    },
     "listenercount": {
       "version": "1.0.1"
     },
@@ -2165,6 +2274,10 @@
       "dependencies": {
         "pify": {
           "version": "4.0.1",
+          "dev": true
+        },
+        "type-fest": {
+          "version": "0.3.1",
           "dev": true
         }
       }
@@ -2528,8 +2641,22 @@
       "version": "2.24.0",
       "optional": true
     },
+    "mri": {
+      "version": "1.1.4",
+      "dev": true
+    },
     "ms": {
       "version": "2.1.2"
+    },
+    "multimatch": {
+      "version": "3.0.0",
+      "dev": true,
+      "requires": {
+        "array-differ": "^2.0.3",
+        "array-union": "^1.0.2",
+        "arrify": "^1.0.1",
+        "minimatch": "^3.0.4"
+      }
     },
     "multistream": {
       "version": "2.1.1",
@@ -3898,6 +4025,10 @@
         "wrappy": "1"
       }
     },
+    "opencollective-postinstall": {
+      "version": "2.0.2",
+      "dev": true
+    },
     "opn": {
       "version": "5.5.0",
       "requires": {
@@ -3926,36 +4057,6 @@
         "execa": "^1.0.0",
         "lcid": "^2.0.0",
         "mem": "^4.0.0"
-      },
-      "dependencies": {
-        "execa": {
-          "version": "1.0.0",
-          "dev": true,
-          "requires": {
-            "cross-spawn": "^6.0.0",
-            "get-stream": "^4.0.0",
-            "is-stream": "^1.1.0",
-            "npm-run-path": "^2.0.0",
-            "p-finally": "^1.0.0",
-            "signal-exit": "^3.0.0",
-            "strip-eof": "^1.0.0"
-          }
-        },
-        "get-stream": {
-          "version": "4.1.0",
-          "dev": true,
-          "requires": {
-            "pump": "^3.0.0"
-          }
-        },
-        "pump": {
-          "version": "3.0.0",
-          "dev": true,
-          "requires": {
-            "end-of-stream": "^1.1.0",
-            "once": "^1.3.1"
-          }
-        }
       }
     },
     "os-tmpdir": {
@@ -4072,12 +4173,89 @@
       }
     },
     "pkg-dir": {
-      "version": "2.0.0",
+      "version": "4.2.0",
       "dev": true,
       "requires": {
-        "find-up": "^2.1.0"
+        "find-up": "^4.0.0"
       },
       "dependencies": {
+        "find-up": {
+          "version": "4.1.0",
+          "dev": true,
+          "requires": {
+            "locate-path": "^5.0.0",
+            "path-exists": "^4.0.0"
+          }
+        },
+        "locate-path": {
+          "version": "5.0.0",
+          "dev": true,
+          "requires": {
+            "p-locate": "^4.1.0"
+          }
+        },
+        "p-locate": {
+          "version": "4.1.0",
+          "dev": true,
+          "requires": {
+            "p-limit": "^2.2.0"
+          }
+        },
+        "path-exists": {
+          "version": "4.0.0",
+          "dev": true
+        }
+      }
+    },
+    "please-upgrade-node": {
+      "version": "3.1.1",
+      "dev": true,
+      "requires": {
+        "semver-compare": "^1.0.0"
+      }
+    },
+    "posix-character-classes": {
+      "version": "0.1.1",
+      "dev": true
+    },
+    "prettier": {
+      "version": "1.18.2",
+      "dev": true
+    },
+    "pretty-quick": {
+      "version": "1.11.1",
+      "dev": true,
+      "requires": {
+        "chalk": "^2.3.0",
+        "execa": "^0.8.0",
+        "find-up": "^2.1.0",
+        "ignore": "^3.3.7",
+        "mri": "^1.1.0",
+        "multimatch": "^3.0.0"
+      },
+      "dependencies": {
+        "cross-spawn": {
+          "version": "5.1.0",
+          "dev": true,
+          "requires": {
+            "lru-cache": "^4.0.1",
+            "shebang-command": "^1.2.0",
+            "which": "^1.2.9"
+          }
+        },
+        "execa": {
+          "version": "0.8.0",
+          "dev": true,
+          "requires": {
+            "cross-spawn": "^5.0.1",
+            "get-stream": "^3.0.0",
+            "is-stream": "^1.1.0",
+            "npm-run-path": "^2.0.0",
+            "p-finally": "^1.0.0",
+            "signal-exit": "^3.0.0",
+            "strip-eof": "^1.0.0"
+          }
+        },
         "find-up": {
           "version": "2.1.0",
           "dev": true,
@@ -4113,10 +4291,6 @@
         }
       }
     },
-    "posix-character-classes": {
-      "version": "0.1.1",
-      "dev": true
-    },
     "process-nextick-args": {
       "version": "2.0.1"
     },
@@ -4136,7 +4310,7 @@
       "version": "1.2.0"
     },
     "pump": {
-      "version": "1.0.3",
+      "version": "3.0.0",
       "dev": true,
       "requires": {
         "end-of-stream": "^1.1.0",
@@ -4180,6 +4354,26 @@
             "path-type": "^3.0.0"
           }
         },
+        "execa": {
+          "version": "0.10.0",
+          "dev": true,
+          "requires": {
+            "cross-spawn": "^6.0.0",
+            "get-stream": "^3.0.0",
+            "is-stream": "^1.1.0",
+            "npm-run-path": "^2.0.0",
+            "p-finally": "^1.0.0",
+            "signal-exit": "^3.0.0",
+            "strip-eof": "^1.0.0"
+          }
+        },
+        "find-up": {
+          "version": "2.1.0",
+          "dev": true,
+          "requires": {
+            "locate-path": "^2.0.0"
+          }
+        },
         "fs-extra": {
           "version": "6.0.1",
           "dev": true,
@@ -4202,9 +4396,38 @@
             "slash": "^1.0.0"
           }
         },
-        "ignore": {
-          "version": "3.3.10",
+        "locate-path": {
+          "version": "2.0.0",
+          "dev": true,
+          "requires": {
+            "p-locate": "^2.0.0",
+            "path-exists": "^3.0.0"
+          }
+        },
+        "p-limit": {
+          "version": "1.3.0",
+          "dev": true,
+          "requires": {
+            "p-try": "^1.0.0"
+          }
+        },
+        "p-locate": {
+          "version": "2.0.0",
+          "dev": true,
+          "requires": {
+            "p-limit": "^1.1.0"
+          }
+        },
+        "p-try": {
+          "version": "1.0.0",
           "dev": true
+        },
+        "pkg-dir": {
+          "version": "2.0.0",
+          "dev": true,
+          "requires": {
+            "find-up": "^2.1.0"
+          }
         },
         "slash": {
           "version": "1.0.0",
@@ -4216,11 +4439,32 @@
       "version": "6.5.2"
     },
     "read-pkg": {
-      "version": "3.0.0",
+      "version": "5.2.0",
+      "dev": true,
       "requires": {
-        "load-json-file": "^4.0.0",
-        "normalize-package-data": "^2.3.2",
-        "path-type": "^3.0.0"
+        "@types/normalize-package-data": "^2.4.0",
+        "normalize-package-data": "^2.5.0",
+        "parse-json": "^5.0.0",
+        "type-fest": "^0.6.0"
+      },
+      "dependencies": {
+        "parse-json": {
+          "version": "5.0.0",
+          "dev": true,
+          "requires": {
+            "@babel/code-frame": "^7.0.0",
+            "error-ex": "^1.3.1",
+            "json-parse-better-errors": "^1.0.1",
+            "lines-and-columns": "^1.1.6"
+          }
+        }
+      }
+    },
+    "read-pkg-up": {
+      "version": "4.0.0",
+      "requires": {
+        "find-up": "^3.0.0",
+        "read-pkg": "^3.0.0"
       },
       "dependencies": {
         "load-json-file": {
@@ -4231,14 +4475,15 @@
             "pify": "^3.0.0",
             "strip-bom": "^3.0.0"
           }
+        },
+        "read-pkg": {
+          "version": "3.0.0",
+          "requires": {
+            "load-json-file": "^4.0.0",
+            "normalize-package-data": "^2.3.2",
+            "path-type": "^3.0.0"
+          }
         }
-      }
-    },
-    "read-pkg-up": {
-      "version": "4.0.0",
-      "requires": {
-        "find-up": "^3.0.0",
-        "read-pkg": "^3.0.0"
       }
     },
     "readable-stream": {
@@ -4382,6 +4627,10 @@
         "glob": "^7.1.3"
       }
     },
+    "run-node": {
+      "version": "1.0.0",
+      "dev": true
+    },
     "safe-buffer": {
       "version": "5.2.0"
     },
@@ -4421,6 +4670,10 @@
     },
     "semver": {
       "version": "5.7.0"
+    },
+    "semver-compare": {
+      "version": "1.0.0",
+      "dev": true
     },
     "sequin": {
       "version": "0.1.1"
@@ -4755,6 +5008,16 @@
         "mkdirp": "^0.5.1",
         "pump": "^1.0.0",
         "tar-stream": "^1.1.2"
+      },
+      "dependencies": {
+        "pump": {
+          "version": "1.0.3",
+          "dev": true,
+          "requires": {
+            "end-of-stream": "^1.1.0",
+            "once": "^1.3.1"
+          }
+        }
       }
     },
     "tar-stream": {
@@ -4899,7 +5162,7 @@
       "version": "4.0.8"
     },
     "type-fest": {
-      "version": "0.3.1",
+      "version": "0.6.0",
       "dev": true
     },
     "typescript": {
