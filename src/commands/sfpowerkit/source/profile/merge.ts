@@ -1,7 +1,7 @@
 import { core, SfdxCommand, flags, FlagsConfig, SfdxResult } from "@salesforce/command";
 
 import { SfdxProject, SfdxError } from "@salesforce/core";
-import AcnProfileUtils from "../../../../profile_utils/profileUtils";
+import SFPowerkitProfleUtils from "../../../../profile_utils/profileUtils";
 import _ from "lodash";
 import { SfPowerKit } from "../../../../shared/sfpowerkit";
 import * as path from "path";
@@ -98,12 +98,12 @@ export default class Merge extends SfdxCommand {
 
     if (argMetadatas !== undefined) {
       metadatas = {};
-      AcnProfileUtils.supportedMetadataTypes.forEach(val => {
+      SFPowerkitProfleUtils.supportedMetadataTypes.forEach(val => {
         metadatas[val] = [];
       });
       for (let i = 0; i < argMetadatas.length; i++) {
         if (
-          AcnProfileUtils.supportedMetadataTypes.includes(
+          SFPowerkitProfleUtils.supportedMetadataTypes.includes(
             argMetadatas[i].MetadataType
           )
         ) {
@@ -138,7 +138,8 @@ export default class Merge extends SfdxCommand {
       SfPowerKit.defaultFolder = argFolder[0];
     }
 
-    const profileUtils = new AcnProfileUtils(this.org);
+    const profileUtils = new SFPowerkitProfleUtils(this.org,this.flags.loglevel=='debug');
+
 
     var mergedProfiles = await profileUtils.merge(
       argFolder,

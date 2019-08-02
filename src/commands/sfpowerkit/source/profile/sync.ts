@@ -8,7 +8,7 @@ import {
 
 import { SfdxProject } from "@salesforce/core";
 import _ from "lodash";
-import AcnProfileUtils from "../../../../profile_utils/profileUtils";
+import SFPowerkitProfleUtils from "../../../../profile_utils/profileUtils";
 import { SfPowerKit } from "../../../../shared/sfpowerkit";
 import * as path from "path";
 import { METADATA_INFO } from "../../../../shared/metadataInfo";
@@ -95,7 +95,7 @@ export default class Sync extends SfdxCommand {
       SfPowerKit.defaultFolder = argFolder[0];
     }
 
-    const profileUtils = new AcnProfileUtils(this.org);
+    const profileUtils = new SFPowerkitProfleUtils(this.org,this.flags.loglevel=='debug');
 
     let syncPofles = await profileUtils.sync(folders, argProfileList || [], this.flags.delete);
 
@@ -113,7 +113,7 @@ export default class Sync extends SfdxCommand {
     if (syncPofles.updated) {
       syncPofles.updated.forEach(file => {
         result.push({
-          state: "Remote Fetched",
+          state: "Remote Updated",
           fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
           type: "Profile",
           path: path.relative(process.cwd(), file)
