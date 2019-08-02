@@ -1,9 +1,17 @@
-import { core, SfdxCommand, flags, FlagsConfig } from "@salesforce/command";
+import {
+  core,
+  SfdxCommand,
+  flags,
+  FlagsConfig,
+  SfdxResult
+} from "@salesforce/command";
 
 import { SfdxProject } from "@salesforce/core";
 import _ from "lodash";
 import AcnProfileUtils from "../../../../profile_utils/profileUtils";
 import { SfPowerKit } from "../../../../shared/sfpowerkit";
+import { METADATA_INFO } from "../../../../shared/metadataInfo";
+import * as path from "path";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -46,7 +54,24 @@ export default class Reconcile extends SfdxCommand {
   //protected static supportsDevhubUsername = true;
 
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
-  //protected static requiresProject = false;
+  protected static requiresProject = true;
+
+  public static result: SfdxResult = {
+    tableColumnData: {
+      columns: [
+        { key: "state", label: "State" },
+        { key: "fullName", label: "Full Name" },
+        { key: "type", label: "Type" },
+        { key: "path", label: "Path" }
+      ]
+    },
+    display() {
+      if (Array.isArray(this.data) && this.data.length) {
+        this.ux.table(this.data, this.tableColumnData);
+      }
+    }
+  };
+
   public async run(): Promise<any> {
     // tslint:disable-line:no-any
     SfPowerKit.ux = this.ux;
@@ -77,6 +102,16 @@ export default class Reconcile extends SfdxCommand {
     );
 
     // Return an object to be displayed with --json
-    return { ReconciledProfile: reconcileProfiles };
+    let result = [];
+    reconcileProfiles.forEach(file => {
+      result.push({
+        state: "Cleaned",
+        fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
+        type: "Profile",
+        path: path.relative(process.cwd(), file)
+      });
+    });
+    
+    return result;
   }
 }

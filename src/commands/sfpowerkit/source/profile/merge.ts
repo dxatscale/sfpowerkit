@@ -1,9 +1,11 @@
-import { core, SfdxCommand, flags, FlagsConfig } from "@salesforce/command";
+import { core, SfdxCommand, flags, FlagsConfig, SfdxResult } from "@salesforce/command";
 
 import { SfdxProject, SfdxError } from "@salesforce/core";
 import AcnProfileUtils from "../../../../profile_utils/profileUtils";
 import _ from "lodash";
 import { SfPowerKit } from "../../../../shared/sfpowerkit";
+import * as path from "path";
+import { METADATA_INFO } from "../../../../shared/metadataInfo";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -49,6 +51,11 @@ export default class Merge extends SfdxCommand {
           ApiName: parts.length >= 2 ? parts[1].trim() : "*"
         };
       }
+    }),
+    delete: flags.boolean({
+      char: "d",
+      description: messages.getMessage("deleteFlagDescription"),
+      required: false
     })
   };
 
@@ -60,6 +67,24 @@ export default class Merge extends SfdxCommand {
 
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   protected static requiresProject = true;
+
+  public static result: SfdxResult = {
+    tableColumnData: {
+      columns: [
+        { key: "state", label: "State" },
+        { key: "fullName", label: "Full Name" },
+        { key: "type", label: "Type" },
+        { key: "path", label: "Path" }
+      ]
+    },
+    display() {
+      if (Array.isArray(this.data) && this.data.length) {
+        this.ux.table(this.data, this.tableColumnData);
+      }
+    }
+  };
+
+  
   public async run(): Promise<any> {
     // tslint:disable-line:no-any
     SfPowerKit.ux = this.ux;
@@ -118,9 +143,41 @@ export default class Merge extends SfdxCommand {
     var mergedProfiles = await profileUtils.merge(
       argFolder,
       argProfileList || [],
-      metadatas
+      metadatas,
+      this.flags.delete
     );
 
-    return mergedProfiles;
+    let result = [];
+    if (mergedProfiles.added) {
+      mergedProfiles.added.forEach(file => {
+        result.push({
+          state: "Remote Add",
+          fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
+          type: "Profile",
+          path: path.relative(process.cwd(), file)
+        });
+      });
+    }
+    if (mergedProfiles.updated) {
+      mergedProfiles.updated.forEach(file => {
+        result.push({
+          state: "Remote Fetched",
+          fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
+          type: "Profile",
+          path: path.relative(process.cwd(), file)
+        });
+      });
+    }
+    if (mergedProfiles.deleted && this.flags.delete) {
+      mergedProfiles.deleted.forEach(file => {
+        result.push({
+          state: "Remote Deleted",
+          fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
+          type: "Profile",
+          path: path.relative(process.cwd(), file)
+        });
+      });
+    }
+    return result;
   }
 }

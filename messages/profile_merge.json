@@ -2,5 +2,6 @@
   "commandDescription": "retrieve profiles from a development environment and merge it with the profile configurations",
   "folderFlagDescription": "comma separated list of folders to scan for profiles. If ommited, the folders in the packageDirectories configuration will be used.",
   "profileListFlagDescription": "comma separated list of profiles. If ommited, all the profiles found in the folder(s) will be merged",
-  "metadataFlagDescription": "comma separated list of metadata for which the permissions will be retrieved."
+  "metadataFlagDescription": "comma separated list of metadata for which the permissions will be retrieved.",
+  "deleteFlagDescription":"set this flag to delete profile files that does not exist in the org."
 }

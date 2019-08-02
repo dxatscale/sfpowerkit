@@ -604,8 +604,13 @@ export default class AcnProfileUtils extends AcnBaseUtils<ProfileTooling> {
   public async merge(
     srcFolders: string[],
     profiles: string[],
-    metadatas: any
-  ): Promise<string[]> {
+    metadatas: any,
+    isdelete?: boolean
+  ): Promise<{
+    added: string[];
+    deleted: string[];
+    updated: string[];
+  }> {
     SfPowerKit.ux.log("Merging profiles...");
     this.metadataFiles = new MetadataFiles();
     for (let i = 0; i < srcFolders.length; i++) {
@@ -616,7 +621,9 @@ export default class AcnProfileUtils extends AcnBaseUtils<ProfileTooling> {
     let profileListToReturn: string[] = [];
     let profileNames: string[] = [];
     var profilePathAssoc = {};
-    var metadataFiles = await this.getMetadataComponents(profiles);
+    let profileStatus = await this.getMetadataComponents(profiles);
+    let metadataFiles = _.union(profileStatus.added, profileStatus.updated);
+    metadataFiles.sort();
     for (var i = 0; i < metadataFiles.length; i++) {
       var profileComponent = metadataFiles[i];
       var profileName = path.basename(
@@ -635,9 +642,13 @@ export default class AcnProfileUtils extends AcnBaseUtils<ProfileTooling> {
       j: number,
       chunk: number = 10;
     var temparray;
+    SfPowerKit.ux.log("Number of profiles " + profileNames.length);
     for (i = 0, j = profileNames.length; i < j; i += chunk) {
       temparray = profileNames.slice(i, i + chunk);
       //SfPowerKit.ux.log(temparray.length);
+      let start = i + 1;
+      let end = i + chunk;
+      SfPowerKit.ux.log("Loading a chunk of profiles " + start + " to " + end);
       let profileList: string[] = [];
       var metadataList = await this.loadProfiles(temparray, this.conn);
 
@@ -690,7 +701,14 @@ export default class AcnProfileUtils extends AcnBaseUtils<ProfileTooling> {
       profileListToReturn.push(...profileList);
     }
 
-    return Promise.resolve(profileListToReturn);
+    if (profileStatus.deleted && isdelete) {
+      profileStatus.deleted.forEach(file => {
+        if (fs.existsSync(file)) {
+          fs.unlinkSync(file);
+        }
+      });
+    }
+    return Promise.resolve(profileStatus);
   }
   private removeUnwantedPermissions(
     profileObjFromServer: Profile,
@@ -762,8 +780,13 @@ export default class AcnProfileUtils extends AcnBaseUtils<ProfileTooling> {
 
   public async sync(
     srcFolders: string[],
-    profiles?: string[]
-  ): Promise<String[]> {
+    profiles?: string[],
+    isdelete?: boolean
+  ): Promise<{
+    added: string[];
+    deleted: string[];
+    updated: string[];
+  }> {
     SfPowerKit.ux.log("Syncing profiles");
     this.metadataFiles = new MetadataFiles();
     for (let i = 0; i < srcFolders.length; i++) {
@@ -774,7 +797,9 @@ export default class AcnProfileUtils extends AcnBaseUtils<ProfileTooling> {
     let profileList: string[] = [];
     let profileNames: string[] = [];
     let profilePathAssoc = {};
-    let metadataFiles = await this.getMetadataComponents(profiles);
+    let profileStatus = await this.getMetadataComponents(profiles);
+    let metadataFiles = _.union(profileStatus.added, profileStatus.updated);
+    metadataFiles.sort();
     for (var i = 0; i < metadataFiles.length; i++) {
       var profileComponent = metadataFiles[i];
       var profileName = path.basename(
@@ -799,7 +824,7 @@ export default class AcnProfileUtils extends AcnBaseUtils<ProfileTooling> {
       //SfPowerKit.ux.log(temparray.length);
       let start = i + 1;
       let end = i + chunk;
-      SfPowerKit.ux.log("Loading a junk of profiles " + start + " to " + end);
+      SfPowerKit.ux.log("Loading a chunk of profiles " + start + " to " + end);
       var metadataList = await this.loadProfiles(temparray, this.conn);
       for (var count = 0; count < metadataList.length; count++) {
         var profileObj = metadataList[count] as Profile;
@@ -825,7 +850,14 @@ export default class AcnProfileUtils extends AcnBaseUtils<ProfileTooling> {
       }
     }
 
-    return Promise.resolve(profileList);
+    if (profileStatus.deleted && isdelete) {
+      profileStatus.deleted.forEach(file => {
+        if (fs.existsSync(file)) {
+          fs.unlinkSync(file);
+        }
+      });
+    }
+    return Promise.resolve(profileStatus);
   }
 
   private async loadProfiles(
@@ -1051,7 +1083,16 @@ export default class AcnProfileUtils extends AcnBaseUtils<ProfileTooling> {
 
   private async getMetadataComponents(
     profileNames: string[]
-  ): Promise<string[]> {
+  ): Promise<{
+    added: string[];
+    deleted: string[];
+    updated: string[];
+  }> {
+    let profilesStatus = {
+      added: [],
+      deleted: [],
+      updated: []
+    };
     let metadataFiles = METADATA_INFO.Profile.files || [];
     //generate path for new profiles
     let profilePath = path.join(
@@ -1078,25 +1119,30 @@ export default class AcnProfileUtils extends AcnBaseUtils<ProfileTooling> {
             METADATA_INFO.Profile.sourceExtension
           );
           if (profileName === oneName) {
-            metadataFiles.push(profileComponent);
+            //metadataFiles.push(profileComponent);
+            profilesStatus.updated.push(profileComponent);
             found = true;
             break;
           }
         }
+        //Query the profile from the server
+        let profiles = await this.getProfilesMetadata(this.conn);
         if (!found) {
-          //Query the profile from the server
-          let profiles = await this.getProfilesMetadata(this.conn);
           for (let k = 0; k < profiles.length; k++) {
             if (profiles[k] === profileName) {
-              metadataFiles.push(
-                path.join(
-                  profilePath,
-                  profiles[k] + METADATA_INFO.Profile.sourceExtension
-                )
+              let newProfilePath = path.join(
+                profilePath,
+                profiles[k] + METADATA_INFO.Profile.sourceExtension
               );
+              //metadataFiles.push(newProfilePath);
+              profilesStatus.added.push(newProfilePath);
+              found = true;
               break;
             }
           }
+        }
+        if (!found) {
+          profilesStatus.deleted.push(profileName);
         }
       }
     } else {
@@ -1105,11 +1151,26 @@ export default class AcnProfileUtils extends AcnBaseUtils<ProfileTooling> {
       );
       // Query the org
       const profiles = await this.getProfilesMetadata(this.conn);
+      profilesStatus.deleted = metadataFiles.filter(file => {
+        let oneName = path.basename(
+          file,
+          METADATA_INFO.Profile.sourceExtension
+        );
+        return !profiles.includes(oneName);
+      });
+      profilesStatus.updated = metadataFiles.filter(file => {
+        let oneName = path.basename(
+          file,
+          METADATA_INFO.Profile.sourceExtension
+        );
+        return profiles.includes(oneName);
+      });
+
       if (profiles && profiles.length > 0) {
         let newProfiles = profiles.filter(profileObj => {
           let found = false;
-          for (let i = 0; i < metadataFiles.length; i++) {
-            let profileComponent = metadataFiles[i];
+          for (let i = 0; i < profilesStatus.updated.length; i++) {
+            let profileComponent = profilesStatus.updated[i];
             let oneName = path.basename(
               profileComponent,
               METADATA_INFO.Profile.sourceExtension
@@ -1128,20 +1189,20 @@ export default class AcnProfileUtils extends AcnBaseUtils<ProfileTooling> {
           SfPowerKit.ux.log("New profiles founds");
           for (let i = 0; i < newProfiles.length; i++) {
             SfPowerKit.ux.log(newProfiles[i]);
-            metadataFiles.push(
-              path.join(
-                profilePath,
-                newProfiles[i] + METADATA_INFO.Profile.sourceExtension
-              )
+            let newPRofilePath = path.join(
+              profilePath,
+              newProfiles[i] + METADATA_INFO.Profile.sourceExtension
             );
+            //metadataFiles.push(newPRofilePath);
+            profilesStatus.added.push(newPRofilePath);
           }
         } else {
           SfPowerKit.ux.log("No new profile found");
         }
       }
     }
-    metadataFiles = metadataFiles.sort();
-    return Promise.resolve(metadataFiles);
+    //metadataFiles = metadataFiles.sort();
+    return Promise.resolve(profilesStatus);
   }
   public async reconcile(
     srcFolders: string[],
@@ -1251,7 +1312,7 @@ export default class AcnProfileUtils extends AcnBaseUtils<ProfileTooling> {
         let xml = builder.buildObject(profileObj);
         fs.writeFileSync(profileComponent, xml);
 
-        result.push(profileObj.fullName);
+        result.push(profileComponent);
       }
     }
     return result;

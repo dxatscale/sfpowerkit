@@ -848,6 +848,7 @@ USAGE
 OPTIONS
   -f, --folder=folder                             comma separated list of folders to scan for profiles. If ommited, all folders in the package directories will be used.
   -n, --profilelist=profilelist                   comma separated list of profiles. If ommited, all the profiles found in the folder(s) will be synchronized
+  -d, --delete                                    set this flag to delete profile files that does not exist in the org.
   -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
   --apiversion=apiversion                         override the api version used for api requests made by this command
   --json                                          format output as json
@@ -898,6 +899,7 @@ OPTIONS
   -f, --folder=folder                                 comma separated list of folders to scan for profiles. If ommited, the folders in the packageDirectories configuration will be used.
   -m, --metadata=metadata                             comma separated list of metadata for which the permissions will be retrieved.
   -n, --profilelist=profilelist                       comma separated list of profiles. If ommited, all the profiles found in the folder(s) will be merged
+  -d, --delete                                        set this flag to delete profile files that does not exist in the org.
   -u, --targetusername=targetusername                 username or alias for the target org; overrides default target org
 
   --apiversion=apiversion                             override the api version used for api requests made by this command

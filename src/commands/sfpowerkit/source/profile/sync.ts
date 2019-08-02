@@ -1,9 +1,17 @@
-import { core, SfdxCommand, flags, FlagsConfig } from "@salesforce/command";
+import {
+  core,
+  SfdxCommand,
+  flags,
+  FlagsConfig,
+  SfdxResult
+} from "@salesforce/command";
 
 import { SfdxProject } from "@salesforce/core";
 import _ from "lodash";
 import AcnProfileUtils from "../../../../profile_utils/profileUtils";
 import { SfPowerKit } from "../../../../shared/sfpowerkit";
+import * as path from "path";
+import { METADATA_INFO } from "../../../../shared/metadataInfo";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -35,6 +43,11 @@ export default class Sync extends SfdxCommand {
       description: messages.getMessage("profileListFlagDescription"),
       required: false,
       map: (p: string) => p.trim()
+    }),
+    delete: flags.boolean({
+      char: "d",
+      description: messages.getMessage("deleteFlagDescription"),
+      required: false
     })
   };
 
@@ -43,6 +56,23 @@ export default class Sync extends SfdxCommand {
 
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   protected static requiresProject = true;
+
+  public static result: SfdxResult = {
+    tableColumnData: {
+      columns: [
+        { key: "state", label: "State" },
+        { key: "fullName", label: "Full Name" },
+        { key: "type", label: "Type" },
+        { key: "path", label: "Path" }
+      ]
+    },
+    display() {
+      if (Array.isArray(this.data) && this.data.length) {
+        this.ux.table(this.data, this.tableColumnData);
+      }
+    }
+  };
+
   public async run(): Promise<any> {
     SfPowerKit.ux = this.ux;
 
@@ -67,8 +97,39 @@ export default class Sync extends SfdxCommand {
 
     const profileUtils = new AcnProfileUtils(this.org);
 
-    let syncPofles = await profileUtils.sync(folders, argProfileList || []);
+    let syncPofles = await profileUtils.sync(folders, argProfileList || [], this.flags.delete);
 
-    return syncPofles;
+    let result = [];
+    if (syncPofles.added) {
+      syncPofles.added.forEach(file => {
+        result.push({
+          state: "Remote Add",
+          fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
+          type: "Profile",
+          path: path.relative(process.cwd(), file)
+        });
+      });
+    }
+    if (syncPofles.updated) {
+      syncPofles.updated.forEach(file => {
+        result.push({
+          state: "Remote Fetched",
+          fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
+          type: "Profile",
+          path: path.relative(process.cwd(), file)
+        });
+      });
+    }
+    if (syncPofles.deleted && this.flags.delete) {
+      syncPofles.deleted.forEach(file => {
+        result.push({
+          state: "Remote Deleted",
+          fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
+          type: "Profile",
+          path: path.relative(process.cwd(), file)
+        });
+      });
+    }
+    return result;
   }
 }
