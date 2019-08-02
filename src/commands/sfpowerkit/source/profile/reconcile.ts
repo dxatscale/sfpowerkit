@@ -8,8 +8,8 @@ import {
 
 import { SfdxProject } from "@salesforce/core";
 import _ from "lodash";
-import SFPowerkitProfleUtils from "../../../../profile_utils/profileUtils";
-import { SfPowerKit } from "../../../../shared/sfpowerkit";
+import ProfileUtils from "../../../../profile_utils/profileUtils";
+import { SfPowerKit } from "../../../../sfpowerkit";
 import { METADATA_INFO } from "../../../../shared/metadataInfo";
 import * as path from "path";
 
@@ -95,7 +95,7 @@ export default class Reconcile extends SfdxCommand {
       SfPowerKit.defaultFolder = argFolder[0];
     }
 
-    var profileUtils =  new SFPowerkitProfleUtils(this.org,this.flags.loglevel=='debug');
+    var profileUtils =  new ProfileUtils(this.org,this.flags.loglevel=='debug');
 
     var reconcileProfiles = await profileUtils.reconcile(
       argFolder,

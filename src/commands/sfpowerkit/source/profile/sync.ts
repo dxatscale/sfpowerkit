@@ -8,8 +8,8 @@ import {
 
 import { SfdxProject } from "@salesforce/core";
 import _ from "lodash";
-import SFPowerkitProfleUtils from "../../../../profile_utils/profileUtils";
-import { SfPowerKit } from "../../../../shared/sfpowerkit";
+import ProfileUtils from "../../../../profile_utils/profileUtils";
+import { SfPowerKit } from "../../../../sfpowerkit";
 import * as path from "path";
 import { METADATA_INFO } from "../../../../shared/metadataInfo";
 
@@ -95,7 +95,7 @@ export default class Sync extends SfdxCommand {
       SfPowerKit.defaultFolder = argFolder[0];
     }
 
-    const profileUtils = new SFPowerkitProfleUtils(this.org,this.flags.loglevel=='debug');
+    const profileUtils = new ProfileUtils(this.org,this.flags.loglevel=='debug');
 
     let syncPofles = await profileUtils.sync(folders, argProfileList || [], this.flags.delete);
 
@@ -103,7 +103,7 @@ export default class Sync extends SfdxCommand {
     if (syncPofles.added) {
       syncPofles.added.forEach(file => {
         result.push({
-          state: "Remote Add",
+          state: "Add",
           fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
           type: "Profile",
           path: path.relative(process.cwd(), file)
@@ -113,7 +113,7 @@ export default class Sync extends SfdxCommand {
     if (syncPofles.updated) {
       syncPofles.updated.forEach(file => {
         result.push({
-          state: "Remote Updated",
+          state: "Updated",
           fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
           type: "Profile",
           path: path.relative(process.cwd(), file)
@@ -123,7 +123,7 @@ export default class Sync extends SfdxCommand {
     if (syncPofles.deleted && this.flags.delete) {
       syncPofles.deleted.forEach(file => {
         result.push({
-          state: "Remote Deleted",
+          state: "Deleted",
           fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
           type: "Profile",
           path: path.relative(process.cwd(), file)

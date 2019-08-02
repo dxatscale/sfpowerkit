@@ -1,4 +1,4 @@
-import { SfPowerKit } from "../shared/sfpowerkit";
+import { SfPowerKit } from "../sfpowerkit";
 
 const fs = require("fs");
 const path = require("path");

@@ -1,9 +1,9 @@
 import { core, SfdxCommand, flags, FlagsConfig, SfdxResult } from "@salesforce/command";
 
 import { SfdxProject, SfdxError } from "@salesforce/core";
-import SFPowerkitProfleUtils from "../../../../profile_utils/profileUtils";
+import ProfileUtils from "../../../../profile_utils/profileUtils";
 import _ from "lodash";
-import { SfPowerKit } from "../../../../shared/sfpowerkit";
+import { SfPowerKit } from "../../../../sfpowerkit";
 import * as path from "path";
 import { METADATA_INFO } from "../../../../shared/metadataInfo";
 
@@ -98,12 +98,12 @@ export default class Merge extends SfdxCommand {
 
     if (argMetadatas !== undefined) {
       metadatas = {};
-      SFPowerkitProfleUtils.supportedMetadataTypes.forEach(val => {
+      ProfileUtils.supportedMetadataTypes.forEach(val => {
         metadatas[val] = [];
       });
       for (let i = 0; i < argMetadatas.length; i++) {
         if (
-          SFPowerkitProfleUtils.supportedMetadataTypes.includes(
+          ProfileUtils.supportedMetadataTypes.includes(
             argMetadatas[i].MetadataType
           )
         ) {
@@ -138,7 +138,7 @@ export default class Merge extends SfdxCommand {
       SfPowerKit.defaultFolder = argFolder[0];
     }
 
-    const profileUtils = new SFPowerkitProfleUtils(this.org,this.flags.loglevel=='debug');
+    const profileUtils = new ProfileUtils(this.org,this.flags.loglevel=='debug');
 
 
     var mergedProfiles = await profileUtils.merge(
@@ -152,7 +152,7 @@ export default class Merge extends SfdxCommand {
     if (mergedProfiles.added) {
       mergedProfiles.added.forEach(file => {
         result.push({
-          state: "Remote Add",
+          state: "Add",
           fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
           type: "Profile",
           path: path.relative(process.cwd(), file)
@@ -162,7 +162,7 @@ export default class Merge extends SfdxCommand {
     if (mergedProfiles.updated) {
       mergedProfiles.updated.forEach(file => {
         result.push({
-          state: "Remote Fetched",
+          state: "Merged",
           fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
           type: "Profile",
           path: path.relative(process.cwd(), file)
@@ -172,7 +172,7 @@ export default class Merge extends SfdxCommand {
     if (mergedProfiles.deleted && this.flags.delete) {
       mergedProfiles.deleted.forEach(file => {
         result.push({
-          state: "Remote Deleted",
+          state: "Deleted",
           fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
           type: "Profile",
           path: path.relative(process.cwd(), file)

@@ -22,7 +22,7 @@ import * as path from "path";
 import xml2js = require("xml2js");
 import { ProfileTooling } from "./schema";
 import BaseUtils from "./baseUtils";
-import { SfPowerKit } from "../shared/sfpowerkit";
+import { SfPowerKit } from "../sfpowerkit";
 import { METADATA_INFO } from "../shared/metadataInfo";
 import _ from "lodash";
 import UserLicenceUtils from "./userLicenseUtils";
@@ -34,6 +34,7 @@ import TabUtils from "./tabUtils";
 import PageUtils from "./pageUtils";
 import LayoutUtils from "./layoutUtils";
 import EntityDefinitionUtils from "./entityDefinitionUtils";
+import util = require('util');
 
 const unsuportedObjects = ["PersonAccount"];
 /**
@@ -62,7 +63,7 @@ const nonArayProperties = [
 const PROFILE_NAMESPACE = "http://soap.sforce.com/2006/04/metadata";
 
 const QUERY = "SELECT Id, Name, UserType, Description From Profile";
-export default class SFPowerkitProfleUtils extends BaseUtils<ProfileTooling> {
+export default class ProfileUtils extends BaseUtils<ProfileTooling> {
   static supportedMetadataTypes = [
     "ApexClass",
     "CustomApplication",
@@ -80,12 +81,10 @@ export default class SFPowerkitProfleUtils extends BaseUtils<ProfileTooling> {
 
   metadataFiles: MetadataFiles;
 
-
-  public constructor(public org: Org, private debugFlag? :boolean) {
+  public constructor(public org: Org, private debugFlag?: boolean) {
     super(org);
     super.setQuery(QUERY);
     this.conn = this.org.getConnection();
- 
   }
 
   public async loadSupportedPermissions() {
@@ -613,6 +612,7 @@ export default class SFPowerkitProfleUtils extends BaseUtils<ProfileTooling> {
     deleted: string[];
     updated: string[];
   }> {
+    if(this.debugFlag)
     SfPowerKit.ux.log("Merging profiles...");
     this.metadataFiles = new MetadataFiles();
     for (let i = 0; i < srcFolders.length; i++) {
@@ -644,7 +644,9 @@ export default class SFPowerkitProfleUtils extends BaseUtils<ProfileTooling> {
       j: number,
       chunk: number = 10;
     var temparray;
-    SfPowerKit.ux.log("Number of profiles in source folder" + profileNames.length);
+    SfPowerKit.ux.log(
+      `${profileNames.length}  profiles found in the directory `
+    );
     for (i = 0, j = profileNames.length; i < j; i += chunk) {
       temparray = profileNames.slice(i, i + chunk);
       //SfPowerKit.ux.log(temparray.length);
@@ -686,17 +688,24 @@ export default class SFPowerkitProfleUtils extends BaseUtils<ProfileTooling> {
 
         var exists = fs.existsSync(filePath);
         if (exists) {
+          if(this.debugFlag)
           SfPowerKit.ux.log("Merging profile " + profileObjFromServer.fullName);
           var profileXml = fs.readFileSync(filePath);
-          let parseResult = await SfPowerKit.parseXml(profileXml);
-          profileObj = SFPowerkitProfleUtils.toProfile(parseResult.Profile);
+
+          const parser = new xml2js.Parser({ explicitArray: false });
+          const parseString = util.promisify(parser.parseString);
+          let parseResult = await parseString(parseString);
+
+          profileObj = ProfileUtils.toProfile(parseResult.Profile);
           this.mergeProfile(profileObj, profileObjFromServer);
         } else {
+          if(this.debugFlag)
           SfPowerKit.ux.log("New Profile " + profileObjFromServer.fullName);
         }
 
         await this.writeProfile(profileObj, filePath);
 
+        if(this.debugFlag)
         SfPowerKit.ux.log("Profile " + profileObj.fullName + " merged");
         profileList.push(profileObj.fullName);
       }
@@ -789,8 +798,7 @@ export default class SFPowerkitProfleUtils extends BaseUtils<ProfileTooling> {
     deleted: string[];
     updated: string[];
   }> {
-    if(this.debugFlag)
-    SfPowerKit.ux.log("Syncing profiles");
+    if (this.debugFlag) SfPowerKit.ux.log("Syncing profiles");
     this.metadataFiles = new MetadataFiles();
     for (let i = 0; i < srcFolders.length; i++) {
       let srcFolder = srcFolders[i];
@@ -816,18 +824,19 @@ export default class SFPowerkitProfleUtils extends BaseUtils<ProfileTooling> {
       }
     }
 
-   
     var i: number,
       j: number,
       chunk: number = 10;
     var temparray;
-    SfPowerKit.ux.log("Number of profiles found in the target org " + profileNames.length);
+    SfPowerKit.ux.log(
+      "Number of profiles found in the target org " + profileNames.length
+    );
     for (i = 0, j = profileNames.length; i < j; i += chunk) {
       temparray = profileNames.slice(i, i + chunk);
       //SfPowerKit.ux.log(temparray.length);
       let start = i + 1;
       let end = i + chunk;
-      SfPowerKit.ux.log("Loading a chunk of profiles " + start + " to " + end);
+      SfPowerKit.ux.log("Loading profiles in batches " + start + " to " + end);
       var metadataList = await this.loadProfiles(temparray, this.conn);
       for (var count = 0; count < metadataList.length; count++) {
         var profileObj = metadataList[count] as Profile;
@@ -1149,11 +1158,10 @@ export default class SFPowerkitProfleUtils extends BaseUtils<ProfileTooling> {
         }
       }
     } else {
-
-      if(this.debugFlag)
-      SfPowerKit.ux.log(
-        "Load new profiles from server and generate a path for future save"
-      );
+      if (this.debugFlag)
+        SfPowerKit.ux.log(
+          "Load new profiles from server and generate a path for future save"
+        );
       // Query the org
       const profiles = await this.getProfilesMetadata(this.conn);
       profilesStatus.deleted = metadataFiles.filter(file => {
@@ -1191,11 +1199,9 @@ export default class SFPowerkitProfleUtils extends BaseUtils<ProfileTooling> {
           return !found;
         });
         if (newProfiles && newProfiles.length > 0) {
-          if(this.debugFlag)
-           SfPowerKit.ux.log("New profiles founds");
+          if (this.debugFlag) SfPowerKit.ux.log("New profiles founds");
           for (let i = 0; i < newProfiles.length; i++) {
-            if(this.debugFlag)
-              SfPowerKit.ux.log(newProfiles[i]);
+            if (this.debugFlag) SfPowerKit.ux.log(newProfiles[i]);
             let newPRofilePath = path.join(
               profilePath,
               newProfiles[i] + METADATA_INFO.Profile.sourceExtension
@@ -1236,11 +1242,12 @@ export default class SFPowerkitProfleUtils extends BaseUtils<ProfileTooling> {
         SfPowerKit.ux.log(
           "Reconciling profile " + path.basename(profileComponent)
         );
-        let profileXml = fs.readFileSync(profileComponent);
-        let parseResult = await SfPowerKit.parseXml(profileXml);
-        let profileObj: Profile = SFPowerkitProfleUtils.toProfile(
-          parseResult.Profile
-        ); // as Profile
+
+        const parser = new xml2js.Parser({ explicitArray: false });
+        const parseString = util.promisify(parser.parseString);
+        let parseResult = await parseString(parseString);
+
+        let profileObj: Profile = ProfileUtils.toProfile(parseResult.Profile); // as Profile
 
         profileObj = await this.removePermissions(profileObj);
 
@@ -1340,7 +1347,7 @@ export default class SFPowerkitProfleUtils extends BaseUtils<ProfileTooling> {
         } else {
           var data = [];
           for (var i = 0; i < profileObj[key].length; i++) {
-            var element = SFPowerkitProfleUtils.removeArrayNatureOnValue(
+            var element = ProfileUtils.removeArrayNatureOnValue(
               profileObj[key][i]
             );
             if (element !== "") {
@@ -1567,7 +1574,7 @@ export default class SFPowerkitProfleUtils extends BaseUtils<ProfileTooling> {
     profileObj: Profile,
     access: boolean = true
   ): Promise<Profile> {
-    let objPerm = SFPowerkitProfleUtils.filterObjects(profileObj);
+    let objPerm = ProfileUtils.filterObjects(profileObj);
     if (objPerm === undefined) {
       objPerm = new Array();
     } else if (!Array.isArray(objPerm)) {
@@ -1595,7 +1602,7 @@ export default class SFPowerkitProfleUtils extends BaseUtils<ProfileTooling> {
 
       if (objectIsPresent === false) {
         //SfPowerKit.ux.log("\n Inserting this object");
-        let objToInsert = SFPowerkitProfleUtils.buildObjPermArray(name, access);
+        let objToInsert = ProfileUtils.buildObjPermArray(name, access);
         //SfPowerKit.ux.log(objToInsert);
         if (profileObj.objectPermissions === undefined) {
           profileObj.objectPermissions = new Array();
