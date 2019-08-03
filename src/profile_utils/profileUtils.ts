@@ -1111,6 +1111,8 @@ export default class ProfileUtils extends BaseUtils<ProfileTooling> {
     let profilePath = path.join(
       process.cwd(),
       SfPowerKit.defaultFolder,
+      "main",
+      "default",
       "profiles"
     );
     if (metadataFiles && metadataFiles.length > 0) {
