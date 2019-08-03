@@ -61,7 +61,7 @@ export default class OrgWideEmail extends SfdxCommand {
       headers: {
         "Content-Type": "application/json"
       },
-      url: "/services/data/v"+apiversion+"/sobjects/OrgWideEmailAddress",
+      url: "/services/data/v" + apiversion + "/sobjects/OrgWideEmailAddress",
       body: JSON.stringify(orgWideAddressObj)
     });
 
