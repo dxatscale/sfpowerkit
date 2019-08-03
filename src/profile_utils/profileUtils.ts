@@ -799,7 +799,7 @@ export default class ProfileUtils extends BaseUtils<ProfileTooling> {
     deleted: string[];
     updated: string[];
   }> {
-    if (this.debugFlag) SfPowerKit.ux.log("Syncing profiles");
+    if (this.debugFlag) SfPowerKit.ux.log("Retrieving profiles");
     this.metadataFiles = new MetadataFiles();
     for (let i = 0; i < srcFolders.length; i++) {
       let srcFolder = srcFolders[i];
@@ -1161,7 +1161,7 @@ export default class ProfileUtils extends BaseUtils<ProfileTooling> {
     } else {
       if (this.debugFlag)
         SfPowerKit.ux.log(
-          "Load new profiles from server and generate a path for future save"
+          "Load new profiles from server into the project directory"
         );
       // Query the org
       const profiles = await this.getProfilesMetadata(this.conn);
