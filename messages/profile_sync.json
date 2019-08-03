@@ -1,6 +1,0 @@
-{
-  "commandDescription": "retrieve profiles from the salesforce org with all their configurations. Run this command preferably again the production org. Use the merge equivalent again other type of orgs.",
-  "folderFlagDescription": "comma separated list of folders to scan for profiles. If ommited, all folders in the package directories will be used.",
-  "profileListFlagDescription": "comma separated list of profiles. If ommited, all the profiles found in the folder(s) will be synchronized",
-  "deleteFlagDescription":"set this flag to delete profile files that does not exist in the org."
-}

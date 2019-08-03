@@ -18,15 +18,15 @@ core.Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages("sfpowerkit", "profile_sync");
+const messages = core.Messages.loadMessages("sfpowerkit", "profile_retrieve");
 
-export default class Sync extends SfdxCommand {
+export default class Retrieve extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:source:profile:sync -u prod`,
-    `$ sfdx sfpowerkit:source:profile:sync  -f force-app -n "My Profile" -r -u prod`,
-    `$ sfdx sfpowerkit:source:profile:sync  -f "module1, module2, module3" -n "My Profile1, My profile2"  -u prod`
+    `$ sfdx sfpowerkit:source:profile:retrieve -u prod`,
+    `$ sfdx sfpowerkit:source:profile:retrieve  -f force-app -n "My Profile" -u prod`,
+    `$ sfdx sfpowerkit:source:profile:retrieve  -f "module1, module2, module3" -n "My Profile1, My profile2"  -u prod`
   ];
 
   //public static args = [{ name: 'file' }];

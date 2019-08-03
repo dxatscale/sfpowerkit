@@ -34,7 +34,7 @@ import TabUtils from "./tabUtils";
 import PageUtils from "./pageUtils";
 import LayoutUtils from "./layoutUtils";
 import EntityDefinitionUtils from "./entityDefinitionUtils";
-import util = require('util');
+import util = require("util");
 
 const unsuportedObjects = ["PersonAccount"];
 /**
@@ -612,8 +612,7 @@ export default class ProfileUtils extends BaseUtils<ProfileTooling> {
     deleted: string[];
     updated: string[];
   }> {
-    if(this.debugFlag)
-    SfPowerKit.ux.log("Merging profiles...");
+    if (this.debugFlag) SfPowerKit.ux.log("Merging profiles...");
     this.metadataFiles = new MetadataFiles();
     for (let i = 0; i < srcFolders.length; i++) {
       let srcFolder = srcFolders[i];
@@ -688,8 +687,10 @@ export default class ProfileUtils extends BaseUtils<ProfileTooling> {
 
         var exists = fs.existsSync(filePath);
         if (exists) {
-          if(this.debugFlag)
-          SfPowerKit.ux.log("Merging profile " + profileObjFromServer.fullName);
+          if (this.debugFlag)
+            SfPowerKit.ux.log(
+              "Merging profile " + profileObjFromServer.fullName
+            );
           var profileXml = fs.readFileSync(filePath);
 
           const parser = new xml2js.Parser({ explicitArray: false });
@@ -699,14 +700,14 @@ export default class ProfileUtils extends BaseUtils<ProfileTooling> {
           profileObj = ProfileUtils.toProfile(parseResult.Profile);
           this.mergeProfile(profileObj, profileObjFromServer);
         } else {
-          if(this.debugFlag)
-          SfPowerKit.ux.log("New Profile " + profileObjFromServer.fullName);
+          if (this.debugFlag)
+            SfPowerKit.ux.log("New Profile " + profileObjFromServer.fullName);
         }
 
         await this.writeProfile(profileObj, filePath);
 
-        if(this.debugFlag)
-        SfPowerKit.ux.log("Profile " + profileObj.fullName + " merged");
+        if (this.debugFlag)
+          SfPowerKit.ux.log("Profile " + profileObj.fullName + " merged");
         profileList.push(profileObj.fullName);
       }
       profileListToReturn.push(...profileList);

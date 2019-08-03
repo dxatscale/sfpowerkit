@@ -837,17 +837,17 @@ EXAMPLE
   }
 ```
 
- ## `sfpowerkit:source:profile:sync`
+ ## `sfpowerkit:source:profile:retrieve`
 
-retrieve profiles from the salesforce org with all their configurations. Run this command preferably again the production org. Use the merge equivalent again other type of orgs.
+Retrieve profiles from the salesforce org with all their configurations even if you do not have the associated  metadata.  
 ```
 
 USAGE
-  $ sfdx sfpowerkit:source:profile:sync [-f <array>] [-n <array>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+  $ sfdx sfpowerkit:source:profile:retrieve [-f <array>] [-n <array>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -f, --folder=folder                             comma separated list of folders to scan for profiles. If ommited, all folders in the package directories will be used.
-  -n, --profilelist=profilelist                   comma separated list of profiles. If ommited, all the profiles found in the folder(s) will be synchronized
+  -f, --folder=folder                             folder to which the profile will be retrieved, if omitted the project folders will be scanned to find profile folders
+  -n, --profilelist=profilelist                   comma separated list of profiles to be retrieved. If ommited, all the profiles will be retreived
   -d, --delete                                    set this flag to delete profile files that does not exist in the org.
   -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
   --apiversion=apiversion                         override the api version used for api requests made by this command
@@ -856,7 +856,7 @@ OPTIONS
 
 EXAMPLES
   $ sfdx sfpowerkit:source:profile:sync -u prod
-  $ sfdx sfpowerkit:source:profile:sync  -f force-app -n "My Profile" -r -u prod
+  $ sfdx sfpowerkit:source:profile:sync  -f force-app -n "My Profile"  -u prod
   $ sfdx sfpowerkit:source:profile:sync  -f "module1, module2, module3" -n "My Profile1, My profile2"  -u prod
 ```
 _See code: [src\commands\sfpowerkit\profile\sync.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/sync.ts)_
