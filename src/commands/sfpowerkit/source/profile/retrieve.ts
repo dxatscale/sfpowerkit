@@ -93,11 +93,19 @@ export default class Retrieve extends SfdxCommand {
       });
     } else {
       SfPowerKit.defaultFolder = argFolder[0];
+      folders.push(argFolder[0]);
     }
 
-    const profileUtils = new ProfileUtils(this.org,this.flags.loglevel=='debug');
+    const profileUtils = new ProfileUtils(
+      this.org,
+      this.flags.loglevel == "debug"
+    );
 
-    let syncPofles = await profileUtils.sync(folders, argProfileList || [], this.flags.delete);
+    let syncPofles = await profileUtils.sync(
+      folders,
+      argProfileList || [],
+      this.flags.delete
+    );
 
     let result = [];
     if (syncPofles.added) {

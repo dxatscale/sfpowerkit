@@ -35,6 +35,7 @@ import PageUtils from "./pageUtils";
 import LayoutUtils from "./layoutUtils";
 import EntityDefinitionUtils from "./entityDefinitionUtils";
 import util = require("util");
+import { retrieveMetadata } from "../shared/retrieveMetadata";
 
 const unsuportedObjects = ["PersonAccount"];
 /**
@@ -1141,7 +1142,12 @@ export default class ProfileUtils extends BaseUtils<ProfileTooling> {
           }
         }
         //Query the profile from the server
-        let profiles = await this.getProfilesMetadata(this.conn);
+
+        let profiles = await retrieveMetadata(
+          [{ type: "Profile", folder: null }],
+          this.conn
+        );
+
         if (!found) {
           for (let k = 0; k < profiles.length; k++) {
             if (profiles[k] === profileName) {
@@ -1166,7 +1172,11 @@ export default class ProfileUtils extends BaseUtils<ProfileTooling> {
           "Load new profiles from server into the project directory"
         );
       // Query the org
-      const profiles = await this.getProfilesMetadata(this.conn);
+      const profiles = await retrieveMetadata(
+        [{ type: "Profile", folder: null }],
+        this.conn
+      );
+
       profilesStatus.deleted = metadataFiles.filter(file => {
         let oneName = path.basename(
           file,
@@ -1213,7 +1223,7 @@ export default class ProfileUtils extends BaseUtils<ProfileTooling> {
             profilesStatus.added.push(newPRofilePath);
           }
         } else {
-          SfPowerKit.ux.log("No new profile found");
+          SfPowerKit.ux.log("No new profile found, Updating existing profiles");
         }
       }
     }
@@ -1670,28 +1680,5 @@ export default class ProfileUtils extends BaseUtils<ProfileTooling> {
       return profiles[0];
     }
     return undefined;
-  }
-
-  public async getProfilesMetadata(conn: any): Promise<string[]> {
-    var types = [{ type: "Profile", folder: null }];
-    //let metadata = await conn.metadata.list(types);
-    // console.log(metadata);
-    const apiversion = await this.org.getConnection().retrieveMaxApiVersion();
-    let toReturn: Promise<string[]> = new Promise<string[]>(
-      (resolve, reject) => {
-        conn.metadata.list(types, apiversion, function(err, metadata) {
-          if (err) {
-            return reject(err);
-          }
-          let profileNames = [];
-          for (let i = 0; i < metadata.length; i++) {
-            profileNames.push(metadata[i].fullName);
-          }
-          resolve(profileNames);
-        });
-      }
-    );
-
-    return toReturn;
   }
 }
