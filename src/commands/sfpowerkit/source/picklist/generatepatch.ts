@@ -10,7 +10,7 @@ import {
   getDefaultPackageInfo
 } from "../../../../shared/getPackageInfo";
 import { searchFilesInDirectory } from "../../../../shared/searchFilesInDirectory";
-import DiffUtil from "../../../../shared/diffutils";
+import DiffUtil from "../../../../impl/project/diff/diffutils";
 import { zipDirectory } from "../../../../shared/zipDirectory";
 
 var path = require("path");

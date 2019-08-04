@@ -1,37 +1,38 @@
-import BaseUtils from "./baseUtils";
-import { TabDefinition } from "./schema";
 import { Org } from "@salesforce/core";
-import { METADATA_INFO } from "../shared/metadataInfo";
+import { METADATA_INFO } from "../../../shared/metadataInfo";
 import _ from "lodash";
+import BaseMetadataRetriever from "./baseMetadataretriever";
+import { TabDefinition } from "../schema";
 
 const QUERY =
   "SELECT Id,  Name, SobjectName, DurableId, IsCustom, Label FROM TabDefinition ";
-export default class TabUtils extends BaseUtils<TabDefinition> {
-  private static instance:TabUtils;
+export default class TabDefinitionRetriever extends BaseMetadataRetriever<
+  TabDefinition
+> {
+  private static instance: TabDefinitionRetriever;
   private constructor(public org: Org) {
     super(org, true);
     super.setQuery(QUERY);
   }
 
-  public static getInstance(org: Org): TabUtils {
-    if (!TabUtils.instance) {
-      TabUtils.instance = new TabUtils(org);
+  public static getInstance(org: Org): TabDefinitionRetriever {
+    if (!TabDefinitionRetriever.instance) {
+      TabDefinitionRetriever.instance = new TabDefinitionRetriever(org);
     }
-    return TabUtils.instance;
+    return TabDefinitionRetriever.instance;
   }
 
   public async getObjects(): Promise<TabDefinition[]> {
     if (
-      ( this.data === undefined ||
-        this.data.length == 0) &&
+      (this.data === undefined || this.data.length == 0) &&
       !this.dataLoaded
     ) {
       super.setQuery(QUERY);
       let tabs = await super.getObjects();
-      this.data=tabs
-      this.dataLoaded=true
+      this.data = tabs;
+      this.dataLoaded = true;
     }
-    return this.data
+    return this.data;
   }
   public async getTabs(): Promise<TabDefinition[]> {
     return await this.getObjects();

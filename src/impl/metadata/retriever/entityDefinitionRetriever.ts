@@ -1,24 +1,26 @@
-import BaseUtils from "./baseUtils";
-import { EntityDefinition } from "./schema";
 import { Org } from "@salesforce/core";
-import { METADATA_INFO } from "../shared/metadataInfo";
 import _ from "lodash";
+import BaseMetadataRetriever from "./baseMetadataretriever";
+import { EntityDefinition } from "../schema";
+import { METADATA_INFO } from "../../../shared/metadataInfo";
 
 const QUERY =
   "SELECT DurableId, DeveloperName, QualifiedApiName, NamespacePrefix FROM EntityDefinition order by QualifiedApiName";
-export default class EntityDefinitionUtils extends BaseUtils<EntityDefinition> {
-  private static instance: EntityDefinitionUtils;
+export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
+  EntityDefinition
+> {
+  private static instance: EntityDefinitionRetriever;
   private objectForPermission: string[];
   private constructor(public org: Org) {
     super(org, true);
     super.setQuery(QUERY);
   }
 
-  public static getInstance(org: Org): EntityDefinitionUtils {
-    if (!EntityDefinitionUtils.instance) {
-      EntityDefinitionUtils.instance = new EntityDefinitionUtils(org);
+  public static getInstance(org: Org): EntityDefinitionRetriever {
+    if (!EntityDefinitionRetriever.instance) {
+      EntityDefinitionRetriever.instance = new EntityDefinitionRetriever(org);
     }
-    return EntityDefinitionUtils.instance;
+    return EntityDefinitionRetriever.instance;
   }
 
   public async getObjects(): Promise<EntityDefinition[]> {

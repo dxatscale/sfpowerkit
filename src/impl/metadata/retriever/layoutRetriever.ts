@@ -1,54 +1,65 @@
-import BaseUtils from "./baseUtils";
-import { Layout } from "./schema";
-import EntityDefinitionUtils from "./entityDefinitionUtils";
+import { Layout } from "../schema";
 import { Org } from "@salesforce/core";
-import { METADATA_INFO } from "../shared/metadataInfo";
+import { METADATA_INFO } from "../../../shared/metadataInfo";
 import _ from "lodash";
+import BaseMetadataRetriever from "./baseMetadataretriever";
+import EntityDefinitionRetriever from "./entityDefinitionRetriever";
 
-const QUERY = "SELECT Id, Name, EntityDefinitionId, NamespacePrefix From Layout ";
+const QUERY =
+  "SELECT Id, Name, EntityDefinitionId, NamespacePrefix From Layout ";
 
-export default class LayoutUtils extends BaseUtils<Layout> {
-  private static instance: LayoutUtils;
+export default class LayoutRetriever extends BaseMetadataRetriever<Layout> {
+  private static instance: LayoutRetriever;
   private constructor(public org: Org) {
     super(org, true);
     super.setQuery(QUERY);
   }
 
-  public static getInstance(org: Org): LayoutUtils {
-    if (!LayoutUtils.instance) {
-      LayoutUtils.instance = new LayoutUtils(org);
+  public static getInstance(org: Org): LayoutRetriever {
+    if (!LayoutRetriever.instance) {
+      LayoutRetriever.instance = new LayoutRetriever(org);
     }
-    return LayoutUtils.instance;
+    return LayoutRetriever.instance;
   }
 
   public async getObjects(): Promise<Layout[]> {
     if (
-      ( this.data === undefined ||
-        this.data.length == 0) &&
+      (this.data === undefined || this.data.length == 0) &&
       !this.dataLoaded
     ) {
-      let entityDefinitionUtils = EntityDefinitionUtils.getInstance(
+      let entityDefinitionRetriever = EntityDefinitionRetriever.getInstance(
         this.org
       );
 
       super.setQuery(QUERY);
       let layouts = await super.getObjects();
       for (let i = 0; i < layouts.length; i++) {
-        layouts[i].ObjectName = await entityDefinitionUtils.getObjectNameByDurableId(
+        layouts[
+          i
+        ].ObjectName = await entityDefinitionRetriever.getObjectNameByDurableId(
           layouts[i].EntityDefinitionId
         );
 
-        let namespace=""
-        if(layouts[i].NamespacePrefix!==undefined && layouts[i].NamespacePrefix!=="" && layouts[i].NamespacePrefix!==null && layouts[i].NamespacePrefix!=="null"){
-          namespace=layouts[i].NamespacePrefix+"__"
+        let namespace = "";
+        if (
+          layouts[i].NamespacePrefix !== undefined &&
+          layouts[i].NamespacePrefix !== "" &&
+          layouts[i].NamespacePrefix !== null &&
+          layouts[i].NamespacePrefix !== "null"
+        ) {
+          namespace = layouts[i].NamespacePrefix + "__";
         }
         if (layouts[i].ObjectName !== null && layouts[i].ObjectName !== "") {
           layouts[i].FullName =
-            layouts[i].ObjectName + "-" + namespace + layouts[i].Name.replace("/", "%2F");
+            layouts[i].ObjectName +
+            "-" +
+            namespace +
+            layouts[i].Name.replace("/", "%2F");
         } else {
           layouts[i].FullName =
             layouts[i].EntityDefinitionId +
-            "-" + namespace +
+            "-" +
+            namespace +
             layouts[i].Name.replace("/", "%2F");
         }
       }
@@ -77,5 +88,4 @@ export default class LayoutUtils extends BaseUtils<Layout> {
     }
     return found;
   }
-
 }

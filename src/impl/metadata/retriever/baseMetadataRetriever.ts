@@ -1,17 +1,13 @@
 import { QueryResult } from "jsforce";
 import { Org } from "@salesforce/core";
 
-export default abstract class BaseUtils<T> {
+export default abstract class BaseMetadataRetriever<T> {
   private query: string;
   protected cacheLoaded: boolean;
   protected data: any;
   protected dataLoaded: boolean = false;
-  protected cacheFileName=""
-  protected constructor(
-    public org:Org,
-    private tooling: boolean = false
-  ) {
-  }
+  protected cacheFileName = "";
+  protected constructor(public org: Org, private tooling: boolean = false) {}
 
   setQuery(query: string) {
     this.query = query;

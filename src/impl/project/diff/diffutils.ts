@@ -1,4 +1,4 @@
-import MetadataFiles from "./metadataFiles";
+import MetadataFiles from "../../../shared/metadataFiles";
 
 const util = require("util");
 const exec = util.promisify(require("child_process").exec);

@@ -1,6 +1,6 @@
 import { Connection } from "@salesforce/core";
 import { DescribeSObjectResult } from "jsforce/describe-result";
-import { ProfileObjectPermissions, ProfileUserPermission } from "./schema";
+import { ProfileObjectPermissions, ProfileUserPermission } from "../schema";
 import _ from "lodash";
 
 const userPermissionDependencies = [
@@ -91,7 +91,7 @@ const userPermissionDependencies = [
   }
 ];
 
-export default class UserPermissionUtils {
+export default class UserPermissionBuilder {
   static supportedPermissions: string[];
   public static addPermissionDependencies(profileOrPermissionSet: any) {
     let objectAccessRequired = [];
@@ -116,9 +116,9 @@ export default class UserPermissionUtils {
       }
     }
     if (objectAccessRequired.length > 0) {
-      UserPermissionUtils.addRequiredObjectAccess(
+      UserPermissionBuilder.addRequiredObjectAccess(
         profileOrPermissionSet,
-        UserPermissionUtils.mergeObjectAccess(objectAccessRequired)
+        UserPermissionBuilder.mergeObjectAccess(objectAccessRequired)
       );
     }
   }
@@ -129,7 +129,7 @@ export default class UserPermissionUtils {
       var objectAccess = objectAccessRequired[i];
       if (objectMapping[objectAccess.object] != undefined) {
         //console.log('Adding access');
-        UserPermissionUtils.addAccess(
+        UserPermissionBuilder.addAccess(
           objectMapping[objectAccess.object],
           objectAccess
         );
@@ -187,7 +187,7 @@ export default class UserPermissionUtils {
           let profileObjectAccess = profileOrPermissionSet.objectPermissions[i];
           exist = profileObjectAccess.object == objectAccess.object;
           if (exist) {
-            UserPermissionUtils.addAccess(profileObjectAccess, objectAccess);
+            UserPermissionBuilder.addAccess(profileObjectAccess, objectAccess);
             break;
           }
         }
@@ -222,30 +222,30 @@ export default class UserPermissionUtils {
   public static async getSupportedPermissions(
     conn: Connection
   ): Promise<string[]> {
-    if (_.isNil(UserPermissionUtils.supportedPermissions)) {
-      let describeResult = await UserPermissionUtils.describeSObject(
+    if (_.isNil(UserPermissionBuilder.supportedPermissions)) {
+      let describeResult = await UserPermissionBuilder.describeSObject(
         conn,
         "PermissionSet"
       );
-      UserPermissionUtils.supportedPermissions = [];
+      UserPermissionBuilder.supportedPermissions = [];
       describeResult.fields.forEach(field => {
         let fieldName = field["name"] as string;
         if (fieldName.startsWith("Permissions")) {
-          UserPermissionUtils.supportedPermissions.push(
+          UserPermissionBuilder.supportedPermissions.push(
             fieldName.replace("Permissions", "").trim()
           );
         }
       });
     }
-    return UserPermissionUtils.supportedPermissions;
+    return UserPermissionBuilder.supportedPermissions;
   }
 
   public static async isSupportedPermission(
     permission: string
   ): Promise<boolean> {
     let found = false;
-    if (!_.isNil(UserPermissionUtils.supportedPermissions)) {
-      found = UserPermissionUtils.supportedPermissions.includes(permission);
+    if (!_.isNil(UserPermissionBuilder.supportedPermissions)) {
+      found = UserPermissionBuilder.supportedPermissions.includes(permission);
     }
     return found;
   }
@@ -258,7 +258,7 @@ export default class UserPermissionUtils {
     supportedPermissions: string[]
   ): any {
     userPermissionDependencies.forEach(userPermission => {
-      let hasPermission = UserPermissionUtils.hasPermission(
+      let hasPermission = UserPermissionBuilder.hasPermission(
         profileOrPermissionSet,
         userPermission.name
       );
@@ -284,7 +284,7 @@ export default class UserPermissionUtils {
         userPermission.permissionsRequired.length > 0
       ) {
         for (let i = 0; i < userPermission.permissionsRequired.length; i++) {
-          UserPermissionUtils.enablePermission(
+          UserPermissionBuilder.enablePermission(
             profileOrPermissionSet,
             userPermission.permissionsRequired[i],
             supportedPermissions

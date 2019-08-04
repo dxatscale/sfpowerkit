@@ -1,23 +1,25 @@
-import BaseUtils from "./baseUtils";
-import { RecordType } from "./schema";
+import { RecordType } from "../schema";
 import { Org } from "@salesforce/core";
-import { METADATA_INFO } from "../shared/metadataInfo";
+import { METADATA_INFO } from "../../../shared/metadataInfo";
 import _ from "lodash";
+import BaseMetadataRetriever from "./baseMetadataretriever";
 
 const QUERY = "Select Id, Name, DeveloperName, SobjectType from RecordType";
 
-export default class RecordTypeUtils extends BaseUtils<RecordType> {
-  private static instance: RecordTypeUtils;
+export default class RecordTypeRetriever extends BaseMetadataRetriever<
+  RecordType
+> {
+  private static instance: RecordTypeRetriever;
   private constructor(public org: Org) {
     super(org);
     super.setQuery(QUERY);
   }
 
-  public static getInstance(org: Org): RecordTypeUtils {
-    if (!RecordTypeUtils.instance) {
-      RecordTypeUtils.instance = new RecordTypeUtils(org);
+  public static getInstance(org: Org): RecordTypeRetriever {
+    if (!RecordTypeRetriever.instance) {
+      RecordTypeRetriever.instance = new RecordTypeRetriever(org);
     }
-    return RecordTypeUtils.instance;
+    return RecordTypeRetriever.instance;
   }
 
   public async getObjects(): Promise<RecordType[]> {
@@ -40,7 +42,7 @@ export default class RecordTypeUtils extends BaseUtils<RecordType> {
       this.data = objects;
       this.dataLoaded = true;
     }
-    return this.data
+    return this.data;
   }
 
   public async getrecordTypes(): Promise<RecordType[]> {
@@ -63,5 +65,4 @@ export default class RecordTypeUtils extends BaseUtils<RecordType> {
     }
     return found;
   }
-  
 }

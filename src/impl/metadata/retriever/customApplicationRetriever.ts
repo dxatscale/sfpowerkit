@@ -1,23 +1,26 @@
-import BaseUtils from "./baseUtils";
-import { CustomApplication } from "./schema";
 import { Org } from "@salesforce/core";
 import _ from "lodash";
-import { METADATA_INFO } from "../shared/metadataInfo";
+import { METADATA_INFO } from "../../../shared/metadataInfo";
+import BaseMetadataRetriever from "./baseMetadataRetriever";
+import { CustomApplication } from "../schema";
 
 const QUERY =
   "Select Id, NamespacePrefix, DeveloperName, Label From CustomApplication ";
-export default class AppUtils extends BaseUtils<CustomApplication> {
-  private static instance: AppUtils;
+
+export default class CustomApplicationRetriever extends BaseMetadataRetriever<
+  CustomApplication
+> {
+  private static instance: CustomApplicationRetriever;
   private constructor(public org: Org) {
     super(org, true);
     super.setQuery(QUERY);
   }
 
-  public static getInstance(org: Org): AppUtils {
-    if (!AppUtils.instance) {
-      AppUtils.instance = new AppUtils(org);
+  public static getInstance(org: Org): CustomApplicationRetriever {
+    if (!CustomApplicationRetriever.instance) {
+      CustomApplicationRetriever.instance = new CustomApplicationRetriever(org);
     }
-    return AppUtils.instance;
+    return CustomApplicationRetriever.instance;
   }
 
   public async getObjects(): Promise<CustomApplication[]> {

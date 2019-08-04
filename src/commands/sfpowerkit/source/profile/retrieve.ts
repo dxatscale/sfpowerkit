@@ -8,10 +8,11 @@ import {
 
 import { SfdxProject } from "@salesforce/core";
 import _ from "lodash";
-import ProfileUtils from "../../../../profile_utils/profileUtils";
+import ProfileRetriever from "../../../../impl/metadata/retriever/profileRetriever";
 import { SfPowerKit } from "../../../../sfpowerkit";
 import * as path from "path";
 import { METADATA_INFO } from "../../../../shared/metadataInfo";
+import ProfileSync from "../../../../impl/source/profiles/profileSync";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -96,7 +97,7 @@ export default class Retrieve extends SfdxCommand {
       folders.push(argFolder[0]);
     }
 
-    const profileUtils = new ProfileUtils(
+    const profileUtils = new ProfileSync(
       this.org,
       this.flags.loglevel == "debug"
     );

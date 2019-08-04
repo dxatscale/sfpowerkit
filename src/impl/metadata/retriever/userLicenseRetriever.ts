@@ -1,22 +1,23 @@
-import BaseUtils from "./baseUtils";
-import { UserLicence } from "./schema";
+import { UserLicence } from "../schema";
 import { Org } from "@salesforce/core";
 import _ from "lodash";
+import BaseMetadataRetriever from "./baseMetadataretriever";
 
-const QUERY =
-  "Select Id, Name, LicenseDefinitionKey From UserLicense";
-export default class UserLicenceUtils extends BaseUtils<UserLicence> {
-  private static instance: UserLicenceUtils;
+const QUERY = "Select Id, Name, LicenseDefinitionKey From UserLicense";
+export default class UserLicenseRetriever extends BaseMetadataRetriever<
+  UserLicence
+> {
+  private static instance: UserLicenseRetriever;
   private constructor(public org: Org) {
     super(org, false);
     super.setQuery(QUERY);
   }
 
-  public static getInstance(org: Org): UserLicenceUtils {
-    if (!UserLicenceUtils.instance) {
-      UserLicenceUtils.instance = new UserLicenceUtils(org);
+  public static getInstance(org: Org): UserLicenseRetriever {
+    if (!UserLicenseRetriever.instance) {
+      UserLicenseRetriever.instance = new UserLicenseRetriever(org);
     }
-    return UserLicenceUtils.instance;
+    return UserLicenseRetriever.instance;
   }
 
   public async getObjects(): Promise<UserLicence[]> {
@@ -36,9 +37,9 @@ export default class UserLicenceUtils extends BaseUtils<UserLicence> {
 
   public async userLicenseExists(license: string): Promise<boolean> {
     let licenses = await this.getUserLicenses();
-    let foundLicense=licenses.find(aLicense => {
+    let foundLicense = licenses.find(aLicense => {
       return aLicense.Name === license;
     });
-    return !_.isNil(foundLicense)
+    return !_.isNil(foundLicense);
   }
 }

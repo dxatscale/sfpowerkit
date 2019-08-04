@@ -5,7 +5,7 @@ import {
   MetadataDescribe,
   SOURCE_EXTENSION_REGEX
 } from "./metadataInfo";
-import FileUtils from "../profile_utils/fsutils";
+import FileUtils from "./fileutils";
 import _ from "lodash";
 
 export default class MetadataFiles {
@@ -228,7 +228,7 @@ export default class MetadataFiles {
             }
             METADATA_INFO[keys[i]].files.push(metadataFile);
 
-            let name = FileUtils.getFileNameWithoudExtension(
+            let name = FileUtils.getFileNameWithoutExtension(
               metadataFile,
               METADATA_INFO[keys[i]].sourceExtension
             );

@@ -1,11 +1,19 @@
-import { core, SfdxCommand, flags, FlagsConfig, SfdxResult } from "@salesforce/command";
+import {
+  core,
+  SfdxCommand,
+  flags,
+  FlagsConfig,
+  SfdxResult
+} from "@salesforce/command";
 
 import { SfdxProject, SfdxError } from "@salesforce/core";
-import ProfileUtils from "../../../../profile_utils/profileUtils";
+
 import _ from "lodash";
 import { SfPowerKit } from "../../../../sfpowerkit";
 import * as path from "path";
 import { METADATA_INFO } from "../../../../shared/metadataInfo";
+import ProfileRetriever from "../../../../impl/metadata/retriever/profileRetriever";
+import ProfileMerge from "../../../../impl/source/profiles/profileMerge";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -84,7 +92,6 @@ export default class Merge extends SfdxCommand {
     }
   };
 
-  
   public async run(): Promise<any> {
     // tslint:disable-line:no-any
     SfPowerKit.ux = this.ux;
@@ -98,12 +105,12 @@ export default class Merge extends SfdxCommand {
 
     if (argMetadatas !== undefined) {
       metadatas = {};
-      ProfileUtils.supportedMetadataTypes.forEach(val => {
+      ProfileRetriever.supportedMetadataTypes.forEach(val => {
         metadatas[val] = [];
       });
       for (let i = 0; i < argMetadatas.length; i++) {
         if (
-          ProfileUtils.supportedMetadataTypes.includes(
+          ProfileRetriever.supportedMetadataTypes.includes(
             argMetadatas[i].MetadataType
           )
         ) {
@@ -138,8 +145,10 @@ export default class Merge extends SfdxCommand {
       SfPowerKit.defaultFolder = argFolder[0];
     }
 
-    const profileUtils = new ProfileUtils(this.org,this.flags.loglevel=='debug');
-
+    const profileUtils = new ProfileMerge(
+      this.org,
+      this.flags.loglevel == "debug"
+    );
 
     var mergedProfiles = await profileUtils.merge(
       argFolder,

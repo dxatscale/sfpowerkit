@@ -1,4 +1,3 @@
-
 export interface BaseObject {
   Id: string;
   Name?: string;
@@ -109,55 +108,52 @@ export interface CustomApplication extends BaseObject {
   IsNavPersonalizationDisabled?: boolean;
   IsNavAutoTempTabsDisabled?: boolean;
 }
-export interface ApexClass extends BaseObject {
-}
-export interface ApexPage extends BaseObject {
-}
+export interface ApexClass extends BaseObject {}
+export interface ApexPage extends BaseObject {}
 export interface UserLicence {
   Id: string;
   Name: string;
-  LicenseDefinitionKey:string;
+  LicenseDefinitionKey: string;
 }
 
-export interface ProfileSObject{
+export interface ProfileSObject {
   Id: string;
   Name: string;
 }
 
-export interface PermissionSetSObject{
-  Id: string
-  Name: string
-  Label: string
-  Profile: ProfileSObject
+export interface PermissionSetSObject {
+  Id: string;
+  Name: string;
+  Label: string;
+  Profile: ProfileSObject;
 }
-
 
 export default interface Profile {
   applicationVisibilities?: ApplicationVisibility[];
   classAccesses?: ProfileApexClassAccess[];
-  custom:boolean;
+  custom: boolean;
   customPermissions?: ProfileCustomPermissions[];
   description?: string;
-  externalDataSourceAccesses? : ProfileExternalDataSourceAccess[];
-  fieldLevelSecurities? : ProfileFieldLevelSecurity[];
-  fieldPermissions? : ProfileFieldLevelSecurity[];
+  externalDataSourceAccesses?: ProfileExternalDataSourceAccess[];
+  fieldLevelSecurities?: ProfileFieldLevelSecurity[];
+  fieldPermissions?: ProfileFieldLevelSecurity[];
   fullName?: string;
-  layoutAssignments?:ProfileLayoutAssignments[];
-  loginHours?:ProfileLoginHours[];
-  loginIpRanges?:ProfileLoginIpRange[];
-  objectPermissions?:ProfileObjectPermissions[];
-  pageAccesses?:ProfileApexPageAccess[];
-  profileActionOverrides?:ProfileActionOverride[];
-  recordTypeVisibilities?:RecordTypeVisibility[];
+  layoutAssignments?: ProfileLayoutAssignments[];
+  loginHours?: ProfileLoginHours[];
+  loginIpRanges?: ProfileLoginIpRange[];
+  objectPermissions?: ProfileObjectPermissions[];
+  pageAccesses?: ProfileApexPageAccess[];
+  profileActionOverrides?: ProfileActionOverride[];
+  recordTypeVisibilities?: RecordTypeVisibility[];
   tabVisibilities?: ProfileTabVisibility[];
   userLicense: string;
-  userPermissions?:ProfileUserPermission[];
+  userPermissions?: ProfileUserPermission[];
 }
 
 export interface ApplicationVisibility {
-   application: string;
-   visible: boolean;
-   default?: boolean;
+  application: string;
+  visible: boolean;
+  default?: boolean;
 }
 
 export interface ProfileApexClassAccess {
@@ -199,26 +195,26 @@ export interface ProfileObjectPermissions {
   object: string;
   allowCreate: boolean;
   allowDelete: boolean;
-  allowEdit:boolean;
-  allowRead:boolean;
-  modifyAllRecords:boolean;
-  viewAllRecords:boolean;
+  allowEdit: boolean;
+  allowRead: boolean;
+  modifyAllRecords: boolean;
+  viewAllRecords: boolean;
 }
 export interface ProfileActionOverride {
   actionName: string;
   content: string;
   formFactor: FormFactor;
-  pageOrSobjectType:string;
-  recordType:string;
-  type:ActionOverrideType;
+  pageOrSobjectType: string;
+  recordType: string;
+  type: ActionOverrideType;
 }
 
-export enum FormFactor  {
+export enum FormFactor {
   Large = "Large",
   Small = "Small",
   Medium = "Medium"
 }
-export enum ActionOverrideType   {
+export enum ActionOverrideType {
   default = "default",
   flexipage = "flexipage",
   lightningcomponent = "lightningcomponent",
@@ -241,10 +237,10 @@ export interface RecordTypeVisibility {
 
 export interface ProfileTabVisibility {
   tab: string;
-  visibility: TabVisibility ;
+  visibility: TabVisibility;
 }
 
-export enum TabVisibility   {
+export enum TabVisibility {
   DefaultOff = "DefaultOff",
   DefaultOn = "DefaultOn",
   Hidden = "Hidden"
@@ -260,16 +256,16 @@ export default interface PermissionSet {
   classAccesses?: PermissionSetApexClassAccess[];
   customPermissions?: PermissionSetCustomPermissions[];
   description?: string;
-  externalDataSourceAccesses? : PermissionSetExternalDataSourceAccess[];
-  fieldPermissions? : ProfileFieldLevelSecurity[];
+  externalDataSourceAccesses?: PermissionSetExternalDataSourceAccess[];
+  fieldPermissions?: ProfileFieldLevelSecurity[];
   hasActivationRequired?: boolean;
-  label?:string;
-  license?:string;
-  objectPermissions?:PermissionSetObjectPermissions[];
-  pageAccesses?:PermissionSetApexPageAccess[];
-  recordTypeVisibilities?:RecordTypeVisibility[];
+  label?: string;
+  license?: string;
+  objectPermissions?: PermissionSetObjectPermissions[];
+  pageAccesses?: PermissionSetApexPageAccess[];
+  recordTypeVisibilities?: RecordTypeVisibility[];
   tabSettings?: PermissionSetTabSetting[];
-  userPermissions?:PermissionSetUserPermission[];
+  userPermissions?: PermissionSetUserPermission[];
 }
 
 export interface PermissionSetApexClassAccess {
@@ -291,10 +287,10 @@ export interface PermissionSetObjectPermissions {
   object: string;
   allowCreate: boolean;
   allowDelete: boolean;
-  allowEdit:boolean;
-  allowRead:boolean;
-  modifyAllRecords:boolean;
-  viewAllRecords:boolean;
+  allowEdit: boolean;
+  allowRead: boolean;
+  modifyAllRecords: boolean;
+  viewAllRecords: boolean;
 }
 
 export interface PermissionSetApexPageAccess {
@@ -307,7 +303,7 @@ export interface PermissionSetTabSetting {
   visibility: PermissionSetTabVisibility;
 }
 
-export enum PermissionSetTabVisibility  {
+export enum PermissionSetTabVisibility {
   Available = "Available",
   None = "None",
   Visible = "Visible"

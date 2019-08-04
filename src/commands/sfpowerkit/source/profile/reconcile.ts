@@ -8,10 +8,11 @@ import {
 
 import { SfdxProject } from "@salesforce/core";
 import _ from "lodash";
-import ProfileUtils from "../../../../profile_utils/profileUtils";
+import ProfileRetriever from "../../../../impl/metadata/retriever/profileRetriever";
 import { SfPowerKit } from "../../../../sfpowerkit";
 import { METADATA_INFO } from "../../../../shared/metadataInfo";
 import * as path from "path";
+import ProfileReconcile from "../../../../impl/source/profiles/ProfileReconcile";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -95,7 +96,10 @@ export default class Reconcile extends SfdxCommand {
       SfPowerKit.defaultFolder = argFolder[0];
     }
 
-    var profileUtils =  new ProfileUtils(this.org,this.flags.loglevel=='debug');
+    var profileUtils = new ProfileReconcile(
+      this.org,
+      this.flags.loglevel == "debug"
+    );
 
     var reconcileProfiles = await profileUtils.reconcile(
       argFolder,
@@ -112,7 +116,7 @@ export default class Reconcile extends SfdxCommand {
         path: path.relative(process.cwd(), file)
       });
     });
-    
+
     return result;
   }
 }

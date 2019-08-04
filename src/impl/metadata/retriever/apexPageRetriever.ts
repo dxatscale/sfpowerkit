@@ -1,22 +1,22 @@
-import BaseUtils from "./baseUtils";
-import { ApexPage } from "./schema";
+import { ApexPage } from "../schema";
 import { Org } from "@salesforce/core";
 import _ from "lodash";
-import { METADATA_INFO } from "../shared/metadataInfo";
+import { METADATA_INFO } from "../../../shared/metadataInfo";
+import BaseMetadataRetriever from "./baseMetadataretriever";
 
 const QUERY = "Select Id, Name, NameSpacePrefix From ApexPage";
-export default class PageUtils extends BaseUtils<ApexPage> {
-  private static instance: PageUtils;
+export default class ApexPageRetriever extends BaseMetadataRetriever<ApexPage> {
+  private static instance: ApexPageRetriever;
   private constructor(public org: Org) {
     super(org, true);
     super.setQuery(QUERY);
   }
 
-  public static getInstance(org: Org): PageUtils {
-    if (!PageUtils.instance) {
-      PageUtils.instance = new PageUtils(org);
+  public static getInstance(org: Org): ApexPageRetriever {
+    if (!ApexPageRetriever.instance) {
+      ApexPageRetriever.instance = new ApexPageRetriever(org);
     }
-    return PageUtils.instance;
+    return ApexPageRetriever.instance;
   }
 
   public async getObjects(): Promise<ApexPage[]> {

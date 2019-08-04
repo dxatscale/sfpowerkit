@@ -48,10 +48,7 @@ export default class FileUtils {
           result.push(curFile);
         }
       } else if (stats.isDirectory()) {
-        let files: string[] = this.getAllFilesSync(
-          curFile,
-          extension
-        );
+        let files: string[] = this.getAllFilesSync(curFile, extension);
         result = _.concat(result, files);
       }
     });
@@ -101,7 +98,7 @@ export default class FileUtils {
    * @param filePath file path
    * @param extension extension
    */
-  public static getFileNameWithoudExtension(
+  public static getFileNameWithoutExtension(
     filePath: string,
     extension?: string
   ): string {

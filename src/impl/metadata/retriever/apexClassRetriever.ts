@@ -1,22 +1,24 @@
-import BaseUtils from "./baseUtils";
-import { ApexClass } from "./schema";
+import { ApexClass } from "../schema";
 import { Org } from "@salesforce/core";
 import _ from "lodash";
-import { METADATA_INFO } from "../shared/metadataInfo";
+import { METADATA_INFO } from "../../../shared/metadataInfo";
+import BaseMetadataRetriever from "./baseMetadataretriever";
 
 const QUERY = "Select Id, Name, NameSpacePrefix From ApexClass ";
-export default class ClassUtils extends BaseUtils<ApexClass> {
-  private static instance: ClassUtils;
+export default class ApexClassRetriever extends BaseMetadataRetriever<
+  ApexClass
+> {
+  private static instance: ApexClassRetriever;
   private constructor(public org: Org) {
     super(org, true);
     super.setQuery(QUERY);
   }
 
-  public static getInstance(org: Org): ClassUtils {
-    if (!ClassUtils.instance) {
-      ClassUtils.instance = new ClassUtils(org);
+  public static getInstance(org: Org): ApexClassRetriever {
+    if (!ApexClassRetriever.instance) {
+      ApexClassRetriever.instance = new ApexClassRetriever(org);
     }
-    return ClassUtils.instance;
+    return ApexClassRetriever.instance;
   }
 
   public async getObjects(): Promise<ApexClass[]> {

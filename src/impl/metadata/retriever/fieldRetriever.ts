@@ -1,28 +1,28 @@
-import BaseUtils from "./baseUtils";
-import { Field } from "./schema";
 import { Org } from "@salesforce/core";
-import EntityDefinitionUtils from "./entityDefinitionUtils";
-import { METADATA_INFO } from "../shared/metadataInfo";
 import _ from "lodash";
+import BaseMetadataRetriever from "./baseMetadataretriever";
+import { Field } from "../schema";
+import EntityDefinitionRetriever from "./entityDefinitionRetriever";
+import { METADATA_INFO } from "../../../shared/metadataInfo";
 
 const QUERY =
   "SELECT Id, QualifiedApiName, EntityDefinitionId, DeveloperName, NamespacePrefix FROM FieldDefinition ";
-export default class FieldUtils extends BaseUtils<Field> {
-  private static instance: FieldUtils;
+export default class FieldRetriever extends BaseMetadataRetriever<Field> {
+  private static instance: FieldRetriever;
   private constructor(public org: Org) {
     super(org, true);
     super.setQuery(QUERY);
   }
-  public static getInstance(org: Org): FieldUtils {
-    if (!FieldUtils.instance) {
-      FieldUtils.instance = new FieldUtils(org);
+  public static getInstance(org: Org): FieldRetriever {
+    if (!FieldRetriever.instance) {
+      FieldRetriever.instance = new FieldRetriever(org);
     }
-    return FieldUtils.instance;
+    return FieldRetriever.instance;
   }
   public async getObjects(): Promise<Field[]> {
     let fieldsToReturn: Field[] = [];
     if (!this.data && !this.dataLoaded) {
-      let entityDefinitionUtils = EntityDefinitionUtils.getInstance(
+      let entityDefinitionUtils = EntityDefinitionRetriever.getInstance(
         this.org
       );
 
@@ -65,7 +65,7 @@ export default class FieldUtils extends BaseUtils<Field> {
       await this.getObjects();
     }
     if (!this.data[objectName]) {
-      let entityDefinitionUtils = EntityDefinitionUtils.getInstance(
+      let entityDefinitionUtils = EntityDefinitionRetriever.getInstance(
         this.org
       );
       let fields = [];
