@@ -1,5 +1,3 @@
-import { Org } from "@salesforce/core";
-import { Connection } from "@salesforce/core";
 import { SfPowerKit } from "../../../sfpowerkit";
 import MetadataFiles from "../../../shared/metadataFiles";
 import * as fs from "fs";
@@ -7,8 +5,6 @@ import * as path from "path";
 import xml2js = require("xml2js");
 import { METADATA_INFO } from "../../../shared/metadataInfo";
 import ProfileRetriever from "../../metadata/retriever/profileRetriever";
-import FileUtils from "../../../shared/fileutils";
-import { retrieveMetadata } from "../../../shared/retrieveMetadata";
 import CustomApplicationRetriever from "../../../impl/metadata/retriever/customApplicationRetriever";
 import ApexClassRetriever from "../../../impl/metadata/retriever/apexClassRetriever";
 import FieldRetriever from "../../../impl/metadata/retriever/fieldRetriever";

@@ -1,5 +1,3 @@
-import { Org } from "@salesforce/core";
-import { Connection } from "@salesforce/core";
 import { SfPowerKit } from "../../../sfpowerkit";
 import MetadataFiles from "../../../shared/metadataFiles";
 import * as fs from "fs";
