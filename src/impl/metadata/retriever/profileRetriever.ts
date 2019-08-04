@@ -105,9 +105,14 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
   ): Promise<MetadataInfo[]> {
     var toReturn: Promise<MetadataInfo[]> = null;
     var metadata = await conn.metadata.readSync("Profile", profileNames);
+
     if (Array.isArray(metadata)) {
+      metadata.forEach(profile => {
+        this.handlePermissions(profile);
+      });
       toReturn = Promise.resolve(metadata);
     } else if (metadata !== null) {
+      this.handlePermissions(metadata);
       toReturn = Promise.resolve([metadata]);
     } else {
       toReturn = Promise.resolve([]);
@@ -117,6 +122,7 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
   }
 
   public async handlePermissions(profileObj: Profile): Promise<Profile> {
+    SfPowerKit.ux.log(`Profile ${profileObj.fullName}`);
     this.handleViewAllDataPermission(profileObj);
     this.handleInstallPackagingPermission(profileObj);
     this.handleQueryAllFilesPermission(profileObj);
