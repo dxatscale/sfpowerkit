@@ -122,7 +122,6 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
   }
 
   public async handlePermissions(profileObj: Profile): Promise<Profile> {
-    SfPowerKit.ux.log(`Profile ${profileObj.fullName}`);
     this.handleViewAllDataPermission(profileObj);
     this.handleInstallPackagingPermission(profileObj);
     this.handleQueryAllFilesPermission(profileObj);
