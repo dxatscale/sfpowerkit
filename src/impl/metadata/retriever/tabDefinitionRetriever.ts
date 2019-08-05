@@ -1,7 +1,7 @@
 import { Org } from "@salesforce/core";
 import { METADATA_INFO } from "../../../shared/metadataInfo";
 import _ from "lodash";
-import BaseMetadataRetriever from "../../metadata/retriever/baseMetadataretriever";
+import BaseMetadataRetriever from "./baseMetadataRetriever";
 import { TabDefinition } from "../schema";
 
 const QUERY =

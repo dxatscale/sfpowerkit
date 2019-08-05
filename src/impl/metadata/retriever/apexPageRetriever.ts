@@ -2,7 +2,7 @@ import { ApexPage } from "../schema";
 import { Org } from "@salesforce/core";
 import _ from "lodash";
 import { METADATA_INFO } from "../../../shared/metadataInfo";
-import BaseMetadataRetriever from "../../metadata/retriever/baseMetadataretriever";
+import BaseMetadataRetriever from "./baseMetadataRetriever";
 
 const QUERY = "Select Id, Name, NameSpacePrefix From ApexPage";
 export default class ApexPageRetriever extends BaseMetadataRetriever<ApexPage> {

@@ -1,6 +1,6 @@
 import { Org } from "@salesforce/core";
 import _ from "lodash";
-import BaseMetadataRetriever from "../../metadata/retriever/baseMetadataretriever";
+import BaseMetadataRetriever from "./baseMetadataRetriever";
 import { EntityDefinition } from "../schema";
 import { METADATA_INFO } from "../../../shared/metadataInfo";
 

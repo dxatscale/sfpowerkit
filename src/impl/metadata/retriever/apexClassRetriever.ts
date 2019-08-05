@@ -2,7 +2,7 @@ import { ApexClass } from "../schema";
 import { Org } from "@salesforce/core";
 import _ from "lodash";
 import { METADATA_INFO } from "../../../shared/metadataInfo";
-import BaseMetadataRetriever from "../../metadata/retriever/baseMetadataretriever";
+import BaseMetadataRetriever from "./baseMetadataRetriever";
 
 const QUERY = "Select Id, Name, NameSpacePrefix From ApexClass ";
 export default class ApexClassRetriever extends BaseMetadataRetriever<
