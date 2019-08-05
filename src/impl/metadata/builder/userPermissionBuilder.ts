@@ -273,13 +273,6 @@ export default class UserPermissionBuilder {
           i < profileOrPermissionSet.objectPermissions.length;
           i++
         ) {
-          if (
-            userPermission.name === "ViewAllData" ||
-            userPermission.name === "QueryAllFiles"
-          ) {
-            console.log("HasPermission ");
-            console.log(hasPermission);
-          }
           profileOrPermissionSet.objectPermissions[i].allowRead = true;
           profileOrPermissionSet.objectPermissions[i].viewAllRecords = true;
         }
@@ -350,22 +343,7 @@ export default class UserPermissionBuilder {
       for (var i = 0; i < profileOrPermissionSet.userPermissions.length; i++) {
         let element = profileOrPermissionSet.userPermissions[i];
         if (element.name === permissionName) {
-          if (
-            permissionName === "ViewAllData" ||
-            permissionName === "QueryAllFiles"
-          ) {
-            console.log("Enabled ");
-            console.log(element.enabled);
-          }
-
           found = element.enabled;
-          if (
-            permissionName === "ViewAllData" ||
-            permissionName === "QueryAllFiles"
-          ) {
-            console.log("Enabled ");
-            console.log(found);
-          }
           break;
         }
       }
