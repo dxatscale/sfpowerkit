@@ -138,7 +138,7 @@ export default class ProfileReconcile extends ProfileActions {
             }
           }
         }
-        SfPowerKit.ux.log("profile reconciled " + profileObj.fullName);
+
         let builder = new xml2js.Builder({ rootName: "Profile" });
         let xml = builder.buildObject(profileObj);
         fs.writeFileSync(profileComponent, xml);
