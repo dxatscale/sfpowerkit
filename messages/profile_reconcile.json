@@ -1,5 +1,5 @@
 {
-  "commandDescription": "cleanup profile configurations to make them compatible with the target org.",
+  "commandDescription": "This command is used in the lower environments such as ScratchOrgs , Development / System Testing Sandboxes, where a retrieved profile from production has to be cleaned up only for the metadata that is contained in the environment.",
   "folderFlagDescription": "the folders to Scan. You can provide a comma separated list of folder. If ommited, the folders listed in the package directories will be used.",
   "nameFlagDescription": "the profile names that will be reconcile. if ommited, all the profiles components will be reconciled."
 }
