@@ -15,24 +15,11 @@ import ApexPageRetriever from "../../../impl/metadata/retriever/apexPageRetrieve
 import TabDefinitionRetriever from "../../../impl/metadata/retriever/tabDefinitionRetriever";
 import UserLicenseRetriever from "../../../impl/metadata/retriever/userLicenseRetriever";
 import UserPermissionBuilder from "../../../impl/metadata/builder/userPermissionBuilder";
-import Profile, {
-  RecordTypeVisibility,
-  ApplicationVisibility,
-  ProfileTabVisibility,
-  ProfileFieldLevelSecurity,
-  ProfileApexClassAccess,
-  ProfileApexPageAccess,
-  ProfileLayoutAssignments,
-  ProfileObjectPermissions,
-  ProfileUserPermission,
-  PermissionSetSObject,
-  ProfileCustomPermissions
-} from "../../metadata/schema";
+import Profile, { ProfileFieldLevelSecurity } from "../../metadata/schema";
 import util = require("util");
 import _ from "lodash";
 import ProfileActions from "./profileActions";
 
-const unsupportedprofiles = [];
 const nonArayProperties = [
   "custom",
   "description",

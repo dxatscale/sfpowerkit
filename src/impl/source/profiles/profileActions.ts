@@ -6,11 +6,6 @@ import { retrieveMetadata } from "../../../shared/retrieveMetadata";
 import { Org } from "@salesforce/core";
 import { Connection } from "@salesforce/core";
 import ProfileRetriever from "../../metadata/retriever/profileRetriever";
-import { ProfileObjectPermissions } from "../../../impl/metadata/schema";
-import Profile from "../../../impl/metadata/schema";
-import EntityDefinitionRetriever from "../../../impl/metadata/retriever/entityDefinitionRetriever";
-
-const unsuportedObjects = ["PersonAccount"];
 
 export default abstract class ProfileActions {
   protected conn: Connection;

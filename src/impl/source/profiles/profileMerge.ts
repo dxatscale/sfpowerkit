@@ -18,7 +18,6 @@ import Profile, {
   ProfileUserPermission,
   ProfileCustomPermissions
 } from "../../../impl/metadata/schema";
-import EntityDefinitionRetriever from "../../../impl/metadata/retriever/entityDefinitionRetriever";
 import util = require("util");
 import ProfileActions from "./profileActions";
 
