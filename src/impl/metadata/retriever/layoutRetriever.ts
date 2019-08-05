@@ -2,8 +2,8 @@ import { Layout } from "../schema";
 import { Org } from "@salesforce/core";
 import { METADATA_INFO } from "../../../shared/metadataInfo";
 import _ from "lodash";
-import BaseMetadataRetriever from "./baseMetadataretriever";
-import EntityDefinitionRetriever from "./entityDefinitionRetriever";
+import BaseMetadataRetriever from "../../metadata/retriever/baseMetadataretriever";
+import EntityDefinitionRetriever from "../../metadata/retriever/entityDefinitionRetriever";
 
 const QUERY =
   "SELECT Id, Name, EntityDefinitionId, NamespacePrefix From Layout ";

@@ -12,8 +12,8 @@ import xml2js = require("xml2js");
 import { ProfileTooling } from "../schema";
 
 import { SfPowerKit } from "../../../sfpowerkit";
-import BaseMetadataRetriever from "./baseMetadataretriever";
-import EntityDefinitionRetriever from "./entityDefinitionRetriever";
+import BaseMetadataRetriever from "../../metadata/retriever/baseMetadataretriever";
+import EntityDefinitionRetriever from "../../metadata/retriever/entityDefinitionRetriever";
 import _ from "lodash";
 
 const unsuportedObjects = ["PersonAccount"];

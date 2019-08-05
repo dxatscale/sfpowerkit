@@ -2,7 +2,7 @@ import { RecordType } from "../schema";
 import { Org } from "@salesforce/core";
 import { METADATA_INFO } from "../../../shared/metadataInfo";
 import _ from "lodash";
-import BaseMetadataRetriever from "./baseMetadataretriever";
+import BaseMetadataRetriever from "../../metadata/retriever/baseMetadataretriever";
 
 const QUERY = "Select Id, Name, DeveloperName, SobjectType from RecordType";
 

@@ -5,11 +5,10 @@
     "paths": { "*": ["types/*"] },
     "outDir": "./lib",
     "rootDir": "./src",
+    "moduleResolution": "node",
     "noUnusedLocals": false,
     "resolveJsonModule": true,
-     "esModuleInterop": true
+    "esModuleInterop": true
   },
-  "include": [
-    "./src/**/*"
-  ]
+  "include": ["./src/**/*"]
 }
