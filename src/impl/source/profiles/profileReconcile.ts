@@ -70,9 +70,10 @@ export default class ProfileReconcile extends ProfileActions {
           "Reconciling profile " + path.basename(profileComponent)
         );
 
-        const parser = new xml2js.Parser({ explicitArray: false });
+        let profileXmlString = fs.readFileSync(profileComponent);
+        const parser = new xml2js.Parser({ explicitArray: true });
         const parseString = util.promisify(parser.parseString);
-        let parseResult = await parseString(parseString);
+        let parseResult = await parseString(profileXmlString);
 
         let profileObj: Profile = ProfileRetriever.toProfile(
           parseResult.Profile

@@ -1,16 +1,6 @@
-import FileUtils from "../../../shared/fileutils";
 import Profile, {
-  RecordTypeVisibility,
-  ApplicationVisibility,
-  ProfileTabVisibility,
-  ProfileFieldLevelSecurity,
-  ProfileApexClassAccess,
-  ProfileApexPageAccess,
-  ProfileLayoutAssignments,
   ProfileObjectPermissions,
-  ProfileUserPermission,
-  PermissionSetSObject,
-  ProfileCustomPermissions
+  ProfileUserPermission
 } from "../schema";
 import MetadataFiles from "../../../shared/metadataFiles";
 import { Connection, Org } from "@salesforce/core";
@@ -18,25 +8,12 @@ import { MetadataInfo } from "jsforce";
 import UserPermissionBuilder from "../builder/userPermissionBuilder";
 
 import * as fs from "fs";
-import * as path from "path";
 import xml2js = require("xml2js");
 import { ProfileTooling } from "../schema";
 
 import { SfPowerKit } from "../../../sfpowerkit";
-import { METADATA_INFO } from "../../../shared/metadataInfo";
-
-import UserLicenseRetriever from "./userLicenseRetriever";
-
-import ApexClassRetriever from "./apexClassRetriever";
-import RecordTypeRetriever from "./recordTypeRetriever";
-import ApexPageRetriever from "./apexPageRetriever";
-import LayoutRetriever from "./layoutRetriever";
-import { retrieveMetadata } from "../../../shared/retrieveMetadata";
 import BaseMetadataRetriever from "./baseMetadataretriever";
-import FieldRetriever from "./fieldRetriever";
-import CustomApplicationRetriever from "./customApplicationRetriever";
 import EntityDefinitionRetriever from "./entityDefinitionRetriever";
-import TabDefinitionRetriever from "./tabDefinitionRetriever";
 import _ from "lodash";
 
 const unsuportedObjects = ["PersonAccount"];
@@ -52,8 +29,6 @@ const userLicenceMap = [
   }
 ];
 
-//const unsupportedprofiles = ["Guest License User", "Interface MFB", "Interface WL", "Premier Support User"];
-const unsupportedprofiles = [];
 const nonArayProperties = [
   "custom",
   "description",
@@ -107,12 +82,14 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
     var metadata = await conn.metadata.readSync("Profile", profileNames);
 
     if (Array.isArray(metadata)) {
-      metadata.forEach(profile => {
-        this.handlePermissions(profile);
-      });
+      for (let i = 0; i < metadata.length; i++) {
+        await this.handlePermissions(metadata[i]);
+        metadata[i] = await this.completeObjects(metadata[i], false);
+      }
       toReturn = Promise.resolve(metadata);
     } else if (metadata !== null) {
-      this.handlePermissions(metadata);
+      await this.handlePermissions(metadata);
+      metadata = await this.completeObjects(metadata, false);
       toReturn = Promise.resolve([metadata]);
     } else {
       toReturn = Promise.resolve([]);
@@ -216,6 +193,84 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
       }
     }
     return found;
+  }
+
+  private async completeObjects(
+    profileObj: Profile,
+    access: boolean = true
+  ): Promise<Profile> {
+    let objPerm = ProfileRetriever.filterObjects(profileObj);
+    if (objPerm === undefined) {
+      objPerm = new Array();
+    } else if (!Array.isArray(objPerm)) {
+      objPerm = [objPerm];
+    }
+
+    let utils = EntityDefinitionRetriever.getInstance(this.org);
+
+    let objects = await utils.getObjectForPermission();
+
+    objects.forEach(name => {
+      if (unsuportedObjects.includes(name)) {
+        return;
+      }
+      let objectIsPresent: boolean = false;
+
+      for (let i = 0; i < objPerm.length; i++) {
+        if (objPerm[i].object === name) {
+          objectIsPresent = true;
+          break;
+        } else {
+          objectIsPresent = false;
+        }
+      }
+
+      if (objectIsPresent === false) {
+        //SfPowerKit.ux.log("\n Inserting this object");
+        let objToInsert = ProfileRetriever.buildObjPermArray(name, access);
+        //SfPowerKit.ux.log(objToInsert);
+        if (profileObj.objectPermissions === undefined) {
+          profileObj.objectPermissions = new Array();
+        } else if (!Array.isArray(profileObj.objectPermissions)) {
+          profileObj.objectPermissions = [profileObj.objectPermissions];
+        }
+        profileObj.objectPermissions.push(objToInsert);
+      }
+    });
+
+    if (profileObj.objectPermissions !== undefined) {
+      profileObj.objectPermissions.sort((obj1, obj2) => {
+        let order = 0;
+        if (obj1.object < obj2.object) {
+          order = -1;
+        } else if (obj1.object > obj2.object) {
+          order = 1;
+        }
+        return order;
+      });
+    }
+    return profileObj;
+  }
+
+  private static buildObjPermArray(
+    objectName: string,
+    access: boolean = true
+  ): ProfileObjectPermissions {
+    var newObjPerm = {
+      allowCreate: access,
+      allowDelete: access,
+      allowEdit: access,
+      allowRead: access,
+      modifyAllRecords: access,
+      object: objectName,
+      viewAllRecords: access
+    };
+    return newObjPerm;
+  }
+  private static filterObjects(
+    profileObj: Profile
+  ): ProfileObjectPermissions[] {
+    return profileObj.objectPermissions;
   }
 
   private togglePermission(profileObj: Profile, permissionName: string) {

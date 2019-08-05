@@ -23,7 +23,6 @@ import util = require("util");
 import ProfileActions from "./profileActions";
 
 const unsupportedprofiles = [];
-const unsuportedObjects = ["PersonAccount"];
 
 export default class ProfileMerge extends ProfileActions {
   metadataFiles: MetadataFiles;
@@ -595,15 +594,6 @@ export default class ProfileMerge extends ProfileActions {
         //handle profile merge here
         var profileObjFromServer = metadataList[count] as Profile;
 
-        profileObjFromServer = await this.completeObjects(
-          profileObjFromServer,
-          false
-        );
-
-        profileObjFromServer = await this.profileRetriever.handlePermissions(
-          profileObjFromServer
-        );
-
         if (metadatas !== undefined) {
           //remove metadatas from profile
           profileObjFromServer = this.removeUnwantedPermissions(
@@ -628,7 +618,7 @@ export default class ProfileMerge extends ProfileActions {
           let parseResult = await parseString(profileXml);
 
           profileObj = ProfileRetriever.toProfile(parseResult.Profile);
-          this.mergeProfile(profileObj, profileObjFromServer);
+          await this.mergeProfile(profileObj, profileObjFromServer);
         } else {
           if (this.debugFlag)
             SfPowerKit.ux.log("New Profile " + profileObjFromServer.fullName);
@@ -719,84 +709,5 @@ export default class ProfileMerge extends ProfileActions {
       delete profileObjFromServer.userPermissions;
     }
     return profileObjFromServer;
-  }
-
-  private async completeObjects(
-    profileObj: Profile,
-    access: boolean = true
-  ): Promise<Profile> {
-    let objPerm = ProfileMerge.filterObjects(profileObj);
-    if (objPerm === undefined) {
-      objPerm = new Array();
-    } else if (!Array.isArray(objPerm)) {
-      objPerm = [objPerm];
-    }
-
-    let utils = EntityDefinitionRetriever.getInstance(this.org);
-
-    let objects = await utils.getObjectForPermission();
-
-    objects.forEach(name => {
-      if (unsuportedObjects.includes(name)) {
-        return;
-      }
-      let objectIsPresent: boolean = false;
-
-      for (let i = 0; i < objPerm.length; i++) {
-        if (objPerm[i].object === name) {
-          objectIsPresent = true;
-          break;
-        } else {
-          objectIsPresent = false;
-        }
-      }
-
-      if (objectIsPresent === false) {
-        //SfPowerKit.ux.log("\n Inserting this object");
-        let objToInsert = ProfileMerge.buildObjPermArray(name, access);
-        //SfPowerKit.ux.log(objToInsert);
-        if (profileObj.objectPermissions === undefined) {
-          profileObj.objectPermissions = new Array();
-        } else if (!Array.isArray(profileObj.objectPermissions)) {
-          profileObj.objectPermissions = [profileObj.objectPermissions];
-        }
-        profileObj.objectPermissions.push(objToInsert);
-      }
-    });
-
-    if (profileObj.objectPermissions !== undefined) {
-      profileObj.objectPermissions.sort((obj1, obj2) => {
-        let order = 0;
-        if (obj1.object < obj2.object) {
-          order = -1;
-        } else if (obj1.object > obj2.object) {
-          order = 1;
-        }
-        return order;
-      });
-    }
-    return profileObj;
-  }
-
-  private static filterObjects(
-    profileObj: Profile
-  ): ProfileObjectPermissions[] {
-    return profileObj.objectPermissions;
-  }
-
-  private static buildObjPermArray(
-    objectName: string,
-    access: boolean = true
-  ): ProfileObjectPermissions {
-    var newObjPerm = {
-      allowCreate: access,
-      allowDelete: access,
-      allowEdit: access,
-      allowRead: access,
-      modifyAllRecords: access,
-      object: objectName,
-      viewAllRecords: access
-    };
-    return newObjPerm;
   }
 }
