@@ -8,11 +8,10 @@ import {
 
 import { SfdxProject } from "@salesforce/core";
 import _ from "lodash";
-import ProfileRetriever from "../../../../impl/metadata/retriever/profileRetriever";
 import { SfPowerKit } from "../../../../sfpowerkit";
 import { METADATA_INFO } from "../../../../shared/metadataInfo";
 import * as path from "path";
-import ProfileReconcile from "../../../../impl/source/profiles/ProfileReconcile";
+import ProfileReconcile from "../../../../impl/source/profiles/profileReconcile";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
