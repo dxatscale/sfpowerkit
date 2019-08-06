@@ -4,6 +4,8 @@ import BaseMetadataRetriever from "./baseMetadataRetriever";
 import { Field } from "../schema";
 import EntityDefinitionRetriever from "./entityDefinitionRetriever";
 import { METADATA_INFO } from "../../../shared/metadataInfo";
+import ProfileReconcile from "../../source/profiles/profileReconcile";
+import MetadataFiles from "../../../shared/metadataFiles";
 
 const QUERY =
   "SELECT Id, QualifiedApiName, EntityDefinitionId, DeveloperName, NamespacePrefix FROM FieldDefinition ";
@@ -99,7 +101,7 @@ export default class FieldRetriever extends BaseMetadataRetriever<Field> {
     if (!_.isNil(METADATA_INFO.CustomField.components)) {
       found = METADATA_INFO.CustomField.components.includes(fullName);
     }
-    if (!found) {
+    if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let objectName = fieldParts[0];
       let fieldDefinitions = await this.getFieldsByObjectName(objectName);

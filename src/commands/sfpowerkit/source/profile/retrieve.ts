@@ -8,7 +8,6 @@ import {
 
 import { SfdxProject } from "@salesforce/core";
 import _ from "lodash";
-import ProfileRetriever from "../../../../impl/metadata/retriever/profileRetriever";
 import { SfPowerKit } from "../../../../sfpowerkit";
 import * as path from "path";
 import { METADATA_INFO } from "../../../../shared/metadataInfo";

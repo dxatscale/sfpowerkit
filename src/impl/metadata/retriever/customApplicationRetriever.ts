@@ -3,6 +3,8 @@ import _ from "lodash";
 import { METADATA_INFO } from "../../../shared/metadataInfo";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 import { CustomApplication } from "../schema";
+import ProfileReconcile from "../../source/profiles/profileReconcile";
+import MetadataFiles from "../../../shared/metadataFiles";
 
 const QUERY =
   "Select Id, NamespacePrefix, DeveloperName, Label From CustomApplication ";
@@ -53,7 +55,7 @@ export default class CustomApplicationRetriever extends BaseMetadataRetriever<
     if (!_.isNil(METADATA_INFO.CustomApplication.components)) {
       found = METADATA_INFO.CustomApplication.components.includes(application);
     }
-    if (!found) {
+    if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let apps = await this.getApps();
       let foundApp = apps.find(app => {

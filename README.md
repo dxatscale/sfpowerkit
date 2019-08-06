@@ -812,8 +812,10 @@ USAGE
 
 OPTIONS
   -f, --folder=folder                               the folders to Scan. You can provide a comma separated list of folder. If ommited, the folders listed in the package directories will be used.
+  -d, --destfolder=destfolder                       (required) the destination folder where reconciled profiles will be stored
   -n, --profilelist=profilelist                     the profile names that will be reconcile. if ommited, all the profiles components will be reconciled.
-  -u, --targetusername=targetusername               username or alias for the target org; overrides default target org
+  -s, --sourceonly                                  set this flag to reconcile profiles only again component in the project only. using this flag will remove all userpermissions from reconciled profiles
+  -u, --targetorg=targetorg                         org again which profiles will be reconcile. thisparameter can be ommited if sourceonly flag is set.
   --apiversion=apiversion                           override the api version used for api requests made by this command
   --json                                            format output as json
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation

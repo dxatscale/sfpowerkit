@@ -3,6 +3,8 @@ import { Org } from "@salesforce/core";
 import { METADATA_INFO } from "../../../shared/metadataInfo";
 import _ from "lodash";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
+import ProfileReconcile from "../../source/profiles/profileReconcile";
+import MetadataFiles from "../../../shared/metadataFiles";
 
 const QUERY = "Select Id, Name, DeveloperName, SobjectType from RecordType";
 
@@ -55,7 +57,7 @@ export default class RecordTypeRetriever extends BaseMetadataRetriever<
     if (!_.isNil(METADATA_INFO.RecordType.components)) {
       found = METADATA_INFO.RecordType.components.includes(recordType);
     }
-    if (!found) {
+    if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let recordTypes = await this.getrecordTypes();
       let foundRecordType = recordTypes.find(rt => {

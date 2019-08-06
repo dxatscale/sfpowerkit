@@ -63,7 +63,9 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
   public constructor(public org: Org, private debugFlag?: boolean) {
     super(org);
     super.setQuery(QUERY);
-    this.conn = this.org.getConnection();
+    if (this.org !== undefined) {
+      this.conn = this.org.getConnection();
+    }
   }
 
   public async loadSupportedPermissions() {
