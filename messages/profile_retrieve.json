@@ -1,0 +1,6 @@
+{
+  "commandDescription": "Retrieve profiles from the salesforce org with all its associated permissions. Common use case for this command is  to migrate profile changes from a integration environment to other higher environments [overcomes SFDX CLI Profile retrieve issue where it doesnt fetch the full profile unless the entire metadata is present in source], or retrieving profiles from production to lower environments for testing.",
+  "folderFlagDescription": "comma separated list of folders to scan for profiles. If ommited, all folders in the package directories will be used.",
+  "profileListFlagDescription": "comma separated list of profiles to be retrieved. If ommited, all the profiles will be retreived",
+  "deleteFlagDescription": "set this flag to delete profile in your local directory that does not exist in the org."
+}

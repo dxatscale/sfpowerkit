@@ -1,5 +1,5 @@
 {
-  "version": "1.14.0-7",
+  "version": "1.14.0-8",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -1897,6 +1897,236 @@
           "type": "boolean",
           "char": "r",
           "description": "Consider patching for standard value set in RecordTypes, Warning: This modifies the source code in your package",
+          "required": false,
+          "allowNo": false
+        }
+      },
+      "args": []
+    },
+    "sfpowerkit:source:profile:merge": {
+      "id": "sfpowerkit:source:profile:merge",
+      "description": "retrieve profiles from a development environment and merge it with the profile configurations",
+      "usage": "<%= command.id %> [-f <array>] [-n <array>] [-m <array>] [-d] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "pluginName": "sfpowerkit",
+      "pluginType": "core",
+      "aliases": [],
+      "examples": [
+        "$ sfdx sfpowerkit:source:profile:merge -u sandbox",
+        "$ sfdx sfpowerkit:source:profile:merge -f force-app -n \"My Profile\" -r -u sandbox",
+        "$ sfdx sfpowerkit:source:profile:merge -f \"module1, module2, module3\" -n \"My Profile1, My profile2\"  -u sandbox"
+      ],
+      "flags": {
+        "json": {
+          "name": "json",
+          "type": "boolean",
+          "description": "format output as json",
+          "allowNo": false
+        },
+        "loglevel": {
+          "name": "loglevel",
+          "type": "option",
+          "description": "logging level for this command invocation",
+          "required": false,
+          "helpValue": "(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)",
+          "options": [
+            "trace",
+            "debug",
+            "info",
+            "warn",
+            "error",
+            "fatal",
+            "TRACE",
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "ERROR",
+            "FATAL"
+          ],
+          "default": "warn"
+        },
+        "targetusername": {
+          "name": "targetusername",
+          "type": "option",
+          "char": "u",
+          "description": "username or alias for the target org; overrides default target org"
+        },
+        "apiversion": {
+          "name": "apiversion",
+          "type": "option",
+          "description": "override the api version used for api requests made by this command"
+        },
+        "folder": {
+          "name": "folder",
+          "type": "option",
+          "char": "f",
+          "description": "comma separated list of folders to scan for profiles. If ommited, the folders in the packageDirectories configuration will be used.",
+          "required": false
+        },
+        "profilelist": {
+          "name": "profilelist",
+          "type": "option",
+          "char": "n",
+          "description": "comma separated list of profiles. If ommited, all the profiles found in the folder(s) will be merged",
+          "required": false
+        },
+        "metadata": {
+          "name": "metadata",
+          "type": "option",
+          "char": "m",
+          "description": "comma separated list of metadata for which the permissions will be retrieved.",
+          "required": false
+        },
+        "delete": {
+          "name": "delete",
+          "type": "boolean",
+          "char": "d",
+          "description": "set this flag to delete profile files that does not exist in the org.",
+          "required": false,
+          "allowNo": false
+        }
+      },
+      "args": []
+    },
+    "sfpowerkit:source:profile:reconcile": {
+      "id": "sfpowerkit:source:profile:reconcile",
+      "description": "cleanup profile configurations to make them compatible with the target org.",
+      "usage": "<%= command.id %> [-f <array>] [-n <array>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "pluginName": "sfpowerkit",
+      "pluginType": "core",
+      "aliases": [],
+      "examples": [
+        "$ sfdx sfpowerkit:source:profile:reconcile  --folder force-app",
+        "$ sfdx sfpowerkit:source:profile:reconcile  --folder force-app,module2,module3 -u sandbox",
+        "$ sfdx sfpowerkit:source:profile:reconcile  -u myscratchorg"
+      ],
+      "flags": {
+        "json": {
+          "name": "json",
+          "type": "boolean",
+          "description": "format output as json",
+          "allowNo": false
+        },
+        "loglevel": {
+          "name": "loglevel",
+          "type": "option",
+          "description": "logging level for this command invocation",
+          "required": false,
+          "helpValue": "(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)",
+          "options": [
+            "trace",
+            "debug",
+            "info",
+            "warn",
+            "error",
+            "fatal",
+            "TRACE",
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "ERROR",
+            "FATAL"
+          ],
+          "default": "warn"
+        },
+        "targetusername": {
+          "name": "targetusername",
+          "type": "option",
+          "char": "u",
+          "description": "username or alias for the target org; overrides default target org"
+        },
+        "apiversion": {
+          "name": "apiversion",
+          "type": "option",
+          "description": "override the api version used for api requests made by this command"
+        },
+        "folder": {
+          "name": "folder",
+          "type": "option",
+          "char": "f",
+          "description": "the folders to Scan. You can provide a comma separated list of folder. If ommited, the folders listed in the package directories will be used.",
+          "required": false
+        },
+        "profilelist": {
+          "name": "profilelist",
+          "type": "option",
+          "char": "n",
+          "description": "the profile names that will be reconcile. if ommited, all the profiles components will be reconciled.",
+          "required": false
+        }
+      },
+      "args": []
+    },
+    "sfpowerkit:source:profile:retrieve": {
+      "id": "sfpowerkit:source:profile:retrieve",
+      "description": "Retrieve profiles from the salesforce org with all their configurations even if you do not have the associated  metadata",
+      "usage": "<%= command.id %> [-f <array>] [-n <array>] [-d] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "pluginName": "sfpowerkit",
+      "pluginType": "core",
+      "aliases": [],
+      "examples": [
+        "$ sfdx sfpowerkit:source:profile:retrieve -u prod",
+        "$ sfdx sfpowerkit:source:profile:retrieve  -f force-app -n \"My Profile\" -u prod",
+        "$ sfdx sfpowerkit:source:profile:retrieve  -f \"module1, module2, module3\" -n \"My Profile1, My profile2\"  -u prod"
+      ],
+      "flags": {
+        "json": {
+          "name": "json",
+          "type": "boolean",
+          "description": "format output as json",
+          "allowNo": false
+        },
+        "loglevel": {
+          "name": "loglevel",
+          "type": "option",
+          "description": "logging level for this command invocation",
+          "required": false,
+          "helpValue": "(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)",
+          "options": [
+            "trace",
+            "debug",
+            "info",
+            "warn",
+            "error",
+            "fatal",
+            "TRACE",
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "ERROR",
+            "FATAL"
+          ],
+          "default": "warn"
+        },
+        "targetusername": {
+          "name": "targetusername",
+          "type": "option",
+          "char": "u",
+          "description": "username or alias for the target org; overrides default target org"
+        },
+        "apiversion": {
+          "name": "apiversion",
+          "type": "option",
+          "description": "override the api version used for api requests made by this command"
+        },
+        "folder": {
+          "name": "folder",
+          "type": "option",
+          "char": "f",
+          "description": "comma separated list of folders to scan for profiles. If ommited, all folders in the package directories will be used.",
+          "required": false
+        },
+        "profilelist": {
+          "name": "profilelist",
+          "type": "option",
+          "char": "n",
+          "description": "comma separated list of profiles to be retrieved. If ommited, all the profiles will be retreived",
+          "required": false
+        },
+        "delete": {
+          "name": "delete",
+          "type": "boolean",
+          "char": "d",
+          "description": "set this flag to delete profile in your local directory that does not exist in the org.",
           "required": false,
           "allowNo": false
         }

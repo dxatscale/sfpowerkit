@@ -1,5 +1,5 @@
 import { core, SfdxCommand, FlagsConfig, flags } from "@salesforce/command";
-import DiffUtil from "../../../shared/diffutils";
+import DiffUtil from "../../../impl/project/diff/diffutils";
 import * as path from "path";
 
 // Initialize Messages with the current plugin directory

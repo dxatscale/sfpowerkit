@@ -1,4 +1,12 @@
 import * as path from "path";
+import {
+  MetadataInfoUtils,
+  METADATA_INFO,
+  MetadataDescribe,
+  SOURCE_EXTENSION_REGEX
+} from "./metadataInfo";
+import FileUtils from "./fileutils";
+import _ from "lodash";
 
 export default class MetadataFiles {
   static getFullApiName(fileName: string): string {
@@ -197,5 +205,53 @@ export default class MetadataFiles {
       name = "CustomSite";
     }
     return name;
+  }
+  public loadComponents(srcFolder: string): void {
+    var metadataFiles: string[] = FileUtils.getAllFilesSync(srcFolder);
+    let keys = Object.keys(METADATA_INFO);
+    if (Array.isArray(metadataFiles) && metadataFiles.length > 0) {
+      metadataFiles.forEach(metadataFile => {
+        for (let i = 0; i < keys.length; i++) {
+          let match = false;
+          if (metadataFile.endsWith(METADATA_INFO[keys[i]].sourceExtension)) {
+            match = true;
+          } else if (
+            METADATA_INFO[keys[i]].inFolder &&
+            metadataFile.endsWith(METADATA_INFO[keys[i]].folderExtension)
+          ) {
+            match = true;
+          }
+          if (match) {
+            if (_.isNil(METADATA_INFO[keys[i]].files)) {
+              METADATA_INFO[keys[i]].files = [];
+              METADATA_INFO[keys[i]].components = [];
+            }
+            METADATA_INFO[keys[i]].files.push(metadataFile);
+
+            let name = FileUtils.getFileNameWithoutExtension(
+              metadataFile,
+              METADATA_INFO[keys[i]].sourceExtension
+            );
+
+            if (METADATA_INFO[keys[i]].isChildComponent) {
+              let fileParts = metadataFile.split(path.sep);
+              let parentName = fileParts[fileParts.length - 3];
+              name = parentName + "." + name;
+            }
+
+            METADATA_INFO[keys[i]].components.push(name);
+
+            break;
+          }
+        }
+      });
+    } else {
+      keys.forEach(key => {
+        if (_.isNil(METADATA_INFO[key].files)) {
+          METADATA_INFO[key].files = [];
+          METADATA_INFO[key].components = [];
+        }
+      });
+    }
   }
 }
