@@ -7,29 +7,9 @@ import {
 } from "./metadataInfo";
 import FileUtils from "./fileutils";
 import _ from "lodash";
-import ignore from "ignore";
-import * as fs from "fs";
 
 export default class MetadataFiles {
   public static sourceOnly: boolean = false;
-  gitignore: any;
-  forceignore: any;
-  public constructor() {
-    if (fs.existsSync(".gitignore")) {
-      this.gitignore = ignore().add(
-        fs.readFileSync(".gitignore", "utf8").toString()
-      );
-    } else {
-      this.gitignore = ignore();
-    }
-    if (fs.existsSync(".forceignore")) {
-      this.forceignore = ignore().add(
-        fs.readFileSync(".forceignore", "utf8").toString()
-      );
-    } else {
-      this.forceignore = ignore();
-    }
-  }
   static getFullApiName(fileName: string): string {
     let fullName = "";
     let metadateType = MetadataInfoUtils.getMetadataName(fileName);
@@ -122,23 +102,20 @@ export default class MetadataFiles {
               METADATA_INFO[keys[i]].files = [];
               METADATA_INFO[keys[i]].components = [];
             }
-            let isValid = this.accepts(metadataFile);
-            if (isValid) {
-              METADATA_INFO[keys[i]].files.push(metadataFile);
+            METADATA_INFO[keys[i]].files.push(metadataFile);
 
-              let name = FileUtils.getFileNameWithoutExtension(
-                metadataFile,
-                METADATA_INFO[keys[i]].sourceExtension
-              );
+            let name = FileUtils.getFileNameWithoutExtension(
+              metadataFile,
+              METADATA_INFO[keys[i]].sourceExtension
+            );
 
-              if (METADATA_INFO[keys[i]].isChildComponent) {
-                let fileParts = metadataFile.split(path.sep);
-                let parentName = fileParts[fileParts.length - 3];
-                name = parentName + "." + name;
-              }
-
-              METADATA_INFO[keys[i]].components.push(name);
+            if (METADATA_INFO[keys[i]].isChildComponent) {
+              let fileParts = metadataFile.split(path.sep);
+              let parentName = fileParts[fileParts.length - 3];
+              name = parentName + "." + name;
             }
+
+            METADATA_INFO[keys[i]].components.push(name);
 
             break;
           }
@@ -151,16 +128,6 @@ export default class MetadataFiles {
           METADATA_INFO[key].components = [];
         }
       });
-    }
-  }
-  //Check if a file is accepted.
-  //the profile ignore by git are not accepted.
-  //other components ignored by forceignore are not accepted
-  private accepts(filePath: string) {
-    if (filePath.endsWith(METADATA_INFO.Profile.sourceExtension)) {
-      return !this.gitignore.ignores(path.relative(process.cwd(), filePath));
-    } else {
-      return !this.forceignore.ignores(path.relative(process.cwd(), filePath));
     }
   }
 }

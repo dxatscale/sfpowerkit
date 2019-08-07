@@ -821,9 +821,9 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
 EXAMPLES
-  $ sfdx sfpowerkit:source:profile:reconcile  --folder force-app
-  $ sfdx sfpowerkit:source:profile:reconcile  --folder force-app,module2,module3 -u sandbox
-  $ sfdx sfpowerkit:source:profile:reconcile  -u myscratchorg
+  $ sfdx sfpowerkit:source:profile:reconcile  --folder force-app -d destfolder -s
+  $ sfdx sfpowerkit:source:profile:reconcile  --folder force-app,module2,module3 -u sandbox -d destfolder
+  $ sfdx sfpowerkit:source:profile:reconcile  -u myscratchorg -d destfolder
 ```
 
 _See code: [src\commands\sfpowerkit\profile\reconcile.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/reconcile.ts)_
