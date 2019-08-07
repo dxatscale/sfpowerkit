@@ -11,7 +11,6 @@ import ignore from "ignore";
 import * as fs from "fs";
 
 export default class MetadataFiles {
-  public static sourceOnly: boolean = false;
   forceignore: any;
   public constructor() {
     if (fs.existsSync(".forceignore")) {
