@@ -1,5 +1,5 @@
 {
-  "orgWideEmailCreateCommandDescription": "Create an orgWide Email Address",
+  "orgWideEmailCreateCommandDescription": "This command is deprecated, Please update your workflows..Create an orgWide Email Address",
   "orgWideEmailAddressDescription": "Org Wide address email",
   "orgWideEmailDisplaynameDescription": "Org Wide address display name",
   "orgWideEmailAllprofileDescription": "Allow for all profile"

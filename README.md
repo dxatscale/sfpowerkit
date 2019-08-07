@@ -1,22 +1,18 @@
-sfpowerkit
-==========
+# sfpowerkit
 
 [![NPM](https://img.shields.io/npm/v/sfpowerkit.svg)](https://www.npmjs.com/package/sfpowerkit) [![Board Status](https://dev.azure.com/cloudfirstanz/f7a91473-0e1c-490e-b0a0-80f9f8d82c14/c97f3cbd-bd4a-4d08-b123-9ebdd5c7c79f/_apis/work/boardbadge/6d1336f9-991b-4cb5-8cce-4173c4dcdca8?columnOptions=1)](https://dev.azure.com/cloudfirstanz/f7a91473-0e1c-490e-b0a0-80f9f8d82c14/_boards/board/t/c97f3cbd-bd4a-4d08-b123-9ebdd5c7c79f/Microsoft.RequirementCategory) [![Build status](https://dev.azure.com/cloudfirstanz/SFPowerkit/_apis/build/status/SFPowerkit-CI)](https://dev.azure.com/cloudfirstanz/SFPowerkit/_build/latest?definitionId=5)
 
-
-
 Salesforce DevOps Helper Extensions
-
 
 ## `sfpowerkit auth:login`
 
-Allows to authenticate against an org using username/password and Security Token.  Security Token requirement
-can be removed by ensuring the particular user profile is allowed to connect to Salesforce from different IP 
+Allows to authenticate against an org using username/password and Security Token. Security Token requirement
+can be removed by ensuring the particular user profile is allowed to connect to Salesforce from different IP
 ranges.
 
 ```
 USAGE
-  $ sfdx sfpowerkit:auth:login -u <string> -p <string>  [-s <string>] [ -r <url> ]  [-a <string>]  [--apiversion 
+  $ sfdx sfpowerkit:auth:login -u <string> -p <string>  [-s <string>] [ -r <url> ]  [-a <string>]  [--apiversion
   <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
@@ -39,9 +35,8 @@ OPTIONS
 EXAMPLE
   $  sfdx sfpowerkit:auth:login -u azlam@sfdc.com -p Xasdax2w2  -a prod
      Authorized to azlam@sfdc.com
-   
-```
 
+```
 
 ## `sfpowerkit org:connectedapp:create`
 
@@ -49,7 +44,7 @@ Creates a connected app in the target org for JWT based authentication, Please n
 
 ```
 USAGE
-  $ sfdx sfpowerkit:org:connectedapp:create -n <string> -c <filepath> -e <email> [-u <string>] [--apiversion 
+  $ sfdx sfpowerkit:org:connectedapp:create -n <string> -c <filepath> -e <email> [-u <string>] [--apiversion
   <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
@@ -69,18 +64,16 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx sfpowerkit:org:connectedapp:create -u myOrg@example.com -n AzurePipelines -c id_rsa -e 
+  $ sfdx sfpowerkit:org:connectedapp:create -u myOrg@example.com -n AzurePipelines -c id_rsa -e
   azlam.salamm@invalid.com
      Created Connected App AzurePipelines in Target Org
 ```
 
 _See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/connectedapp/create.ts)_
 
-
-
 ## `sfpowerkit org:connectedapp:retrieve`
 
-Useful if you want to retreive a connected app key especially in  CI/CD system after a sandbox refresh. Use the auth command to login to the sandbox and then use this command. Use JSON format if you want to retrieve the entire metadata of the connected app, Without the json flag, it only displays the key
+Useful if you want to retreive a connected app key especially in CI/CD system after a sandbox refresh. Use the auth command to login to the sandbox and then use this command. Use JSON format if you want to retrieve the entire metadata of the connected app, Without the json flag, it only displays the key
 
 ```
 USAGE
@@ -89,7 +82,7 @@ USAGE
 OPTIONS
   -n, --name=name                                 (required) Name of the connected app to be
                                                   retreived
-  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org                     
+  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
   --json                                          format output as json
 
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this
@@ -103,10 +96,9 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\connectedapp\retrieve.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/connectedapp/retrieve.ts)_
 
-
 ## `sfpowerkit:org:duplicaterule:deactivate`
 
-Deactivates a duplicate rule in the target org
+Deactivates a duplicate rule in the target org. Deactivate active rules before pushing the changes to the target org
 
 ```
 USAGE
@@ -135,6 +127,38 @@ EXAMPLE
 ```
 
 _See code: [src\commands\sfpowerkit\org\duplicaterule\deactivate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/deactivate.ts)_
+
+## `sfpowerkit:org:duplicaterule:activate`
+
+Activates a matching rule in the target org
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:duplicaterule:activate -n <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -n, --name=name                                 (required) Name of the duplicate rule
+
+  -u, --targetusername=targetusername              username or alias for the target org; overrides default target org
+
+  --json                                          format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this
+                                                  command invocation
+
+EXAMPLE
+   $ sfdx sfpowerkit:org:duplicaterule:activate -n Account.CRM_Account_Rule_1 -u sandbox
+    Polling for Retrieval Status
+    Retrieved Duplicate Rule  with label : CRM Account Rule 2
+    Preparing Activation
+    Deploying Activated Rule with ID  0Af4Y000003OdTWSA0
+    Polling for Deployment Status
+    Polling for Deployment Status
+    Duplicate Rule CRM Account Rule 2 Activated
+```
+
+_See code: [src\commands\sfpowerkit\org\duplicaterule\activate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/activate.ts)_
 
 ## `sfpowerkit:org:matchingrule:deactivate`
 
@@ -167,21 +191,18 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\matchingrule\deactivate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/matchingrule/deactivate.ts)_
 
+## `sfpowerkit:org:matchingrule:activate`
 
-## `sfpowerkit:org:orgwideemail:create`
-
-Create organisation wide email address
+Activates a matching rule in the target org, Please ensure all duplicate rules are activated before using this
 
 ```
 USAGE
-  $ sfdx sfpowerkit:org:orgwideemail:create -e <email> -n <string>  [-p] [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  $ sfdx sfpowerkit:org:matchingrule:activate -n <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -e, --address=emailaddress                      (required) Email Address
-  -n, --displayname=displayname                   (required) Display name of the org wide email
-  -p, --allprofile                                (Optional) Specify if the orgwide email is available for all profile
-  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
+  -n, --name=name                                 (required) Name of the object
+  -u, --targetusername=targetusername              username or alias for the target org; overrides default target org
 
   --json                                          format output as json
 
@@ -189,42 +210,17 @@ OPTIONS
                                                   command invocation
 
 EXAMPLE
-    $ sfdx sfpowerkit:org:orgwideemail:create -e test@example.com -n TestEmail -p -u sandbox
-      Creating email test@example.com
-      Org wide email created with Id 0D20E00000003wtSAA
-      Run the folowing command to verify it
-      sfdx sfpowerkit:org:orgwideemail:verify -i 0D20E00000003wtSAA -u test-qvoqbs1ofjd0@example.com
+   $ sfdx sfpowerkit:org:matchingrules:activate -n Account -u sandbox
+    Polling for Retrieval Status
+    Retrieved Matching Rule  for Object : Account
+    Preparing Activation
+    Deploying Activated Rule with ID  0Af4Y000003OdTWSA0
+    Polling for Deployment Status
+    Polling for Deployment Status
+    Matching Rule for  Account activated
 ```
 
-_See code: [src\commands\sfpowerkit\org\orgwideemail\create.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/orgwideemail/create.ts)_
-
-
-## `sfpowerkit:org:orgwideemail:verify`
-
-Verify organisation wide email address
-
-```
-USAGE
-  $ sfdx sfpowerkit:org:orgwideemail:verify -i <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel
-  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
-
-OPTIONS
-  -i, --emailid=emailid                           (required) Org Wide Email Id
-  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
-
-  --json                                          format output as json
-
-  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this
-                                                  command invocation
-
-EXAMPLE
-    $ sfdx sfpowerkit:org:orgwideemail:verify -i 0D20E00000003wtSAA -u sandbox
-      Verify email 0D21l0000008QgYCAU
-      Org wide email address verified
-```
-
-_See code: [src\commands\sfpowerkit\org\orgwideemail\verify.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/orgwideemail/verify.ts)_
-
+_See code: [src\commands\sfpowerkit\org\matchingrule\activate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/matchingrule/activate.ts)_
 
 ## `sfpowerkit:org:trigger:deactivate`
 
@@ -286,15 +282,13 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\trigger\activate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/trigger/activate.ts)_
 
-
-
 ## `sfpowerkit:org:healthcheck`
 
-Gets the  health details of an org against the Salesforce baseline
+Gets the health details of an org against the Salesforce baseline
 
 ```
 USAGE
-  $ sfdx sfpowerkit:org:healthcheck [-u <string>] [--apiversion <string>] [--json] [--loglevel 
+  $ sfdx sfpowerkit:org:healthcheck [-u <string>] [--apiversion <string>] [--json] [--loglevel
   trace|debug|info|warn|error|fatal]
 
 OPTIONS
@@ -316,11 +310,11 @@ Gets the apex tests coverage of an org
 
 ```
 USAGE
-  $ sfdx sfpowerkit:org:orgcoverage [-u <string>] [--apiversion <string>] [--json] [--loglevel 
+  $ sfdx sfpowerkit:org:orgcoverage [-u <string>] [--apiversion <string>] [--json] [--loglevel
   trace|debug|info|warn|error|fatal]
 
 OPTIONS
-  -u, --targetusername=targetusername             username or alias for the target org; 
+  -u, --targetusername=targetusername             username or alias for the target org;
   --apiversion=apiversion                         override the api version used for api requests made by this command
   --json                                          format output as json
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
@@ -333,14 +327,13 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\orgcoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/orgcoverage.ts)_
 
-
 ## `sfpowerkit:org:sandbox:create`
 
 Creates a sandbox using the tooling api, ensure the user has the required permissions before using this command
 
 ```
 USAGE
-  $ sfdx sfpowerkit:org:sandbox:create -n <string> -d <string> -l <string> [-a <string>] [-f <string>] [-v 
+  $ sfdx sfpowerkit:org:sandbox:create -n <string> -d <string> -l <string> [-a <string>] [-f <string>] [-v
   <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
@@ -373,13 +366,13 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\sandbox\create.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/sandbox/create.ts)_
 
-## ` sfpowerkit:org:sandbox:info`
+## `sfpowerkit:org:sandbox:info`
 
 Gets the status of a sandbox
 
 ```
 USAGE
-  $ sfdx sfpowerkit:org:sandbox:info -n <string> [-s] [-v <string>] [--apiversion <string>] [--json] [--loglevel 
+  $ sfdx sfpowerkit:org:sandbox:info -n <string> [-s] [-v <string>] [--apiversion <string>] [--json] [--loglevel
   trace|debug|info|warn|error|fatal]
 
 OPTIONS
@@ -403,7 +396,7 @@ Refresh a sandbox using the tooling api, ensure the user has the required permis
 
 ```
 USAGE
-  $ sfdx sfpowerkit:org:sandbox:refresh -n <string> [-f <string>] [-v <string>] [--apiversion <string>] [--json] 
+  $ sfdx sfpowerkit:org:sandbox:refresh -n <string> [-f <string>] [-v <string>] [--apiversion <string>] [--json]
   [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
@@ -427,14 +420,13 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\sandbox\refresh.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/sandbox/refresh.ts)_
 
-
 ## `sfpowerkit:org:scratchorg:usage`
 
 Gets the active count of scratch org by users in a devhub
 
 ```
 USAGE
-  $ sfdx sfpowerkit:org:scratchorg:usage -v <string> 
+  $ sfdx sfpowerkit:org:scratchorg:usage -v <string>
   [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
@@ -455,7 +447,6 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/scratchorg/usage.ts)_
 
-
 ## `sfpowerkit:org:scratchorg:delete`
 
 Delete the scratch org for a paritcular user
@@ -467,7 +458,7 @@ USAGE
 
 OPTIONS
   -v, --targetdevhubusername=targetdevhubusername  (required) username or alias for the dev hub org; overrides default dev hub org
-  
+
   -e, --email=email                                (required) Email of the user account's whose scratch org to be deleted
 
 
@@ -481,14 +472,13 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/scratchorg/usage.ts)_
 
-
 ## `sfpowerkit:package:dependencies:install`
 
 Install dependencies of a package
 
 ```
 USAGE
-  $ sfdx sfpowerkit:package:dependencies:install [-p <string>] [-k <string>] [-b <string>] [-w <string>] [-r] [-v 
+  $ sfdx sfpowerkit:package:dependencies:install [-p <string>] [-k <string>] [-b <string>] [-w <string>] [-r] [-v
   <string>] [-a] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
@@ -511,7 +501,7 @@ OPTIONS
                                                    publishwait). Default is 10
 
   -a, --apexcompileonlypackage=apexcompileonlypackage  Compile the apex only in the package, by default only the
-                                                    compilation of the apex in the entire org is triggered  
+                                                    compilation of the apex in the entire org is triggered
   --apiversion=apiversion                          override the api version used for api requests made by this command
 
   --json                                           format output as json
@@ -524,10 +514,9 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/dependencies/install.ts)_
 
-
 ## `sfpowerkit:package:applypatch`
 
-Retrieves and applies the patch, Useful after a package upgrade in a CD Environmen
+Retrieves and applies the patch, This command is exclusively used to apply the patched created by the generatepatch command, see source: picklist:generatepatch and source:permissionset:generatepatch. The command will download the static reource (collection of patched metadata) from the target org, unzips and apply to the target org using mdapi
 
 ```
 USAGE
@@ -552,10 +541,9 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\package\applypatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/applypatch.ts)_
 
-
 ## `sfpowerkit:package:valid`
 
-Validates a package to check whether it only contains valid metadata as per metadata coverage
+Validates a package directory to check whether it only contains valid metadata as per metadata coverage
 
 ```
 USAGE
@@ -570,7 +558,7 @@ EXAMPLE
   $ sfdx sfpowerkit:package:valid -n testPackage
      Now analyzing inspections
   Converting package testPackage
-  Source was successfully converted to Metadata API format and written to the location: 
+  Source was successfully converted to Metadata API format and written to the location:
   D:projects	estPackage	emp_sfpowerkitmdapi
   Elements supported included in your package testPackage are
   [
@@ -582,21 +570,23 @@ EXAMPLE
   ]
 
 ```
+
 _See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/valid.ts)_
 
 ## `sfpowerkit:source:customlabel:create`
 
 Creates a custom label (with default namespace) with parameters
+
 ```
 
 USAGE
-  $ sfdx sfpowerkit:source:customlabel:create -n <string> -v <string> -s <string> [-c <string>] [-l <string>] [-p <string>] [-i] [-u <string>] 
+  $ sfdx sfpowerkit:source:customlabel:create -n <string> -v <string> -s <string> [-c <string>] [-l <string>] [-p <string>] [-i] [-u <string>]
   [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
   -c, --categories=categories                                                       Comma Separated Category Values
 
-  -i, --ignorenamespace                                                             Ignores the addition of the namespace into the fullname 
+  -i, --ignorenamespace                                                             Ignores the addition of the namespace into the fullname
                                                                                     (API Name)
 
   -l, --language=language                                                           Language of the custom label (Default: en_US)
@@ -607,12 +597,12 @@ OPTIONS
 
   -s, --shortdescription=shortdescription                                           (required) Short Description of the custom label
 
-  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default 
+  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default
                                                                                     target org
 
   -v, --value=value                                                                 (required) Value of the custom label
 
-  --apiversion=apiversion                                                           override the api version used for api requests made by this 
+  --apiversion=apiversion                                                           override the api version used for api requests made by this
                                                                                     command
 
   --json                                                                            format output as json
@@ -620,7 +610,7 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx sfpowerkit:source:customlabel:create -u fancyScratchOrg1 -n FlashError -v "Memory leaks aren't for the faint hearted" -s "A flashing 
+  $ sfdx sfpowerkit:source:customlabel:create -u fancyScratchOrg1 -n FlashError -v "Memory leaks aren't for the faint hearted" -s "A flashing
   error"
      Created CustomLabel FlashError in Target Org
 ```
@@ -631,16 +621,16 @@ Removes the namespace from the custom labels
 
 ```
 USAGE
-  $ sfdx sfpowerkit:source:customlabel:clean -p <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel 
+  $ sfdx sfpowerkit:source:customlabel:clean -p <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
   -p, --path=path                                                                   (required) Path to the CustomLabels.labels-meta.xml file
 
-  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default 
+  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default
                                                                                     target org
 
-  --apiversion=apiversion                                                           override the api version used for api requests made by this 
+  --apiversion=apiversion                                                           override the api version used for api requests made by this
                                                                                     command
 
   --json                                                                            format output as json
@@ -655,7 +645,7 @@ EXAMPLE
 
 ## `sfpowerkit:source:apextestsuite:convert`
 
-Converts an apex test suite to its consituent apex classes as a single line separated by commas, so that it can be used for metadata api deployment
+Converts an apex test suite to its consituent apex classes as a single line separated by commas, so that it can be used along with metadata validate only deployment
 
 ```
 USAGE
@@ -671,24 +661,30 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $  sfdx sfpowerkit:source:apextestsuite:convert -n MyApexTestSuite 
-    "ABC2,ABC1Test"    
+  $  sfdx sfpowerkit:source:apextestsuite:convert -n MyApexTestSuite
+    "ABC2,ABC1Test"
 ```
 
 ## `sfpowerkit:source:picklist:generatepatch`
 
-Search picklist fields from Standatd/ custom objects inside project and generate a static resource file with picklist fields, used to solve the picklist upgrade issue in dx unlock package as well as issue with utilizing standard value set as the controlling picklist field. Custom metadata picklist fields will be ignored. 
+This command generates a patch in the format of a metadata packed together as a static resource with the intent of solving the following issues.
+
+1. Changes to picklist values are not updated in the target org through a unlocked package upgrade.
+2. Standard Value are non packageable, hence any picklist that has a modified standardvalueset as the controlling field will fail to package, The optional fixstandardvalueset flag will strip of the controlling field and puts the original code into the patch
+3. Fix for business process and recordtype, that depend on a modified standard valueset and fail to package.
+
+These command is to be run just before the package:version: create command and any changes made by the command should not be committed to the repo. Once a patch is generated and the package is installed in the target org, run the apply patch command tofix the above issues.
 
 ```
 USAGE
-  $ sfdx sfpowerkit:source:picklist:generatepatch [-p <string>] [-d <string>] [-f <boolean>]  [-r <boolean>] 
+  $ sfdx sfpowerkit:source:picklist:generatepatch [-p <string>] [-d <string>] [-f <boolean>]  [-r <boolean>]
 
 OPTIONS
   -d, --objectsdir=objectsdir                                                       Path for Objects folder located in project
-  -p, --package=package                                                             Name of the package to generate the picklist 
+  -p, --package=package                                                             Name of the package to generate the picklist
   patch
-  -f, --fixstandardvalueset                                                         Consider patching for standard value set controlled picklists, Warning: This modifies the source code in your package by removing references to standardvalueset from the particular picklist.                      
-  -r, --fixrecordtypes                                                               Consider patching for standard value set in RecordTypes, Warning: This modifies the source code in your package
+  -f, --fixstandardvalueset                                                         Consider patching for standard value set controlled picklists, Warning: This modifies the source code in your package by removing references to standardvalueset from the particular picklist.
+  -r, --fixrecordtypes                                                          Consider patching for standard value set in RecordTypes, Warning: This modifies the source code in your package
 
 EXAMPLE
     sfdx sfpowerkit:source:picklist:generatepatch -p sfpowerkit_test -d force-app/main/default/objects/ -f
@@ -704,8 +700,8 @@ EXAMPLE
     Generating static resource file : force-app/main/default/staticresources/sfpowerkit_test_picklist.resource-meta.xml
     Patch sfpowerkit_test_picklist generated successfully.
 ```
-_See code: [src\commands\sfpowerkit\source\picklist\generatepatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/picklist/generatepatch.ts)_
 
+_See code: [src\commands\sfpowerkit\source\picklist\generatepatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/picklist/generatepatch.ts)_
 
 ## `sfpowerkit:source:permissionset:generatepatch`
 
@@ -730,12 +726,13 @@ EXAMPLE
   Generating static resource file : src/core/main/default/staticresources/Core_permissionsets.resource-meta.xml
   Patch Core_permissionsets generated successfully.
 ```
-_See code: [src\commands\sfpowerkit\source\permissionset\generatepatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/permissionset/generatepatch.ts)_
 
+_See code: [src\commands\sfpowerkit\source\permissionset\generatepatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/permissionset/generatepatch.ts)_
 
 ## `sfpowerkit:project:diff`
 
 Generate a subset of the project base on a diff file generated by a git diff --raw command. You can ommit the diff file and provide the revisionFrom and optionally revisionTo insted.
+
 ```
 
 USAGE
@@ -746,13 +743,13 @@ OPTIONS
   -f, --difffile=difffile                         the diff file generate with the command [git diff --raw] you can skip this parameter and set the revisionfrom and optionally revisionto parameter
   -e, --encoding=encoding                         [default:utf8] diff file encoding
   -r, --revisionfrom=revisionfrom                 base revision to generate the diff. required if diff file ommited
-  -t, --revisionto=revisionto                     [default:head]target revision to generate the diff 
+  -t, --revisionto=revisionto                     [default:head]target revision to generate the diff
 
   --json                                          format output as json
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $  sfdx sfpowerkit:project:diff --revisionfrom revisionfrom --revisionto revisionto --output OutputFolder  
+  $  sfdx sfpowerkit:project:diff --revisionfrom revisionfrom --revisionto revisionto --output OutputFolder
   {
   "status": 0,
   "result": {
@@ -765,4 +762,91 @@ EXAMPLE
   }
 ```
 
- 
+## `sfpowerkit:source:profile:retrieve [BETA]`
+
+Retrieve profiles from the salesforce org with all its associated permissions. Common use case for this command is to migrate profile changes from a integration environment to other higher environments [overcomes SFDX CLI Profile retrieve issue where it doesnt fetch the full profile unless the entire metadata is present in source], or retrieving profiles from production to lower environments for testing.
+
+This command is of sufficient quality, however proceed with caution while adopting in your workflow
+
+```
+
+USAGE
+  $ sfdx sfpowerkit:source:profile:retrieve [-f <array>] [-n <array>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -f, --folder=folder                             folder to which the profile will be retrieved, if omitted the project folders will be scanned to find profile folders
+  -n, --profilelist=profilelist                   comma separated list of profiles to be retrieved. If ommited, all the profiles will be retreived
+  -d, --delete                                    set this flag to delete profile files that does not exist in the org.
+  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
+  --apiversion=apiversion                         override the api version used for api requests made by this command
+  --json                                          format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLES
+  $ sfdx sfpowerkit:source:profile:sync -u prod
+  $ sfdx sfpowerkit:source:profile:sync  -f force-app -n "My Profile"  -u prod
+  $ sfdx sfpowerkit:source:profile:sync  -f "module1, module2, module3" -n "My Profile1, My profile2"  -u prod
+```
+
+_See code: [src\commands\sfpowerkit\profile\sync.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/sync.ts)_
+
+## `sfpowerkit:source:profile:reconcile [BETA]`
+
+This command is used in the lower environments such as ScratchOrgs , Development / System Testing Sandboxes, where a retrieved profile from production has to be cleaned up only for the metadata that is contained in the environment.
+
+This command is of sufficient quality, however proceed with caution while adopting in your workflow
+
+```
+
+USAGE
+  $ sfdx sfpowerkit:source:profile:reconcile [-f <array>] [-n <array>] [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -f, --folder=folder                               the folders to Scan. You can provide a comma separated list of folder. If ommited, the folders listed in the package directories will be used.
+  -n, --profilelist=profilelist                     the profile names that will be reconcile. if ommited, all the profiles components will be reconciled.
+  -u, --targetusername=targetusername               username or alias for the target org; overrides default target org
+  --apiversion=apiversion                           override the api version used for api requests made by this command
+  --json                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLES
+  $ sfdx sfpowerkit:source:profile:reconcile  --folder force-app
+  $ sfdx sfpowerkit:source:profile:reconcile  --folder force-app,module2,module3 -u sandbox
+  $ sfdx sfpowerkit:source:profile:reconcile  -u myscratchorg
+```
+
+_See code: [src\commands\sfpowerkit\profile\reconcile.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/reconcile.ts)_
+
+## `sfpowerkit:source:profile:merge [BETA]`
+
+This command is used in the lower environments such as ScratchOrgs , Development / System Testing Sandboxes, inorder to apply the changes made in the environment to retrieved profile, so that it can be deployed to the higher environments
+
+This command is of sufficient quality, however proceed with caution while adopting in your workflow
+
+```
+
+USAGE
+  $ sfdx sfpowerkit:source:profile:merge [-f <array>] [-n <array>] [-m <array>] [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -f, --folder=folder                                 comma separated list of folders to scan for profiles. If ommited, the folders in the packageDirectories configuration will be used.
+  -m, --metadata=metadata                             comma separated list of metadata for which the permissions will be retrieved.
+  -n, --profilelist=profilelist                       comma separated list of profiles. If ommited, all the profiles found in the folder(s) will be merged
+  -d, --delete                                        set this flag to delete profile files that does not exist in the org.
+  -u, --targetusername=targetusername                 username or alias for the target org; overrides default target org
+
+  --apiversion=apiversion                             override the api version used for api requests made by this command
+
+  --json                                              format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLES
+  $ sfdx sfpowerkit:source:profile:merge -u sandbox
+  $ sfdx sfpowerkit:source:profile:merge -f force-app -n "My Profile" -r -u sandbox
+  $ sfdx sfpowerkit:source:profile:merge -f "module1, module2, module3" -n "My Profile1, My profile2"  -u sandbox
+```
+
+_See code: [src\commands\sfpowerkit\profile\merge.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/merge.ts)_

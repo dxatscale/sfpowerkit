@@ -31,6 +31,10 @@ export default class OrgWideEmail extends SfdxCommand {
   protected static requiresUsername = true;
 
   public async run(): Promise<any> {
+    this.ux.log(
+      "This command is deprecated, It is no longer guaranteed to work, Please update your workflow with alternate solution"
+    );
+
     const apiversion = await this.org.getConnection().retrieveMaxApiVersion();
     const id: string = this.flags.emailid;
 
@@ -44,7 +48,7 @@ export default class OrgWideEmail extends SfdxCommand {
         "Content-Type": "application/json"
       },
       url:
-        "/services/data/v"+apiversion+"/sobjects/OrgWideEmailAddress/" + id,
+        "/services/data/v" + apiversion + "/sobjects/OrgWideEmailAddress/" + id,
       body: JSON.stringify(orgWideAddressObj)
     });
     if (response === undefined) {
