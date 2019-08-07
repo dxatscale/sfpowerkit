@@ -100,7 +100,6 @@ export class MetadataInfoUtils {
       "resources",
       "metadatainfo.json"
     );
-    console.log(resourcePAth);
     const fileData = fs.readFileSync(resourcePAth, "utf8");
     let metadataInfoJSON = JSON.parse(fileData);
     metadataInfoJSON.metadataObjects.forEach(metadata => {
