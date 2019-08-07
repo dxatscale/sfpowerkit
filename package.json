@@ -49,6 +49,7 @@
   "files": [
     "/lib",
     "/messages",
+    "/resources",
     "/npm-shrinkwrap.json",
     "/oclif.manifest.json"
   ],
