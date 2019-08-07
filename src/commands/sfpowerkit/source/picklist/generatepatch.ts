@@ -200,11 +200,23 @@ export default class Generatepatch extends SfdxCommand {
 
     this.ux.log("Scanning for fields of type picklist");
 
+    //search picklist
     let customFieldsWithPicklist: any[] = searchFilesInDirectory(
       objectsDirPath,
       "<type>Picklist</type>",
       ".xml"
     );
+
+    //search MultiselectPicklist
+    let customFieldsWithMultiPicklist: any[] = searchFilesInDirectory(
+      objectsDirPath,
+      "<type>MultiselectPicklist</type>",
+      ".xml"
+    );
+    
+    if (customFieldsWithMultiPicklist && customFieldsWithMultiPicklist.length > 0) {
+      customFieldsWithPicklist = customFieldsWithPicklist.concat(customFieldsWithMultiPicklist);
+    }
 
     if (customFieldsWithPicklist && customFieldsWithPicklist.length > 0) {
       this.ux.log(
