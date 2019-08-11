@@ -28,8 +28,8 @@ export default class Create extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:source:customlabel:create -u fancyScratchOrg1 -n FlashError -v "Memory leaks aren't for the faint hearted" -s "A flashing error"
-  Created CustomLabel FlashError in Target Org
+    `$ sfdx sfpowerkit:source:customlabel:create -u fancyScratchOrg1 -n FlashError -v "Memory leaks aren't for the faint hearted" -s "A flashing error --package core"
+  Deployed CustomLabel FlashError in target org with core_  prefix, You may now pull and utilize the customlabel:reconcile command
   `
   ];
 
@@ -68,7 +68,7 @@ export default class Create extends SfdxCommand {
       required: false,
       description: messages.getMessage("packageFlagDescription")
     }),
-    ignorenamespace: flags.boolean({
+    ignorepackage: flags.boolean({
       char: "i",
       default: false,
       description: messages.getMessage("ignorepackageFlagDescription")
@@ -97,7 +97,7 @@ export default class Create extends SfdxCommand {
     // Gives first value in url after https protocol
     const packageName = this.flags.package;
 
-    this.customlabel_fullname = this.flags.ignorenamespace
+    this.customlabel_fullname = this.flags.ignorepackage
       ? this.flags.fullname
       : `${packageName}_${this.flags.fullname}`;
     this.customlabel_value = this.flags.value;
@@ -161,9 +161,15 @@ export default class Create extends SfdxCommand {
       }
     );
 
-    this.ux.log(
-      `Deployed  Custom Label ${this.customlabel_fullname} with ID ${deployId.id}`
-    );
+    if (!this.flags.ignorepackage)
+      this.ux.log(
+        `Deployed  Custom Label ${this.customlabel_fullname} in target org with ${this.flags.package}_  prefix, You may now pull and utilize the customlabel:reconcile command `
+      );
+    else
+      this.ux.log(
+        `Deployed  Custom Label ${this.customlabel_fullname} in target org`
+      );
+
     rimraf.sync("temp_sfpowerkit");
 
     return {

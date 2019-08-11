@@ -4,7 +4,7 @@ import xml2js = require("xml2js");
 import util = require("util");
 import fs = require("fs-extra");
 import rimraf = require("rimraf");
-var path = require("path");
+import path from "path";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -17,8 +17,7 @@ const messages = core.Messages.loadMessages(
 );
 
 export default class Reconcile extends SfdxCommand {
-  public customlabel_path: string;
-  public customlabel_cleanstatus: boolean = false;
+  private customlabel_path: string;
 
   public static description = messages.getMessage("commandDescription");
 
@@ -60,7 +59,7 @@ export default class Reconcile extends SfdxCommand {
 
     if (
       fs.existsSync(path.resolve(this.customlabel_path)) &&
-      path.extName(this.customlabel_path) == ".xml"
+      path.extname(this.customlabel_path) == ".xml"
     ) {
       const parser = new xml2js.Parser({ explicitArray: false });
       const parseString = util.promisify(parser.parseString);
@@ -77,27 +76,29 @@ export default class Reconcile extends SfdxCommand {
         return 1;
       }
 
-      console.log(`Namespace ::: ${packageName}_`);
+      console.log(`Package ::: ${packageName}`);
 
       if (this.isIterable(retrieved_customlabels.CustomLabels.labels)) {
-        for (var label of retrieved_customlabels.CustomLabels.labels) {
-          label.fullName = label.fullName.replace(`${packageName}_`, "");
-        }
-      } else {
-        retrieved_customlabels.CustomLabels.labels.fullName = retrieved_customlabels.CustomLabels.labels.fullName.replace(
-          `${packageName}_`,
-          ""
+        retrieved_customlabels.CustomLabels.labels = retrieved_customlabels.CustomLabels.labels.filter(
+          item => item.fullName.startsWith(`${packageName}_`)
         );
+      } else {
+        if (
+          !retrieved_customlabels.CustomLabels.labels.fullName.startsWith(
+            "${packageName}_`"
+          )
+        )
+          delete retrieved_customlabels.CustomLabels.labels;
       }
 
-      var builder = new xml2js.Builder({
-        xmldec: { version: "1.0", encoding: "UTF-8" }
-      });
-      var xml = builder.buildObject(retrieved_customlabels);
+      let builder = new xml2js.Builder();
+      let xml = builder.buildObject(retrieved_customlabels);
 
       await fs.writeFileSync(path.resolve(this.customlabel_path), xml);
 
-      this.ux.log(`Reconciled The Custom Labels`);
+      this.ux.log(
+        `Reconciled The Custom Labels  only to have ${packageName} labels (labels with full name beginning with ${packageName}_)`
+      );
     } else {
       this.ux.log(`File is either not found, or not an xml file.`);
     }

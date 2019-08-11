@@ -1621,7 +1621,7 @@
       "pluginType": "core",
       "aliases": [],
       "examples": [
-        "$ sfdx sfpowerkit:source:customlabel:create -u fancyScratchOrg1 -n FlashError -v \"Memory leaks aren't for the faint hearted\" -s \"A flashing error\"\n  Created CustomLabel FlashError in Target Org\n  "
+        "$ sfdx sfpowerkit:source:customlabel:create -u fancyScratchOrg1 -n FlashError -v \"Memory leaks aren't for the faint hearted\" -s \"A flashing error --package core\"\n  Deployed CustomLabel FlashError in target org with core_  prefix, You may now pull and utilize the customlabel:reconcile command\n  "
       ],
       "flags": {
         "json": {
@@ -1711,8 +1711,8 @@
           "description": "The name of the package that needs to be appended",
           "required": false
         },
-        "ignorenamespace": {
-          "name": "ignorenamespace",
+        "ignorepackage": {
+          "name": "ignorepackage",
           "type": "boolean",
           "char": "i",
           "description": "Ignores the addition of the package into the fullname (API Name)",
