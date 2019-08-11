@@ -77,6 +77,12 @@
       "sfpowerkit:source": {
         "description": "Commands that work on the source"
       },
+      "sfpowerkit:source:customlabel": {
+        "description": "Commands to work on custom label"
+      },
+      "sfpowerkit:source:profile": {
+        "description": "Commands that operate on profiles"
+      },
       "sfpowerkit": {
         "description": "Salesforce DevOps Helper Extensions to use in CI/CD Pipelines"
       }

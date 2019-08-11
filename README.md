@@ -575,7 +575,9 @@ _See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/Accentu
 
 ## `sfpowerkit:source:customlabel:create`
 
-Creates a custom label (with default namespace) with parameters
+Custom Labels are org wide, hence when the metadata is pulled down from scratch org, the entire custom label metadata file is pulled down in a package repo. This results in often packaging failures, when developers forget to clean the customlabels only to contain what the package needs, as unlocked package does not support duplicate items.The custom labels has to be then cleaned up per package.
+
+This command is a helper command to create customlabel with pacakage names prepended for easy reconcilation.
 
 ```
 
@@ -585,9 +587,6 @@ USAGE
 
 OPTIONS
   -c, --categories=categories                                                       Comma Separated Category Values
-
-  -i, --ignorenamespace                                                             Ignores the addition of the namespace into the fullname
-                                                                                    (API Name)
 
   -l, --language=language                                                           Language of the custom label (Default: en_US)
 
@@ -602,6 +601,11 @@ OPTIONS
 
   -v, --value=value                                                                 (required) Value of the custom label
 
+  --package                                                                         Name of the package that needs to be appended, omit this if ignore namespace is used
+
+  -i, --ignorepackage                                                             Ignores the addition of the namespace into the fullname
+                                                                                    (API Name)
+
   --apiversion=apiversion                                                           override the api version used for api requests made by this
                                                                                     command
 
@@ -611,24 +615,25 @@ OPTIONS
 
 EXAMPLE
   $ sfdx sfpowerkit:source:customlabel:create -u fancyScratchOrg1 -n FlashError -v "Memory leaks aren't for the faint hearted" -s "A flashing
-  error"
-     Created CustomLabel FlashError in Target Org
+  error" --package core
+     Created CustomLabel FlashError in target org with core_  prefix, You may now pull and utilize the customlabel:reconcile command
 ```
 
-## `sfpowerkit:source:customlabel:clean`
+## `sfpowerkit:source:customlabel:reconcile`
 
-Removes the namespace from the custom labels
+Custom Labels are org wide, hence when the metadata is pulled down from scratch org, the entire custom label metadata file is pulled down in a package repo. This results in often packaging failures, when developers forget to clean the customlabels only to contain what the package needs, as unlocked package does not support duplicate items.The custom labels has to be then cleaned up per package.
+
+This command reconcile the updated custom labels to include only the labels that have the API name starting with package name (packagename\_ ) or created using the custom label create command
 
 ```
 USAGE
-  $ sfdx sfpowerkit:source:customlabel:clean -p <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  $ sfdx sfpowerkit:source:customlabel:reconcile -d <string> -p <string>  [--apiversion <string>] [--json] [--loglevel
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -p, --path=path                                                                   (required) Path to the CustomLabels.labels-meta.xml file
+  -d, --path=path                                                                   (required) Path to the CustomLabels.labels-meta.xml file
 
-  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default
-                                                                                    target org
+  -p, --package                                                                     (required) Name of the package
 
   --apiversion=apiversion                                                           override the api version used for api requests made by this
                                                                                     command
@@ -638,8 +643,9 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx sfpowerkit:source:customlabel:clean -p path/to/customlabelfile.xml
-       Cleaned The Custom Labels
+  $ sfdx sfpowerkit:source:customlabel:reconcile -p path/to/customlabelfile.xml -d core
+  Package ::: core
+  Reconciled The Custom Labels, only to have core labels (labels with full name beginning with core_)
 ``
 ```
 

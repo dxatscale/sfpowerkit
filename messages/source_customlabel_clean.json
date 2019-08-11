@@ -1,4 +1,5 @@
 {
-  "commandDescription": "Removes the namespace from the custom labels",
-  "pathFlagDescription": "Path to the CustomLabels.labels-meta.xml file"
+  "commandDescription": "Custom Labels are org wide, hence when the metadata is pulled down from scratch org, the entire custom label metadata file is updated in a package repo, This command reconcile the updated custom labels to include only the labels that have the API name starting with package name or created using the custom label create command",
+  "pathFlagDescription": "Path to the CustomLabels.labels-meta.xml file",
+  "packageFlagDescription": "The name of the package that needs to be reconciled"
 }
