@@ -31,13 +31,7 @@ export default class Generatepatch extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:source:permissionset:generatepatch -p Core -d src/core/main/default/permissionsets
-     Scanning for permissionsets
-     Found 30 permissionsets
-     Source was successfully converted to Metadata API format and written to the location: .../temp_sfpowerkit/mdapi
-     Generating static resource file : src/core/main/default/staticresources/Core_permissionsets.resource-meta.xml
-     Patch Core_permissionsets generated successfully.
-  `
+    `$ sfdx sfpowerkit:source:permissionset:generatepatch -p Core -d src/core/main/default/permissionsets`
   ];
 
   protected static flagsConfig = {
@@ -50,6 +44,9 @@ export default class Generatepatch extends SfdxCommand {
       required: false,
       char: "d",
       description: messages.getMessage("permsetDirFlagDescription")
+    }),
+    apiversion: flags.builtin({
+      description: messages.getMessage("apiversion")
     })
   };
 
@@ -68,6 +65,8 @@ export default class Generatepatch extends SfdxCommand {
     else {
       packageToBeUsed = getDefaultPackageInfo(projectJson);
     }
+
+    this.flags.apiversion = this.flags.apiversion || "46.0";
 
     //set permset directory
     let permsetDirPath;
@@ -103,7 +102,7 @@ export default class Generatepatch extends SfdxCommand {
           }
         ],
         "namespace": "",
-        "sourceApiVersion": "46.0"
+        "sourceApiVersion": "${this.flags.apiversion}"
       }`;
 
       fs.outputFileSync("temp_sfpowerkit/sfdx-project.json", sfdx_project_json);
