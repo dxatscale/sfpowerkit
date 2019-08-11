@@ -49,7 +49,7 @@ export default class Reconcile extends SfdxCommand {
     destfolder: flags.directory({
       char: "d",
       description: messages.getMessage("destFolderFlagDescription"),
-      required: true
+      required: false
     }),
     sourceonly: flags.boolean({
       char: "s",

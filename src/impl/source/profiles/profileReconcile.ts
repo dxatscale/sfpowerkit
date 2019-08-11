@@ -37,7 +37,9 @@ export default class ProfileReconcile extends ProfileActions {
     profileList: string[],
     destFolder: string
   ): Promise<string[]> {
-    FileUtils.mkDirByPathSync(destFolder);
+    if (!_.isNil(destFolder)) {
+      FileUtils.mkDirByPathSync(destFolder);
+    }
 
     let result: string[] = [];
     this.metadataFiles = new MetadataFiles();
@@ -149,7 +151,10 @@ export default class ProfileReconcile extends ProfileActions {
 
         let builder = new xml2js.Builder({ rootName: "Profile" });
         let xml = builder.buildObject(profileObj);
-        let outputFile = path.join(destFolder, path.basename(profileComponent));
+        let outputFile = profileComponent;
+        if (!_.isNil(destFolder)) {
+          outputFile = path.join(destFolder, path.basename(profileComponent));
+        }
         fs.writeFileSync(outputFile, xml);
 
         result.push(outputFile);
