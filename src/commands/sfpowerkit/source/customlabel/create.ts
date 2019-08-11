@@ -2,6 +2,8 @@ import { core, flags, SfdxCommand } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import fs = require("fs-extra");
 import rimraf = require("rimraf");
+import { zipDirectory } from "../../../../shared/zipDirectory";
+import { AsyncResult } from "jsforce";
 
 const spawn = require("child-process-promise").spawn;
 
@@ -26,8 +28,8 @@ export default class Create extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:source:customlabel:create -u fancyScratchOrg1 -n FlashError -v "Memory leaks aren't for the faint hearted" -s "A flashing error"
-  Created CustomLabel FlashError in Target Org
+    `$ sfdx sfpowerkit:source:customlabel:create -u fancyScratchOrg1 -n FlashError -v "Memory leaks aren't for the faint hearted" -s "A flashing error --package core"
+  Deployed CustomLabel FlashError in target org with core_  prefix, You may now pull and utilize the customlabel:reconcile command
   `
   ];
 
@@ -62,11 +64,14 @@ export default class Create extends SfdxCommand {
       char: "s",
       description: messages.getMessage("shortdescriptionFlagDescription")
     }),
-
-    ignorenamespace: flags.boolean({
+    package: flags.string({
+      required: false,
+      description: messages.getMessage("packageFlagDescription")
+    }),
+    ignorepackage: flags.boolean({
       char: "i",
       default: false,
-      description: messages.getMessage("ignorenamespaceFlagDescription")
+      description: messages.getMessage("ignorepackageFlagDescription")
     })
   };
 
@@ -77,27 +82,24 @@ export default class Create extends SfdxCommand {
   // protected static supportsDevhubUsername = true;
 
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
-  //protected static requiresProject = true;
+  protected static requiresProject = true;
 
   public async run(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
 
     await this.org.refreshAuth();
 
-    // this.org is guaranteed because requiresUsername=true, as opposed to supportsUsername
-    const username = this.org.getUsername();
+    const conn = this.org.getConnection();
+
+    this.flags.apiversion =
+      this.flags.apiversion || (await conn.retrieveMaxApiVersion());
 
     // Gives first value in url after https protocol
-    const orgShortName = this.org
-      .getConnection()
-      .baseUrl()
-      .replace("https://", "")
-      .split(/[\.]/)[0]
-      .replace(/[^A-Za-z0-9]/g, "");
+    const packageName = this.flags.package;
 
-    this.customlabel_fullname = this.flags.ignorenamespace
+    this.customlabel_fullname = this.flags.ignorepackage
       ? this.flags.fullname
-      : `${orgShortName}_${this.flags.fullname}`;
+      : `${packageName}_${this.flags.fullname}`;
     this.customlabel_value = this.flags.value;
 
     this.customlabel_categories = this.flags.categories || null;
@@ -125,15 +127,13 @@ export default class Create extends SfdxCommand {
     </labels>
 </CustomLabels>`;
 
-    this.ux.log(customlabels_metadata);
-
     var package_xml: string = `<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>*</members>
         <name>CustomLabel</name>
     </types>
-    <version>45.0</version>
+    <version>${this.flags.apiversion}</version>
 </Package>`;
 
     let targetmetadatapath =
@@ -142,26 +142,33 @@ export default class Create extends SfdxCommand {
     let targetpackagepath = "temp_sfpowerkit/mdapi/package.xml";
     fs.outputFileSync(targetpackagepath, package_xml);
 
-    // Split arguments to use spawn
-    const args = [];
-    args.push("force:mdapi:deploy");
+    var zipFile = "temp_sfpowerkit/package.zip";
+    await zipDirectory("temp_sfpowerkit/mdapi", zipFile);
 
-    // USERNAME
-    args.push("--targetusername");
-    args.push(`${username}`);
+    //Deploy Rule
+    conn.metadata.pollTimeout = 300;
+    let deployId: AsyncResult;
 
-    // MANIFEST
-    args.push("--deploydir");
-    args.push(`temp_sfpowerkit/mdapi`);
+    var zipStream = fs.createReadStream(zipFile);
+    await conn.metadata.deploy(
+      zipStream,
+      { rollbackOnError: true, singlePackage: true },
+      function(error, result: AsyncResult) {
+        if (error) {
+          return console.error(error);
+        }
+        deployId = result;
+      }
+    );
 
-    args.push("--wait");
-    args.push(`30`);
-
-    this.ux.log(`Deployed custom label: ${this.customlabel_fullname}`);
-
-    await spawn("sfdx", args, {
-      stdio: "inherit"
-    });
+    if (!this.flags.ignorepackage)
+      this.ux.log(
+        `Deployed  Custom Label ${this.customlabel_fullname} in target org with ${this.flags.package}_  prefix, You may now pull and utilize the customlabel:reconcile command `
+      );
+    else
+      this.ux.log(
+        `Deployed  Custom Label ${this.customlabel_fullname} in target org`
+      );
 
     rimraf.sync("temp_sfpowerkit");
 
