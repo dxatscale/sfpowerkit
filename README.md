@@ -731,7 +731,7 @@ _See code: [src\commands\sfpowerkit\source\permissionset\generatepatch.ts](https
 
 ## `sfpowerkit:project:diff`
 
-Generate a delta 'changeset' between two diff commits so that the incremental changes can be deployed to the target org.To be used for an org based deployment and the size of the metadata is large that the project cannot not be deployed in a single attempt.
+Generate a delta 'changeset' between two diff commits so that the incremental changes can be deployed to the target org.To be used for an org based deployment when the size of the metadata is large that the project cannot not be deployed in a single attempt.
 
 This command works with a source format based repository only. Utilize the command during a transition phase where an org is transformed to a modular architecture composing of multiple projects.
 
