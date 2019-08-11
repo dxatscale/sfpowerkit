@@ -7,8 +7,20 @@ import {
 } from "./metadataInfo";
 import FileUtils from "./fileutils";
 import _ from "lodash";
+import ignore from "ignore";
+import * as fs from "fs";
 
 export default class MetadataFiles {
+  forceignore: any;
+  public constructor() {
+    if (fs.existsSync(".forceignore")) {
+      this.forceignore = ignore().add(
+        fs.readFileSync(".forceignore", "utf8").toString()
+      );
+    } else {
+      this.forceignore = ignore();
+    }
+  }
   static getFullApiName(fileName: string): string {
     let fullName = "";
     let metadateType = MetadataInfoUtils.getMetadataName(fileName);
@@ -47,7 +59,10 @@ export default class MetadataFiles {
     let splitFilepath = filepath.split(path.sep);
     let componentName = splitFilepath[splitFilepath.length - 1];
     componentName = componentName.substring(0, componentName.indexOf("."));
-    if (name === METADATA_INFO.CustomField.xmlName  || name === METADATA_INFO.CustomObject.xmlName ) {
+    if (
+      name === METADATA_INFO.CustomField.xmlName ||
+      name === METADATA_INFO.CustomObject.xmlName
+    ) {
       //Custom Field or Custom Object
       result = componentName.endsWith("__c") || componentName.endsWith("__mdt");
     }
@@ -98,20 +113,23 @@ export default class MetadataFiles {
               METADATA_INFO[keys[i]].files = [];
               METADATA_INFO[keys[i]].components = [];
             }
-            METADATA_INFO[keys[i]].files.push(metadataFile);
+            let isValid = this.accepts(metadataFile);
+            if (isValid) {
+              METADATA_INFO[keys[i]].files.push(metadataFile);
 
-            let name = FileUtils.getFileNameWithoutExtension(
-              metadataFile,
-              METADATA_INFO[keys[i]].sourceExtension
-            );
+              let name = FileUtils.getFileNameWithoutExtension(
+                metadataFile,
+                METADATA_INFO[keys[i]].sourceExtension
+              );
 
-            if (METADATA_INFO[keys[i]].isChildComponent) {
-              let fileParts = metadataFile.split(path.sep);
-              let parentName = fileParts[fileParts.length - 3];
-              name = parentName + "." + name;
+              if (METADATA_INFO[keys[i]].isChildComponent) {
+                let fileParts = metadataFile.split(path.sep);
+                let parentName = fileParts[fileParts.length - 3];
+                name = parentName + "." + name;
+              }
+
+              METADATA_INFO[keys[i]].components.push(name);
             }
-
-            METADATA_INFO[keys[i]].components.push(name);
 
             break;
           }
@@ -125,5 +143,9 @@ export default class MetadataFiles {
         }
       });
     }
+  }
+  //Check if a component is accepted by forceignore.
+  private accepts(filePath: string) {
+    return !this.forceignore.ignores(path.relative(process.cwd(), filePath));
   }
 }
