@@ -16,14 +16,14 @@ const messages = core.Messages.loadMessages(
   "source_customlabel_clean"
 );
 
-export default class Clean extends SfdxCommand {
+export default class Reconcile extends SfdxCommand {
   public customlabel_path: string;
   public customlabel_cleanstatus: boolean = false;
 
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:source:customlabel:clean -p path/to/customlabelfile.xml
+    `$ sfdx sfpowerkit:source:customlabel:reconcile -d path/to/customlabelfile.xml -p core
     Cleaned The Custom Labels
 `
   ];
@@ -31,35 +31,30 @@ export default class Clean extends SfdxCommand {
   protected static flagsConfig = {
     path: flags.string({
       required: true,
-      char: "p",
+      char: "d",
       description: messages.getMessage("pathFlagDescription")
+    }),
+    project: flags.string({
+      required: true,
+      char: "p",
+      description: messages.getMessage("packageFlagDescription")
     })
   };
 
   // Comment this out if your command does not require an org username
-  protected static requiresUsername = true;
+  //protected static requiresUsername = true;
 
   // Comment this out if your command does not support a hub org username
   // protected static supportsDevhubUsername = true;
 
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
-  //protected static requiresProject = true;
+  protected static requiresProject = true;
 
   public async run(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
 
-    await this.org.refreshAuth();
-
-    // this.org is guaranteed because requiresUsername=true, as opposed to supportsUsername
-    const username = this.org.getUsername();
-
     // Gives first value in url after https protocol
-    const orgShortName = this.org
-      .getConnection()
-      .baseUrl()
-      .replace("https://", "")
-      .split(/[\.]/)[0]
-      .replace(/[^A-Za-z0-9]/g, "");
+    const packageName = this.flags.project;
 
     this.customlabel_path = this.flags.path;
 
@@ -79,20 +74,18 @@ export default class Clean extends SfdxCommand {
 
         rimraf.sync("temp_sfpowerkit");
 
-        return {
-          "customlabel.clean_status": this.customlabel_cleanstatus
-        };
+        return 1;
       }
 
-      console.log(`Namespace ::: ${orgShortName}_`);
+      console.log(`Namespace ::: ${packageName}_`);
 
       if (this.isIterable(retrieved_customlabels.CustomLabels.labels)) {
         for (var label of retrieved_customlabels.CustomLabels.labels) {
-          label.fullName = label.fullName.replace(`${orgShortName}_`, "");
+          label.fullName = label.fullName.replace(`${packageName}_`, "");
         }
       } else {
         retrieved_customlabels.CustomLabels.labels.fullName = retrieved_customlabels.CustomLabels.labels.fullName.replace(
-          `${orgShortName}_`,
+          `${packageName}_`,
           ""
         );
       }
@@ -104,18 +97,14 @@ export default class Clean extends SfdxCommand {
 
       await fs.writeFileSync(path.resolve(this.customlabel_path), xml);
 
-      this.ux.log(`Cleaned The Custom Labels`);
-
-      this.customlabel_cleanstatus = true;
+      this.ux.log(`Reconciled The Custom Labels`);
     } else {
       this.ux.log(`File is either not found, or not an xml file.`);
     }
 
     rimraf.sync("temp_sfpowerkit");
 
-    return {
-      "customlabel.clean_status": this.customlabel_cleanstatus
-    };
+    return 0;
   }
 
   isIterable(obj) {

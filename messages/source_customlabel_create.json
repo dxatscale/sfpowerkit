@@ -1,5 +1,5 @@
 {
-  "commandDescription": " Creates a custom label in the target org",
+  "commandDescription": "Custom Labels are org wide, hence when the metadata is pulled down from scratch org, the entire custom label metadata file is updated in a package repo. This command is a helper command to create customlabel with pacakage names prepended for easy reconcilation.",
   "fullnameFlagDescription": "Name of the custom label (API Name)",
   "valueFlagDescription": "Value of the custom label",
   "categoriesFlagDescription": "Comma Separated Category Values",

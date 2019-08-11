@@ -1613,69 +1613,9 @@
       },
       "args": []
     },
-    "sfpowerkit:source:customlabel:clean": {
-      "id": "sfpowerkit:source:customlabel:clean",
-      "description": "Removes the namespace from the custom labels",
-      "usage": "<%= command.id %> -p <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
-      "pluginName": "sfpowerkit",
-      "pluginType": "core",
-      "aliases": [],
-      "examples": [
-        "$ sfdx sfpowerkit:source:customlabel:clean -p path/to/customlabelfile.xml\n    Cleaned The Custom Labels\n"
-      ],
-      "flags": {
-        "json": {
-          "name": "json",
-          "type": "boolean",
-          "description": "format output as json",
-          "allowNo": false
-        },
-        "loglevel": {
-          "name": "loglevel",
-          "type": "option",
-          "description": "logging level for this command invocation",
-          "required": false,
-          "helpValue": "(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)",
-          "options": [
-            "trace",
-            "debug",
-            "info",
-            "warn",
-            "error",
-            "fatal",
-            "TRACE",
-            "DEBUG",
-            "INFO",
-            "WARN",
-            "ERROR",
-            "FATAL"
-          ],
-          "default": "warn"
-        },
-        "targetusername": {
-          "name": "targetusername",
-          "type": "option",
-          "char": "u",
-          "description": "username or alias for the target org; overrides default target org"
-        },
-        "apiversion": {
-          "name": "apiversion",
-          "type": "option",
-          "description": "override the api version used for api requests made by this command"
-        },
-        "path": {
-          "name": "path",
-          "type": "option",
-          "char": "p",
-          "description": "Path to the CustomLabels.labels-meta.xml file",
-          "required": true
-        }
-      },
-      "args": []
-    },
     "sfpowerkit:source:customlabel:create": {
       "id": "sfpowerkit:source:customlabel:create",
-      "description": " Creates a custom label in the target org",
+      "description": "Custom Labels are org wide, hence when the metadata is pulled down from scratch org, the entire custom label metadata file is updated in a package repo. This command is a helper command to create customlabel with pacakage names prepended for easy reconcilation.",
       "usage": "<%= command.id %> -n <string> -v <string> -s <string> [-c <string>] [-l <string>] [-p <string>] [--package <string>] [-i] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
@@ -1777,6 +1717,62 @@
           "char": "i",
           "description": "Ignores the addition of the package into the fullname (API Name)",
           "allowNo": false
+        }
+      },
+      "args": []
+    },
+    "sfpowerkit:source:customlabel:reconcile": {
+      "id": "sfpowerkit:source:customlabel:reconcile",
+      "description": "Custom Labels are org wide, hence when the metadata is pulled down from scratch org, the entire custom label metadata file is updated in a package repo, This command reconcile the updated custom labels to include only the labels that have the API name starting with package name or created using the custom label create command",
+      "usage": "<%= command.id %> -d <string> -p <string> [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "pluginName": "sfpowerkit",
+      "pluginType": "core",
+      "aliases": [],
+      "examples": [
+        "$ sfdx sfpowerkit:source:customlabel:reconcile -d path/to/customlabelfile.xml -p core\n    Cleaned The Custom Labels\n"
+      ],
+      "flags": {
+        "json": {
+          "name": "json",
+          "type": "boolean",
+          "description": "format output as json",
+          "allowNo": false
+        },
+        "loglevel": {
+          "name": "loglevel",
+          "type": "option",
+          "description": "logging level for this command invocation",
+          "required": false,
+          "helpValue": "(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)",
+          "options": [
+            "trace",
+            "debug",
+            "info",
+            "warn",
+            "error",
+            "fatal",
+            "TRACE",
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "ERROR",
+            "FATAL"
+          ],
+          "default": "warn"
+        },
+        "path": {
+          "name": "path",
+          "type": "option",
+          "char": "d",
+          "description": "Path to the CustomLabels.labels-meta.xml file",
+          "required": true
+        },
+        "project": {
+          "name": "project",
+          "type": "option",
+          "char": "p",
+          "description": "The name of the package that needs to be reconciled",
+          "required": true
         }
       },
       "args": []
