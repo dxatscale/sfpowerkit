@@ -811,11 +811,11 @@ USAGE
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -f, --folder=folder                               the folders to Scan. You can provide a comma separated list of folder. If ommited, the folders listed in the package directories will be used.
-  -d, --destfolder=destfolder                       (required) the destination folder where reconciled profiles will be stored
+  -f, --folder=folder                               path to the folder which contains the profiles to be reconciled,if project contain multiple package directories, please provide a comma seperated list, if omitted, all the package directories will be checked for profiles
+  -d, --destfolder=destfolder                       the destination folder for reconciled profiles, if omitted existing profiles will be reconciled
   -n, --profilelist=profilelist                     the profile names that will be reconcile. if ommited, all the profiles components will be reconciled.
-  -s, --sourceonly                                  set this flag to reconcile profiles only again component in the project only. using this flag will remove all userpermissions from reconciled profiles
-  -u, --targetorg=targetorg                         org again which profiles will be reconcile. thisparameter can be ommited if sourceonly flag is set.
+  -s, --sourceonly                                  set this flag to reconcile profiles only against component available in the project only. Using this flag will remove all userpermissions from reconciled profiles
+  -u, --targetorg=targetorg                         org against which profiles will be reconciled. this parameter can be ommited if sourceonly flag is set.
   --apiversion=apiversion                           override the api version used for api requests made by this command
   --json                                            format output as json
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
@@ -841,7 +841,7 @@ USAGE
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -f, --folder=folder                                 comma separated list of folders to scan for profiles. If ommited, the folders in the packageDirectories configuration will be used.
+  -f, --folder=folder                                 path to the folder which contains the profiles to be reconciled,if project contain multiple package directories, please provide a comma seperated list, if omitted, all the package directories will be checked for profiles
   -m, --metadata=metadata                             comma separated list of metadata for which the permissions will be retrieved.
   -n, --profilelist=profilelist                       comma separated list of profiles. If ommited, all the profiles found in the folder(s) will be merged
   -d, --delete                                        set this flag to delete profile files that does not exist in the org.
