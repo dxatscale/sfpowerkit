@@ -841,7 +841,7 @@ USAGE
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -f, --folder=folder                                 path to the folder which contains the profiles to be reconciled,if project contain multiple package directories, please provide a comma seperated list, if omitted, all the package directories will be checked for profiles
+  -f, --folder=folder                                 path to the folder which contains the profiles to be merged,if project contain multiple package directories, please provide a comma seperated list, if omitted, all the package directories will be checked for profiles
   -m, --metadata=metadata                             comma separated list of metadata for which the permissions will be retrieved.
   -n, --profilelist=profilelist                       comma separated list of profiles. If ommited, all the profiles found in the folder(s) will be merged
   -d, --delete                                        set this flag to delete profile files that does not exist in the org.
