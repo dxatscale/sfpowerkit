@@ -105,19 +105,36 @@ export default class ProfileReconcile extends ProfileActions {
           );
         }
 
-        if (
-          profileObj.userPermissions !== undefined &&
-          profileObj.userPermissions.length > 0
-        ) {
-          //Remove permission that are not present in the target org
-          profileObj.userPermissions = profileObj.userPermissions.filter(
-            permission => {
-              let supported = this.profileRetriever.supportedPermissions.includes(
-                permission.name
-              );
-              return supported;
-            }
-          );
+        //IS sourceonly, use ignorePermission set in sfdxProject.json file
+        if (MetadataFiles.sourceOnly) {
+          let pluginConfig = await SfPowerKit.getConfig();
+          let ignorePermissions = pluginConfig.ignoredPermissions || [];
+          if (
+            profileObj.userPermissions !== undefined &&
+            profileObj.userPermissions.length > 0
+          ) {
+            profileObj.userPermissions = profileObj.userPermissions.filter(
+              permission => {
+                let supported = !ignorePermissions.includes(permission.name);
+                return supported;
+              }
+            );
+          }
+        } else {
+          if (
+            profileObj.userPermissions !== undefined &&
+            profileObj.userPermissions.length > 0
+          ) {
+            //Remove permission that are not present in the target org
+            profileObj.userPermissions = profileObj.userPermissions.filter(
+              permission => {
+                let supported = this.profileRetriever.supportedPermissions.includes(
+                  permission.name
+                );
+                return supported;
+              }
+            );
+          }
         }
 
         //UserPermissionUtils.addPermissionDependencies(profileObj);
