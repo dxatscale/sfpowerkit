@@ -1,8 +1,8 @@
 {
-  "commandDescription": "This command is used in the lower environments such as ScratchOrgs , Development / System Testing Sandboxes, where a retrieved profile from production has to be cleaned up only for the metadata that is contained in the environment.",
-  "folderFlagDescription": "the folders to Scan. You can provide a comma separated list of folder. If ommited, the folders listed in the package directories will be used.",
-  "nameFlagDescription": "the profile names that will be reconcile. if ommited, all the profiles components will be reconciled.",
-  "destFolderFlagDescription": "the destination folder where reconciled profiles will be stored",
-  "sourceonlyFlagDescription": "set this flag to reconcile profiles only again component in the project. using this flag will remove all userpermissions from reconciled profiles",
-  "targetorgFlagDescription": "org again which profiles will be reconcile. this parameter can be ommited if sourceonly flag is set."
+  "commandDescription": "This command is used in the lower environments such as ScratchOrgs , Development / System Testing Sandboxes, where a retrieved profile from production has to be cleaned up only for the metadata that is contained in the environment or  base it only as per the metadata that is contained in the packaging directory.",
+  "folderFlagDescription": "path to the folder which contains the profiles to be reconciled,if project contain multiple package directories, please provide a comma seperated list, if omitted, all the package directories will be checked for profiles",
+  "nameFlagDescription": "list of profiles to be reconciled. If ommited, all the profiles components will be reconciled.",
+  "destFolderFlagDescription": " the destination folder for reconciled profiles, if omitted existing profiles will be reconciled and will be rewritten in the current location",
+  "sourceonlyFlagDescription": "set this flag to reconcile profiles only against component available in the project only. Using this flag will remove all userpermissions from reconciled profiles",
+  "targetorgFlagDescription": " org against which profiles will be reconciled. this parameter can be ommited if sourceonly flag is set."
 }
