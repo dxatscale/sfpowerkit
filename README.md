@@ -800,7 +800,7 @@ _See code: [src\commands\sfpowerkit\profile\sync.ts](https://github.com/Accentur
 
 ## `sfpowerkit:source:profile:reconcile [BETA]`
 
-This command is used in the lower environments such as ScratchOrgs , Development / System Testing Sandboxes, where a retrieved profile from production has to be cleaned up only for the metadata that is contained in the environment.
+This command is used in the lower environments such as ScratchOrgs , Development / System Testing Sandboxes, where a retrieved profile from production has to be cleaned up only for the metadata that is contained in the environment or base it only as per the metadata that is contained in the packaging directory.
 
 This command is of sufficient quality, however proceed with caution while adopting in your workflow
 
@@ -811,17 +811,19 @@ USAGE
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -f, --folder=folder                               the folders to Scan. You can provide a comma separated list of folder. If ommited, the folders listed in the package directories will be used.
-  -n, --profilelist=profilelist                     the profile names that will be reconcile. if ommited, all the profiles components will be reconciled.
-  -u, --targetusername=targetusername               username or alias for the target org; overrides default target org
+  -f, --folder=folder                               path to the folder which contains the profiles to be reconciled,if project contain multiple package directories, please provide a comma seperated list, if omitted, all the package directories will be checked for profiles
+  -d, --destfolder=destfolder                       the destination folder for reconciled profiles, if omitted existing profiles will be reconciled and will be rewritten in the current location
+  -n, --profilelist=profilelist                     list of profiles to be reconciled. If ommited, all the profiles components will be reconciled.
+  -s, --sourceonly                                  set this flag to reconcile profiles only against component available in the project only. Using this flag will remove all userpermissions from reconciled profiles
+  -u, --targetorg=targetorg                         org against which profiles will be reconciled. this parameter can be ommited if sourceonly flag is used.
   --apiversion=apiversion                           override the api version used for api requests made by this command
   --json                                            format output as json
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
 EXAMPLES
-  $ sfdx sfpowerkit:source:profile:reconcile  --folder force-app
-  $ sfdx sfpowerkit:source:profile:reconcile  --folder force-app,module2,module3 -u sandbox
-  $ sfdx sfpowerkit:source:profile:reconcile  -u myscratchorg
+  $ sfdx sfpowerkit:source:profile:reconcile  --folder force-app -d destfolder -s
+  $ sfdx sfpowerkit:source:profile:reconcile  --folder force-app,module2,module3 -u sandbox -d destfolder
+  $ sfdx sfpowerkit:source:profile:reconcile  -u myscratchorg -d destfolder
 ```
 
 _See code: [src\commands\sfpowerkit\profile\reconcile.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/reconcile.ts)_
@@ -839,7 +841,7 @@ USAGE
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -f, --folder=folder                                 comma separated list of folders to scan for profiles. If ommited, the folders in the packageDirectories configuration will be used.
+  -f, --folder=folder                                 path to the folder which contains the profiles to be reconciled,if project contain multiple package directories, please provide a comma seperated list, if omitted, all the package directories will be checked for profiles
   -m, --metadata=metadata                             comma separated list of metadata for which the permissions will be retrieved.
   -n, --profilelist=profilelist                       comma separated list of profiles. If ommited, all the profiles found in the folder(s) will be merged
   -d, --delete                                        set this flag to delete profile files that does not exist in the org.

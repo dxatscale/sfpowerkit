@@ -3,6 +3,8 @@ import { METADATA_INFO } from "../../../shared/metadataInfo";
 import _ from "lodash";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 import { TabDefinition } from "../schema";
+import ProfileReconcile from "../../source/profiles/profileReconcile";
+import MetadataFiles from "../../../shared/metadataFiles";
 
 const QUERY =
   "SELECT Id,  Name, SobjectName, DurableId, IsCustom, Label FROM TabDefinition ";
@@ -43,7 +45,7 @@ export default class TabDefinitionRetriever extends BaseMetadataRetriever<
     if (!_.isNil(METADATA_INFO.CustomTab.components)) {
       found = METADATA_INFO.CustomTab.components.includes(tab);
     }
-    if (!found) {
+    if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let tabs = await this.getTabs();
       let foundTab = tabs.find(t => {
