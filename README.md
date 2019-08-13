@@ -35,7 +35,7 @@ EXAMPLES
   $ sfdx sfpowerkit:source:profile:retrieve  -f "module1, module2, module3" -n "My Profile1, My profile2"  -u prod
 ```
 
-_See code: [src\commands\sfpowerkit\profile\sync.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/sync.ts)_
+_See code: [src\commands\sfpowerkit\profile\retrieve.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/retrieve.ts)_
 
 ## `sfpowerkit:source:profile:reconcile [BETA]`
 
@@ -50,7 +50,7 @@ USAGE
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -f, --folder=folder                               path to the project folder, if the profiles are reconciled in sourceonly mode
+  -f, --folder=folder                               path to the project folder, if the profiles are reconciled in source only mode
   -d, --destfolder=destfolder                       the destination folder for reconciled profiles, if omitted existing profiles will be reconciled and will be rewritten in the current location
   -n, --profilelist=profilelist                     list of profiles to be reconciled. If ommited, all the profiles components will be reconciled.
   -s, --sourceonly                                  set this flag to reconcile profiles only against component available in the project only. Using this flag will remove all userpermissions from reconciled profiles
