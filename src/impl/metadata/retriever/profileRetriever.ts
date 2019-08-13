@@ -160,6 +160,9 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
         if (profileObj.userPermissions === undefined) {
           profileObj.userPermissions = new Array();
         }
+        if (!Array.isArray(profileObj.userPermissions)) {
+          profileObj.userPermissions = [profileObj.userPermissions];
+        }
         profileObj.userPermissions.push(newPermission);
       }
     }
