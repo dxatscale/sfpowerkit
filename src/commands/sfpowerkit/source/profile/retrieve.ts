@@ -80,20 +80,9 @@ export default class Retrieve extends SfdxCommand {
     let argProfileList: string[] = this.flags.profilelist;
 
     let folders: string[] = [];
-    if (_.isNil(argFolder) || argFolder.length === 0) {
-      const dxProject = await SfdxProject.resolve();
-      const project = await dxProject.retrieveSfdxProjectJson();
-
-      let packages = (project.get("packageDirectories") as any[]) || [];
-      packages.forEach(element => {
-        folders.push(element.path);
-        if (element.default) {
-          SfPowerKit.defaultFolder = element.path;
-        }
-      });
-    } else {
-      SfPowerKit.defaultFolder = argFolder[0];
-      folders.push(argFolder[0]);
+    if (!_.isNil(argFolder) && argFolder.length !== 0) {
+      SfPowerKit.setDefaultFolder(argFolder[0]);
+      folders.push(...argFolder);
     }
 
     const profileUtils = new ProfileSync(

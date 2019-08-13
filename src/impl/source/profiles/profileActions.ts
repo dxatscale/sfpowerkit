@@ -36,7 +36,7 @@ export default abstract class ProfileActions {
     //generate path for new profiles
     let profilePath = path.join(
       process.cwd(),
-      SfPowerKit.defaultFolder,
+      await SfPowerKit.getDefaultFolder(),
       "main",
       "default",
       "profiles"

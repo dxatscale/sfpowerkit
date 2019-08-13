@@ -22,6 +22,12 @@ export default class ProfileSync extends ProfileActions {
     updated: string[];
   }> {
     if (this.debugFlag) SfPowerKit.ux.log("Retrieving profiles");
+
+    let fetchNewProfiles = _.isNil(srcFolders) || srcFolders.length === 0;
+    if (fetchNewProfiles) {
+      srcFolders = await SfPowerKit.getProjectDirectories();
+    }
+
     this.metadataFiles = new MetadataFiles();
     for (let i = 0; i < srcFolders.length; i++) {
       let srcFolder = srcFolders[i];
@@ -32,7 +38,12 @@ export default class ProfileSync extends ProfileActions {
     let profileNames: string[] = [];
     let profilePathAssoc = {};
     let profileStatus = await this.getProfileFullNamesWithLocalStatus(profiles);
-    let metadataFiles = _.union(profileStatus.added, profileStatus.updated);
+    let metadataFiles = profileStatus.updated || [];
+    if (fetchNewProfiles) {
+      metadataFiles = _.union(profileStatus.added, profileStatus.updated);
+    } else {
+      profileStatus.added = [];
+    }
     metadataFiles.sort();
     for (var i = 0; i < metadataFiles.length; i++) {
       var profileComponent = metadataFiles[i];
