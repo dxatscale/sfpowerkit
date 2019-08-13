@@ -198,6 +198,88 @@ EXAMPLE
     "ABC2,ABC1Test"
 ```
 
+## `sfpowerkit:project:diff`
+
+Generate a delta 'changeset' between two diff commits so that the incremental changes can be deployed to the target org.To be used for an org based deployment when the size of the metadata is large that the project cannot not be deployed in a single attempt.
+
+This command works with a source format based repository only. Utilize the command during a transition phase where an org is transformed to a modular architecture composing of multiple projects.
+
+```
+
+USAGE
+  $ sfdx sfpowerkit:project:diff  -d <string> [-f <string>] [  -e <string> ] [  -r <string> ] [  -t <string> ] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+
+OPTIONS
+  -d, --output=output                             (required) The output dir where the incremental project will be created
+  -f, --difffile=difffile                         The diff file from which the incremental project should be generated [git diff --raw]. Its an optional parameter, you can skip this parameter and set the revisionfrom and  revisionto parameter instead
+  -e, --encoding=encoding                         [default:utf8] Diff file encoding
+  -r, --revisionfrom=revisionfrom                 Base revision from where diff is to be generated, required if diff file is ommited
+  -t, --revisionto=revisionto                     [default:HEAD]Target revision to generate the diff
+
+  --json                                          format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $  sfdx sfpowerkit:project:diff --revisionfrom revisionfrom --revisionto revisionto --output OutputFolder
+  {
+  "status": 0,
+  "result": {
+    "deleted": [],
+    "addedEdited": [
+      "scripts\\Alias.sh",
+      "sfdx-project.json",
+    ]
+   }
+  }
+```
+
+## Unlocked Package Related Functionalities
+
+Various helper commands in aiding with Salesforce DX Unlocked Package Development
+
+
+## `sfpowerkit:package:dependencies:install`
+
+Install unlocked package dependencies of a package
+
+```
+USAGE
+  $ sfdx sfpowerkit:package:dependencies:install [-p <string>] [-k <string>] [-b <string>] [-w <string>] [-r] [-v
+  <string>] [-a] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+
+OPTIONS
+  -b, --branch=branch                              the package version’s branch
+
+  -k, --installationkeys=installationkeys          installation key for key-protected packages (format is
+                                                   1:MyPackage1Key 2: 3:MyPackage3Key... to allow some packages without
+                                                   installation key)
+
+  -p, --individualpackage=individualpackage        Installs a specific package especially for upgrade scenario
+
+  -r, --noprompt                                   allow Remote Site Settings and Content Security Policy websites to
+                                                   send or receive data without confirmation
+
+  -u, --targetusername=targetusername              username or alias for the target org; overrides default target org
+
+  -v, --targetdevhubusername=targetdevhubusername  username or alias for the dev hub org; overrides default dev hub org
+
+  -w, --wait=wait                                  number of minutes to wait for installation status (also used for
+                                                   publishwait). Default is 10
+
+  -a, --apexcompileonlypackage=apexcompileonlypackage  Compile the apex only in the package, by default only the
+                                                    compilation of the apex in the entire org is triggered
+  --apiversion=apiversion                          override the api version used for api requests made by this command
+
+  --json                                           format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal)   [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $ sfpowerkit package:dependencies:install -u MyScratchOrg -v MyDevHub -k "1:MyPackage1Key 2: 3:MyPackage3Key" -b "DEV"
+```
+
+_See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/dependencies/install.ts)_
+
 ## `sfpowerkit:source:picklist:generatepatch`
 
 This command generates a patch in the format of a metadata packed together as a static resource with the intent of solving the following issues.
@@ -261,87 +343,6 @@ EXAMPLE
 ```
 
 _See code: [src\commands\sfpowerkit\source\permissionset\generatepatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/permissionset/generatepatch.ts)_
-
-## `sfpowerkit:project:diff`
-
-Generate a delta 'changeset' between two diff commits so that the incremental changes can be deployed to the target org.To be used for an org based deployment when the size of the metadata is large that the project cannot not be deployed in a single attempt.
-
-This command works with a source format based repository only. Utilize the command during a transition phase where an org is transformed to a modular architecture composing of multiple projects.
-
-```
-
-USAGE
-  $ sfdx sfpowerkit:project:diff  -d <string> [-f <string>] [  -e <string> ] [  -r <string> ] [  -t <string> ] [--json] [--loglevel trace|debug|info|warn|error|fatal]
-
-OPTIONS
-  -d, --output=output                             (required) The output dir where the incremental project will be created
-  -f, --difffile=difffile                         The diff file from which the incremental project should be generated [git diff --raw]. Its an optional parameter, you can skip this parameter and set the revisionfrom and  revisionto parameter instead
-  -e, --encoding=encoding                         [default:utf8] Diff file encoding
-  -r, --revisionfrom=revisionfrom                 Base revision from where diff is to be generated, required if diff file is ommited
-  -t, --revisionto=revisionto                     [default:HEAD]Target revision to generate the diff
-
-  --json                                          format output as json
-  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
-
-EXAMPLE
-  $  sfdx sfpowerkit:project:diff --revisionfrom revisionfrom --revisionto revisionto --output OutputFolder
-  {
-  "status": 0,
-  "result": {
-    "deleted": [],
-    "addedEdited": [
-      "scripts\\Alias.sh",
-      "sfdx-project.json",
-    ]
-   }
-  }
-```
-
-## Unlocked Package Related Functionalities
-
-Various helper commands in aiding with Salesforce DX Unlocked Package Development
-
-## `sfpowerkit:package:dependencies:install`
-
-Install dependencies of a package
-
-```
-USAGE
-  $ sfdx sfpowerkit:package:dependencies:install [-p <string>] [-k <string>] [-b <string>] [-w <string>] [-r] [-v
-  <string>] [-a] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
-
-OPTIONS
-  -b, --branch=branch                              the package version’s branch
-
-  -k, --installationkeys=installationkeys          installation key for key-protected packages (format is
-                                                   1:MyPackage1Key 2: 3:MyPackage3Key... to allow some packages without
-                                                   installation key)
-
-  -p, --individualpackage=individualpackage        Installs a specific package especially for upgrade scenario
-
-  -r, --noprompt                                   allow Remote Site Settings and Content Security Policy websites to
-                                                   send or receive data without confirmation
-
-  -u, --targetusername=targetusername              username or alias for the target org; overrides default target org
-
-  -v, --targetdevhubusername=targetdevhubusername  username or alias for the dev hub org; overrides default dev hub org
-
-  -w, --wait=wait                                  number of minutes to wait for installation status (also used for
-                                                   publishwait). Default is 10
-
-  -a, --apexcompileonlypackage=apexcompileonlypackage  Compile the apex only in the package, by default only the
-                                                    compilation of the apex in the entire org is triggered
-  --apiversion=apiversion                          override the api version used for api requests made by this command
-
-  --json                                           format output as json
-
-  --loglevel=(trace|debug|info|warn|error|fatal)   [default: warn] logging level for this command invocation
-
-EXAMPLE
-  $ sfpowerkit package:dependencies:install -u MyScratchOrg -v MyDevHub -k "1:MyPackage1Key 2: 3:MyPackage3Key" -b "DEV"
-```
-
-_See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/dependencies/install.ts)_
 
 ## `sfpowerkit:package:applypatch`
 
