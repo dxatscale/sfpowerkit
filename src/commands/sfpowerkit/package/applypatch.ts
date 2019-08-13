@@ -67,7 +67,7 @@ export default class Applypatch extends SfdxCommand {
       apiVersion: apiversion
     };
 
-    //Retrieve Duplicate Rule
+    //Retrieve Static  Resource
     retrieveRequest["singlePackage"] = true;
     retrieveRequest["unpackaged"] = {
       types: { name: "StaticResource", members: this.flags.name }
@@ -125,14 +125,18 @@ export default class Applypatch extends SfdxCommand {
           }
         );
 
-        this.ux.log(`Deploying Patch with ID  ${deployId.id}`);
+        this.ux.log(
+          `Deploying Patch with ID  ${deployId.id} to ${this.org.getUsername()}`
+        );
         let metadata_deploy_result: DeployResult = await checkDeploymentStatus(
           conn,
           deployId.id
         );
 
         if (!metadata_deploy_result.success)
-          throw new SfdxError("Unable to deploy the Patch");
+          throw new SfdxError(
+            `Unable to deploy the Patch : ${metadata_deploy_result.details["componentFailures"]}`
+          );
 
         this.ux.log(`Patch ${this.flags.name} Deployed successfully.`);
         rimraf.sync("temp_sfpowerkit");

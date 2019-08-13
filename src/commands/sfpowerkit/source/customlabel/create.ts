@@ -3,7 +3,9 @@ import { AnyJson } from "@salesforce/ts-types";
 import fs = require("fs-extra");
 import rimraf = require("rimraf");
 import { zipDirectory } from "../../../../shared/zipDirectory";
-import { AsyncResult } from "jsforce";
+import { AsyncResult, DeployResult } from "jsforce";
+import { checkDeploymentStatus } from "../../../../shared/checkDeploymentStatus";
+import { SfdxError } from "@salesforce/core";
 
 const spawn = require("child-process-promise").spawn;
 
@@ -161,14 +163,30 @@ export default class Create extends SfdxCommand {
       }
     );
 
-    if (!this.flags.ignorepackage)
-      this.ux.log(
-        `Deployed  Custom Label ${this.customlabel_fullname} in target org with ${this.flags.package}_  prefix, You may now pull and utilize the customlabel:reconcile command `
+    this.ux.log(
+      `Deploying Custom Label with ID  ${
+        deployId.id
+      } to ${this.org.getUsername()}`
+    );
+    let metadata_deploy_result: DeployResult = await checkDeploymentStatus(
+      conn,
+      deployId.id
+    );
+
+    if (metadata_deploy_result.success) {
+      if (!this.flags.ignorepackage)
+        this.ux.log(
+          `Deployed  Custom Label ${this.customlabel_fullname} in target org with ${this.flags.package}_  prefix, You may now pull and utilize the customlabel:reconcile command `
+        );
+      else if (metadata_deploy_result.success)
+        this.ux.log(
+          `Deployed  Custom Label ${this.customlabel_fullname} in target org`
+        );
+    } else {
+      throw new SfdxError(
+        `Unable to deploy the Custom Label: ${metadata_deploy_result.details["componentFailures"]["problem"]}`
       );
-    else
-      this.ux.log(
-        `Deployed  Custom Label ${this.customlabel_fullname} in target org`
-      );
+    }
 
     rimraf.sync("temp_sfpowerkit");
 
