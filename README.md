@@ -2,11 +2,12 @@
 
 [![NPM](https://img.shields.io/npm/v/sfpowerkit.svg)](https://www.npmjs.com/package/sfpowerkit) ![npm (tag)](https://img.shields.io/npm/v/sfpowerkit/alpha) [![Board Status](https://dev.azure.com/cloudfirstanz/f7a91473-0e1c-490e-b0a0-80f9f8d82c14/c97f3cbd-bd4a-4d08-b123-9ebdd5c7c79f/_apis/work/boardbadge/6d1336f9-991b-4cb5-8cce-4173c4dcdca8?columnOptions=1)](https://dev.azure.com/cloudfirstanz/f7a91473-0e1c-490e-b0a0-80f9f8d82c14/_boards/board/t/c97f3cbd-bd4a-4d08-b123-9ebdd5c7c79f/Microsoft.RequirementCategory) [![Build status](https://dev.azure.com/cloudfirstanz/SFPowerkit/_apis/build/status/SFPowerkit-CI)](https://dev.azure.com/cloudfirstanz/SFPowerkit/_build/latest?definitionId=5)![npm](https://img.shields.io/npm/dw/sfpowerkit)
 
-A Salesforce DX Plugin with different functionalities aimed at improving development and operational workflows
+A Salesforce DX Plugin with multiple functionalities aimed at improving development and operational workflows
 Read the blog here https://accenture.github.io/blog/2019/06/27/sfpowerkit.html
 
-## Source Related  Functionalities
-These commands manipulate the metadata configuration/code locally or during the packaging process.  
+## Source Related Functionalities
+
+These commands manipulate the metadata configuration/code locally or during the packaging process.
 
 ## `sfpowerkit:source:profile:retrieve [BETA]`
 
@@ -29,12 +30,12 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
 EXAMPLES
-  $ sfdx sfpowerkit:source:profile:sync -u prod
-  $ sfdx sfpowerkit:source:profile:sync  -f force-app -n "My Profile"  -u prod
-  $ sfdx sfpowerkit:source:profile:sync  -f "module1, module2, module3" -n "My Profile1, My profile2"  -u prod
+  $ sfdx sfpowerkit:source:profile:retrieve -u prod
+  $ sfdx sfpowerkit:source:profile:retrieve  -f force-app -n "My Profile"  -u prod
+  $ sfdx sfpowerkit:source:profile:retrieve  -f "module1, module2, module3" -n "My Profile1, My profile2"  -u prod
 ```
 
-_See code: [src\commands\sfpowerkit\profile\sync.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/sync.ts)_
+_See code: [src\commands\sfpowerkit\profile\retrieve.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/retrieve.ts)_
 
 ## `sfpowerkit:source:profile:reconcile [BETA]`
 
@@ -49,7 +50,7 @@ USAGE
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -f, --folder=folder                               path to the folder which contains the profiles to be reconciled,if project contain multiple package directories, please provide a comma seperated list, if omitted, all the package directories will be checked for profiles
+  -f, --folder=folder                               path to the project folder, if the profiles are reconciled in source only mode
   -d, --destfolder=destfolder                       the destination folder for reconciled profiles, if omitted existing profiles will be reconciled and will be rewritten in the current location
   -n, --profilelist=profilelist                     list of profiles to be reconciled. If ommited, all the profiles components will be reconciled.
   -s, --sourceonly                                  set this flag to reconcile profiles only against component available in the project only. Using this flag will remove all userpermissions from reconciled profiles
@@ -232,9 +233,9 @@ EXAMPLE
   }
 ```
 
-##  Unlocked Package Related  Functionalities
-Various helper commands in aiding with Salesforce DX Unlocked Package Development
+## Unlocked Package Related Functionalities
 
+Various helper commands in aiding with Salesforce DX Unlocked Package Development
 
 ## `sfpowerkit:package:dependencies:install`
 
@@ -401,9 +402,9 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/valid.ts)_
 
-##  Org Related  Functionalities
-These commands are helpful in managing functionalities are related to a Salesforce Org
+## Org Related Functionalities
 
+These commands are helpful in managing functionalities are related to a Salesforce Org
 
 ## `sfpowerkit org:connectedapp:create`
 
@@ -838,7 +839,6 @@ EXAMPLE
 ```
 
 _See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/scratchorg/usage.ts)_
-
 
 ## `sfpowerkit auth:login`
 
