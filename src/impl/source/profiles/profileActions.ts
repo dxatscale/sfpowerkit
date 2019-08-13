@@ -33,6 +33,7 @@ export default abstract class ProfileActions {
       updated: []
     };
     let metadataFiles = METADATA_INFO.Profile.files || [];
+
     //generate path for new profiles
     let profilePath = path.join(
       process.cwd(),
@@ -53,8 +54,9 @@ export default abstract class ProfileActions {
       for (let i = 0; i < profileNames.length; i++) {
         let profileName = profileNames[i];
         let found = false;
-        for (let j = 0; j < METADATA_INFO.Profile.files.length; j++) {
-          let profileComponent = METADATA_INFO.Profile.files[j];
+
+        for (let j = 0; j < metadataFiles.length; j++) {
+          let profileComponent = metadataFiles[j];
           let oneName = path.basename(
             profileComponent,
             METADATA_INFO.Profile.sourceExtension

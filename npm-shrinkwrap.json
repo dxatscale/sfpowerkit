@@ -1,6 +1,6 @@
 {
   "name": "sfpowerkit",
-  "version": "1.15.0-13",
+  "version": "1.15.0-16",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -142,6 +142,17 @@
         "normalize-package-data": "^2.5.0",
         "qqjs": "^0.3.10",
         "tslib": "^1.9.3"
+      },
+      "dependencies": {
+        "fs-extra": {
+          "version": "7.0.1",
+          "dev": true,
+          "requires": {
+            "graceful-fs": "^4.1.2",
+            "jsonfile": "^4.0.0",
+            "universalify": "^0.1.0"
+          }
+        }
       }
     },
     "@oclif/errors": {
@@ -156,6 +167,14 @@
       "dependencies": {
         "clean-stack": {
           "version": "1.3.0"
+        },
+        "fs-extra": {
+          "version": "7.0.1",
+          "requires": {
+            "graceful-fs": "^4.1.2",
+            "jsonfile": "^4.0.0",
+            "universalify": "^0.1.0"
+          }
         }
       }
     },
@@ -201,25 +220,64 @@
     },
     "@oclif/test": {
       "version": "1.2.4",
+      "dev": true,
       "requires": {
         "fancy-test": "^1.4.3"
       }
     },
     "@salesforce/command": {
-      "version": "1.5.3",
+      "version": "2.1.0",
       "requires": {
-        "@oclif/command": "^1.5.0",
-        "@oclif/errors": "^1.2.0",
-        "@oclif/parser": "^3.6.0",
-        "@oclif/plugin-help": "^2.1.0",
-        "@oclif/test": "^1.2.0",
-        "@salesforce/core": "^1.2.3",
-        "@salesforce/kit": "^1.1.0",
-        "@salesforce/ts-types": "^1.0.0",
-        "chalk": "^2.4.0",
-        "cli-ux": "^4.8.0"
+        "@oclif/command": "^1.5.17",
+        "@oclif/errors": "^1.2.2",
+        "@oclif/parser": "^3.8.3",
+        "@oclif/plugin-help": "^2.2.0",
+        "@oclif/test": "^1.2.4",
+        "@salesforce/core": "^2.1.0",
+        "@salesforce/kit": "^1.2.0",
+        "@salesforce/ts-types": "^1.2.0",
+        "chalk": "^2.4.2",
+        "cli-ux": "^4.9.3"
       },
       "dependencies": {
+        "@oclif/command": {
+          "version": "1.5.18",
+          "requires": {
+            "@oclif/config": "^1",
+            "@oclif/errors": "^1.2.2",
+            "@oclif/parser": "^3.8.3",
+            "@oclif/plugin-help": "^2",
+            "debug": "^4.1.1",
+            "semver": "^5.6.0"
+          }
+        },
+        "@oclif/parser": {
+          "version": "3.8.4",
+          "requires": {
+            "@oclif/linewrap": "^1.0.0",
+            "chalk": "^2.4.2",
+            "tslib": "^1.9.3"
+          }
+        },
+        "@oclif/test": {
+          "version": "1.2.5",
+          "requires": {
+            "fancy-test": "^1.4.3"
+          }
+        },
+        "@salesforce/kit": {
+          "version": "1.2.0",
+          "requires": {
+            "@salesforce/ts-types": "^1.2.0",
+            "tslib": "^1.10.0"
+          }
+        },
+        "@salesforce/ts-types": {
+          "version": "1.2.0",
+          "requires": {
+            "tslib": "^1.10.0"
+          }
+        },
         "cli-ux": {
           "version": "4.9.3",
           "requires": {
@@ -245,11 +303,19 @@
             "treeify": "^1.1.0",
             "tslib": "^1.9.3"
           }
+        },
+        "fs-extra": {
+          "version": "7.0.1",
+          "requires": {
+            "graceful-fs": "^4.1.2",
+            "jsonfile": "^4.0.0",
+            "universalify": "^0.1.0"
+          }
         }
       }
     },
     "@salesforce/core": {
-      "version": "1.3.3",
+      "version": "2.1.1",
       "requires": {
         "@salesforce/kit": "^1.0.0",
         "@salesforce/ts-sinon": "^1.0.0",
@@ -489,32 +555,67 @@
       }
     },
     "archiver": {
-      "version": "3.0.0",
+      "version": "3.1.1",
       "requires": {
-        "archiver-utils": "^2.0.0",
-        "async": "^2.0.0",
+        "archiver-utils": "^2.1.0",
+        "async": "^2.6.3",
         "buffer-crc32": "^0.2.1",
-        "glob": "^7.0.0",
-        "readable-stream": "^2.0.0",
-        "tar-stream": "^1.5.0",
-        "zip-stream": "^2.0.1"
+        "glob": "^7.1.4",
+        "readable-stream": "^3.4.0",
+        "tar-stream": "^2.1.0",
+        "zip-stream": "^2.1.2"
+      },
+      "dependencies": {
+        "bl": {
+          "version": "3.0.0",
+          "requires": {
+            "readable-stream": "^3.0.1"
+          }
+        },
+        "readable-stream": {
+          "version": "3.4.0",
+          "requires": {
+            "inherits": "^2.0.3",
+            "string_decoder": "^1.1.1",
+            "util-deprecate": "^1.0.1"
+          }
+        },
+        "string_decoder": {
+          "version": "1.3.0",
+          "requires": {
+            "safe-buffer": "~5.2.0"
+          }
+        },
+        "tar-stream": {
+          "version": "2.1.0",
+          "requires": {
+            "bl": "^3.0.0",
+            "end-of-stream": "^1.4.1",
+            "fs-constants": "^1.0.0",
+            "inherits": "^2.0.3",
+            "readable-stream": "^3.1.1"
+          }
+        }
       }
     },
     "archiver-utils": {
-      "version": "2.0.0",
+      "version": "2.1.0",
       "requires": {
-        "glob": "^7.0.0",
-        "graceful-fs": "^4.1.0",
+        "glob": "^7.1.4",
+        "graceful-fs": "^4.2.0",
         "lazystream": "^1.0.0",
-        "lodash.assign": "^4.2.0",
         "lodash.defaults": "^4.2.0",
         "lodash.difference": "^4.5.0",
         "lodash.flatten": "^4.4.0",
         "lodash.isplainobject": "^4.0.6",
-        "lodash.toarray": "^4.4.0",
         "lodash.union": "^4.6.0",
         "normalize-path": "^3.0.0",
         "readable-stream": "^2.0.0"
+      },
+      "dependencies": {
+        "graceful-fs": {
+          "version": "4.2.1"
+        }
       }
     },
     "archy": {},
@@ -588,9 +689,14 @@
       "dev": true
     },
     "async": {
-      "version": "2.6.2",
+      "version": "2.6.3",
       "requires": {
-        "lodash": "^4.17.11"
+        "lodash": "^4.17.14"
+      },
+      "dependencies": {
+        "lodash": {
+          "version": "4.17.15"
+        }
       }
     },
     "asynckit": {
@@ -898,6 +1004,14 @@
         "emoji-regex": {
           "version": "7.0.3"
         },
+        "fs-extra": {
+          "version": "7.0.1",
+          "requires": {
+            "graceful-fs": "^4.1.2",
+            "jsonfile": "^4.0.0",
+            "universalify": "^0.1.0"
+          }
+        },
         "string-width": {
           "version": "3.1.0",
           "requires": {
@@ -1014,20 +1128,12 @@
       "dev": true
     },
     "compress-commons": {
-      "version": "1.2.2",
+      "version": "2.1.1",
       "requires": {
-        "buffer-crc32": "^0.2.1",
-        "crc32-stream": "^2.0.0",
-        "normalize-path": "^2.0.0",
-        "readable-stream": "^2.0.0"
-      },
-      "dependencies": {
-        "normalize-path": {
-          "version": "2.1.1",
-          "requires": {
-            "remove-trailing-separator": "^1.0.1"
-          }
-        }
+        "buffer-crc32": "^0.2.13",
+        "crc32-stream": "^3.0.1",
+        "normalize-path": "^3.0.0",
+        "readable-stream": "^2.3.6"
       }
     },
     "concat-map": {
@@ -1074,10 +1180,26 @@
       }
     },
     "crc32-stream": {
-      "version": "2.0.0",
+      "version": "3.0.1",
       "requires": {
         "crc": "^3.4.4",
-        "readable-stream": "^2.0.0"
+        "readable-stream": "^3.4.0"
+      },
+      "dependencies": {
+        "readable-stream": {
+          "version": "3.4.0",
+          "requires": {
+            "inherits": "^2.0.3",
+            "string_decoder": "^1.1.1",
+            "util-deprecate": "^1.0.1"
+          }
+        },
+        "string_decoder": {
+          "version": "1.3.0",
+          "requires": {
+            "safe-buffer": "~5.2.0"
+          }
+        }
       }
     },
     "cross-spawn": {
@@ -1627,11 +1749,16 @@
       "version": "1.0.0"
     },
     "fs-extra": {
-      "version": "7.0.1",
+      "version": "8.1.0",
       "requires": {
-        "graceful-fs": "^4.1.2",
+        "graceful-fs": "^4.2.0",
         "jsonfile": "^4.0.0",
         "universalify": "^0.1.0"
+      },
+      "dependencies": {
+        "graceful-fs": {
+          "version": "4.2.1"
+        }
       }
     },
     "fs.realpath": {
@@ -2294,9 +2421,6 @@
     "lodash._reinterpolate": {
       "version": "3.0.0"
     },
-    "lodash.assign": {
-      "version": "4.2.0"
-    },
     "lodash.defaults": {
       "version": "4.2.0"
     },
@@ -2345,9 +2469,6 @@
       "requires": {
         "lodash._reinterpolate": "^3.0.0"
       }
-    },
-    "lodash.toarray": {
-      "version": "4.4.0"
     },
     "lodash.union": {
       "version": "4.6.0"
@@ -4549,9 +4670,6 @@
         "es6-error": "^4.0.1"
       }
     },
-    "remove-trailing-separator": {
-      "version": "1.1.0"
-    },
     "repeat-element": {
       "version": "1.1.3",
       "dev": true
@@ -5239,14 +5357,14 @@
       }
     },
     "unzipper": {
-      "version": "0.9.11",
+      "version": "0.10.3",
       "requires": {
         "big-integer": "^1.6.17",
         "binary": "~0.3.0",
         "bluebird": "~3.4.1",
         "buffer-indexof-polyfill": "~1.0.0",
         "duplexer2": "~0.1.4",
-        "fstream": "~1.0.10",
+        "fstream": "^1.0.12",
         "listenercount": "~1.0.1",
         "readable-stream": "~2.3.6",
         "setimmediate": "~1.0.4"
@@ -5453,11 +5571,27 @@
       "dev": true
     },
     "zip-stream": {
-      "version": "2.0.1",
+      "version": "2.1.2",
       "requires": {
-        "archiver-utils": "^2.0.0",
-        "compress-commons": "^1.2.0",
-        "readable-stream": "^2.0.0"
+        "archiver-utils": "^2.1.0",
+        "compress-commons": "^2.1.1",
+        "readable-stream": "^3.4.0"
+      },
+      "dependencies": {
+        "readable-stream": {
+          "version": "3.4.0",
+          "requires": {
+            "inherits": "^2.0.3",
+            "string_decoder": "^1.1.1",
+            "util-deprecate": "^1.0.1"
+          }
+        },
+        "string_decoder": {
+          "version": "1.3.0",
+          "requires": {
+            "safe-buffer": "~5.2.0"
+          }
+        }
       }
     }
   }
