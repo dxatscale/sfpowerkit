@@ -2,7 +2,29 @@
   "name": "sfpowerkit",
   "description": "Salesforce DevOps Helper Extensions",
   "version": "1.15.0",
-  "author": "Azlam Abdulsalam @azlam-abdulsalam",
+  "author": {
+    "name": "Azlam Abdulsalam",
+    "email": "azlam.abdulsalam@accenture.com",
+    "url": "https://www.linkedin.com/in/azlam/"
+  },
+  "contributors": [
+    {
+      "name": "Genoud Douanla Djatio",
+      "email": "magloiredjatio@gmail.com"
+    },
+    {
+      "name": "Manivasaga Murugesan",
+      "email": "manivasaga.murugesan@accenture.com"
+    },
+    {
+      "name": "Eric Shen",
+      "email": "eric.shen@accenture.com"
+    },
+    {
+      "name": "Paul Davidson",
+      "email": "p.davidson@accenture.com"
+    }
+  ],
   "bugs": "https://github.com/accenture/sfpowerkit/issues",
   "dependencies": {
     "@oclif/command": "1",
