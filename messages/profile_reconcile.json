@@ -3,6 +3,6 @@
   "folderFlagDescription": "path to the folder which contains the profiles to be reconciled,if project contain multiple package directories, please provide a comma seperated list, if omitted, all the package directories will be checked for profiles",
   "nameFlagDescription": "list of profiles to be reconciled. If ommited, all the profiles components will be reconciled.",
   "destFolderFlagDescription": " the destination folder for reconciled profiles, if omitted existing profiles will be reconciled and will be rewritten in the current location",
-  "sourceonlyFlagDescription": "set this flag to reconcile profiles only against component available in the project only. Using this flag will remove all userpermissions from reconciled profiles",
+  "sourceonlyFlagDescription": "set this flag to reconcile profiles only against component available in the project only. Configure ignored perissions in sfdx-project.json file in the array plugins->sfpowerkit->ignoredPermissions.",
   "targetorgFlagDescription": " org against which profiles will be reconciled. this parameter can be ommited if sourceonly flag is set."
 }

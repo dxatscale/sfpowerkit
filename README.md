@@ -53,7 +53,7 @@ OPTIONS
   -f, --folder=folder                               path to the project folder, if the profiles are reconciled in source only mode
   -d, --destfolder=destfolder                       the destination folder for reconciled profiles, if omitted existing profiles will be reconciled and will be rewritten in the current location
   -n, --profilelist=profilelist                     list of profiles to be reconciled. If ommited, all the profiles components will be reconciled.
-  -s, --sourceonly                                  set this flag to reconcile profiles only against component available in the project only. Using this flag will remove all userpermissions from reconciled profiles
+  -s, --sourceonly                                  set this flag to reconcile profiles only against component available in the project only. Configure ignored perissions in sfdx-project.json file in the array plugins->sfpowerkit->ignoredPermissions.
   -u, --targetorg=targetorg                         org against which profiles will be reconciled. this parameter can be ommited if sourceonly flag is used.
   --apiversion=apiversion                           override the api version used for api requests made by this command
   --json                                            format output as json
