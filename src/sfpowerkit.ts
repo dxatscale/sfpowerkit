@@ -37,7 +37,7 @@ export class SfPowerKit {
     if (!SfPowerKit.pluginConfig) {
       const dxProject = await SfdxProject.resolve();
       const project = await dxProject.retrieveSfdxProjectJson();
-      let plugins = project.get("plugins");
+      let plugins = project.get("plugins") || {};
       let sfpowerkitConfig = plugins["sfpowerkit"];
       SfPowerKit.pluginConfig = sfpowerkitConfig || {};
     }
