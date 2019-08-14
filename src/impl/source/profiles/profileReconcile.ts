@@ -41,6 +41,10 @@ export default class ProfileReconcile extends ProfileActions {
       FileUtils.mkDirByPathSync(destFolder);
     }
 
+    if (_.isNil(srcFolders) || srcFolders.length === 0) {
+      srcFolders = await SfPowerKit.getProjectDirectories();
+    }
+
     let result: string[] = [];
     this.metadataFiles = new MetadataFiles();
     srcFolders.forEach(srcFolder => {
@@ -186,7 +190,7 @@ export default class ProfileReconcile extends ProfileActions {
       let validArray = [];
       for (let i = 0; i < profileObj.applicationVisibilities.length; i++) {
         let cmpObj = profileObj.applicationVisibilities[i];
-        let exist = utils.appExists(cmpObj.application);
+        let exist = await utils.appExists(cmpObj.application);
         if (exist) {
           validArray.push(cmpObj);
         }
