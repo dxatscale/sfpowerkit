@@ -1,7 +1,7 @@
 {
   "name": "sfpowerkit",
-  "description": "Salesforce DevOps Helper Extensions",
-  "version": "1.15.0-19",
+  "description": "A Salesforce DX Plugin with multiple functionalities aimed at improving development and operational workflows",
+  "version": "1.16.0",
   "author": "Azlam Abdulsalam @azlam-abdulsalam",
   "bugs": "https://github.com/accenture/sfpowerkit/issues",
   "dependencies": {
