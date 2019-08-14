@@ -143,7 +143,9 @@ export default class Deactivate extends SfdxCommand {
       );
 
       this.ux.log(
-        `Deploying Deactivated Matching Rule with ID  ${deployId.id}`
+        `Deploying Deactivated Matching Rule with ID  ${
+          deployId.id
+        }  to ${this.org.getUsername()}`
       );
       let metadata_deploy_result: DeployResult = await checkDeploymentStatus(
         conn,
@@ -151,7 +153,9 @@ export default class Deactivate extends SfdxCommand {
       );
 
       if (!metadata_deploy_result.success)
-        throw new SfdxError("Unable to deploy the deactivated matching rule");
+        throw new SfdxError(
+          `Unable to deploy the deactivated matching rule : ${metadata_deploy_result.details["componentFailures"]["problem"]}`
+        );
 
       this.ux.log(`Matching Rule for ${this.flags.name} deactivated`);
       return { status: 1 };
