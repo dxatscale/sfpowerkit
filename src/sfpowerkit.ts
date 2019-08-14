@@ -5,6 +5,8 @@ export class SfPowerKit {
   static ux: UX;
   private static defaultFolder: string;
   private static projectDirectories: string[];
+  private static pluginConfig;
+
   public static async getProjectDirectories() {
     if (!SfPowerKit.projectDirectories) {
       SfPowerKit.projectDirectories = [];
@@ -29,5 +31,16 @@ export class SfPowerKit {
   }
   public static setDefaultFolder(defaultFolder: string) {
     SfPowerKit.defaultFolder = defaultFolder;
+  }
+
+  public static async getConfig() {
+    if (!SfPowerKit.pluginConfig) {
+      const dxProject = await SfdxProject.resolve();
+      const project = await dxProject.retrieveSfdxProjectJson();
+      let plugins = project.get("plugins");
+      let sfpowerkitConfig = plugins["sfpowerkit"];
+      SfPowerKit.pluginConfig = sfpowerkitConfig || {};
+    }
+    return SfPowerKit.pluginConfig;
   }
 }
