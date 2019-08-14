@@ -2,7 +2,29 @@
   "name": "sfpowerkit",
   "description": "A Salesforce DX Plugin with multiple functionalities aimed at improving development and operational workflows",
   "version": "1.16.0",
-  "author": "Azlam Abdulsalam @azlam-abdulsalam",
+  "author": {
+    "name": "Azlam Abdulsalam",
+    "email": "azlam.abdulsalam@accenture.com",
+    "url": "https://www.linkedin.com/in/azlam/"
+  },
+  "contributors": [
+    {
+      "name": "Genoud Douanla Djatio",
+      "email": "magloiredjatio@gmail.com"
+    },
+    {
+      "name": "Manivasaga Murugesan",
+      "email": "manivasaga.murugesan@accenture.com"
+    },
+    {
+      "name": "Eric Shen",
+      "email": "eric.shen@accenture.com"
+    },
+    {
+      "name": "Paul Davidson",
+      "email": "p.davidson@accenture.com"
+    }
+  ],
   "bugs": "https://github.com/accenture/sfpowerkit/issues",
   "dependencies": {
     "@oclif/command": "1",
