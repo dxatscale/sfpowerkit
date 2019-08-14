@@ -21,9 +21,9 @@ USAGE
   $ sfdx sfpowerkit:source:profile:retrieve [-f <array>] [-n <array>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -f, --folder=folder                             folder to which the profile will be retrieved, if omitted the project folders will be scanned to find profile folders
-  -n, --profilelist=profilelist                   comma separated list of profiles to be retrieved. If ommited, all the profiles will be retreived
-  -d, --delete                                    set this flag to delete profile files that does not exist in the org.
+  -f, --folder=folder                             retrieve only updated versions of profiles found in this directory, If ignored, all profiles will be retrieved.
+  -n, --profilelist=profilelist                   comma separated list of profiles to be retrieved. Use it for selectively retrieving an existing profile or retrieving a new profile
+  -d, --delete                                    set this flag to delete profile files that does not exist in the org, when retrieving in bulk
   -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
   --apiversion=apiversion                         override the api version used for api requests made by this command
   --json                                          format output as json
@@ -53,7 +53,7 @@ OPTIONS
   -f, --folder=folder                               path to the project folder, if the profiles are reconciled in source only mode
   -d, --destfolder=destfolder                       the destination folder for reconciled profiles, if omitted existing profiles will be reconciled and will be rewritten in the current location
   -n, --profilelist=profilelist                     list of profiles to be reconciled. If ommited, all the profiles components will be reconciled.
-  -s, --sourceonly                                  set this flag to reconcile profiles only against component available in the project only. Using this flag will remove all userpermissions from reconciled profiles
+  -s, --sourceonly                                  set this flag to reconcile profiles only against component available in the project only. Configure ignored perissions in sfdx-project.json file in the array plugins->sfpowerkit->ignoredPermissions.
   -u, --targetorg=targetorg                         org against which profiles will be reconciled. this parameter can be ommited if sourceonly flag is used.
   --apiversion=apiversion                           override the api version used for api requests made by this command
   --json                                            format output as json

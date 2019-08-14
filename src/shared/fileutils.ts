@@ -86,7 +86,11 @@ export default class FileUtils {
       try {
         fs.mkdirSync(curDir);
       } catch (err) {
-        if (err.code !== "EEXIST" && err.code !== "EPERM") {
+        if (
+          err.code !== "EEXIST" &&
+          err.code !== "EPERM" &&
+          err.code !== "EISDIR"
+        ) {
           throw err;
         }
       }
