@@ -34,19 +34,7 @@ export default class Generatepatch extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:source:picklist:generatepatch -p sfpowerkit_test -d force-app/main/default/objects/ -f
-    Scanning for fields of type picklist
-    Found 2 fields of type picklist
-    Processing and adding the following fields to patch
-    Copied Original to Patch:         force-app\main\default\objects\Case\fields\test_standard2__c.field-meta.xml
-    Modified Original in Packaging:         force-app\main\default\objects\Case\fields\test_standard2__c.field-meta.xml
-    Copied Original to Patch:         force-app\main\default\objects\Case\fields\test_standard__c.field-meta.xml
-    Added  2 fields of field type picklist into patch after'removing fields picklist fields in cmdt objects
-    Added  1 fields of field type picklist that have standard value sets as controlling types
-    Source was successfully converted to Metadata API format and written to the location: C:\Projects\sfpowerkit_test\temp_sfpowerkit\mdapi
-    Generating static resource file : force-app/main/default/staticresources/sfpowerkit_test_picklist.resource-meta.xml
-    Patch sfpowerkit_test_picklist generated successfully.
-  `
+    `$ sfdx sfpowerkit:source:picklist:generatepatch -p sfpowerkit_test -d force-app/main/default/objects/ -f`
   ];
 
   protected static flagsConfig = {
@@ -69,6 +57,9 @@ export default class Generatepatch extends SfdxCommand {
       required: false,
       char: "r",
       description: messages.getMessage("fixRecordTypes")
+    }),
+    apiversion: flags.builtin({
+      description: messages.getMessage("apiversion")
     })
   };
 
@@ -90,6 +81,8 @@ export default class Generatepatch extends SfdxCommand {
       packageToBeUsed = getDefaultPackageInfo(projectJson);
     }
 
+    this.flags.apiversion = this.flags.apiversion || "46.0";
+
     //set objects directory
     let objectsDirPath;
     if (this.flags.objectsdir) objectsDirPath = this.flags.objectsdir;
@@ -97,18 +90,22 @@ export default class Generatepatch extends SfdxCommand {
       objectsDirPath = packageToBeUsed.path + `/main/default/objects/`;
     }
 
-    await this.gemeratePatchForCustomPicklistField(
+    let status = await this.gemeratePatchForCustomPicklistField(
       objectsDirPath,
       this.flags.fixstandardvalueset
     );
+
+    if (!status) return 1;
 
     this.ux.log(
       "--------------------------------------------------------------------------------"
     );
 
     if (this.flags.fixrecordtypes) {
-      await this.gemeratePatchForBusinessProcess(objectsDirPath);
-      await this.gemeratePatchForRecordTypes(objectsDirPath);
+      let status = await this.gemeratePatchForBusinessProcess(objectsDirPath);
+      if (!status) return 1;
+      status = await this.gemeratePatchForRecordTypes(objectsDirPath);
+      if (!status) return 1;
     }
 
     // sfdx project json file running force source command
@@ -120,7 +117,7 @@ export default class Generatepatch extends SfdxCommand {
           }
         ],
         "namespace": "",
-        "sourceApiVersion": "46.0"
+        "sourceApiVersion": "${this.flags.apiversion}"
       }`;
 
     fs.outputFileSync("temp_sfpowerkit/sfdx-project.json", sfdx_project_json);
@@ -191,7 +188,7 @@ export default class Generatepatch extends SfdxCommand {
   private async gemeratePatchForCustomPicklistField(
     objectsDirPath: string,
     isStandardValueSetToBeFixed: boolean
-  ) {
+  ): Promise<boolean> {
     if (isStandardValueSetToBeFixed) {
       this.ux
         .log(`Warning, your package source code will be modified to remove references to standard value set and will be 
@@ -213,9 +210,14 @@ export default class Generatepatch extends SfdxCommand {
       "<type>MultiselectPicklist</type>",
       ".xml"
     );
-    
-    if (customFieldsWithMultiPicklist && customFieldsWithMultiPicklist.length > 0) {
-      customFieldsWithPicklist = customFieldsWithPicklist.concat(customFieldsWithMultiPicklist);
+
+    if (
+      customFieldsWithMultiPicklist &&
+      customFieldsWithMultiPicklist.length > 0
+    ) {
+      customFieldsWithPicklist = customFieldsWithPicklist.concat(
+        customFieldsWithMultiPicklist
+      );
     }
 
     if (customFieldsWithPicklist && customFieldsWithPicklist.length > 0) {
@@ -234,9 +236,15 @@ export default class Generatepatch extends SfdxCommand {
       for (const file of customFieldsWithPicklist) {
         const parser = new xml2js.Parser({ explicitArray: false });
         const parseString = util.promisify(parser.parseString);
-        let field_metadata = await parseString(
-          fs.readFileSync(path.resolve(file))
-        );
+        let field_metadata;
+        try {
+          field_metadata = await parseString(
+            fs.readFileSync(path.resolve(file))
+          );
+        } catch (e) {
+          this.ux.log(`Unable to parse file ${file} due to ${e}`);
+          return Promise.reject(e);
+        }
 
         let controllingField: string = (
           field_metadata.CustomField.valueSet || {}
@@ -279,9 +287,12 @@ export default class Generatepatch extends SfdxCommand {
           `Modified  ${modified_source_count} fields of field type picklist that have standard value sets as controlling types in packaging folder`
         );
     }
+    return Promise.resolve(true);
   }
 
-  private async gemeratePatchForRecordTypes(objectsDirPath: string) {
+  private async gemeratePatchForRecordTypes(
+    objectsDirPath: string
+  ): Promise<boolean> {
     this.ux
       .log(`Warning, your package source code will be modified to remove references to standard value set and the orginal source code
     will be  added into the patch`);
@@ -306,9 +317,15 @@ export default class Generatepatch extends SfdxCommand {
 
         const parser = new xml2js.Parser({ explicitArray: false });
         const parseString = util.promisify(parser.parseString);
-        let recordtype_metadata = await parseString(
-          fs.readFileSync(path.resolve(file))
-        );
+        let recordtype_metadata;
+        try {
+          recordtype_metadata = await parseString(
+            fs.readFileSync(path.resolve(file))
+          );
+        } catch (e) {
+          this.ux.log(`Unable to parse file ${file} due to ${e}`);
+          return false;
+        }
 
         this.ux.log("Copied Original to Patch:         " + file);
         diffUtils.copyFile(file, "temp_sfpowerkit");
@@ -325,9 +342,12 @@ export default class Generatepatch extends SfdxCommand {
         `Modified  ${modified_source_count} RecordTypes in packaging folder`
       );
     }
+    return true;
   }
 
-  private async gemeratePatchForBusinessProcess(objectsDirPath: string) {
+  private async gemeratePatchForBusinessProcess(
+    objectsDirPath: string
+  ): Promise<boolean> {
     let patch_value = {
       fullName: "New",
       default: "true"
@@ -357,9 +377,15 @@ export default class Generatepatch extends SfdxCommand {
 
         const parser = new xml2js.Parser({ explicitArray: false });
         const parseString = util.promisify(parser.parseString);
-        let businessProcess_metadata = await parseString(
-          fs.readFileSync(path.resolve(file))
-        );
+        let businessProcess_metadata;
+        try {
+          businessProcess_metadata = await parseString(
+            fs.readFileSync(path.resolve(file))
+          );
+        } catch (e) {
+          this.ux.log(`Unable to parse file ${file} due to ${e}`);
+          return false;
+        }
 
         this.ux.log("Copied Original to Patch:         " + file);
         diffUtils.copyFile(file, "temp_sfpowerkit");
@@ -377,5 +403,6 @@ export default class Generatepatch extends SfdxCommand {
         `Modified  ${modified_source_count} BusinessProcess in packaging folder`
       );
     }
+    return true;
   }
 }

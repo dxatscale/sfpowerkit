@@ -63,7 +63,9 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
   public constructor(public org: Org, private debugFlag?: boolean) {
     super(org);
     super.setQuery(QUERY);
-    this.conn = this.org.getConnection();
+    if (this.org !== undefined) {
+      this.conn = this.org.getConnection();
+    }
   }
 
   public async loadSupportedPermissions() {
@@ -157,6 +159,9 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
         };
         if (profileObj.userPermissions === undefined) {
           profileObj.userPermissions = new Array();
+        }
+        if (!Array.isArray(profileObj.userPermissions)) {
+          profileObj.userPermissions = [profileObj.userPermissions];
         }
         profileObj.userPermissions.push(newPermission);
       }

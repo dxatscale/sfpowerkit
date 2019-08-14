@@ -129,20 +129,8 @@ export default class Merge extends SfdxCommand {
       }
     }
 
-    if (_.isNil(argFolder) || argFolder.length === 0) {
-      argFolder = [];
-      const dxProject = await SfdxProject.resolve();
-      const project = await dxProject.retrieveSfdxProjectJson();
-
-      let packages = (project.get("packageDirectories") as any[]) || [];
-      packages.forEach(element => {
-        argFolder.push(element.path);
-        if (element.default) {
-          SfPowerKit.defaultFolder = element.path;
-        }
-      });
-    } else {
-      SfPowerKit.defaultFolder = argFolder[0];
+    if (!_.isNil(argFolder) && argFolder.length !== 0) {
+      SfPowerKit.setDefaultFolder(argFolder[0]);
     }
 
     const profileUtils = new ProfileMerge(

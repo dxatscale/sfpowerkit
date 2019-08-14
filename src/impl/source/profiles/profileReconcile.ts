@@ -19,6 +19,7 @@ import Profile, { ProfileFieldLevelSecurity } from "../../metadata/schema";
 import util = require("util");
 import _ from "lodash";
 import ProfileActions from "./profileActions";
+import FileUtils from "../../../shared/fileutils";
 
 const nonArayProperties = [
   "custom",
@@ -33,8 +34,13 @@ export default class ProfileReconcile extends ProfileActions {
 
   public async reconcile(
     srcFolders: string[],
-    profileList: string[]
+    profileList: string[],
+    destFolder: string
   ): Promise<string[]> {
+    if (!_.isNil(destFolder)) {
+      FileUtils.mkDirByPathSync(destFolder);
+    }
+
     let result: string[] = [];
     this.metadataFiles = new MetadataFiles();
     srcFolders.forEach(srcFolder => {
@@ -46,7 +52,9 @@ export default class ProfileReconcile extends ProfileActions {
       return element + METADATA_INFO.Profile.sourceExtension;
     });
 
-    await this.profileRetriever.loadSupportedPermissions();
+    if (!MetadataFiles.sourceOnly) {
+      await this.profileRetriever.loadSupportedPermissions();
+    }
     for (let count = 0; count < METADATA_INFO.Profile.files.length; count++) {
       let profileComponent = METADATA_INFO.Profile.files[count];
       if (
@@ -68,13 +76,15 @@ export default class ProfileReconcile extends ProfileActions {
 
         profileObj = await this.removePermissions(profileObj);
 
-        //Manage licences
-        let licenceUtils = UserLicenseRetriever.getInstance(this.org);
-        const isSupportedLicence = await licenceUtils.userLicenseExists(
-          profileObj.userLicense
-        );
-        if (!isSupportedLicence) {
-          delete profileObj.userLicense;
+        if (!MetadataFiles.sourceOnly) {
+          //Manage licences
+          let licenceUtils = UserLicenseRetriever.getInstance(this.org);
+          const isSupportedLicence = await licenceUtils.userLicenseExists(
+            profileObj.userLicense
+          );
+          if (!isSupportedLicence) {
+            delete profileObj.userLicense;
+          }
         }
 
         // remove unsupported userPermission
@@ -95,19 +105,36 @@ export default class ProfileReconcile extends ProfileActions {
           );
         }
 
-        if (
-          profileObj.userPermissions !== undefined &&
-          profileObj.userPermissions.length > 0
-        ) {
-          //Remove permission that are not present in the target org
-          profileObj.userPermissions = profileObj.userPermissions.filter(
-            permission => {
-              let supported = this.profileRetriever.supportedPermissions.includes(
-                permission.name
-              );
-              return supported;
-            }
-          );
+        //IS sourceonly, use ignorePermission set in sfdxProject.json file
+        if (MetadataFiles.sourceOnly) {
+          let pluginConfig = await SfPowerKit.getConfig();
+          let ignorePermissions = pluginConfig.ignoredPermissions || [];
+          if (
+            profileObj.userPermissions !== undefined &&
+            profileObj.userPermissions.length > 0
+          ) {
+            profileObj.userPermissions = profileObj.userPermissions.filter(
+              permission => {
+                let supported = !ignorePermissions.includes(permission.name);
+                return supported;
+              }
+            );
+          }
+        } else {
+          if (
+            profileObj.userPermissions !== undefined &&
+            profileObj.userPermissions.length > 0
+          ) {
+            //Remove permission that are not present in the target org
+            profileObj.userPermissions = profileObj.userPermissions.filter(
+              permission => {
+                let supported = this.profileRetriever.supportedPermissions.includes(
+                  permission.name
+                );
+                return supported;
+              }
+            );
+          }
         }
 
         //UserPermissionUtils.addPermissionDependencies(profileObj);
@@ -141,9 +168,13 @@ export default class ProfileReconcile extends ProfileActions {
 
         let builder = new xml2js.Builder({ rootName: "Profile" });
         let xml = builder.buildObject(profileObj);
-        fs.writeFileSync(profileComponent, xml);
+        let outputFile = profileComponent;
+        if (!_.isNil(destFolder)) {
+          outputFile = path.join(destFolder, path.basename(profileComponent));
+        }
+        fs.writeFileSync(outputFile, xml);
 
-        result.push(profileComponent);
+        result.push(outputFile);
       }
     }
     return result;

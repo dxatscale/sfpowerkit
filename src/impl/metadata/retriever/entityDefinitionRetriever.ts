@@ -3,6 +3,8 @@ import _ from "lodash";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 import { EntityDefinition } from "../schema";
 import { METADATA_INFO } from "../../../shared/metadataInfo";
+import ProfileReconcile from "../../source/profiles/profileReconcile";
+import MetadataFiles from "../../../shared/metadataFiles";
 
 const QUERY =
   "SELECT DurableId, DeveloperName, QualifiedApiName, NamespacePrefix FROM EntityDefinition order by QualifiedApiName";
@@ -103,7 +105,7 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
     if (!_.isNil(METADATA_INFO.CustomObject.components)) {
       found = METADATA_INFO.CustomObject.components.includes(object);
     }
-    if (!found) {
+    if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let objects = await this.getObjectForPermission();
       found = objects.includes(object);

@@ -1,6 +1,6 @@
 import * as _ from "lodash";
-import * as path from 'path';
-import * as fs from 'fs';
+import * as path from "path";
+import * as fs from "fs";
 
 export const SOURCE_EXTENSION_REGEX = /\.[a-zA-Z]+-meta\.xml/;
 const SPLITED_TYPES = {
@@ -93,19 +93,24 @@ export interface MetadataInfo {
 export class MetadataInfoUtils {
   static loadMetadataInfo(): MetadataInfo {
     let metadataInfo: MetadataInfo = {};
-    let resourcePAth= path.join(__dirname,'..','..', 'resources', 'metadatainfo.json')
-    const fileData = fs.readFileSync(resourcePAth, 'utf8');
-    let metadataInfoJSON= JSON.parse(fileData);
+    let resourcePAth = path.join(
+      __dirname,
+      "..",
+      "..",
+      "resources",
+      "metadatainfo.json"
+    );
+    const fileData = fs.readFileSync(resourcePAth, "utf8");
+    let metadataInfoJSON = JSON.parse(fileData);
     metadataInfoJSON.metadataObjects.forEach(metadata => {
       let metadataDescribe = metadata as MetadataDescribe;
-      if(_.isNil(metadata.suffix)){
-        if(metadata.xmlName==="AuraDefinitionBundle"){
-          metadata.suffix="cmp"
-          metadataDescribe.suffix="cmp"
-        }
-        else if(metadata.xmlName=="LightningComponentBundle"){
-          metadata.suffix="js"
-          metadataDescribe.suffix="js"
+      if (_.isNil(metadata.suffix)) {
+        if (metadata.xmlName === "AuraDefinitionBundle") {
+          metadata.suffix = "cmp";
+          metadataDescribe.suffix = "cmp";
+        } else if (metadata.xmlName == "LightningComponentBundle") {
+          metadata.suffix = "js";
+          metadataDescribe.suffix = "js";
         }
       }
       metadataDescribe.sourceExtension = `.${metadata.suffix}-meta.xml`;
@@ -130,9 +135,7 @@ export class MetadataInfoUtils {
             childDescribe.inFolder = false;
             childDescribe.metaFile = false;
             childDescribe.isChildComponent = true;
-            childDescribe.sourceExtension = `.${
-              SPLITED_TYPES[element].suffix
-            }-meta.xml`;
+            childDescribe.sourceExtension = `.${SPLITED_TYPES[element].suffix}-meta.xml`;
             metadataInfo[childDescribe.xmlName] = childDescribe;
           }
         });
@@ -143,13 +146,12 @@ export class MetadataInfoUtils {
   }
 
   static getMetadataName(metadataFile: string): string {
-    let matcher=metadataFile.match(SOURCE_EXTENSION_REGEX);
-    let extension="";
-    if(matcher){
+    let matcher = metadataFile.match(SOURCE_EXTENSION_REGEX);
+    let extension = "";
+    if (matcher) {
       extension = matcher[0];
-    }
-    else{
-      extension=path.parse(metadataFile).ext;
+    } else {
+      extension = path.parse(metadataFile).ext;
     }
     //SfPowerKit.ux.log(extension);
     let metadataName = "";

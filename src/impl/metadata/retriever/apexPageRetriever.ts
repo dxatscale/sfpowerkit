@@ -3,6 +3,8 @@ import { Org } from "@salesforce/core";
 import _ from "lodash";
 import { METADATA_INFO } from "../../../shared/metadataInfo";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
+import ProfileReconcile from "../../source/profiles/profileReconcile";
+import MetadataFiles from "../../../shared/metadataFiles";
 
 const QUERY = "Select Id, Name, NameSpacePrefix From ApexPage";
 export default class ApexPageRetriever extends BaseMetadataRetriever<ApexPage> {
@@ -49,7 +51,7 @@ export default class ApexPageRetriever extends BaseMetadataRetriever<ApexPage> {
     if (!_.isNil(METADATA_INFO.ApexPage.components)) {
       found = METADATA_INFO.ApexPage.components.includes(page);
     }
-    if (!found) {
+    if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let pages = await this.getPages();
       let foundPage = pages.find(p => {

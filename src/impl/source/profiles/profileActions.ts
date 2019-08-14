@@ -13,7 +13,9 @@ export default abstract class ProfileActions {
   protected profileRetriever: ProfileRetriever;
 
   public constructor(public org: Org, debugFlag?: boolean) {
-    this.conn = this.org.getConnection();
+    if (this.org !== undefined) {
+      this.conn = this.org.getConnection();
+    }
     this.debugFlag = debugFlag;
     this.profileRetriever = new ProfileRetriever(org, debugFlag);
   }
@@ -31,10 +33,11 @@ export default abstract class ProfileActions {
       updated: []
     };
     let metadataFiles = METADATA_INFO.Profile.files || [];
+
     //generate path for new profiles
     let profilePath = path.join(
       process.cwd(),
-      SfPowerKit.defaultFolder,
+      await SfPowerKit.getDefaultFolder(),
       "main",
       "default",
       "profiles"
@@ -51,8 +54,9 @@ export default abstract class ProfileActions {
       for (let i = 0; i < profileNames.length; i++) {
         let profileName = profileNames[i];
         let found = false;
-        for (let j = 0; j < METADATA_INFO.Profile.files.length; j++) {
-          let profileComponent = METADATA_INFO.Profile.files[j];
+
+        for (let j = 0; j < metadataFiles.length; j++) {
+          let profileComponent = metadataFiles[j];
           let oneName = path.basename(
             profileComponent,
             METADATA_INFO.Profile.sourceExtension

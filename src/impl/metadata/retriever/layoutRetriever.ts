@@ -4,6 +4,8 @@ import { METADATA_INFO } from "../../../shared/metadataInfo";
 import _ from "lodash";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 import EntityDefinitionRetriever from "./entityDefinitionRetriever";
+import ProfileReconcile from "../../source/profiles/profileReconcile";
+import MetadataFiles from "../../../shared/metadataFiles";
 
 const QUERY =
   "SELECT Id, Name, EntityDefinitionId, NamespacePrefix From Layout ";
@@ -78,7 +80,7 @@ export default class LayoutRetriever extends BaseMetadataRetriever<Layout> {
     if (!_.isNil(METADATA_INFO.Layout.components)) {
       found = METADATA_INFO.Layout.components.includes(layout);
     }
-    if (!found) {
+    if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let layouts = await this.getLayouts();
       let foundLayout = layouts.find(l => {

@@ -21,25 +21,53 @@ export default class ProfileSync extends ProfileActions {
     deleted: string[];
     updated: string[];
   }> {
-    if (this.debugFlag) SfPowerKit.ux.log("Retrieving profiles");
+    if (this.debugFlag) {
+      SfPowerKit.ux.log("Retrieving profiles");
+      SfPowerKit.ux.log("Requested  profiles are..");
+      SfPowerKit.ux.logJson(profiles);
+      SfPowerKit.ux.log("Retrieving profiles");
+    }
+
+    let fetchNewProfiles = _.isNil(srcFolders) || srcFolders.length === 0;
+    if (fetchNewProfiles) {
+      srcFolders = await SfPowerKit.getProjectDirectories();
+    }
+
     this.metadataFiles = new MetadataFiles();
+
+    if (this.debugFlag) {
+      SfPowerKit.ux.log("Source Folders are");
+      SfPowerKit.ux.logJson(srcFolders);
+    }
+
     for (let i = 0; i < srcFolders.length; i++) {
       let srcFolder = srcFolders[i];
       let normalizedPath = path.join(process.cwd(), srcFolder);
       this.metadataFiles.loadComponents(normalizedPath);
     }
+
     let profileList: string[] = [];
     let profileNames: string[] = [];
     let profilePathAssoc = {};
     let profileStatus = await this.getProfileFullNamesWithLocalStatus(profiles);
-    let metadataFiles = _.union(profileStatus.added, profileStatus.updated);
+    if (this.debugFlag) SfPowerKit.ux.logJson(profileStatus);
+    let metadataFiles = profileStatus.updated || [];
+    if (fetchNewProfiles) {
+      metadataFiles = _.union(profileStatus.added, profileStatus.updated);
+    } else {
+      metadataFiles = profileStatus.added;
+    }
     metadataFiles.sort();
+
+    if (this.debugFlag) SfPowerKit.ux.logJson(metadataFiles);
+
     for (var i = 0; i < metadataFiles.length; i++) {
       var profileComponent = metadataFiles[i];
       var profileName = path.basename(
         profileComponent,
         METADATA_INFO.Profile.sourceExtension
       );
+
       var supported = !unsupportedprofiles.includes(profileName);
       if (supported) {
         profilePathAssoc[profileName] = profileComponent;
