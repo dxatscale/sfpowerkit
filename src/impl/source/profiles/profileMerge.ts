@@ -632,7 +632,7 @@ export default class ProfileMerge extends ProfileActions {
             SfPowerKit.ux.log("New Profile " + profileObjFromServer.fullName);
         }
 
-        await this.profileRetriever.writeProfile(profileObj, filePath);
+        await ProfileRetriever.writeProfile(profileObj, filePath);
 
         if (this.debugFlag)
           SfPowerKit.ux.log("Profile " + profileObj.fullName + " merged");

@@ -6,6 +6,7 @@ import { METADATA_INFO } from "../../../shared/metadataInfo";
 import Profile from "../../../impl/metadata/schema";
 import _ from "lodash";
 import ProfileActions from "./profileActions";
+import ProfileRetriever from "../../metadata/retriever/profileRetriever";
 
 const unsupportedprofiles = [];
 
@@ -96,7 +97,7 @@ export default class ProfileSync extends ProfileActions {
       for (var count = 0; count < metadataList.length; count++) {
         var profileObj = metadataList[count] as Profile;
 
-        await this.profileRetriever.writeProfile(
+        await ProfileRetriever.writeProfile(
           profileObj,
           profilePathAssoc[profileObj.fullName]
         );

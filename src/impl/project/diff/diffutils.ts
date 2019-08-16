@@ -1,7 +1,6 @@
 import MetadataFiles from "../../../shared/metadataFiles";
 
-const util = require("util");
-const exec = util.promisify(require("child_process").exec);
+const { spawnSync } = require("child_process");
 
 import * as xml2js from "xml2js";
 import * as path from "path";
@@ -13,6 +12,9 @@ import {
   METADATA_INFO
 } from "../../../shared/metadataInfo";
 import FileUtils from "../../../shared/fileutils";
+import _ from "lodash";
+import ProfileDiff from "../../project/diff/profileDiff";
+import PermsetDiff from "../../project/diff/permsetDiff";
 
 const pairStatResources = METADATA_INFO.StaticResource.directoryName;
 const pairStatResourcesRegExp = new RegExp(pairStatResources);
@@ -23,9 +25,25 @@ const pairAuaraRegExp = new RegExp(
 const deleteNotSupported = ["RecordType"];
 const LWC_IGNORE_FILES = ["jsconfig.json", ".eslintrc.json"];
 
+const UNSPLITED_METADATA_EXTENSION = [
+  ".workflow-meta.xml",
+  ".sharingRules-meta.xml",
+  ".labels-meta.xml",
+  ".permissionset-meta.xml",
+  ".profile-meta.xml"
+];
+
+export interface DiffFileStatus {
+  revisionFrom: string;
+  revisionTo: string;
+  path: string;
+  status: string;
+  renamedPath?: string;
+}
+
 export interface DiffFile {
-  deleted: string[];
-  addedEdited: string[];
+  deleted: DiffFileStatus[];
+  addedEdited: DiffFileStatus[];
 }
 export default class DiffUtil {
   public constructor(
@@ -54,20 +72,22 @@ export default class DiffUtil {
       data = fs.readFileSync(diffFilePath, encoding);
     } else {
       data = await this.execShelCommand(
-        "git diff --raw " + this.revisionFrom + "..." + this.revisionTo
+        "git  diff --raw  " + this.revisionFrom + "..." + this.revisionTo
       );
     }
-
+    let destructivePackageObj: any[] = new Array();
     let content = data.split(sepRegex);
     let diffFile: DiffFile = this.parseContent(content);
     let filesToCopy = diffFile.addedEdited;
     let deletedFiles = diffFile.deleted;
     deletedFiles = deletedFiles.filter(deleted => {
       let found = false;
-      let deletedMetadata = MetadataFiles.getFullApiNameWithExtension(deleted);
+      let deletedMetadata = MetadataFiles.getFullApiNameWithExtension(
+        deleted.path
+      );
       for (let i = 0; i < filesToCopy.length; i++) {
         let addedOrEdited = MetadataFiles.getFullApiNameWithExtension(
-          filesToCopy[i]
+          filesToCopy[i].path
         );
         if (deletedMetadata === addedOrEdited) {
           found = true;
@@ -83,11 +103,32 @@ export default class DiffUtil {
 
     if (filesToCopy && filesToCopy.length > 0) {
       for (var i = 0; i < filesToCopy.length; i++) {
-        this.copyFile(filesToCopy[i], outputFolder);
+        let filePath = filesToCopy[i].path;
+        let matcher = filePath.match(SOURCE_EXTENSION_REGEX);
+        let extension = "";
+        if (matcher) {
+          extension = matcher[0];
+        } else {
+          extension = path.parse(filePath).ext;
+        }
+        if (UNSPLITED_METADATA_EXTENSION.includes(extension)) {
+          //handle unsplited files
+          await this.handleUnsplitedMetadata(
+            filesToCopy[i],
+            outputFolder,
+            destructivePackageObj
+          );
+        } else {
+          this.copyFile(filePath, outputFolder);
+        }
       }
     }
     if (deletedFiles && deletedFiles.length > 0) {
-      await this.createDestructiveChanges(deletedFiles, outputFolder);
+      await this.createDestructiveChanges(
+        deletedFiles,
+        outputFolder,
+        destructivePackageObj
+      );
     }
 
     try {
@@ -112,6 +153,7 @@ export default class DiffUtil {
     const tabRegEx = /\t/;
     const deletedFileRegEx = new RegExp(/\sD\t/);
     const lineBreakRegEx = /\r?\n|\r|( $)/;
+    const editedFileRegEx = new RegExp(/\sM\t/);
 
     var diffFile: DiffFile = {
       deleted: [],
@@ -129,26 +171,143 @@ export default class DiffUtil {
         finalPath = finalPath.trim();
         finalPath = finalPath.replace("\\303\\251", "é");
 
+        let revisionPart = lineParts[0].split(/\t|\s/);
+
         if (deletedFileRegEx.test(fileContents[i])) {
           //Deleted
-          diffFile.deleted.push(finalPath);
+          diffFile.deleted.push({
+            revisionFrom: revisionPart[2].substring(0, 9),
+            revisionTo: revisionPart[3].substring(0, 9),
+            path: finalPath,
+            status: "D"
+          });
         } else {
           // Added or edited
-          diffFile.addedEdited.push(finalPath);
+          let status = "A";
+          if (editedFileRegEx.test(fileContents[i])) {
+            status = "M";
+          }
+          diffFile.addedEdited.push({
+            revisionFrom: revisionPart[2].substring(0, 9),
+            revisionTo: revisionPart[3].substring(0, 9),
+            path: finalPath,
+            status: status
+          });
         }
       } else if (renamedRegEx.test(fileContents[i])) {
         var lineParts = fileContents[i].split(renamedRegEx);
 
         var pathsParts = path.join(".", lineParts[1].trim());
         pathsParts = pathsParts.replace("\\303\\251", "é");
+        let revisionPart = lineParts[0].split(/\t|\s/);
 
         var paths = pathsParts.split(tabRegEx);
-        var finalPath = paths[1];
 
-        diffFile.addedEdited.push(finalPath);
+        diffFile.addedEdited.push({
+          revisionFrom: "000000000",
+          revisionTo: revisionPart[3],
+          renamedPath: paths[0].trim(),
+          path: paths[1].trim(),
+          status: "M"
+        });
+
+        //allow deletion of renamed components
+        diffFile.deleted.push({
+          revisionFrom: revisionPart[2],
+          revisionTo: "000000000",
+          path: paths[0].trim(),
+          status: "D"
+        });
       }
     }
     return diffFile;
+  }
+
+  public async handleUnsplitedMetadata(
+    diffFile: DiffFileStatus,
+    outputFolder: string,
+    destructivePackageObj: any[]
+  ) {
+    let content1 = "";
+    let content2 = "";
+
+    try {
+      content1 = await this.execShelCommand(
+        `git  show --format=raw  ${diffFile.revisionFrom}`
+      );
+    } catch (e) {}
+
+    try {
+      content2 = await this.execShelCommand(
+        `git  show --format=raw  ${diffFile.revisionTo}`
+      );
+    } catch (e) {}
+
+    if (content1 === "") {
+      //The metadata is added
+      this.copyFile(diffFile.path, outputFolder);
+      return;
+    }
+
+    FileUtils.mkDirByPathSync(
+      path.join(outputFolder, path.parse(diffFile.path).dir)
+    );
+
+    if (diffFile.path.endsWith(".profile-meta.xml")) {
+      if (content2 === "") {
+        //The profile is deleted or marked as renamed.
+        //Delete the renamed one
+        let profileType: any = _.find(destructivePackageObj, function(
+          metaType: any
+        ) {
+          return metaType.name === "Profile";
+        });
+        if (profileType === undefined) {
+          profileType = {
+            name: "Profile",
+            members: []
+          };
+          destructivePackageObj.push(profileType);
+        }
+
+        let baseName = path.parse(diffFile.path).base;
+        let profileName = baseName.split(".")[0];
+        profileType.members.push(profileName);
+      } else {
+        await ProfileDiff.generateProfileXml(
+          content1,
+          content2,
+          path.join(outputFolder, diffFile.path)
+        );
+      }
+    }
+    if (diffFile.path.endsWith(".permissionset-meta.xml")) {
+      if (content2 === "") {
+        //Deleted permissionSet
+        let permsetType: any = _.find(destructivePackageObj, function(
+          metaType: any
+        ) {
+          return metaType.name === "PermissionSet";
+        });
+        if (permsetType === undefined) {
+          permsetType = {
+            name: "PermissionSet",
+            members: []
+          };
+          destructivePackageObj.push(permsetType);
+        }
+
+        let baseName = path.parse(diffFile.path).base;
+        let permsetName = baseName.split(".")[0];
+        permsetType.members.push(permsetName);
+      } else {
+        await PermsetDiff.generatePermissionsetXml(
+          content1,
+          content2,
+          path.join(outputFolder, diffFile.path)
+        );
+      }
+    }
   }
 
   public copyFile(filePath: string, outputFolder: string) {
@@ -159,9 +318,9 @@ export default class DiffUtil {
       return;
     }
 
-    let fileName= path.parse(filePath).base;
+    let fileName = path.parse(filePath).base;
     //exclude lwc ignored files
-    if(LWC_IGNORE_FILES.includes(fileName)){
+    if (LWC_IGNORE_FILES.includes(fileName)) {
       return;
     }
 
@@ -278,14 +437,38 @@ export default class DiffUtil {
   }
 
   public async createDestructiveChanges(
-    filePaths: string[],
-    outputFolder: string
+    filePaths: DiffFileStatus[],
+    outputFolder: string,
+    destrucObj: any[]
   ) {
-    let destrucObj = new Array();
+    if (_.isNil(destrucObj)) {
+      destrucObj = new Array();
+    } else {
+      destrucObj = destrucObj.filter(metaType => {
+        return !_.isNil(metaType.members) && metaType.members.length > 0;
+      });
+    }
     let destrucObjPre = new Array();
     //returns root, dir, base and name
     for (let i = 0; i < filePaths.length; i++) {
-      let filePath = filePaths[i];
+      let filePath = filePaths[i].path;
+      let matcher = filePath.match(SOURCE_EXTENSION_REGEX);
+      let extension = "";
+      if (matcher) {
+        extension = matcher[0];
+      } else {
+        extension = path.parse(filePath).ext;
+      }
+      if (UNSPLITED_METADATA_EXTENSION.includes(extension)) {
+        //handle unsplited files
+        await this.handleUnsplitedMetadata(
+          filePaths[i],
+          outputFolder,
+          destrucObj
+        );
+        continue;
+      }
+
       let parsedPath = path.parse(filePath);
       let filename = parsedPath.base;
       let name = MetadataInfoUtils.getMetadataName(filename);
@@ -335,6 +518,15 @@ export default class DiffUtil {
     outputFolder: string,
     fileName: string
   ) {
+    //encure unique component per type
+    for (let i = 0; i < destrucObj.length; i++) {
+      destrucObj[i].members = _.uniq(destrucObj[i].members);
+    }
+
+    destrucObj = destrucObj.filter(metaType => {
+      return !metaType.members || metaType.members.length === 0;
+    });
+
     if (destrucObj.length > 0) {
       let dest = {
         Package: {
@@ -364,11 +556,11 @@ export default class DiffUtil {
       return "";
     }
     const result = await this.execShelCommand(
-      "git diff " +
+      "git diff  " +
         this.revisionFrom.trim() +
         "..." +
         this.revisionTo.trim() +
-        ' -- "' +
+        ' --   "' +
         filePath +
         '"'
     );
@@ -379,8 +571,18 @@ export default class DiffUtil {
     if (command === "") {
       return "";
     }
-    const { stdout } = await exec(command, { maxBuffer: 1024 * 500 });
-    return stdout;
+    let commandParts = command.split(" ");
+    commandParts = commandParts.filter(elem => {
+      return !(elem.trim() === "");
+    });
+    let output = "";
+    if (commandParts.length > 0) {
+      let mainCommand = commandParts[0];
+      const cmdOutput = spawnSync(mainCommand, _.tail(commandParts));
+      const buf = Buffer.from(cmdOutput.stdout);
+      output = buf.toString();
+    }
+    return output;
   }
 
   private buildDestructiveTypeObj(destructiveObj, name, member) {
@@ -416,5 +618,41 @@ export default class DiffUtil {
       typeArrayInObj.push(buildMemberObj);
     }
     return destructiveObj;
+  }
+
+  public static getChangedOrAdded(list1: any[], list2: any[], key: string) {
+    let result: any[] = [];
+    if (_.isNil(list1) && !_.isNil(list2) && list2.length > 0) {
+      result.push(...list2);
+    }
+
+    if (!_.isNil(list1) && !_.isNil(list2)) {
+      list1.forEach(criteria1 => {
+        for (let i = 0; i < list2.length; i++) {
+          let criteria2 = list2[i];
+          if (criteria1[key] === criteria2[key]) {
+            //check if edited
+            if (!_.isEqual(criteria1, criteria2)) {
+              result.push(criteria2);
+            }
+            break;
+          }
+        }
+      });
+
+      //Check for added elements
+
+      let addedElement = _.differenceWith(list2, list1, function(
+        element1: any,
+        element2: any
+      ) {
+        return element1[key] === element2[key];
+      });
+
+      if (!_.isNil(addedElement)) {
+        result.push(...addedElement);
+      }
+    }
+    return result;
   }
 }

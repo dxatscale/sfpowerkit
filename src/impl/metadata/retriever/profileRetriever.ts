@@ -451,7 +451,7 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
     return undefined;
   }
 
-  public async writeProfile(profileObj: Profile, filePath: string) {
+  public static async writeProfile(profileObj: Profile, filePath: string) {
     //Delete eampty arrays
     for (var key in profileObj) {
       if (Array.isArray(profileObj[key])) {
