@@ -46,32 +46,32 @@ export default abstract class ProfileDiff {
       profileObj1.applicationVisibilities,
       profileObj2.applicationVisibilities,
       "application"
-    );
+    ).addedEdited;
     newProObj.classAccesses = DiffUtil.getChangedOrAdded(
       profileObj1.classAccesses,
       profileObj2.classAccesses,
       "apexClass"
-    );
+    ).addedEdited;
     newProObj.customPermissions = DiffUtil.getChangedOrAdded(
       profileObj1.customPermissions,
       profileObj2.customPermissions,
       "name"
-    );
+    ).addedEdited;
     newProObj.externalDataSourceAccesses = DiffUtil.getChangedOrAdded(
       profileObj1.externalDataSourceAccesses,
       profileObj2.externalDataSourceAccesses,
       "externalDataSource"
-    );
+    ).addedEdited;
     newProObj.fieldLevelSecurities = DiffUtil.getChangedOrAdded(
       profileObj1.fieldLevelSecurities,
       profileObj2.fieldLevelSecurities,
       "field"
-    );
+    ).addedEdited;
     newProObj.fieldPermissions = DiffUtil.getChangedOrAdded(
       profileObj1.fieldPermissions,
       profileObj2.fieldPermissions,
       "field"
-    );
+    ).addedEdited;
     newProObj.loginHours = !_.isEqual(
       profileObj1.loginHours,
       profileObj2.loginHours
@@ -89,32 +89,32 @@ export default abstract class ProfileDiff {
       profileObj1.objectPermissions,
       profileObj2.objectPermissions,
       "object"
-    );
+    ).addedEdited;
     newProObj.pageAccesses = DiffUtil.getChangedOrAdded(
       profileObj1.pageAccesses,
       profileObj2.pageAccesses,
       "apexPage"
-    );
+    ).addedEdited;
     newProObj.profileActionOverrides = DiffUtil.getChangedOrAdded(
       profileObj1.profileActionOverrides,
       profileObj2.profileActionOverrides,
       "actionName"
-    );
+    ).addedEdited;
     newProObj.recordTypeVisibilities = DiffUtil.getChangedOrAdded(
       profileObj1.recordTypeVisibilities,
       profileObj2.recordTypeVisibilities,
       "recordType"
-    );
+    ).addedEdited;
     newProObj.tabVisibilities = DiffUtil.getChangedOrAdded(
       profileObj1.tabVisibilities,
       profileObj2.tabVisibilities,
       "tab"
-    );
+    ).addedEdited;
     newProObj.userPermissions = DiffUtil.getChangedOrAdded(
       profileObj1.userPermissions,
       profileObj2.userPermissions,
       "name"
-    );
+    ).addedEdited;
 
     newProObj.layoutAssignments = this.getChangedOrAddedLayouts(
       profileObj1.layoutAssignments,

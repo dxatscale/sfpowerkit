@@ -15,6 +15,9 @@ import FileUtils from "../../../shared/fileutils";
 import _ from "lodash";
 import ProfileDiff from "../../project/diff/profileDiff";
 import PermsetDiff from "../../project/diff/permsetDiff";
+import WorkflowDiff from "./workflowDiff";
+import SharingRuleDiff from "./sharingRuleDiff";
+import CustomLabelsDiff from "./customLabelsDiff";
 
 const pairStatResources = METADATA_INFO.StaticResource.directoryName;
 const pairStatResourcesRegExp = new RegExp(pairStatResources);
@@ -123,6 +126,7 @@ export default class DiffUtil {
         }
       }
     }
+
     if (deletedFiles && deletedFiles.length > 0) {
       await this.createDestructiveChanges(
         deletedFiles,
@@ -252,6 +256,39 @@ export default class DiffUtil {
     FileUtils.mkDirByPathSync(
       path.join(outputFolder, path.parse(diffFile.path).dir)
     );
+
+    if (diffFile.path.endsWith(".workflow-meta.xml")) {
+      //Workflow
+      let baseName = path.parse(diffFile.path).base;
+      let objectName = baseName.split(".")[0];
+      await WorkflowDiff.generateWorkflowXml(
+        content1,
+        content2,
+        path.join(outputFolder, diffFile.path),
+        objectName,
+        destructivePackageObj
+      );
+    }
+
+    if (diffFile.path.endsWith(".sharingRules-meta.xml")) {
+      let baseName = path.parse(diffFile.path).base;
+      let objectName = baseName.split(".")[0];
+      await SharingRuleDiff.generateSharingRulesXml(
+        content1,
+        content2,
+        path.join(outputFolder, diffFile.path),
+        objectName,
+        destructivePackageObj
+      );
+    }
+    if (diffFile.path.endsWith(".labels-meta.xml")) {
+      await CustomLabelsDiff.generateCustomLabelsXml(
+        content1,
+        content2,
+        path.join(outputFolder, diffFile.path),
+        destructivePackageObj
+      );
+    }
 
     if (diffFile.path.endsWith(".profile-meta.xml")) {
       if (content2 === "") {
@@ -511,6 +548,7 @@ export default class DiffUtil {
       outputFolder,
       "destructiveChangesPost.xml"
     );
+    return { destructivePre: destrucObjPre, destructivePost: destrucObj };
   }
 
   writeDestructivechanges(
@@ -524,7 +562,7 @@ export default class DiffUtil {
     }
 
     destrucObj = destrucObj.filter(metaType => {
-      return !metaType.members || metaType.members.length === 0;
+      return metaType.members && metaType.members.length > 0;
     });
 
     if (destrucObj.length > 0) {
@@ -621,22 +659,35 @@ export default class DiffUtil {
   }
 
   public static getChangedOrAdded(list1: any[], list2: any[], key: string) {
-    let result: any[] = [];
+    let result: any = {
+      addedEdited: [],
+      deleted: []
+    };
+
     if (_.isNil(list1) && !_.isNil(list2) && list2.length > 0) {
-      result.push(...list2);
+      result.addedEdited.push(...list2);
+    }
+
+    if (_.isNil(list2) && !_.isNil(list1) && list1.length > 0) {
+      result.deleted.push(...list1);
     }
 
     if (!_.isNil(list1) && !_.isNil(list2)) {
-      list1.forEach(criteria1 => {
+      list1.forEach(elem1 => {
+        let found = false;
         for (let i = 0; i < list2.length; i++) {
-          let criteria2 = list2[i];
-          if (criteria1[key] === criteria2[key]) {
+          let elem2 = list2[i];
+          if (elem1[key] === elem2[key]) {
             //check if edited
-            if (!_.isEqual(criteria1, criteria2)) {
-              result.push(criteria2);
+            if (!_.isEqual(elem1, elem2)) {
+              result.addedEdited.push(elem2);
             }
+            found = true;
             break;
           }
+        }
+        if (!found) {
+          result.deleted.push(elem1);
         }
       });
 
@@ -650,7 +701,7 @@ export default class DiffUtil {
       });
 
       if (!_.isNil(addedElement)) {
-        result.push(...addedElement);
+        result.addedEdited.push(...addedElement);
       }
     }
     return result;

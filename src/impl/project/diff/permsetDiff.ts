@@ -26,7 +26,7 @@ const parser = new xml2js.Parser({
   valueProcessors: [
     function(name) {
       if (name === "true") name = true;
-      if (name.trim() === "false") name = false;
+      if (name === "false") name = false;
       return name;
     }
   ]
@@ -73,55 +73,55 @@ export default abstract class PermsetDiff {
       permsetObj1.applicationVisibilities,
       permsetObj2.applicationVisibilities,
       "application"
-    );
+    ).addedEdited;
     newPermsetObj.classAccesses = DiffUtil.getChangedOrAdded(
       permsetObj1.classAccesses,
       permsetObj2.classAccesses,
       "apexClass"
-    );
+    ).addedEdited;
     newPermsetObj.customPermissions = DiffUtil.getChangedOrAdded(
       permsetObj1.customPermissions,
       permsetObj2.customPermissions,
       "name"
-    );
+    ).addedEdited;
     newPermsetObj.externalDataSourceAccesses = DiffUtil.getChangedOrAdded(
       permsetObj1.externalDataSourceAccesses,
       permsetObj2.externalDataSourceAccesses,
       "externalDataSource"
-    );
+    ).addedEdited;
 
     newPermsetObj.fieldPermissions = DiffUtil.getChangedOrAdded(
       permsetObj1.fieldPermissions,
       permsetObj2.fieldPermissions,
       "field"
-    );
+    ).addedEdited;
 
     newPermsetObj.objectPermissions = DiffUtil.getChangedOrAdded(
       permsetObj1.objectPermissions,
       permsetObj2.objectPermissions,
       "object"
-    );
+    ).addedEdited;
     newPermsetObj.pageAccesses = DiffUtil.getChangedOrAdded(
       permsetObj1.pageAccesses,
       permsetObj2.pageAccesses,
       "apexPage"
-    );
+    ).addedEdited;
 
     newPermsetObj.recordTypeVisibilities = DiffUtil.getChangedOrAdded(
       permsetObj1.recordTypeVisibilities,
       permsetObj2.recordTypeVisibilities,
       "recordType"
-    );
+    ).addedEdited;
     newPermsetObj.tabSettings = DiffUtil.getChangedOrAdded(
       permsetObj1.tabSettings,
       permsetObj2.tabSettings,
       "tab"
-    );
+    ).addedEdited;
     newPermsetObj.userPermissions = DiffUtil.getChangedOrAdded(
       permsetObj1.userPermissions,
       permsetObj2.userPermissions,
       "name"
-    );
+    ).addedEdited;
 
     await PermsetDiff.writePermset(newPermsetObj, outputFilePath);
   }
