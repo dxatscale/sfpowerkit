@@ -1,6 +1,5 @@
 import MetadataFiles from "../../../shared/metadataFiles";
-
-const { spawnSync } = require("child_process");
+import simplegit = require("simple-git/promise");
 
 import * as xml2js from "xml2js";
 import * as path from "path";
@@ -26,7 +25,7 @@ const pairAuaraRegExp = new RegExp(
 );
 
 const deleteNotSupported = ["RecordType"];
-const LWC_IGNORE_FILES = ["jsconfig.json", ".eslintrc.json"];
+const LWC_IGNORE_FILES = ["jsconfig.json", ".eslintrc.json"]; //Enforcing .forceignore will remove this constant
 
 const UNSPLITED_METADATA_EXTENSION = [
   ".workflow-meta.xml",
@@ -44,7 +43,6 @@ export interface DiffFileStatus {
   revisionFrom: string;
   revisionTo: string;
   path: string;
-  status: string;
   renamedPath?: string;
 }
 
@@ -52,6 +50,9 @@ export interface DiffFile {
   deleted: DiffFileStatus[];
   addedEdited: DiffFileStatus[];
 }
+
+const git = simplegit();
+
 export default class DiffUtil {
   destructivePackageObjPre: any[];
   destructivePackageObjPost: any[];
@@ -89,9 +90,7 @@ export default class DiffUtil {
     if (diffFilePath !== null && diffFilePath !== "") {
       data = fs.readFileSync(diffFilePath, encoding);
     } else {
-      data = await this.execShelCommand(
-        "git  diff --raw  " + this.revisionFrom + "..." + this.revisionTo
-      );
+      data = await git.diff(["--raw", this.revisionFrom, this.revisionTo]);
     }
 
     let content = data.split(sepRegex);
@@ -191,20 +190,14 @@ export default class DiffUtil {
           diffFile.deleted.push({
             revisionFrom: revisionPart[2].substring(0, 9),
             revisionTo: revisionPart[3].substring(0, 9),
-            path: finalPath,
-            status: "D"
+            path: finalPath
           });
         } else {
           // Added or edited
-          let status = "A";
-          if (editedFileRegEx.test(fileContents[i])) {
-            status = "M";
-          }
           diffFile.addedEdited.push({
             revisionFrom: revisionPart[2].substring(0, 9),
             revisionTo: revisionPart[3].substring(0, 9),
-            path: finalPath,
-            status: status
+            path: finalPath
           });
         }
       } else if (renamedRegEx.test(fileContents[i])) {
@@ -220,16 +213,14 @@ export default class DiffUtil {
           revisionFrom: "000000000",
           revisionTo: revisionPart[3],
           renamedPath: paths[0].trim(),
-          path: paths[1].trim(),
-          status: "M"
+          path: paths[1].trim()
         });
 
         //allow deletion of renamed components
         diffFile.deleted.push({
           revisionFrom: revisionPart[2],
           revisionTo: "000000000",
-          path: paths[0].trim(),
-          status: "D"
+          path: paths[0].trim()
         });
       }
     }
@@ -289,15 +280,11 @@ export default class DiffUtil {
     let content2 = "";
 
     try {
-      content1 = await this.execShelCommand(
-        `git  show --format=raw  ${diffFile.revisionFrom}`
-      );
+      content1 = await git.show(["--raw", diffFile.revisionFrom]);
     } catch (e) {}
 
     try {
-      content2 = await this.execShelCommand(
-        `git  show --format=raw  ${diffFile.revisionTo}`
-      );
+      content2 = await git.show(["--raw", diffFile.revisionTo]);
     } catch (e) {}
 
     if (content1 === "") {
@@ -570,7 +557,7 @@ export default class DiffUtil {
         }
         let member = MetadataFiles.getMemberNameFromFilepath(filePath, name);
         if (name === METADATA_INFO.CustomField.xmlName) {
-          let isFormular = await this.isFormularField(filePath);
+          let isFormular = await this.isFormularField(filePaths[i]);
           if (isFormular) {
             this.destructivePackageObjPre = this.buildDestructiveTypeObj(
               this.destructivePackageObjPre,
@@ -628,11 +615,10 @@ export default class DiffUtil {
     outputFolder: string,
     fileName: string
   ) {
-    //encure unique component per type
+    //ensure unique component per type
     for (let i = 0; i < destrucObj.length; i++) {
       destrucObj[i].members = _.uniq(destrucObj[i].members);
     }
-
     destrucObj = destrucObj.filter(metaType => {
       return metaType.members && metaType.members.length > 0;
     });
@@ -655,77 +641,28 @@ export default class DiffUtil {
     }
   }
 
-  async isFormularField(filePath: string): Promise<boolean> {
-    let content = await this.getDeletedGitFileContent(filePath);
+  async isFormularField(diffFile: DiffFileStatus): Promise<boolean> {
+    let content = await git.show(["--raw", diffFile.revisionFrom]);
     let result = content.includes("<formula>");
     return result;
   }
 
-  async getDeletedGitFileContent(filePath: string): Promise<string> {
-    if (this.revisionFrom === "") {
-      return "";
-    }
-    const result = await this.execShelCommand(
-      "git diff  " +
-        this.revisionFrom.trim() +
-        "..." +
-        this.revisionTo.trim() +
-        ' --   "' +
-        filePath +
-        '"'
-    );
-    return result;
-  }
-
-  async execShelCommand(command: string): Promise<string> {
-    if (command === "") {
-      return "";
-    }
-    let commandParts = command.split(" ");
-    commandParts = commandParts.filter(elem => {
-      return !(elem.trim() === "");
-    });
-    let output = "";
-    if (commandParts.length > 0) {
-      let mainCommand = commandParts[0];
-      const cmdOutput = spawnSync(mainCommand, _.tail(commandParts));
-      const buf = Buffer.from(cmdOutput.stdout);
-      output = buf.toString();
-    }
-    return output;
-  }
-
   private buildDestructiveTypeObj(destructiveObj, name, member) {
     let typeIsPresent: boolean = false;
-    let typeIofIndex: number;
-    let typeObj = destructiveObj;
-    for (let i = 0; i < typeObj.length; i++) {
-      for (let j = 0; j < typeObj[i].length; j++) {
-        if (typeObj[i][j].name === name) {
-          typeIsPresent = true;
-          typeIofIndex = i;
-          break;
-        }
+    for (let i = 0; i < destructiveObj.length; i++) {
+      if (destructiveObj[i].name === name) {
+        typeIsPresent = true;
+        destructiveObj.members.push(member);
+        break;
       }
     }
-    let typeArray;
+    let typeNode: any;
     if (typeIsPresent === false) {
-      typeArray = new Array();
-      let buildNameObj = {
-        name: name
+      typeNode = {
+        name: name,
+        members: [member]
       };
-      let buildMemberObj = {
-        members: member
-      };
-      typeArray.push(buildNameObj);
-      typeArray.push(buildMemberObj);
-      destructiveObj.push(typeArray);
-    } else {
-      let typeArrayInObj = destructiveObj[typeIofIndex];
-      let buildMemberObj = {
-        members: member
-      };
-      typeArrayInObj.push(buildMemberObj);
+      destructiveObj.push(typeNode);
     }
     return destructiveObj;
   }
