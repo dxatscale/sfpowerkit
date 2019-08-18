@@ -12,7 +12,7 @@ import {
 import { searchFilesInDirectory } from "../../../../shared/searchFilesInDirectory";
 
 import { zipDirectory } from "../../../../shared/zipDirectory";
-import DiffUtil from "../../../../impl/project/diff/diffutils";
+import MetadataFiles from "../../../../shared/metadataFiles";
 
 var path = require("path");
 const spawn = require("child-process-promise").spawn;
@@ -229,8 +229,6 @@ export default class Generatepatch extends SfdxCommand {
 
       this.ux.log("Processing and adding the following fields to patch");
 
-      let diffUtils = new DiffUtil("0", "0");
-
       let in_patch_count = 0;
       let modified_source_count = 0;
       for (const file of customFieldsWithPicklist) {
@@ -260,7 +258,7 @@ export default class Generatepatch extends SfdxCommand {
             if (isStandardValueSetToBeFixed) {
               in_patch_count++;
               this.ux.log("Copied Original to Patch:         " + file);
-              diffUtils.copyFile(file, "temp_sfpowerkit");
+              MetadataFiles.copyFile(file, "temp_sfpowerkit");
 
               modified_source_count++;
 
@@ -274,7 +272,7 @@ export default class Generatepatch extends SfdxCommand {
           } else {
             in_patch_count++;
             this.ux.log("Copied Original to Patch:         " + file);
-            diffUtils.copyFile(file, "temp_sfpowerkit");
+            MetadataFiles.copyFile(file, "temp_sfpowerkit");
           }
         }
       }
@@ -308,7 +306,6 @@ export default class Generatepatch extends SfdxCommand {
 
       this.ux.log("Processing and adding the following fields to patch");
 
-      let diffUtils = new DiffUtil("0", "0");
       let in_patch_count = 0;
       let modified_source_count = 0;
       for (const file of recordTypes) {
@@ -328,7 +325,7 @@ export default class Generatepatch extends SfdxCommand {
         }
 
         this.ux.log("Copied Original to Patch:         " + file);
-        diffUtils.copyFile(file, "temp_sfpowerkit");
+        MetadataFiles.copyFile(file, "temp_sfpowerkit");
         delete recordtype_metadata.RecordType.picklistValues;
 
         let builder = new xml2js.Builder();
@@ -368,7 +365,6 @@ export default class Generatepatch extends SfdxCommand {
 
       this.ux.log("Processing and adding the following fields to patch");
 
-      let diffUtils = new DiffUtil("0", "0");
       let in_patch_count = 0;
       let modified_source_count = 0;
       for (const file of businessProcess) {
@@ -388,7 +384,7 @@ export default class Generatepatch extends SfdxCommand {
         }
 
         this.ux.log("Copied Original to Patch:         " + file);
-        diffUtils.copyFile(file, "temp_sfpowerkit");
+        MetadataFiles.copyFile(file, "temp_sfpowerkit");
         businessProcess_metadata.BusinessProcess.values = [];
         businessProcess_metadata.BusinessProcess.values.push(patch_value);
 

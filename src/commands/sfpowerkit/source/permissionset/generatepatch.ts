@@ -8,8 +8,8 @@ import {
   getDefaultPackageInfo
 } from "../../../../shared/getPackageInfo";
 import { searchFilesInDirectory } from "../../../../shared/searchFilesInDirectory";
-import DiffUtil from "../../../../impl/project/diff/diffutils";
 import { zipDirectory } from "../../../../shared/zipDirectory";
+import MetadataFiles from "../../../../shared/metadataFiles";
 
 var path = require("path");
 const spawn = require("child-process-promise").spawn;
@@ -86,12 +86,10 @@ export default class Generatepatch extends SfdxCommand {
     if (permissionsetList && permissionsetList.length > 0) {
       this.ux.log("Found " + `${permissionsetList.length}` + " Permissionsets");
 
-      let diffUtils = new DiffUtil("0", "0");
-
       fs.mkdirSync("temp_sfpowerkit");
 
       permissionsetList.forEach(file => {
-        diffUtils.copyFile(file, "temp_sfpowerkit");
+        MetadataFiles.copyFile(file, "temp_sfpowerkit");
       });
 
       var sfdx_project_json: string = `{

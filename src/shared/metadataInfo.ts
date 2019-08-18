@@ -84,10 +84,12 @@ export interface MetadataInfo {
   Dashboard?: MetadataDescribe;
   EmailTemplate?: MetadataDescribe;
   CustomSite?: MetadataDescribe;
-  Permissionset?: MetadataDescribe;
+  PermissionSet?: MetadataDescribe;
   StaticResource?: MetadataDescribe;
   CustomObjectTranslation?: MetadataDescribe;
   AuraDefinitionBundle?: MetadataDescribe;
+  Workflow?: MetadataDescribe;
+  SharingRules?: MetadataDescribe;
 }
 
 export class MetadataInfoUtils {
@@ -171,3 +173,15 @@ export class MetadataInfoUtils {
 }
 
 export const METADATA_INFO = MetadataInfoUtils.loadMetadataInfo();
+export const UNSPLITED_METADATA = [
+  METADATA_INFO.Workflow,
+  METADATA_INFO.SharingRules,
+  METADATA_INFO.CustomLabels,
+  METADATA_INFO.Profile,
+  METADATA_INFO.PermissionSet
+];
+
+export const PROFILE_PERMISSIONSET_EXTENSION = [
+  METADATA_INFO.Profile,
+  METADATA_INFO.PermissionSet
+];

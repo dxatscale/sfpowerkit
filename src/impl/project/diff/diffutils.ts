@@ -4,11 +4,12 @@ import simplegit = require("simple-git/promise");
 import * as xml2js from "xml2js";
 import * as path from "path";
 import * as fs from "fs";
-import * as glob from "glob";
 import {
   SOURCE_EXTENSION_REGEX,
   MetadataInfoUtils,
-  METADATA_INFO
+  METADATA_INFO,
+  UNSPLITED_METADATA,
+  PROFILE_PERMISSIONSET_EXTENSION
 } from "../../../shared/metadataInfo";
 import FileUtils from "../../../shared/fileutils";
 import _ from "lodash";
@@ -18,26 +19,7 @@ import WorkflowDiff from "./workflowDiff";
 import SharingRuleDiff from "./sharingRuleDiff";
 import CustomLabelsDiff from "./customLabelsDiff";
 
-const pairStatResources = METADATA_INFO.StaticResource.directoryName;
-const pairStatResourcesRegExp = new RegExp(pairStatResources);
-const pairAuaraRegExp = new RegExp(
-  METADATA_INFO.AuraDefinitionBundle.directoryName
-);
-
 const deleteNotSupported = ["RecordType"];
-const LWC_IGNORE_FILES = ["jsconfig.json", ".eslintrc.json"]; //Enforcing .forceignore will remove this constant
-
-const UNSPLITED_METADATA_EXTENSION = [
-  ".workflow-meta.xml",
-  ".sharingRules-meta.xml",
-  ".labels-meta.xml",
-  ".permissionset-meta.xml",
-  ".profile-meta.xml"
-];
-const PROFILE_PERMISSIONSET_EXTENSION = [
-  ".permissionset-meta.xml",
-  ".profile-meta.xml"
-];
 
 export interface DiffFileStatus {
   revisionFrom: string;
@@ -52,6 +34,12 @@ export interface DiffFile {
 }
 
 const git = simplegit();
+const unsplitedMetadataExtensions = UNSPLITED_METADATA.map(elem => {
+  return elem.sourceExtension;
+});
+const permissionExtensions = PROFILE_PERMISSIONSET_EXTENSION.map(elem => {
+  return elem.sourceExtension;
+});
 
 export default class DiffUtil {
   destructivePackageObjPre: any[];
@@ -128,11 +116,12 @@ export default class DiffUtil {
         } else {
           extension = path.parse(filePath).ext;
         }
-        if (UNSPLITED_METADATA_EXTENSION.includes(extension)) {
+
+        if (unsplitedMetadataExtensions.includes(extension)) {
           //handle unsplited files
           await this.handleUnsplitedMetadata(filesToCopy[i], outputFolder);
         } else {
-          this.copyFile(filePath, outputFolder);
+          MetadataFiles.copyFile(filePath, outputFolder);
         }
       }
     }
@@ -142,14 +131,14 @@ export default class DiffUtil {
     }
 
     try {
-      this.copyFile(".forceignore", outputFolder);
+      MetadataFiles.copyFile(".forceignore", outputFolder);
     } catch (e) {
       if (e.code !== "EPERM") {
         throw e;
       }
     }
     try {
-      this.copyFile("sfdx-project.json", outputFolder);
+      MetadataFiles.copyFile("sfdx-project.json", outputFolder);
     } catch (e) {
       if (e.code !== "EPERM") {
         throw e;
@@ -165,7 +154,6 @@ export default class DiffUtil {
     const tabRegEx = /\t/;
     const deletedFileRegEx = new RegExp(/\sD\t/);
     const lineBreakRegEx = /\r?\n|\r|( $)/;
-    const editedFileRegEx = new RegExp(/\sM\t/);
 
     var diffFile: DiffFile = {
       deleted: [],
@@ -233,8 +221,8 @@ export default class DiffUtil {
 
     let keys = Object.keys(METADATA_INFO);
     let excludedFiles = _.difference(
-      UNSPLITED_METADATA_EXTENSION,
-      PROFILE_PERMISSIONSET_EXTENSION
+      unsplitedMetadataExtensions,
+      permissionExtensions
     );
 
     keys.forEach(key => {
@@ -289,7 +277,7 @@ export default class DiffUtil {
 
     if (content1 === "") {
       //The metadata is added
-      this.copyFile(diffFile.path, outputFolder);
+      MetadataFiles.copyFile(diffFile.path, outputFolder);
       return;
     }
 
@@ -297,7 +285,7 @@ export default class DiffUtil {
       path.join(outputFolder, path.parse(diffFile.path).dir)
     );
 
-    if (diffFile.path.endsWith(".workflow-meta.xml")) {
+    if (diffFile.path.endsWith(METADATA_INFO.Workflow.sourceExtension)) {
       //Workflow
       let baseName = path.parse(diffFile.path).base;
       let objectName = baseName.split(".")[0];
@@ -311,7 +299,7 @@ export default class DiffUtil {
       );
     }
 
-    if (diffFile.path.endsWith(".sharingRules-meta.xml")) {
+    if (diffFile.path.endsWith(METADATA_INFO.SharingRules.sourceExtension)) {
       let baseName = path.parse(diffFile.path).base;
       let objectName = baseName.split(".")[0];
       await SharingRuleDiff.generateSharingRulesXml(
@@ -323,7 +311,7 @@ export default class DiffUtil {
         this.resultOutput
       );
     }
-    if (diffFile.path.endsWith(".labels-meta.xml")) {
+    if (diffFile.path.endsWith(METADATA_INFO.CustomLabels.sourceExtension)) {
       await CustomLabelsDiff.generateCustomLabelsXml(
         content1,
         content2,
@@ -333,18 +321,18 @@ export default class DiffUtil {
       );
     }
 
-    if (diffFile.path.endsWith(".profile-meta.xml")) {
+    if (diffFile.path.endsWith(METADATA_INFO.Profile.sourceExtension)) {
       if (content2 === "") {
         //The profile is deleted or marked as renamed.
         //Delete the renamed one
         let profileType: any = _.find(this.destructivePackageObjPost, function(
           metaType: any
         ) {
-          return metaType.name === "Profile";
+          return metaType.name === METADATA_INFO.Profile.xmlName;
         });
         if (profileType === undefined) {
           profileType = {
-            name: "Profile",
+            name: METADATA_INFO.Profile.xmlName,
             members: []
           };
           this.destructivePackageObjPost.push(profileType);
@@ -361,17 +349,17 @@ export default class DiffUtil {
         );
       }
     }
-    if (diffFile.path.endsWith(".permissionset-meta.xml")) {
+    if (diffFile.path.endsWith(METADATA_INFO.PermissionSet.sourceExtension)) {
       if (content2 === "") {
         //Deleted permissionSet
         let permsetType: any = _.find(this.destructivePackageObjPost, function(
           metaType: any
         ) {
-          return metaType.name === "PermissionSet";
+          return metaType.name === METADATA_INFO.PermissionSet.xmlName;
         });
         if (permsetType === undefined) {
           permsetType = {
-            name: "PermissionSet",
+            name: METADATA_INFO.PermissionSet.xmlName,
             members: []
           };
           this.destructivePackageObjPost.push(permsetType);
@@ -386,132 +374,6 @@ export default class DiffUtil {
           content2,
           path.join(outputFolder, diffFile.path)
         );
-      }
-    }
-  }
-
-  public copyFile(filePath: string, outputFolder: string) {
-    let copyOutputFolder = outputFolder;
-    if (filePath.startsWith(".")) {
-      // exclude technical files such as .gitignore or .forceignore
-      fs.copyFileSync(filePath, outputFolder);
-      return;
-    }
-
-    let fileName = path.parse(filePath).base;
-    //exclude lwc ignored files
-    if (LWC_IGNORE_FILES.includes(fileName)) {
-      return;
-    }
-
-    let exists = fs.existsSync(path.join(outputFolder, filePath));
-    if (exists) {
-      return;
-    }
-
-    let filePathParts = filePath.split(path.sep);
-
-    if (fs.existsSync(outputFolder) == false) {
-      fs.mkdirSync(outputFolder);
-    }
-    for (let i = 0; i < filePathParts.length - 1; i++) {
-      let folder = filePathParts[i].replace('"', "");
-      outputFolder = path.join(outputFolder, folder);
-      if (fs.existsSync(outputFolder) == false) {
-        fs.mkdirSync(outputFolder);
-      }
-    }
-
-    //let fileName = filePathParts[filePathParts.length - 1].replace('"', "");
-    let associatedFilePattern = "";
-    if (SOURCE_EXTENSION_REGEX.test(filePath)) {
-      associatedFilePattern = filePath.replace(SOURCE_EXTENSION_REGEX, ".*");
-    } else {
-      let extension = path.parse(filePath).ext;
-      associatedFilePattern = filePath.replace(extension, ".*");
-    }
-    let files = glob.sync(associatedFilePattern);
-    for (let i = 0; i < files.length; i++) {
-      if (fs.lstatSync(files[i]).isDirectory() == false) {
-        let oneFilePath = path.join(".", files[i]);
-        let oneFilePathParts = oneFilePath.split(path.sep);
-        fileName = oneFilePathParts[oneFilePathParts.length - 1];
-        let outputPath = path.join(outputFolder, fileName);
-        fs.copyFileSync(files[i], outputPath);
-      }
-    }
-
-    if (
-      filePath.endsWith("Translation-meta.xml") &&
-      filePath.indexOf("globalValueSet") < 0
-    ) {
-      let parentFolder = filePathParts[filePathParts.length - 2];
-      let objectTranslation =
-        parentFolder + METADATA_INFO.CustomObjectTranslation.sourceExtension;
-      let outputPath = path.join(outputFolder, objectTranslation);
-      let sourceFile = filePath.replace(fileName, objectTranslation);
-      if (fs.existsSync(sourceFile) == true) {
-        fs.copyFileSync(sourceFile, outputPath);
-      }
-    }
-
-    //FOR STATIC RESOURCES - WHERE THE CORRESPONDING DIRECTORY + THE ROOT META FILE HAS TO BE INCLUDED
-    if (pairStatResourcesRegExp.test(filePath)) {
-      outputFolder = path.join(".", copyOutputFolder);
-      let srcFolder = ".";
-      let staticRecourceRoot = "";
-      let resourceFile = "";
-      for (let i = 0; i < filePathParts.length; i++) {
-        outputFolder = path.join(outputFolder, filePathParts[i]);
-        srcFolder = path.join(srcFolder, filePathParts[i]);
-        if (filePathParts[i] === METADATA_INFO.StaticResource.directoryName) {
-          let fileOrDirname = filePathParts[i + 1];
-          let fileOrDirnameParts = fileOrDirname.split(".");
-          srcFolder = path.join(srcFolder, fileOrDirnameParts[0]);
-          outputFolder = path.join(outputFolder, fileOrDirnameParts[0]);
-          resourceFile =
-            srcFolder + METADATA_INFO.StaticResource.sourceExtension;
-          METADATA_INFO.StaticResource.sourceExtension;
-          staticRecourceRoot =
-            outputFolder + METADATA_INFO.StaticResource.sourceExtension;
-          if (fs.existsSync(srcFolder)) {
-            if (fs.existsSync(outputFolder) == false) {
-              fs.mkdirSync(outputFolder);
-            }
-          }
-          break;
-        }
-      }
-      if (fs.existsSync(srcFolder)) {
-        FileUtils.copyRecursiveSync(srcFolder, outputFolder);
-      }
-      if (fs.existsSync(resourceFile)) {
-        fs.copyFileSync(resourceFile, staticRecourceRoot);
-      }
-    }
-    //FOR AURA components
-    if (pairAuaraRegExp.test(filePath)) {
-      outputFolder = path.join(".", copyOutputFolder);
-      let srcFolder = ".";
-      for (let i = 0; i < filePathParts.length; i++) {
-        outputFolder = path.join(outputFolder, filePathParts[i]);
-        srcFolder = path.join(srcFolder, filePathParts[i]);
-        if (filePathParts[i] === "aura" || filePathParts[i] === "lwc") {
-          let fileOrDirname = filePathParts[i + 1];
-          let fileOrDirnameParts = fileOrDirname.split(".");
-          srcFolder = path.join(srcFolder, fileOrDirnameParts[0]);
-          outputFolder = path.join(outputFolder, fileOrDirnameParts[0]);
-
-          if (fs.existsSync(srcFolder)) {
-            if (fs.existsSync(outputFolder) == false) {
-              fs.mkdirSync(outputFolder);
-            }
-          }
-          break;
-        }
-      }
-      if (fs.existsSync(srcFolder)) {
-        FileUtils.copyRecursiveSync(srcFolder, outputFolder);
       }
     }
   }
@@ -540,7 +402,7 @@ export default class DiffUtil {
       } else {
         extension = path.parse(filePath).ext;
       }
-      if (UNSPLITED_METADATA_EXTENSION.includes(extension)) {
+      if (unsplitedMetadataExtensions.includes(extension)) {
         //handle unsplited files
         await this.handleUnsplitedMetadata(filePaths[i], outputFolder);
         continue;
@@ -552,7 +414,7 @@ export default class DiffUtil {
       if (name) {
         if (!MetadataFiles.isCustomMetadata(filePath, name)) {
           // avoid to generate destructive for Standard Components
-          //Support on Custom Fields, Custom Objects and Layout for now
+          //Support on Custom Fields and Custom Objects for now
           continue;
         }
         let member = MetadataFiles.getMemberNameFromFilepath(filePath, name);
