@@ -20,7 +20,8 @@ export default class CustomLabelsDiff {
     customLabelsXml1: string,
     customLabelsXml2: string,
     outputFilePath: string,
-    destructivePackageObj: any[]
+    destructivePackageObj: any[],
+    resultOutput: any[]
   ) {
     let customLabelsObj1: any = {};
     let customLabelsObj2: any = {};
@@ -59,7 +60,37 @@ export default class CustomLabelsDiff {
       addedEditedOrDeleted.deleted,
       destructivePackageObj
     );
+
+    CustomLabelsDiff.updateOutput(
+      addedEditedOrDeleted.addedEdited,
+      resultOutput,
+      "Deploy",
+      outputFilePath
+    );
+    CustomLabelsDiff.updateOutput(
+      addedEditedOrDeleted.deleted,
+      resultOutput,
+      "Delete",
+      "destructiveChanges.xml"
+    );
+
     return destructivePackageObj;
+  }
+
+  private static updateOutput(
+    customLabelObj,
+    resultOutput: any[],
+    action,
+    filePath
+  ) {
+    customLabelObj.labels.forEach(elem => {
+      resultOutput.push({
+        action: action,
+        metadataType: "CustomLabel",
+        componentName: elem.fullName,
+        path: filePath
+      });
+    });
   }
 
   private static buildCustomLabelsObj(

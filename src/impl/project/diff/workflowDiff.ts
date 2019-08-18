@@ -21,7 +21,8 @@ export default class WorkflowDiff {
     workflowXml2: string,
     outputFilePath: string,
     objectName: string,
-    destructivePackageObj: any[]
+    destructivePackageObj: any[],
+    resultOutput: any[]
   ) {
     let workflowObj1: any = {};
     let workflowObj2: any = {};
@@ -54,7 +55,84 @@ export default class WorkflowDiff {
       objectName
     );
 
+    WorkflowDiff.updateOutput(
+      addedEditedOrDeleted.addedEdited,
+      resultOutput,
+      objectName,
+      "Deploy",
+      outputFilePath
+    );
+    WorkflowDiff.updateOutput(
+      addedEditedOrDeleted.deleted,
+      resultOutput,
+      objectName,
+      "Delete",
+      "destructiveChanges.xml"
+    );
+
     return destructivePackageObj;
+  }
+
+  private static updateOutput(
+    workflowObj,
+    resultOutput: any[],
+    objectName,
+    action,
+    filePath
+  ) {
+    workflowObj.alerts.forEach(elem => {
+      resultOutput.push({
+        action: action,
+        metadataType: "WorkflowAlert",
+        componentName: `${objectName}.${elem.fullName}`,
+        path: filePath
+      });
+    });
+
+    workflowObj.fieldUpdates.forEach(elem => {
+      resultOutput.push({
+        action: action,
+        metadataType: "WorkflowFieldUpdate",
+        componentName: `${objectName}.${elem.fullName}`,
+        path: filePath
+      });
+    });
+
+    workflowObj.knowledgePublishes.forEach(elem => {
+      resultOutput.push({
+        action: action,
+        metadataType: "WorkflowKnowledgePublish",
+        componentName: `${objectName}.${elem.label}`,
+        path: filePath
+      });
+    });
+
+    workflowObj.outboundMessages.forEach(elem => {
+      resultOutput.push({
+        action: action,
+        metadataType: "WorkflowOutboundMessage",
+        componentName: `${objectName}.${elem.fullName}`,
+        path: filePath
+      });
+    });
+
+    workflowObj.rules.forEach(elem => {
+      resultOutput.push({
+        action: action,
+        metadataType: "WorkflowRule",
+        componentName: `${objectName}.${elem.fullName}`,
+        path: filePath
+      });
+    });
+
+    workflowObj.tasks.forEach(elem => {
+      resultOutput.push({
+        action: action,
+        metadataType: "WorkflowTask",
+        componentName: `${objectName}.${elem.fullName}`,
+        path: filePath
+      });
+    });
   }
 
   private static ensureArray(workflowObj) {

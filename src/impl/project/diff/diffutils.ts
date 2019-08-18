@@ -35,6 +35,10 @@ const UNSPLITED_METADATA_EXTENSION = [
   ".permissionset-meta.xml",
   ".profile-meta.xml"
 ];
+const PROFILE_PERMISSIONSET_EXTENSION = [
+  ".permissionset-meta.xml",
+  ".profile-meta.xml"
+];
 
 export interface DiffFileStatus {
   revisionFrom: string;
@@ -49,6 +53,14 @@ export interface DiffFile {
   addedEdited: DiffFileStatus[];
 }
 export default class DiffUtil {
+  destructivePackageObjPre: any[];
+  destructivePackageObjPost: any[];
+  resultOutput: {
+    action: string;
+    metadataType: string;
+    componentName: string;
+    path: string;
+  }[];
   public constructor(
     private revisionFrom?: string,
     private revisionTo?: string
@@ -59,13 +71,16 @@ export default class DiffUtil {
     if (this.revisionFrom == null) {
       this.revisionFrom = "";
     }
+    this.destructivePackageObjPost = new Array();
+    this.destructivePackageObjPre = new Array();
+    this.resultOutput = [];
   }
 
   public async build(
     diffFilePath: string,
     encoding: string,
     outputFolder: string
-  ): Promise<DiffFile> {
+  ) {
     //const sepRegex=/\t| |\n/;
     const sepRegex = /\n|\r/;
 
@@ -78,7 +93,7 @@ export default class DiffUtil {
         "git  diff --raw  " + this.revisionFrom + "..." + this.revisionTo
       );
     }
-    let destructivePackageObj: any[] = new Array();
+
     let content = data.split(sepRegex);
     let diffFile: DiffFile = this.parseContent(content);
     let filesToCopy = diffFile.addedEdited;
@@ -116,11 +131,7 @@ export default class DiffUtil {
         }
         if (UNSPLITED_METADATA_EXTENSION.includes(extension)) {
           //handle unsplited files
-          await this.handleUnsplitedMetadata(
-            filesToCopy[i],
-            outputFolder,
-            destructivePackageObj
-          );
+          await this.handleUnsplitedMetadata(filesToCopy[i], outputFolder);
         } else {
           this.copyFile(filePath, outputFolder);
         }
@@ -128,11 +139,7 @@ export default class DiffUtil {
     }
 
     if (deletedFiles && deletedFiles.length > 0) {
-      await this.createDestructiveChanges(
-        deletedFiles,
-        outputFolder,
-        destructivePackageObj
-      );
+      await this.createDestructiveChanges(deletedFiles, outputFolder);
     }
 
     try {
@@ -149,7 +156,9 @@ export default class DiffUtil {
         throw e;
       }
     }
-    return diffFile;
+
+    this.buildOutput(outputFolder);
+    return this.resultOutput;
   }
   public parseContent(fileContents): DiffFile {
     const statusRegEx = /\sA\t|\sM\t|\sD\t/;
@@ -227,10 +236,54 @@ export default class DiffUtil {
     return diffFile;
   }
 
+  private buildOutput(outputFolder) {
+    let metadataFiles = new MetadataFiles();
+    metadataFiles.loadComponents(outputFolder);
+
+    let keys = Object.keys(METADATA_INFO);
+    let excludedFiles = _.difference(
+      UNSPLITED_METADATA_EXTENSION,
+      PROFILE_PERMISSIONSET_EXTENSION
+    );
+
+    keys.forEach(key => {
+      if (METADATA_INFO[key].files && METADATA_INFO[key].files.length > 0) {
+        METADATA_INFO[key].files.forEach(filePath => {
+          let matcher = filePath.match(SOURCE_EXTENSION_REGEX);
+          let extension = "";
+          if (matcher) {
+            extension = matcher[0];
+          } else {
+            extension = path.parse(filePath).ext;
+          }
+          if (!excludedFiles.includes(extension)) {
+            let name = FileUtils.getFileNameWithoutExtension(
+              filePath,
+              METADATA_INFO[key].sourceExtension
+            );
+
+            if (METADATA_INFO[key].isChildComponent) {
+              let fileParts = filePath.split(path.sep);
+              let parentName = fileParts[fileParts.length - 3];
+              name = parentName + "." + name;
+            }
+
+            this.resultOutput.push({
+              action: "Deploy",
+              metadataType: METADATA_INFO[key].xmlName,
+              componentName: name,
+              path: filePath
+            });
+          }
+        });
+      }
+    });
+    return this.resultOutput;
+  }
+
   public async handleUnsplitedMetadata(
     diffFile: DiffFileStatus,
-    outputFolder: string,
-    destructivePackageObj: any[]
+    outputFolder: string
   ) {
     let content1 = "";
     let content2 = "";
@@ -266,7 +319,8 @@ export default class DiffUtil {
         content2,
         path.join(outputFolder, diffFile.path),
         objectName,
-        destructivePackageObj
+        this.destructivePackageObjPost,
+        this.resultOutput
       );
     }
 
@@ -278,7 +332,8 @@ export default class DiffUtil {
         content2,
         path.join(outputFolder, diffFile.path),
         objectName,
-        destructivePackageObj
+        this.destructivePackageObjPost,
+        this.resultOutput
       );
     }
     if (diffFile.path.endsWith(".labels-meta.xml")) {
@@ -286,7 +341,8 @@ export default class DiffUtil {
         content1,
         content2,
         path.join(outputFolder, diffFile.path),
-        destructivePackageObj
+        this.destructivePackageObjPost,
+        this.resultOutput
       );
     }
 
@@ -294,7 +350,7 @@ export default class DiffUtil {
       if (content2 === "") {
         //The profile is deleted or marked as renamed.
         //Delete the renamed one
-        let profileType: any = _.find(destructivePackageObj, function(
+        let profileType: any = _.find(this.destructivePackageObjPost, function(
           metaType: any
         ) {
           return metaType.name === "Profile";
@@ -304,7 +360,7 @@ export default class DiffUtil {
             name: "Profile",
             members: []
           };
-          destructivePackageObj.push(profileType);
+          this.destructivePackageObjPost.push(profileType);
         }
 
         let baseName = path.parse(diffFile.path).base;
@@ -321,7 +377,7 @@ export default class DiffUtil {
     if (diffFile.path.endsWith(".permissionset-meta.xml")) {
       if (content2 === "") {
         //Deleted permissionSet
-        let permsetType: any = _.find(destructivePackageObj, function(
+        let permsetType: any = _.find(this.destructivePackageObjPost, function(
           metaType: any
         ) {
           return metaType.name === "PermissionSet";
@@ -331,7 +387,7 @@ export default class DiffUtil {
             name: "PermissionSet",
             members: []
           };
-          destructivePackageObj.push(permsetType);
+          this.destructivePackageObjPost.push(permsetType);
         }
 
         let baseName = path.parse(diffFile.path).base;
@@ -475,17 +531,18 @@ export default class DiffUtil {
 
   public async createDestructiveChanges(
     filePaths: DiffFileStatus[],
-    outputFolder: string,
-    destrucObj: any[]
+    outputFolder: string
   ) {
-    if (_.isNil(destrucObj)) {
-      destrucObj = new Array();
+    if (_.isNil(this.destructivePackageObjPost)) {
+      this.destructivePackageObjPost = new Array();
     } else {
-      destrucObj = destrucObj.filter(metaType => {
-        return !_.isNil(metaType.members) && metaType.members.length > 0;
-      });
+      this.destructivePackageObjPost = this.destructivePackageObjPost.filter(
+        metaType => {
+          return !_.isNil(metaType.members) && metaType.members.length > 0;
+        }
+      );
     }
-    let destrucObjPre = new Array();
+    this.destructivePackageObjPre = new Array();
     //returns root, dir, base and name
     for (let i = 0; i < filePaths.length; i++) {
       let filePath = filePaths[i].path;
@@ -498,11 +555,7 @@ export default class DiffUtil {
       }
       if (UNSPLITED_METADATA_EXTENSION.includes(extension)) {
         //handle unsplited files
-        await this.handleUnsplitedMetadata(
-          filePaths[i],
-          outputFolder,
-          destrucObj
-        );
+        await this.handleUnsplitedMetadata(filePaths[i], outputFolder);
         continue;
       }
 
@@ -519,17 +572,37 @@ export default class DiffUtil {
         if (name === METADATA_INFO.CustomField.xmlName) {
           let isFormular = await this.isFormularField(filePath);
           if (isFormular) {
-            destrucObjPre = this.buildDestructiveTypeObj(
-              destrucObjPre,
+            this.destructivePackageObjPre = this.buildDestructiveTypeObj(
+              this.destructivePackageObjPre,
               name,
               member
             );
           } else {
-            destrucObj = this.buildDestructiveTypeObj(destrucObj, name, member);
+            this.destructivePackageObjPost = this.buildDestructiveTypeObj(
+              this.destructivePackageObjPost,
+              name,
+              member
+            );
           }
+          this.resultOutput.push({
+            action: "Delete",
+            componentName: member,
+            metadataType: name,
+            path: "destructiveChanges.xml"
+          });
         } else {
           if (!deleteNotSupported.includes(name)) {
-            destrucObj = this.buildDestructiveTypeObj(destrucObj, name, member);
+            this.destructivePackageObjPost = this.buildDestructiveTypeObj(
+              this.destructivePackageObjPost,
+              name,
+              member
+            );
+            this.resultOutput.push({
+              action: "Delete",
+              componentName: member,
+              metadataType: name,
+              path: "destructiveChanges.xml"
+            });
           } else {
             //add the component in the manual action list
             // TODO
@@ -539,16 +612,15 @@ export default class DiffUtil {
     }
 
     this.writeDestructivechanges(
-      destrucObjPre,
+      this.destructivePackageObjPre,
       outputFolder,
       "destructiveChangesPre.xml"
     );
     this.writeDestructivechanges(
-      destrucObj,
+      this.destructivePackageObjPost,
       outputFolder,
       "destructiveChangesPost.xml"
     );
-    return { destructivePre: destrucObjPre, destructivePost: destrucObj };
   }
 
   writeDestructivechanges(

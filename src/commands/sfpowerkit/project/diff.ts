@@ -1,4 +1,10 @@
-import { core, SfdxCommand, FlagsConfig, flags } from "@salesforce/command";
+import {
+  core,
+  SfdxCommand,
+  FlagsConfig,
+  flags,
+  SfdxResult
+} from "@salesforce/command";
 import DiffUtil from "../../../impl/project/diff/diffutils";
 import * as path from "path";
 import { SfPowerKit } from "../../../sfpowerkit";
@@ -66,11 +72,28 @@ export default class Diff extends SfdxCommand {
       required: true
     })
   };
+
+  public static result: SfdxResult = {
+    tableColumnData: {
+      columns: [
+        { key: "action", label: "Action (Deploy/Delete)" },
+        { key: "metadataType", label: "Type" },
+        { key: "componentName", label: "Component Name" },
+        { key: "path", label: "Path" }
+      ]
+    },
+    display() {
+      if (Array.isArray(this.data) && this.data.length) {
+        this.ux.table(this.data, this.tableColumnData);
+      }
+    }
+  };
+
   protected static requiresUsername = false;
   protected static requiresProject = true;
 
   public async run(): Promise<any> {
-    SfPowerKit.ux=this.ux;
+    SfPowerKit.ux = this.ux;
     const diffFile: string = this.flags.difffile;
     let encoding: string = this.flags.encoding;
     const outputFolder: string = this.flags.output;
@@ -100,7 +123,7 @@ export default class Diff extends SfdxCommand {
       encoding,
       outputFolder
     );
-    if (!this.flags.json) this.ux.logJson(diffOutput);
+    //if (!this.flags.json) this.ux.logJson(diffOutput);
     return diffOutput;
   }
 }

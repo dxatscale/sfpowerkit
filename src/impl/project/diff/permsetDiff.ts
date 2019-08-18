@@ -1,13 +1,8 @@
-import { METADATA_INFO } from "../../../shared/metadataInfo";
-import { SfPowerKit } from "../../../sfpowerkit";
-import * as path from "path";
 import * as fs from "fs";
-import FileUtils from "../../../shared/fileutils";
 import { Org } from "@salesforce/core";
 import { Connection } from "@salesforce/core";
 import xml2js = require("xml2js");
 import util = require("util");
-import Profile from "../../metadata/schema";
 import _ from "lodash";
 import DiffUtil from "../../project/diff/diffutils";
 
@@ -33,13 +28,9 @@ const parser = new xml2js.Parser({
 });
 
 export default abstract class PermsetDiff {
-  protected conn: Connection;
   protected debugFlag: boolean;
 
-  public constructor(public org: Org, debugFlag?: boolean) {
-    if (this.org !== undefined) {
-      this.conn = this.org.getConnection();
-    }
+  public constructor(debugFlag?: boolean) {
     this.debugFlag = debugFlag;
   }
 

@@ -21,7 +21,8 @@ export default class SharingRuleDiff {
     sharingRuleXml2: string,
     outputFilePath: string,
     objectName: string,
-    destructivePackageObj: any[]
+    destructivePackageObj: any[],
+    resultOutput: any[]
   ) {
     const parseString = util.promisify(parser.parseString);
     let sharingRulesObj1: any = {};
@@ -51,9 +52,57 @@ export default class SharingRuleDiff {
       destructivePackageObj,
       objectName
     );
+
+    SharingRuleDiff.updateOutput(
+      addedEditedOrDeleted.addedEdited,
+      resultOutput,
+      objectName,
+      "Deploy",
+      outputFilePath
+    );
+    SharingRuleDiff.updateOutput(
+      addedEditedOrDeleted.deleted,
+      resultOutput,
+      objectName,
+      "Delete",
+      "destructiveChanges.xml"
+    );
+
     return destructivePackageObj;
   }
 
+  private static updateOutput(
+    sharingRulesObj,
+    resultOutput: any[],
+    objectName,
+    action,
+    filePath
+  ) {
+    sharingRulesObj.sharingCriteriaRules.forEach(elem => {
+      resultOutput.push({
+        action: action,
+        metadataType: "SharingCriteriaRule",
+        componentName: `${objectName}.${elem.fullName}`,
+        path: filePath
+      });
+    });
+    sharingRulesObj.sharingOwnerRules.forEach(elem => {
+      resultOutput.push({
+        action: action,
+        metadataType: "SharingOwnerRule",
+        componentName: `${objectName}.${elem.fullName}`,
+        path: filePath
+      });
+    });
+    sharingRulesObj.sharingTerritoryRules.forEach(elem => {
+      resultOutput.push({
+        action: action,
+        metadataType: "SharingTerritoryRule",
+        componentName: `${objectName}.${elem.fullName}`,
+        path: filePath
+      });
+    });
+  }
   private static ensureArray(sharingObj) {
     let keys = Object.keys(sharingObj);
     keys.forEach(key => {
