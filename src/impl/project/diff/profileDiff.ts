@@ -3,7 +3,8 @@ import xml2js = require("xml2js");
 import util = require("util");
 import Profile from "../../metadata/schema";
 import _ from "lodash";
-import DiffUtil from "../../project/diff/diffutils";
+import DiffImpl from "./diffImpl";
+import DiffUtil from "./diffUtil";
 
 export default abstract class ProfileDiff {
   public static async generateProfileXml(

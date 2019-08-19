@@ -5,7 +5,7 @@ import {
   flags,
   SfdxResult
 } from "@salesforce/command";
-import DiffUtil from "../../../impl/project/diff/diffutils";
+import DiffImpl from "../../../impl/project/diff/diffImpl";
 import * as path from "path";
 import { SfPowerKit } from "../../../sfpowerkit";
 
@@ -110,7 +110,7 @@ export default class Diff extends SfdxCommand {
       this.error("Provide either diffFile or revisionFrom parameters");
     }
 
-    let diffUtils = new DiffUtil(revisionfrom, revisionto);
+    let diffUtils = new DiffImpl(revisionfrom, revisionto);
 
     /* PATH TO DIFF FILE */
     let diffFilePath = "";

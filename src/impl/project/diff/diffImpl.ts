@@ -13,27 +13,17 @@ import {
 } from "../../../shared/metadataInfo";
 import FileUtils from "../../../shared/fileutils";
 import _ from "lodash";
-import ProfileDiff from "../../project/diff/profileDiff";
-import PermsetDiff from "../../project/diff/permsetDiff";
+import ProfileDiff from "./profileDiff";
+import PermsetDiff from "./permsetDiff";
 import WorkflowDiff from "./workflowDiff";
 import SharingRuleDiff from "./sharingRuleDiff";
 import CustomLabelsDiff from "./customLabelsDiff";
+import DiffUtil, { DiffFile, DiffFileStatus } from "./diffUtil";
 
 const deleteNotSupported = ["RecordType"];
 
-export interface DiffFileStatus {
-  revisionFrom: string;
-  revisionTo: string;
-  path: string;
-  renamedPath?: string;
-}
-
-export interface DiffFile {
-  deleted: DiffFileStatus[];
-  addedEdited: DiffFileStatus[];
-}
-
 const git = simplegit();
+
 const unsplitedMetadataExtensions = UNSPLITED_METADATA.map(elem => {
   return elem.sourceExtension;
 });
@@ -41,7 +31,7 @@ const permissionExtensions = PROFILE_PERMISSIONSET_EXTENSION.map(elem => {
   return elem.sourceExtension;
 });
 
-export default class DiffUtil {
+export default class DiffImpl {
   destructivePackageObjPre: any[];
   destructivePackageObjPost: any[];
   resultOutput: {
@@ -82,7 +72,7 @@ export default class DiffUtil {
     }
 
     let content = data.split(sepRegex);
-    let diffFile: DiffFile = this.parseContent(content);
+    let diffFile: DiffFile = DiffUtil.parseContent(content);
     let filesToCopy = diffFile.addedEdited;
     let deletedFiles = diffFile.deleted;
     deletedFiles = deletedFiles.filter(deleted => {
@@ -119,7 +109,7 @@ export default class DiffUtil {
 
         if (unsplitedMetadataExtensions.includes(extension)) {
           //handle unsplited files
-          await this.handleUnsplitedMetadata(filesToCopy[i], outputFolder);
+          await this.handleUnsplittedMetadata(filesToCopy[i], outputFolder);
         } else {
           MetadataFiles.copyFile(filePath, outputFolder);
         }
@@ -147,72 +137,6 @@ export default class DiffUtil {
 
     this.buildOutput(outputFolder);
     return this.resultOutput;
-  }
-  public parseContent(fileContents): DiffFile {
-    const statusRegEx = /\sA\t|\sM\t|\sD\t/;
-    const renamedRegEx = /\sR[0-9]{3}\t|\sC[0-9]{3}\t/;
-    const tabRegEx = /\t/;
-    const deletedFileRegEx = new RegExp(/\sD\t/);
-    const lineBreakRegEx = /\r?\n|\r|( $)/;
-
-    var diffFile: DiffFile = {
-      deleted: [],
-      addedEdited: []
-    };
-
-    for (var i = 0; i < fileContents.length; i++) {
-      if (statusRegEx.test(fileContents[i])) {
-        var lineParts = fileContents[i].split(statusRegEx);
-
-        var finalPath = path.join(
-          ".",
-          lineParts[1].replace(lineBreakRegEx, "")
-        );
-        finalPath = finalPath.trim();
-        finalPath = finalPath.replace("\\303\\251", "é");
-
-        let revisionPart = lineParts[0].split(/\t|\s/);
-
-        if (deletedFileRegEx.test(fileContents[i])) {
-          //Deleted
-          diffFile.deleted.push({
-            revisionFrom: revisionPart[2].substring(0, 9),
-            revisionTo: revisionPart[3].substring(0, 9),
-            path: finalPath
-          });
-        } else {
-          // Added or edited
-          diffFile.addedEdited.push({
-            revisionFrom: revisionPart[2].substring(0, 9),
-            revisionTo: revisionPart[3].substring(0, 9),
-            path: finalPath
-          });
-        }
-      } else if (renamedRegEx.test(fileContents[i])) {
-        var lineParts = fileContents[i].split(renamedRegEx);
-
-        var pathsParts = path.join(".", lineParts[1].trim());
-        pathsParts = pathsParts.replace("\\303\\251", "é");
-        let revisionPart = lineParts[0].split(/\t|\s/);
-
-        var paths = pathsParts.split(tabRegEx);
-
-        diffFile.addedEdited.push({
-          revisionFrom: "000000000",
-          revisionTo: revisionPart[3],
-          renamedPath: paths[0].trim(),
-          path: paths[1].trim()
-        });
-
-        //allow deletion of renamed components
-        diffFile.deleted.push({
-          revisionFrom: revisionPart[2],
-          revisionTo: "000000000",
-          path: paths[0].trim()
-        });
-      }
-    }
-    return diffFile;
   }
 
   private buildOutput(outputFolder) {
@@ -260,7 +184,7 @@ export default class DiffUtil {
     return this.resultOutput;
   }
 
-  public async handleUnsplitedMetadata(
+  private async handleUnsplittedMetadata(
     diffFile: DiffFileStatus,
     outputFolder: string
   ) {
@@ -378,7 +302,7 @@ export default class DiffUtil {
     }
   }
 
-  public async createDestructiveChanges(
+  private async createDestructiveChanges(
     filePaths: DiffFileStatus[],
     outputFolder: string
   ) {
@@ -404,7 +328,7 @@ export default class DiffUtil {
       }
       if (unsplitedMetadataExtensions.includes(extension)) {
         //handle unsplited files
-        await this.handleUnsplitedMetadata(filePaths[i], outputFolder);
+        await this.handleUnsplittedMetadata(filePaths[i], outputFolder);
         continue;
       }
 
@@ -419,7 +343,7 @@ export default class DiffUtil {
         }
         let member = MetadataFiles.getMemberNameFromFilepath(filePath, name);
         if (name === METADATA_INFO.CustomField.xmlName) {
-          let isFormular = await this.isFormularField(filePaths[i]);
+          let isFormular = await DiffUtil.isFormulaField(filePaths[i]);
           if (isFormular) {
             this.destructivePackageObjPre = this.buildDestructiveTypeObj(
               this.destructivePackageObjPre,
@@ -472,7 +396,7 @@ export default class DiffUtil {
     );
   }
 
-  writeDestructivechanges(
+  private writeDestructivechanges(
     destrucObj: Array<any>,
     outputFolder: string,
     fileName: string
@@ -503,12 +427,6 @@ export default class DiffUtil {
     }
   }
 
-  async isFormularField(diffFile: DiffFileStatus): Promise<boolean> {
-    let content = await git.show(["--raw", diffFile.revisionFrom]);
-    let result = content.includes("<formula>");
-    return result;
-  }
-
   private buildDestructiveTypeObj(destructiveObj, name, member) {
     let typeIsPresent: boolean = false;
     for (let i = 0; i < destructiveObj.length; i++) {
@@ -527,54 +445,5 @@ export default class DiffUtil {
       destructiveObj.push(typeNode);
     }
     return destructiveObj;
-  }
-
-  public static getChangedOrAdded(list1: any[], list2: any[], key: string) {
-    let result: any = {
-      addedEdited: [],
-      deleted: []
-    };
-
-    if (_.isNil(list1) && !_.isNil(list2) && list2.length > 0) {
-      result.addedEdited.push(...list2);
-    }
-
-    if (_.isNil(list2) && !_.isNil(list1) && list1.length > 0) {
-      result.deleted.push(...list1);
-    }
-
-    if (!_.isNil(list1) && !_.isNil(list2)) {
-      list1.forEach(elem1 => {
-        let found = false;
-        for (let i = 0; i < list2.length; i++) {
-          let elem2 = list2[i];
-          if (elem1[key] === elem2[key]) {
-            //check if edited
-            if (!_.isEqual(elem1, elem2)) {
-              result.addedEdited.push(elem2);
-            }
-            found = true;
-            break;
-          }
-        }
-        if (!found) {
-          result.deleted.push(elem1);
-        }
-      });
-
-      //Check for added elements
-
-      let addedElement = _.differenceWith(list2, list1, function(
-        element1: any,
-        element2: any
-      ) {
-        return element1[key] === element2[key];
-      });
-
-      if (!_.isNil(addedElement)) {
-        result.addedEdited.push(...addedElement);
-      }
-    }
-    return result;
   }
 }

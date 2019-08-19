@@ -1,8 +1,8 @@
 import * as fs from "fs";
 import * as xml2js from "xml2js";
-import DiffUtil from "./diffutils";
 const _ = require("lodash");
 import util = require("util");
+import DiffUtil from "./diffUtil";
 
 const parser = new xml2js.Parser({
   explicitArray: false,

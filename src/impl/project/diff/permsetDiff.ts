@@ -4,7 +4,7 @@ import { Connection } from "@salesforce/core";
 import xml2js = require("xml2js");
 import util = require("util");
 import _ from "lodash";
-import DiffUtil from "../../project/diff/diffutils";
+import DiffUtil from "./diffUtil";
 
 const nonArayProperties = [
   "description",
