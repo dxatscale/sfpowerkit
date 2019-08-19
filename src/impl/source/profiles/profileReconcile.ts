@@ -4,7 +4,6 @@ import * as fs from "fs";
 import * as path from "path";
 import xml2js = require("xml2js");
 import { METADATA_INFO } from "../../../shared/metadataInfo";
-import ProfileRetriever from "../../metadata/retriever/profileRetriever";
 import CustomApplicationRetriever from "../../../impl/metadata/retriever/customApplicationRetriever";
 import ApexClassRetriever from "../../../impl/metadata/retriever/apexClassRetriever";
 import FieldRetriever from "../../../impl/metadata/retriever/fieldRetriever";
@@ -20,6 +19,7 @@ import util = require("util");
 import _ from "lodash";
 import ProfileActions from "./profileActions";
 import FileUtils from "../../../shared/fileutils";
+import { toProfile } from "../../../shared/profileUtils";
 
 const nonArayProperties = [
   "custom",
@@ -74,9 +74,7 @@ export default class ProfileReconcile extends ProfileActions {
         const parseString = util.promisify(parser.parseString);
         let parseResult = await parseString(profileXmlString);
 
-        let profileObj: Profile = ProfileRetriever.toProfile(
-          parseResult.Profile
-        ); // as Profile
+        let profileObj: Profile = toProfile(parseResult.Profile); // as Profile
 
         profileObj = await this.removePermissions(profileObj);
 

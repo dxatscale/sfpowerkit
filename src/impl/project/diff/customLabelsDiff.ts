@@ -48,7 +48,7 @@ export default class CustomLabelsDiff {
       addedEditedOrDeleted.addedEdited.labels &&
       addedEditedOrDeleted.addedEdited.labels.length > 0
     ) {
-      CustomLabelsDiff.generateXmlFile(
+      CustomLabelsDiff.writeCustomLabel(
         addedEditedOrDeleted.addedEdited,
         outputFilePath
       );
@@ -162,7 +162,7 @@ export default class CustomLabelsDiff {
     return destructivePackageObj;
   }
 
-  private static generateXmlFile(
+  private static writeCustomLabel(
     newCustomLabelsObj: any,
     outputFilePath: string
   ) {

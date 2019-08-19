@@ -4,7 +4,6 @@ import * as fs from "fs";
 import * as path from "path";
 import xml2js = require("xml2js");
 import { METADATA_INFO } from "../../../shared/metadataInfo";
-import ProfileRetriever from "../../metadata/retriever/profileRetriever";
 import _ from "lodash";
 import Profile, {
   ApplicationVisibility,
@@ -20,6 +19,7 @@ import Profile, {
 } from "../../../impl/metadata/schema";
 import util = require("util");
 import ProfileActions from "./profileActions";
+import writeProfile, { toProfile } from "../../../shared/profileUtils";
 
 const unsupportedprofiles = [];
 
@@ -625,14 +625,14 @@ export default class ProfileMerge extends ProfileActions {
           const parseString = util.promisify(parser.parseString);
           let parseResult = await parseString(profileXml);
 
-          profileObj = ProfileRetriever.toProfile(parseResult.Profile);
+          profileObj = toProfile(parseResult.Profile);
           await this.mergeProfile(profileObj, profileObjFromServer);
         } else {
           if (this.debugFlag)
             SfPowerKit.ux.log("New Profile " + profileObjFromServer.fullName);
         }
 
-        await ProfileRetriever.writeProfile(profileObj, filePath);
+        writeProfile(profileObj, filePath);
 
         if (this.debugFlag)
           SfPowerKit.ux.log("Profile " + profileObj.fullName + " merged");

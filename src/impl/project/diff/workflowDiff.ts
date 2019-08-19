@@ -44,7 +44,7 @@ export default class WorkflowDiff {
       workflowObj2
     );
 
-    WorkflowDiff.generateWorkflowXmlFile(
+    WorkflowDiff.writeWorkflow(
       addedEditedOrDeleted.addedEdited,
       outputFilePath
     );
@@ -307,10 +307,7 @@ export default class WorkflowDiff {
     return destructivePackageObj;
   }
 
-  private static generateWorkflowXmlFile(
-    newWorkflowObj: any,
-    outputFilePath: string
-  ) {
+  private static writeWorkflow(newWorkflowObj: any, outputFilePath: string) {
     const builder = new xml2js.Builder({
       xmldec: { version: "1.0", encoding: "UTF-8", standalone: null }
     });

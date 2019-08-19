@@ -1,9 +1,9 @@
-import ProfileRetriever from "../../metadata/retriever/profileRetriever";
 import xml2js = require("xml2js");
 import util = require("util");
 import Profile from "../../metadata/schema";
 import _ from "lodash";
 import DiffUtil from "../../project/diff/diffutils";
+import writeProfile, { toProfile } from "../../../shared/profileUtils";
 
 export default abstract class ProfileDiff {
   public static async generateProfileXml(
@@ -15,9 +15,9 @@ export default abstract class ProfileDiff {
     const parseString = util.promisify(parser.parseString);
 
     let parseResult = await parseString(profileXml1);
-    let profileObj1 = ProfileRetriever.toProfile(parseResult.Profile);
+    let profileObj1 = toProfile(parseResult.Profile);
     parseResult = await parseString(profileXml2);
-    let profileObj2 = ProfileRetriever.toProfile(parseResult.Profile);
+    let profileObj2 = toProfile(parseResult.Profile);
 
     let newProObj = {
       fullName: profileObj2.fullName,
@@ -121,7 +121,7 @@ export default abstract class ProfileDiff {
       profileObj2.layoutAssignments
     );
 
-    await ProfileRetriever.writeProfile(newProObj, outputFilePath);
+    writeProfile(newProObj, outputFilePath);
   }
   private static getChangedOrAddedLayouts(list1: any[], list2: any[]) {
     let result: any[] = [];

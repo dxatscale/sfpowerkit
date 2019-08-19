@@ -6,7 +6,7 @@ import { METADATA_INFO } from "../../../shared/metadataInfo";
 import Profile from "../../../impl/metadata/schema";
 import _ from "lodash";
 import ProfileActions from "./profileActions";
-import ProfileRetriever from "../../metadata/retriever/profileRetriever";
+import writeProfile from "../../../shared/profileUtils";
 
 const unsupportedprofiles = [];
 
@@ -97,10 +97,7 @@ export default class ProfileSync extends ProfileActions {
       for (var count = 0; count < metadataList.length; count++) {
         var profileObj = metadataList[count] as Profile;
 
-        await ProfileRetriever.writeProfile(
-          profileObj,
-          profilePathAssoc[profileObj.fullName]
-        );
+        writeProfile(profileObj, profilePathAssoc[profileObj.fullName]);
         //SfPowerKit.ux.log("Profile " + profileObj.fullName + " Sync!");
         profileList.push(profileObj.fullName);
       }
