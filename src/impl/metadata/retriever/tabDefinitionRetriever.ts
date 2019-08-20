@@ -1,10 +1,10 @@
 import { Org } from "@salesforce/core";
-import { METADATA_INFO } from "../../../shared/metadataInfo";
+import { METADATA_INFO } from "../metadataInfo";
 import _ from "lodash";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 import { TabDefinition } from "../schema";
 import ProfileReconcile from "../../source/profiles/profileReconcile";
-import MetadataFiles from "../../../shared/metadataFiles";
+import MetadataFiles from "../metadataFiles";
 
 const QUERY =
   "SELECT Id,  Name, SobjectName, DurableId, IsCustom, Label FROM TabDefinition ";

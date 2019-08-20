@@ -5,8 +5,8 @@ import { SfdxProject, SfdxError } from "@salesforce/core";
 import xml2js = require("xml2js");
 import util = require("util");
 import fs = require("fs-extra");
-import coverageJSON from "../../../metadata.json";
 import rimraf = require("rimraf");
+import * as path from "path";
 
 const spawn = require("child-process-promise").spawn;
 
@@ -52,11 +52,29 @@ Elements supported included in your package testPackage are
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   protected static requiresProject = true;
 
+  private coverageJSON;
+
   public async run(): Promise<AnyJson> {
     // Getting Project config
     const project = await SfdxProject.resolve();
 
     const projectJson = await project.retrieveSfdxProjectJson();
+
+    let resourcePath = path.join(
+      __dirname,
+      "..",
+      "..",
+      "..",
+      "..",
+      "resources",
+      "metadata.json"
+    );
+
+    this.ux.log(__dirname);
+    this.ux.log(resourcePath);
+
+    const fileData = fs.readFileSync(resourcePath, "utf8");
+    this.coverageJSON = JSON.parse(fileData);
 
     let packageToBeScanned = this.flags.package;
     this.ux.log("package:" + packageToBeScanned);
@@ -132,7 +150,7 @@ Elements supported included in your package testPackage are
 
     // INSTALL PACKAGE
     this.ux.log(
-      `Utilizing Version of the metadata coverage ${coverageJSON.versions.selected}`
+      `Utilizing Version of the metadata coverage ${this.coverageJSON.versions.selected}`
     );
     this.ux.log(`Converting package ${packageToBeScanned["package"]}`);
 
@@ -147,9 +165,9 @@ Elements supported included in your package testPackage are
       const existing = await parseString(fs.readFileSync(targetFilename));
 
       for (const types of existing.Package.types as JsonArray) {
-        if (coverageJSON.types[types["name"]] != undefined)
+        if (this.coverageJSON.types[types["name"]] != undefined)
           if (
-            coverageJSON.types[types["name"]].channels
+            this.coverageJSON.types[types["name"]].channels
               .unlockedPackagingWithoutNamespace
           )
             sfdx_package.supportedTypes.push(`${types["name"]}`);

@@ -1,10 +1,9 @@
-import { SfPowerKit } from "../../../sfpowerkit";
-import MetadataFiles from "../../../shared/metadataFiles";
+import { SFPowerkit } from "../../../sfpowerkit";
+import MetadataFiles from "../../metadata/metadataFiles";
 import * as fs from "fs";
 import * as path from "path";
 import xml2js = require("xml2js");
-import { METADATA_INFO } from "../../../shared/metadataInfo";
-import ProfileRetriever from "../../metadata/retriever/profileRetriever";
+import { METADATA_INFO } from "../../metadata/metadataInfo";
 import CustomApplicationRetriever from "../../../impl/metadata/retriever/customApplicationRetriever";
 import ApexClassRetriever from "../../../impl/metadata/retriever/apexClassRetriever";
 import FieldRetriever from "../../../impl/metadata/retriever/fieldRetriever";
@@ -19,7 +18,8 @@ import Profile, { ProfileFieldLevelSecurity } from "../../metadata/schema";
 import util = require("util");
 import _ from "lodash";
 import ProfileActions from "./profileActions";
-import FileUtils from "../../../shared/fileutils";
+import FileUtils from "../../../utils/fileutils";
+import ProfileWriter from "../../../impl/metadata/writer/profileWriter";
 
 const nonArayProperties = [
   "custom",
@@ -42,7 +42,7 @@ export default class ProfileReconcile extends ProfileActions {
     }
 
     if (_.isNil(srcFolders) || srcFolders.length === 0) {
-      srcFolders = await SfPowerKit.getProjectDirectories();
+      srcFolders = await SFPowerkit.getProjectDirectories();
     }
 
     let result: string[] = [];
@@ -65,7 +65,7 @@ export default class ProfileReconcile extends ProfileActions {
         profileList.length == 0 ||
         profileList.includes(path.basename(profileComponent))
       ) {
-        SfPowerKit.ux.log(
+        SFPowerkit.ux.log(
           "Reconciling profile " + path.basename(profileComponent)
         );
 
@@ -73,10 +73,9 @@ export default class ProfileReconcile extends ProfileActions {
         const parser = new xml2js.Parser({ explicitArray: true });
         const parseString = util.promisify(parser.parseString);
         let parseResult = await parseString(profileXmlString);
+        let profileWriter = new ProfileWriter();
 
-        let profileObj: Profile = ProfileRetriever.toProfile(
-          parseResult.Profile
-        ); // as Profile
+        let profileObj: Profile = profileWriter.toProfile(parseResult.Profile); // as Profile
 
         profileObj = await this.removePermissions(profileObj);
 
@@ -111,7 +110,7 @@ export default class ProfileReconcile extends ProfileActions {
 
         //IS sourceonly, use ignorePermission set in sfdxProject.json file
         if (MetadataFiles.sourceOnly) {
-          let pluginConfig = await SfPowerKit.getConfig();
+          let pluginConfig = await SFPowerkit.getConfig();
           let ignorePermissions = pluginConfig.ignoredPermissions || [];
           if (
             profileObj.userPermissions !== undefined &&

@@ -1,8 +1,8 @@
-import { METADATA_INFO } from "../../../shared/metadataInfo";
-import { SfPowerKit } from "../../../sfpowerkit";
+import { METADATA_INFO } from "../../metadata/metadataInfo";
+import { SFPowerkit } from "../../../sfpowerkit";
 import * as path from "path";
-import FileUtils from "../../../shared/fileutils";
-import { retrieveMetadata } from "../../../shared/retrieveMetadata";
+import FileUtils from "../../../utils/fileutils";
+import { retrieveMetadata } from "../../../utils/retrieveMetadata";
 import { Org } from "@salesforce/core";
 import { Connection } from "@salesforce/core";
 import ProfileRetriever from "../../metadata/retriever/profileRetriever";
@@ -37,7 +37,7 @@ export default abstract class ProfileActions {
     //generate path for new profiles
     let profilePath = path.join(
       process.cwd(),
-      await SfPowerKit.getDefaultFolder(),
+      await SFPowerkit.getDefaultFolder(),
       "main",
       "default",
       "profiles"
@@ -95,7 +95,7 @@ export default abstract class ProfileActions {
       }
     } else {
       if (this.debugFlag)
-        SfPowerKit.ux.log(
+        SFPowerkit.ux.log(
           "Load new profiles from server into the project directory"
         );
       // Query the org
@@ -139,9 +139,9 @@ export default abstract class ProfileActions {
           return !found;
         });
         if (newProfiles && newProfiles.length > 0) {
-          if (this.debugFlag) SfPowerKit.ux.log("New profiles founds");
+          if (this.debugFlag) SFPowerkit.ux.log("New profiles founds");
           for (let i = 0; i < newProfiles.length; i++) {
-            if (this.debugFlag) SfPowerKit.ux.log(newProfiles[i]);
+            if (this.debugFlag) SFPowerkit.ux.log(newProfiles[i]);
             let newPRofilePath = path.join(
               profilePath,
               newProfiles[i] + METADATA_INFO.Profile.sourceExtension
@@ -150,7 +150,7 @@ export default abstract class ProfileActions {
             profilesStatus.added.push(newPRofilePath);
           }
         } else {
-          SfPowerKit.ux.log("No new profile found, Updating existing profiles");
+          SFPowerkit.ux.log("No new profile found, Updating existing profiles");
         }
       }
     }

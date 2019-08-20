@@ -1,7 +1,7 @@
 {
   "name": "sfpowerkit",
   "description": "A Salesforce DX Plugin with multiple functionalities aimed at improving development and operational workflows",
-  "version": "1.15.2",
+  "version": "1.16.1-2",
   "author": {
     "name": "Azlam Abdulsalam",
     "email": "azlam.abdulsalam@accenture.com",
@@ -42,6 +42,7 @@
     "ignore": "^5.1.2",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
+    "simple-git": "^1.124.0",
     "tslib": "1",
     "unzipper": "0.10.3",
     "xml2js": "^0.4.19"
@@ -53,15 +54,15 @@
     "@salesforce/dev-config": "^1.4.1",
     "@types/chai": "^4",
     "@types/mocha": "^5",
-    "@types/node": "^11.13.17",
+    "@types/node": "^12.7.2",
     "chai": "^4",
-    "globby": "^9",
+    "globby": "^10.0.1",
     "husky": "^3.0.2",
     "mocha": "^6",
-    "nyc": "^13",
+    "nyc": "^14.1.1",
     "prettier": "1.18.2",
     "pretty-quick": "^1.11.1",
-    "rimraf": "^2.6.3",
+    "rimraf": "^3.0.0",
     "sinon": "7",
     "ts-node": "^8",
     "typescript": "^3.3"
