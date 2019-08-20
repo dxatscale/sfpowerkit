@@ -1,4 +1,4 @@
-import { SfPowerKit } from "../sfpowerkit";
+import { SFPowerkit } from "../sfpowerkit";
 
 const fs = require("fs");
 const path = require("path");
@@ -36,7 +36,7 @@ export default class FileUtils {
     let pathExists = fs.existsSync(folder);
     let folderName = path.basename(folder);
     if (!pathExists) {
-      SfPowerKit.ux.log("Folder not exists: " + folderName);
+      SFPowerkit.ux.log("Folder not exists: " + folderName);
       return result;
     }
     let content: string[] = fs.readdirSync(folder);
@@ -62,7 +62,7 @@ export default class FileUtils {
     let homedir = os.homedir();
     let configDir = homedir + path.sep + PLUGIN_CACHE_FOLDER;
     if (!fs.existsSync(configDir)) {
-      SfPowerKit.ux.log("Config folder does not exists");
+      SFPowerkit.ux.log("Config folder does not exists");
       fs.mkdirSync(configDir);
     }
     return configDir + path.sep + fileName;

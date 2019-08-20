@@ -1,5 +1,5 @@
 import { Connection, DeployResult } from "jsforce";
-import { delay } from "../shared/delay";
+import { delay } from "./delay";
 
 export async function checkDeploymentStatus(
   conn: Connection,

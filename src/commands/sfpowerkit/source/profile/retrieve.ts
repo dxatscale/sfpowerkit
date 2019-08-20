@@ -8,9 +8,9 @@ import {
 
 import { SfdxProject } from "@salesforce/core";
 import _ from "lodash";
-import { SfPowerKit } from "../../../../sfpowerkit";
+import { SFPowerkit } from "../../../../sfpowerkit";
 import * as path from "path";
-import { METADATA_INFO } from "../../../../shared/metadataInfo";
+import { METADATA_INFO } from "../../../../impl/metadata/metadataInfo";
 import ProfileSync from "../../../../impl/source/profiles/profileSync";
 
 // Initialize Messages with the current plugin directory
@@ -74,14 +74,14 @@ export default class Retrieve extends SfdxCommand {
   };
 
   public async run(): Promise<any> {
-    SfPowerKit.ux = this.ux;
+    SFPowerkit.ux = this.ux;
 
     let argFolder: string = this.flags.folder;
     let argProfileList: string[] = this.flags.profilelist;
 
     let folders: string[] = [];
     if (!_.isNil(argFolder) && argFolder.length !== 0) {
-      SfPowerKit.setDefaultFolder(argFolder[0]);
+      SFPowerkit.setDefaultFolder(argFolder[0]);
       folders.push(...argFolder);
     }
 

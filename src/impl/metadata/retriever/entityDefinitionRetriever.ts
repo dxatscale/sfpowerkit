@@ -2,9 +2,9 @@ import { Org } from "@salesforce/core";
 import _ from "lodash";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 import { EntityDefinition } from "../schema";
-import { METADATA_INFO } from "../../../shared/metadataInfo";
+import { METADATA_INFO } from "../metadataInfo";
 import ProfileReconcile from "../../source/profiles/profileReconcile";
-import MetadataFiles from "../../../shared/metadataFiles";
+import MetadataFiles from "../metadataFiles";
 
 const QUERY =
   "SELECT DurableId, DeveloperName, QualifiedApiName, NamespacePrefix FROM EntityDefinition order by QualifiedApiName";

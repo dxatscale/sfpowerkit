@@ -42,6 +42,7 @@
     "ignore": "^5.1.2",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.7",
+    "simple-git": "^1.124.0",
     "tslib": "1",
     "unzipper": "0.10.3",
     "xml2js": "^0.4.19"

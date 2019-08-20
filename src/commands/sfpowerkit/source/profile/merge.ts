@@ -9,9 +9,9 @@ import {
 import { SfdxProject, SfdxError } from "@salesforce/core";
 
 import _ from "lodash";
-import { SfPowerKit } from "../../../../sfpowerkit";
+import { SFPowerkit } from "../../../../sfpowerkit";
 import * as path from "path";
-import { METADATA_INFO } from "../../../../shared/metadataInfo";
+import { METADATA_INFO } from "../../../../impl/metadata/metadataInfo";
 import ProfileRetriever from "../../../../impl/metadata/retriever/profileRetriever";
 import ProfileMerge from "../../../../impl/source/profiles/profileMerge";
 
@@ -94,7 +94,7 @@ export default class Merge extends SfdxCommand {
 
   public async run(): Promise<any> {
     // tslint:disable-line:no-any
-    SfPowerKit.ux = this.ux;
+    SFPowerkit.ux = this.ux;
 
     let argFolder = this.flags.folder;
     let argProfileList = this.flags.profilelist;
@@ -130,7 +130,7 @@ export default class Merge extends SfdxCommand {
     }
 
     if (!_.isNil(argFolder) && argFolder.length !== 0) {
-      SfPowerKit.setDefaultFolder(argFolder[0]);
+      SFPowerkit.setDefaultFolder(argFolder[0]);
     }
 
     const profileUtils = new ProfileMerge(

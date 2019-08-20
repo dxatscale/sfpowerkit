@@ -8,7 +8,7 @@ import util = require("util");
 import {
   getPackageInfo,
   getDefaultPackageInfo
-} from "../../../../shared/getPackageInfo";
+} from "../../../../utils/getPackageInfo";
 var path = require("path");
 
 // Initialize Messages with the current plugin directory
