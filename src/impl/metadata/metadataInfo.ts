@@ -92,17 +92,18 @@ export interface MetadataInfo {
   SharingRules?: MetadataDescribe;
 }
 
-export class MetadataInfoUtils {
+export class MetadataInfo {
   static loadMetadataInfo(): MetadataInfo {
     let metadataInfo: MetadataInfo = {};
-    let resourcePAth = path.join(
+    let resourcePath = path.join(
       __dirname,
+      "..",
       "..",
       "..",
       "resources",
       "metadatainfo.json"
     );
-    const fileData = fs.readFileSync(resourcePAth, "utf8");
+    const fileData = fs.readFileSync(resourcePath, "utf8");
     let metadataInfoJSON = JSON.parse(fileData);
     metadataInfoJSON.metadataObjects.forEach(metadata => {
       let metadataDescribe = metadata as MetadataDescribe;
@@ -172,7 +173,7 @@ export class MetadataInfoUtils {
   }
 }
 
-export const METADATA_INFO = MetadataInfoUtils.loadMetadataInfo();
+export const METADATA_INFO = MetadataInfo.loadMetadataInfo();
 export const UNSPLITED_METADATA = [
   METADATA_INFO.Workflow,
   METADATA_INFO.SharingRules,

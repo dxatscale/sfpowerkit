@@ -42,7 +42,7 @@ export default class SharingRuleDiff {
       sharingRulesObj2
     );
 
-    SharingRuleDiff.generateXmlFile(
+    SharingRuleDiff.writeSharingRule(
       addedEditedOrDeleted.addedEdited,
       outputFilePath
     );
@@ -242,7 +242,7 @@ export default class SharingRuleDiff {
     return destructivePackageObj;
   }
 
-  private static generateXmlFile(
+  private static writeSharingRule(
     newSharingRulesObj: any,
     outputFilePath: string
   ) {

@@ -1,10 +1,10 @@
 import { Org } from "@salesforce/core";
 import _ from "lodash";
-import { METADATA_INFO } from "../../../shared/metadataInfo";
+import { METADATA_INFO } from "../metadataInfo";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 import { CustomApplication } from "../schema";
 import ProfileReconcile from "../../source/profiles/profileReconcile";
-import MetadataFiles from "../../../shared/metadataFiles";
+import MetadataFiles from "../metadataFiles";
 
 const QUERY =
   "Select Id, NamespacePrefix, DeveloperName, Label From CustomApplication ";

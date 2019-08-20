@@ -3,9 +3,9 @@ import _ from "lodash";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 import { Field } from "../schema";
 import EntityDefinitionRetriever from "./entityDefinitionRetriever";
-import { METADATA_INFO } from "../../../shared/metadataInfo";
+import { METADATA_INFO } from "../metadataInfo";
 import ProfileReconcile from "../../source/profiles/profileReconcile";
-import MetadataFiles from "../../../shared/metadataFiles";
+import MetadataFiles from "../metadataFiles";
 
 const QUERY =
   "SELECT Id, QualifiedApiName, EntityDefinitionId, DeveloperName, NamespacePrefix FROM FieldDefinition ";

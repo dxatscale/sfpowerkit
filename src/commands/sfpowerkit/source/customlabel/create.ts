@@ -2,9 +2,9 @@ import { core, flags, SfdxCommand } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import fs = require("fs-extra");
 import rimraf = require("rimraf");
-import { zipDirectory } from "../../../../shared/zipDirectory";
+import { zipDirectory } from "../../../../utils/zipDirectory";
 import { AsyncResult, DeployResult } from "jsforce";
-import { checkDeploymentStatus } from "../../../../shared/checkDeploymentStatus";
+import { checkDeploymentStatus } from "../../../../utils/checkDeploymentStatus";
 import { SfdxError } from "@salesforce/core";
 
 const spawn = require("child-process-promise").spawn;

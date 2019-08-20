@@ -1,10 +1,10 @@
-import ProfileRetriever from "../../metadata/retriever/profileRetriever";
 import xml2js = require("xml2js");
 import util = require("util");
 import Profile from "../../metadata/schema";
 import _ from "lodash";
-import DiffImpl from "./diffImpl";
+
 import DiffUtil from "./diffUtil";
+import ProfileWriter from "../../../impl/metadata/writer/profileWriter";
 
 export default abstract class ProfileDiff {
   public static async generateProfileXml(
@@ -12,13 +12,15 @@ export default abstract class ProfileDiff {
     profileXml2: string,
     outputFilePath: string
   ) {
+    let profileWriter = new ProfileWriter();
+
     const parser = new xml2js.Parser({ explicitArray: true });
     const parseString = util.promisify(parser.parseString);
 
     let parseResult = await parseString(profileXml1);
-    let profileObj1 = ProfileRetriever.toProfile(parseResult.Profile);
+    let profileObj1 = profileWriter.toProfile(parseResult.Profile);
     parseResult = await parseString(profileXml2);
-    let profileObj2 = ProfileRetriever.toProfile(parseResult.Profile);
+    let profileObj2 = profileWriter.toProfile(parseResult.Profile);
 
     let newProObj = {
       fullName: profileObj2.fullName,
@@ -122,7 +124,7 @@ export default abstract class ProfileDiff {
       profileObj2.layoutAssignments
     );
 
-    await ProfileRetriever.writeProfile(newProObj, outputFilePath);
+    profileWriter.writeProfile(newProObj, outputFilePath);
   }
   private static getChangedOrAddedLayouts(list1: any[], list2: any[]) {
     let result: any[] = [];

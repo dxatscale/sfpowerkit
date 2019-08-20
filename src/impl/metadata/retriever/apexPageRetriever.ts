@@ -1,10 +1,10 @@
 import { ApexPage } from "../schema";
 import { Org } from "@salesforce/core";
 import _ from "lodash";
-import { METADATA_INFO } from "../../../shared/metadataInfo";
+import { METADATA_INFO } from "../metadataInfo";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 import ProfileReconcile from "../../source/profiles/profileReconcile";
-import MetadataFiles from "../../../shared/metadataFiles";
+import MetadataFiles from "../metadataFiles";
 
 const QUERY = "Select Id, Name, NameSpacePrefix From ApexPage";
 export default class ApexPageRetriever extends BaseMetadataRetriever<ApexPage> {

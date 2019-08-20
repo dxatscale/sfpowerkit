@@ -9,8 +9,8 @@ import util = require("util");
 // tslint:disable-next-line:ordered-imports
 var jsforce = require("jsforce");
 var path = require("path");
-import { checkRetrievalStatus } from "../../../../shared/checkRetrievalStatus";
-import { extract } from "../../../../shared/extract";
+import { checkRetrievalStatus } from "../../../../utils/checkRetrievalStatus";
+import { extract } from "../../../../utils/extract";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);

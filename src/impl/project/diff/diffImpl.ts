@@ -1,4 +1,4 @@
-import MetadataFiles from "../../../shared/metadataFiles";
+import MetadataFiles from "../../metadata/metadataFiles";
 import simplegit = require("simple-git/promise");
 
 import * as xml2js from "xml2js";
@@ -6,12 +6,12 @@ import * as path from "path";
 import * as fs from "fs";
 import {
   SOURCE_EXTENSION_REGEX,
-  MetadataInfoUtils,
+  MetadataInfo,
   METADATA_INFO,
   UNSPLITED_METADATA,
   PROFILE_PERMISSIONSET_EXTENSION
-} from "../../../shared/metadataInfo";
-import FileUtils from "../../../shared/fileutils";
+} from "../../metadata/metadataInfo";
+import FileUtils from "../../../utils/fileutils";
 import _ from "lodash";
 import ProfileDiff from "./profileDiff";
 import PermsetDiff from "./permsetDiff";
@@ -334,7 +334,7 @@ export default class DiffImpl {
 
       let parsedPath = path.parse(filePath);
       let filename = parsedPath.base;
-      let name = MetadataInfoUtils.getMetadataName(filename);
+      let name = MetadataInfo.getMetadataName(filename);
       if (name) {
         if (!MetadataFiles.isCustomMetadata(filePath, name)) {
           // avoid to generate destructive for Standard Components

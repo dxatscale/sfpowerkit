@@ -1,11 +1,11 @@
 import * as path from "path";
 import {
-  MetadataInfoUtils,
+  MetadataInfo,
   METADATA_INFO,
   MetadataDescribe,
   SOURCE_EXTENSION_REGEX
 } from "./metadataInfo";
-import FileUtils from "./fileutils";
+import FileUtils from "../../utils/fileutils";
 import _ from "lodash";
 import ignore from "ignore";
 import * as fs from "fs";
@@ -25,7 +25,7 @@ export default class MetadataFiles {
   }
   static getFullApiName(fileName: string): string {
     let fullName = "";
-    let metadateType = MetadataInfoUtils.getMetadataName(fileName);
+    let metadateType = MetadataInfo.getMetadataName(fileName);
     let splitFilepath = fileName.split(path.sep);
     let isObjectChild = METADATA_INFO.CustomObject.childXmlNames.includes(
       metadateType
@@ -41,7 +41,7 @@ export default class MetadataFiles {
   }
   static getFullApiNameWithExtension(fileName: string): string {
     let fullName = "";
-    let metadateType = MetadataInfoUtils.getMetadataName(fileName);
+    let metadateType = MetadataInfo.getMetadataName(fileName);
     let splitFilepath = fileName.split(path.sep);
     let isObjectChild = METADATA_INFO.CustomObject.childXmlNames.includes(
       metadateType

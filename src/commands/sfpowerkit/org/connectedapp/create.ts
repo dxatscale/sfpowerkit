@@ -4,9 +4,9 @@ import fs = require("fs-extra");
 import rimraf = require("rimraf");
 
 const spawn = require("child-process-promise").spawn;
-import { zipDirectory } from "../../../../shared/zipDirectory";
+import { zipDirectory } from "../../../../utils/zipDirectory";
 import { AsyncResult, DeployResult } from "jsforce";
-import { checkDeploymentStatus } from "../../../../shared/checkDeploymentStatus";
+import { checkDeploymentStatus } from "../../../../utils/checkDeploymentStatus";
 import { SfdxError } from "@salesforce/core";
 
 // Initialize Messages with the current plugin directory

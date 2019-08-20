@@ -8,11 +8,11 @@ import util = require("util");
 import {
   getPackageInfo,
   getDefaultPackageInfo
-} from "../../../../shared/getPackageInfo";
-import { searchFilesInDirectory } from "../../../../shared/searchFilesInDirectory";
+} from "../../../../utils/getPackageInfo";
+import { searchFilesInDirectory } from "../../../../utils/searchFilesInDirectory";
 
-import { zipDirectory } from "../../../../shared/zipDirectory";
-import MetadataFiles from "../../../../shared/metadataFiles";
+import { zipDirectory } from "../../../../utils/zipDirectory";
+import MetadataFiles from "../../../../impl/metadata/metadataFiles";
 
 var path = require("path");
 const spawn = require("child-process-promise").spawn;
