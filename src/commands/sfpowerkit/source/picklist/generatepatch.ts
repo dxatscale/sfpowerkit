@@ -191,8 +191,36 @@ export default class Generatepatch extends SfdxCommand {
   ): Promise<boolean> {
     if (isStandardValueSetToBeFixed) {
       this.ux
-        .log(`Warning, your package source code will be modified to remove references to standard value set and will be 
+        .log(`Warning, your package source code will be modified to remove standard valueset and its references. The modified source will be 
       added into the patch`);
+
+      let standardValueSetPath = objectsDirPath.replace("objects", "");
+      if (standardValueSetPath.includes("//")) {
+        standardValueSetPath = standardValueSetPath.replace("//", "/");
+      }
+      standardValueSetPath = standardValueSetPath + "standardValueSets/";
+
+      if (fs.existsSync(path.resolve(standardValueSetPath))) {
+        let standardValueSets: any[] = searchFilesInDirectory(
+          standardValueSetPath,
+          '<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">',
+          ".xml"
+        );
+        if (standardValueSets.length > 0) {
+          this.ux.log(
+            `Found ${standardValueSets.length} Standard valueset in ${standardValueSetPath}`
+          );
+          for (const file of standardValueSets) {
+            this.ux.log("Copied Original to Patch:         " + file);
+            MetadataFiles.copyFile(file, "temp_sfpowerkit");
+          }
+        }
+        this.ux.log(`Removing ${standardValueSetPath} from source`);
+        rimraf.sync(standardValueSetPath);
+        this.ux.log(
+          "--------------------------------------------------------------------------------"
+        );
+      }
     }
 
     this.ux.log("Scanning for fields of type picklist");
@@ -339,6 +367,9 @@ export default class Generatepatch extends SfdxCommand {
         `Modified  ${modified_source_count} RecordTypes in packaging folder`
       );
     }
+    this.ux.log(
+      "--------------------------------------------------------------------------------"
+    );
     return true;
   }
 
@@ -399,6 +430,9 @@ export default class Generatepatch extends SfdxCommand {
         `Modified  ${modified_source_count} BusinessProcess in packaging folder`
       );
     }
+    this.ux.log(
+      "--------------------------------------------------------------------------------"
+    );
     return true;
   }
 }
