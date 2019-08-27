@@ -45,7 +45,6 @@
     "simple-git": "^1.124.0",
     "tslib": "1",
     "unzipper": "0.10.3",
-    "xml-js": "^1.6.11",
     "xml2js": "^0.4.19"
   },
   "devDependencies": {
