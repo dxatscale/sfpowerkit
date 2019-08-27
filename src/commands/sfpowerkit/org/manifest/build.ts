@@ -5,7 +5,6 @@ import {
   BuildConfig,
   Packagexml
 } from "../../../../impl/metadata/packageBuilder";
-import { ListMetadataQuery } from "jsforce";
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -18,11 +17,11 @@ export default class Build extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx build:fetch:xml --targetusername myOrg@example.com -o package.xml
+    `$ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml
     <?xml version="1.0" encoding="UTF-8"?>
     <Package xmlns="http://soap.sforce.com/2006/04/metadata">...</Package>
     `,
-    `$ sfdx build:fetch:xml --targetusername myOrg@example.com -o package.xml -q 'ApexClass, CustomObject, Report' 
+    `$ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml -q 'ApexClass, CustomObject, Report' 
     <?xml version="1.0" encoding="UTF-8"?>
     <Package xmlns="http://soap.sforce.com/2006/04/metadata">...</Package>
     `

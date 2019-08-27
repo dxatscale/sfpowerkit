@@ -699,11 +699,11 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
 EXAMPLES
-  $ sfdx build:fetch:xml --targetusername myOrg@example.com -o package.xml
+  $ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml
        <?xml version="1.0" encoding="UTF-8"?>
        <Package xmlns="http://soap.sforce.com/2006/04/metadata">...</Package>
 
-  $ sfdx build:fetch:xml --targetusername myOrg@example.com -o package.xml -q 'ApexClass, CustomObject, Report'
+  $ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml -q 'ApexClass, CustomObject, Report'
        <?xml version="1.0" encoding="UTF-8"?>
        <Package xmlns="http://soap.sforce.com/2006/04/metadata">...</Package>
 ```
