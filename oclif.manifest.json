@@ -338,12 +338,12 @@
     "sfpowerkit:package:valid": {
       "id": "sfpowerkit:package:valid",
       "description": "Validates a package to check whether it only contains valid metadata as per metadata coverage",
-      "usage": "<%= command.id %> [-n <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "usage": "<%= command.id %> [-n <string>] [-b <array>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],
       "examples": [
-        "$ sfdx sfpowerkit:package:valid -n testPackage\n  Now analyzing inspections\nConverting package testPackage\nElements supported included in your package testPackage are\n[\n  \"AuraDefinitionBundle\",\n  \"CustomApplication\",\n  \"ApexClass\",\n  \"ContentAsset\",\n  \"WorkflowRule\"\n]\n  "
+        "$ sfdx sfpowerkit:package:valid -n testPackage\n  Now analyzing testPackage\nConverting package testPackage\nElements supported included in your package testPackage are\n[\n  \"AuraDefinitionBundle\",\n  \"CustomApplication\",\n  \"ApexClass\",\n  \"ContentAsset\",\n  \"WorkflowRule\"\n]\n  "
       ],
       "flags": {
         "json": {
@@ -379,6 +379,13 @@
           "type": "option",
           "char": "n",
           "description": "the package to analyze",
+          "required": false
+        },
+        "bypass": {
+          "name": "bypass",
+          "type": "option",
+          "char": "b",
+          "description": "metadatatypes to skip the package validation check",
           "required": false
         }
       },
