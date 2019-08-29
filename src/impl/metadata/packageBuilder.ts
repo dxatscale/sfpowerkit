@@ -311,10 +311,10 @@ export class Packagexml {
         }
         this.packageTypes[x].push(member.fullName);
       } else {
-        if (!this.packageTypes[member.type]) {
-          this.packageTypes[member.type] = [];
+        if (!this.packageTypes[type]) {
+          this.packageTypes[type] = [];
         }
-        this.packageTypes[member.type].push(member.fullName);
+        this.packageTypes[type].push(member.fullName);
       }
     }
   }
