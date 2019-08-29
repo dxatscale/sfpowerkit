@@ -201,7 +201,7 @@ export default class Generatepatch extends SfdxCommand {
   ): Promise<boolean> {
     if (isStandardValueSetToBeFixed) {
       this.ux
-        .log(`Warning, your package source code will be modified to remove standard valueset and its references. The modified source will be 
+        .log(`Warning, your package source code will be modified to remove references to standard value set and will be 
       added into the patch`);
     }
 
