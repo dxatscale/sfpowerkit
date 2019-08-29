@@ -1841,7 +1841,7 @@
     "sfpowerkit:source:picklist:generatepatch": {
       "id": "sfpowerkit:source:picklist:generatepatch",
       "description": "Search picklist fields inside project and create a static resource file with picklist fields, used to solve the picklist upgrade issue in dx unlock package",
-      "usage": "<%= command.id %> [-p <string>] [-d <string>] [-f] [-r] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "usage": "<%= command.id %> [-p <string>] [-d <string>] [-f] [-r] [-m] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],
@@ -1895,7 +1895,7 @@
           "name": "fixstandardvalueset",
           "type": "boolean",
           "char": "f",
-          "description": "Consider patching for standard valueset and picklists controlled by standard valueset, Warning: This modifies the source code in your package",
+          "description": "Consider patching for standard value set controlled picklists, Warning: This modifies the source code in your package",
           "required": false,
           "allowNo": false
         },
@@ -1904,6 +1904,14 @@
           "type": "boolean",
           "char": "r",
           "description": "Consider patching for standard value set in RecordTypes, Warning: This modifies the source code in your package",
+          "required": false,
+          "allowNo": false
+        },
+        "movestandardvalueset": {
+          "name": "movestandardvalueset",
+          "type": "boolean",
+          "char": "m",
+          "description": "Consider patching for standard valueset inside source repo, Warning: This modifies the source code in your package",
           "required": false,
           "allowNo": false
         },
