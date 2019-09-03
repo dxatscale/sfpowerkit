@@ -22,7 +22,7 @@ export default class Valid extends SfdxCommand {
 
   public static examples = [
     `$ sfdx sfpowerkit:package:valid -n testPackage
-  Now analyzing inspections
+  Now analyzing testPackage
 Converting package testPackage
 Elements supported included in your package testPackage are
 [
@@ -40,6 +40,11 @@ Elements supported included in your package testPackage are
       required: false,
       char: "n",
       description: messages.getMessage("packageFlagDescription")
+    }),
+    bypass: flags.array({
+      required: false,
+      char: "b",
+      description: messages.getMessage("itemsToBypassValidationDescription")
     })
   };
 
@@ -70,9 +75,6 @@ Elements supported included in your package testPackage are
       "metadata.json"
     );
 
-    this.ux.log(__dirname);
-    this.ux.log(resourcePath);
-
     const fileData = fs.readFileSync(resourcePath, "utf8");
     this.coverageJSON = JSON.parse(fileData);
 
@@ -81,7 +83,6 @@ Elements supported included in your package testPackage are
 
     const packageDirectories =
       (projectJson.get("packageDirectories") as JsonArray) || [];
-    // this.ux.logJson(packageDirectories);
     const result_store = [];
 
     if (packageToBeScanned != undefined) {
@@ -110,7 +111,6 @@ Elements supported included in your package testPackage are
           try {
             result = await this.validate(sf_package);
           } catch (e) {
-            this.clearDirectory();
             this.ux.log("Error Occured Unable to analyze");
           }
           result_store.push(result);
@@ -124,7 +124,7 @@ Elements supported included in your package testPackage are
           throw new SfdxError("Analysis Failed, Unsupported metadata present");
       });
     }
-
+    this.clearDirectory();
     return { packages: result_store };
   }
 
@@ -153,6 +153,11 @@ Elements supported included in your package testPackage are
       `Utilizing Version of the metadata coverage ${this.coverageJSON.versions.selected}`
     );
     this.ux.log(`Converting package ${packageToBeScanned["package"]}`);
+
+    //Bypass package validation
+    if (this.flags.bypass) {
+      sfdx_package.typesToBypass = this.flags.bypass;
+    }
 
     var startTime = new Date().valueOf();
     await spawn("sfdx", args, { stdio: "inherit" });
@@ -184,6 +189,43 @@ Elements supported included in your package testPackage are
           this.ux.log(element);
         });
         sfdx_package.valid = true;
+        this.ux.log(
+          `--------------------------------------------------------------------------------`
+        );
+      }
+
+      //Bypass metadata in package validator
+      if (
+        sfdx_package.typesToBypass.length > 0 &&
+        sfdx_package.unsupportedtypes.length > 0
+      ) {
+        let itemsToRemove = [];
+
+        sfdx_package.typesToBypass = sfdx_package.typesToBypass.map(element =>
+          element.toLowerCase()
+        );
+        sfdx_package.unsupportedtypes = sfdx_package.unsupportedtypes.map(
+          element => element.toLowerCase()
+        );
+
+        itemsToRemove = sfdx_package.typesToBypass.filter(element =>
+          sfdx_package.unsupportedtypes.includes(element)
+        );
+
+        if (itemsToRemove.length > 0) {
+          this.ux.log(
+            `Unsupported elements to bypass in your package ${packageToBeScanned["package"]} are`
+          );
+          itemsToRemove.forEach(element => {
+            this.ux.log(element);
+          });
+          sfdx_package.unsupportedtypes = sfdx_package.unsupportedtypes.filter(
+            element => !itemsToRemove.includes(element)
+          );
+          this.ux.log(
+            `--------------------------------------------------------------------------------`
+          );
+        }
       }
 
       if (sfdx_package.unsupportedtypes.length > 0) {
@@ -192,6 +234,9 @@ Elements supported included in your package testPackage are
           this.ux.log(element);
         });
         sfdx_package.valid = false;
+        this.ux.log(
+          `--------------------------------------------------------------------------------`
+        );
       }
     }
 
@@ -206,6 +251,7 @@ Elements supported included in your package testPackage are
 export class SFDXPackage {
   public unsupportedtypes = [];
   public supportedTypes = [];
+  public typesToBypass = [];
   public packageName: string;
   public valid: boolean;
   public processed: boolean;
