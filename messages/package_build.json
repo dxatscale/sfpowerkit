@@ -1,0 +1,6 @@
+{
+  "commandDescription": "generate a complete package xml form the specified org",
+  "quickfilterFlagDescription": "csv separated list of metadata type, member or file names to filter on",
+  "excludeManagedFlagDescription": "exclude managed packages from output",
+  "outputFileFlagDescription": "path to the file where the generated manifest "
+}
