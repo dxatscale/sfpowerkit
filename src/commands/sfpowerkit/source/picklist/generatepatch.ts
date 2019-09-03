@@ -58,6 +58,11 @@ export default class Generatepatch extends SfdxCommand {
       char: "r",
       description: messages.getMessage("fixRecordTypes")
     }),
+    movestandardvalueset: flags.boolean({
+      required: false,
+      char: "m",
+      description: messages.getMessage("movestandardvalueSetDescription")
+    }),
     apiversion: flags.builtin({
       description: messages.getMessage("apiversion")
     })
@@ -90,7 +95,7 @@ export default class Generatepatch extends SfdxCommand {
       objectsDirPath = packageToBeUsed.path + `/main/default/objects/`;
     }
 
-    let status = await this.gemeratePatchForCustomPicklistField(
+    let status = await this.generatePatchForCustomPicklistField(
       objectsDirPath,
       this.flags.fixstandardvalueset
     );
@@ -102,9 +107,14 @@ export default class Generatepatch extends SfdxCommand {
     );
 
     if (this.flags.fixrecordtypes) {
-      let status = await this.gemeratePatchForBusinessProcess(objectsDirPath);
+      let status = await this.generatePatchForBusinessProcess(objectsDirPath);
       if (!status) return 1;
-      status = await this.gemeratePatchForRecordTypes(objectsDirPath);
+      status = await this.generatePatchForRecordTypes(objectsDirPath);
+      if (!status) return 1;
+    }
+
+    if (this.flags.movestandardvalueset) {
+      status = await this.generatePatchForStandardValuset(objectsDirPath);
       if (!status) return 1;
     }
 
@@ -185,7 +195,7 @@ export default class Generatepatch extends SfdxCommand {
     return 0;
   }
 
-  private async gemeratePatchForCustomPicklistField(
+  private async generatePatchForCustomPicklistField(
     objectsDirPath: string,
     isStandardValueSetToBeFixed: boolean
   ): Promise<boolean> {
@@ -288,7 +298,7 @@ export default class Generatepatch extends SfdxCommand {
     return Promise.resolve(true);
   }
 
-  private async gemeratePatchForRecordTypes(
+  private async generatePatchForRecordTypes(
     objectsDirPath: string
   ): Promise<boolean> {
     this.ux
@@ -339,10 +349,13 @@ export default class Generatepatch extends SfdxCommand {
         `Modified  ${modified_source_count} RecordTypes in packaging folder`
       );
     }
+    this.ux.log(
+      "--------------------------------------------------------------------------------"
+    );
     return true;
   }
 
-  private async gemeratePatchForBusinessProcess(
+  private async generatePatchForBusinessProcess(
     objectsDirPath: string
   ): Promise<boolean> {
     let patch_value = {
@@ -399,6 +412,46 @@ export default class Generatepatch extends SfdxCommand {
         `Modified  ${modified_source_count} BusinessProcess in packaging folder`
       );
     }
+    this.ux.log(
+      "--------------------------------------------------------------------------------"
+    );
     return true;
+  }
+
+  private async generatePatchForStandardValuset(
+    objectsDirPath: string
+  ): Promise<boolean> {
+    this.ux
+      .log(`Warning, your package source code will be modified to remove standard valueset. The modified source will be 
+    added into the patch`);
+
+    let standardValueSetPath = objectsDirPath.replace("objects", "");
+    if (standardValueSetPath.includes("//")) {
+      standardValueSetPath = standardValueSetPath.replace("//", "/");
+    }
+    standardValueSetPath = standardValueSetPath + "standardValueSets/";
+
+    if (fs.existsSync(path.resolve(standardValueSetPath))) {
+      let standardValueSets: any[] = searchFilesInDirectory(
+        standardValueSetPath,
+        '<StandardValueSet xmlns="http://soap.sforce.com/2006/04/metadata">',
+        ".xml"
+      );
+      if (standardValueSets.length > 0) {
+        this.ux.log(
+          `Found ${standardValueSets.length} Standard valueset in ${standardValueSetPath}`
+        );
+        for (const file of standardValueSets) {
+          this.ux.log("Copied Original to Patch:         " + file);
+          MetadataFiles.copyFile(file, "temp_sfpowerkit");
+        }
+      }
+      this.ux.log(`Removing ${standardValueSetPath} from source`);
+      rimraf.sync(standardValueSetPath);
+      this.ux.log(
+        "--------------------------------------------------------------------------------"
+      );
+    }
+    return Promise.resolve(true);
   }
 }

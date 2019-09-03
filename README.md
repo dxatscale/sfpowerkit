@@ -379,25 +379,28 @@ USAGE
   $ sfdx sfpowerkit:package:valid [-n <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
+  -b, --bypass=bypass                                                               metadatatypes to skip the package validation check
   -n, --package=package                           the package to analyze
   --json                                          format output as json
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx sfpowerkit:package:valid -n testPackage
-     Now analyzing inspections
+  $ sfdx sfpowerkit:package:valid -n testPackage -b sharingrules,sharingownerrule
+     Now analyzing testPackage
   Converting package testPackage
   Source was successfully converted to Metadata API format and written to the location:
   D:projects	estPackage	emp_sfpowerkitmdapi
   Elements supported included in your package testPackage are
-  [
-     "AuraDefinitionBundle",
-     "CustomApplication",
-     "ApexClass",
-     "ContentAsset",
-     "WorkflowRule"
-  ]
-
+  AuraDefinitionBundle
+  CustomApplication
+  ApexClass
+  ContentAsset
+  WorkflowRule
+  --------------------------------------------------------------------------------
+  Unsupported elements to bypass in your package sample are
+  sharingrules
+  sharingownerrule
+  --------------------------------------------------------------------------------
 ```
 
 _See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/valid.ts)_
