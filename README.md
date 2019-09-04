@@ -298,7 +298,8 @@ OPTIONS
   -p, --package=package                                                             Name of the package to generate the picklist
   patch
   -f, --fixstandardvalueset                                                         Consider patching for standard value set controlled picklists, Warning: This modifies the source code in your package by removing references to standardvalueset from the particular picklist.
-  -r, --fixrecordtypes                                                          Consider patching for standard value set in RecordTypes, Warning: This modifies the source code in your package
+  -m. --mmovestandardvalueset                                                       Consider patching for standard valueset inside source repo, Warning: This modifies the source code in your package
+  -r, --fixrecordtypes                                                              Consider patching for standard value set in RecordTypes, Warning: This modifies the source code in your package
 
 EXAMPLE
     sfdx sfpowerkit:source:picklist:generatepatch -p sfpowerkit_test -d force-app/main/default/objects/ -f
