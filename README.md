@@ -677,7 +677,7 @@ _See code: [src\commands\sfpowerkit\org\healthcheck.ts](https://github.com/Accen
 
 ## `sfpowerkit:org:manifest:build [BETA]`
 
-Generate a complete manifest of all the metadata from the specified org. Once the manifest while is generated use source:retrieve or mdapi:retrieve to retrieve the metadata. Reports and Dashboards are omitted in the current version
+Generate a complete manifest of all the metadata from the specified org. Once the manifest is generated use source:retrieve or mdapi:retrieve to retrieve the metadata.
 
 This command is of sufficient quality, however proceed with caution while adopting in your workflow
 
