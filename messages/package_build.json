@@ -1,0 +1,6 @@
+{
+  "commandDescription": "Generate a complete manifest of all the metadata from the specified org. Once the manifest while is generated use source:retrieve or mdapi:retrieve to retrieve the metadata. Reports and Dashboards are omitted in the current version",
+  "quickfilterFlagDescription": "comma separated values  of metadata type, member or file names to be excluded while building the manifest",
+  "excludeManagedFlagDescription": "exclude managed packages components from the manifest",
+  "outputFileFlagDescription": "The output path where the manifest file will be created"
+}

@@ -379,25 +379,28 @@ USAGE
   $ sfdx sfpowerkit:package:valid [-n <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
+  -b, --bypass=bypass                                                               metadatatypes to skip the package validation check
   -n, --package=package                           the package to analyze
   --json                                          format output as json
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx sfpowerkit:package:valid -n testPackage
-     Now analyzing inspections
+  $ sfdx sfpowerkit:package:valid -n testPackage -b sharingrules,sharingownerrule
+     Now analyzing testPackage
   Converting package testPackage
   Source was successfully converted to Metadata API format and written to the location:
   D:projects	estPackage	emp_sfpowerkitmdapi
   Elements supported included in your package testPackage are
-  [
-     "AuraDefinitionBundle",
-     "CustomApplication",
-     "ApexClass",
-     "ContentAsset",
-     "WorkflowRule"
-  ]
-
+  AuraDefinitionBundle
+  CustomApplication
+  ApexClass
+  ContentAsset
+  WorkflowRule
+  --------------------------------------------------------------------------------
+  Unsupported elements to bypass in your package sample are
+  sharingrules
+  sharingownerrule
+  --------------------------------------------------------------------------------
 ```
 
 _See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/valid.ts)_
@@ -671,6 +674,45 @@ EXAMPLE
 ```
 
 _See code: [src\commands\sfpowerkit\org\healthcheck.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/healthcheck.ts)_
+
+## `sfpowerkit:org:manifest:build [BETA]`
+
+Generate a complete manifest of all the metadata from the specified org. Once the manifest while is generated use source:retrieve or mdapi:retrieve to retrieve the metadata. Reports and Dashboards are omitted in the current version
+
+This command is of sufficient quality, however proceed with caution while adopting in your workflow
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:manifest:build [-q <string>] [-x] [-o <filepath>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+
+OPTIONS
+  -o, --outputfile=outputfile                      The output path where the manifest file will be created
+
+  -q, --quickfilter=quickfilter                    comma separated values  of metadata type, member or file names to be excluded while building the manifest
+
+  -u, --targetusername=targetusername              username or alias for the target org; overrides default
+                                                   target org
+
+  -x, --excludemanaged                             exclude managed packages components from the manifest
+
+  --apiversion=apiversion                          override the api version used for api requests made by this
+                                                   command
+
+  --json                                           format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLES
+  $ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml
+       <?xml version="1.0" encoding="UTF-8"?>
+       <Package xmlns="http://soap.sforce.com/2006/04/metadata">...</Package>
+
+  $ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml -q 'ApexClass, CustomObject, Report'
+       <?xml version="1.0" encoding="UTF-8"?>
+       <Package xmlns="http://soap.sforce.com/2006/04/metadata">...</Package>
+```
+
+_See code: [src\commands\sfpowerkit\org\manifest\build.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/manifest/build.ts)_
 
 ## `sfpowerkit:org:orgcoverage`
 

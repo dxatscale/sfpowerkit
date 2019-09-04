@@ -1,9 +1,9 @@
 {
   "extends": "@salesforce/dev-config/tslint",
   "rules": {
-    "variable-name" : false,
-    "no-angle-bracket-type-assertion" : false,
+    "variable-name": false,
+    "no-angle-bracket-type-assertion": false,
     "no-string-based-set-timeout": false,
-    "member-ordering":false,
+    "member-ordering": false
   }
 }

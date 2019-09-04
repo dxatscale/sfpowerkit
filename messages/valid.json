@@ -1,4 +1,5 @@
 {
   "commandDescription": "Validates a package to check whether it only contains valid metadata as per metadata coverage",
-  "packageFlagDescription": "the package to analyze"
+  "packageFlagDescription": "the package to analyze",
+  "itemsToBypassValidationDescription": "metadatatypes to skip the package validation check"
 }
