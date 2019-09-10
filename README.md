@@ -530,7 +530,42 @@ EXAMPLE
     Duplicate Rule CRM Account Rule 2 Activated
 ```
 
-_See code: [src\commands\sfpowerkit\org\duplicaterule\activate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/activate.ts)_
+_See code: [src\commands\sfpowerkit\org\duplicaterule\activate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/duplicaterule/activate.ts)_
+
+## `sfpowerkit:org:email:updatelink`
+
+This command is used to Update links in email templates, this helps to reduce the manual effort involved updating links in multiple environments.
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:email:updatelink [-n <array>] [-t <string>] [-r <string>] [-j <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -j, --jsonpath=jsonpath                                                           path for JSON contains email template details to update
+  -n, --name=name                                                                   Name of the email templates to update
+  -r, --replacelink=replacelink                                                     New link to replace in the email template
+  -t, --targetlink=targetlink                                                       Target link to be replaced from email template
+  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:org:email:updatelink -n "sampleFolder/sample_email" -t "https://www.test.salesforce.com" -r "https://www.login.salesforce.com" -u sandbox
+       Polling for Retrieval Status
+       --------------retrieved emails from the org------------------
+       temp_sfpowerkitemail/sampleFolder/sample_email.email
+       temp_sfpowerkit/email/sampleFolder/sample_email.email-meta.xml
+       -----------------------------------------------------------------
+       Updated link in:         temp_sfpowerkit/email/sampleFolder/sample_email.email
+       Updated link in:         temp_sfpowerkit/emailsampleFolder/sample_email.email-meta.xml
+       Deploying Email templates with ID  0Af0w000007HU7FCAW to sample.user@example.com
+       Polling for Deployment Status
+       Email templates updated successfully.
+```
+
+_See code: [src\commands\sfpowerkit\org\email\updatelink.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/email/updatelink.ts)_
 
 ## `sfpowerkit:org:matchingrule:deactivate`
 

@@ -1,0 +1,7 @@
+{
+  "commandDescription": "This command is used to Update links in email templates, this helps to reduce the manual effort involved updating links in multiple environments.",
+  "nameFlagDescription": "Name of the email templates to update",
+  "targetlinkFlagDescription": "Target link to be replaced from email template",
+  "replacelinkFlagDescription": "New link to replace in the email template",
+  "jsonpathDescription": "path for JSON contains email template details to update"
+}
