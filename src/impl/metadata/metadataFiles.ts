@@ -174,7 +174,7 @@ export default class MetadataFiles {
     }
 
     if (filePath.startsWith(".")) {
-      fs.copyFileSync(filePath, outputFolder);
+      fs.copyFileSync(filePath, path.join(outputFolder, filePath));
       return;
     }
 
