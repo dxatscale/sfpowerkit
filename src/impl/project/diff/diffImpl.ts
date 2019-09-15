@@ -432,7 +432,7 @@ export default class DiffImpl {
     for (let i = 0; i < destructiveObj.length; i++) {
       if (destructiveObj[i].name === name) {
         typeIsPresent = true;
-        destructiveObj.members.push(member);
+        destructiveObj[i].members.push(member);
         break;
       }
     }
