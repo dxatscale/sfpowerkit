@@ -98,6 +98,14 @@ export default class DiffUtil {
       deleted: []
     };
 
+    //Ensure array
+    if (!_.isNil(list1) && !Array.isArray(list1)) {
+      list1 = [list1];
+    }
+    if (!_.isNil(list2) && !Array.isArray(list2)) {
+      list2 = [list2];
+    }
+
     if (_.isNil(list1) && !_.isNil(list2) && list2.length > 0) {
       result.addedEdited.push(...list2);
     }
