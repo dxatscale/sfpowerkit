@@ -95,7 +95,7 @@ export default class MetadataFiles {
     return member;
   }
 
-  public loadComponents(srcFolder: string): void {
+  public loadComponents(srcFolder: string, checkIgnore = true): void {
     var metadataFiles: string[] = FileUtils.getAllFilesSync(srcFolder);
     let keys = Object.keys(METADATA_INFO);
     if (Array.isArray(metadataFiles) && metadataFiles.length > 0) {
@@ -115,8 +115,7 @@ export default class MetadataFiles {
               METADATA_INFO[keys[i]].files = [];
               METADATA_INFO[keys[i]].components = [];
             }
-            let isValid = this.accepts(metadataFile);
-            if (isValid) {
+            if (!checkIgnore || (checkIgnore && this.accepts(metadataFile))) {
               METADATA_INFO[keys[i]].files.push(metadataFile);
 
               let name = FileUtils.getFileNameWithoutExtension(
@@ -147,7 +146,7 @@ export default class MetadataFiles {
     }
   }
   //Check if a component is accepted by forceignore.
-  private accepts(filePath: string) {
+  public accepts(filePath: string) {
     return !this.forceignore.ignores(path.relative(process.cwd(), filePath));
   }
 
