@@ -1,6 +1,7 @@
 import * as path from "path";
 import _ from "lodash";
 import simplegit = require("simple-git/promise");
+import MetadataFiles from "../../../impl/metadata/metadataFiles";
 
 export interface DiffFileStatus {
   revisionFrom: string;
@@ -32,6 +33,8 @@ export default class DiffUtil {
     const deletedFileRegEx = new RegExp(/\sD\t/);
     const lineBreakRegEx = /\r?\n|\r|( $)/;
 
+    let metadataFiles = new MetadataFiles();
+
     var diffFile: DiffFile = {
       deleted: [],
       addedEdited: []
@@ -47,6 +50,10 @@ export default class DiffUtil {
         );
         finalPath = finalPath.trim();
         finalPath = finalPath.replace("\\303\\251", "é");
+
+        if (!metadataFiles.accepts(finalPath)) {
+          continue;
+        }
 
         let revisionPart = lineParts[0].split(/\t|\s/);
 
@@ -73,6 +80,10 @@ export default class DiffUtil {
         let revisionPart = lineParts[0].split(/\t|\s/);
 
         var paths = pathsParts.split(tabRegEx);
+
+        if (!metadataFiles.accepts(paths[0].trim())) {
+          continue;
+        }
 
         diffFile.addedEdited.push({
           revisionFrom: "000000000",
