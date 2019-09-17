@@ -141,7 +141,7 @@ export default class DiffImpl {
 
   private buildOutput(outputFolder) {
     let metadataFiles = new MetadataFiles();
-    metadataFiles.loadComponents(outputFolder);
+    metadataFiles.loadComponents(outputFolder, false);
 
     let keys = Object.keys(METADATA_INFO);
     let excludedFiles = _.difference(
