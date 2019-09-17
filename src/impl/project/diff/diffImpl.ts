@@ -20,6 +20,9 @@ import WorkflowDiff from "./workflowDiff";
 import SharingRuleDiff from "./sharingRuleDiff";
 import CustomLabelsDiff from "./customLabelsDiff";
 import DiffUtil, { DiffFile, DiffFileStatus } from "./diffUtil";
+import { core } from "@salesforce/command";
+
+const messages = core.Messages.loadMessages("sfpowerkit", "project_diff");
 
 const deleteNotSupported = ["RecordType"];
 
@@ -71,6 +74,17 @@ export default class DiffImpl {
     if (diffFilePath !== null && diffFilePath !== "") {
       data = fs.readFileSync(diffFilePath, encoding);
     } else {
+      //check if same commit
+      const commitFrom = await git.raw([
+        "rev-list",
+        "-n",
+        "1",
+        this.revisionFrom
+      ]);
+      const commitTo = await git.raw(["rev-list", "-n", "1", this.revisionTo]);
+      if (commitFrom === commitTo) {
+        throw new Error(messages.getMessage("sameCommitErrorMessage"));
+      }
       data = await git.diff(["--raw", this.revisionFrom, this.revisionTo]);
     }
 
