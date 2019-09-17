@@ -4,6 +4,7 @@ import simplegit = require("simple-git/promise");
 import * as xml2js from "xml2js";
 import * as path from "path";
 import * as fs from "fs";
+import rimraf = require("rimraf");
 import {
   SOURCE_EXTENSION_REGEX,
   MetadataInfo,
@@ -60,6 +61,8 @@ export default class DiffImpl {
     encoding: string,
     outputFolder: string
   ) {
+    rimraf.sync(outputFolder);
+
     //const sepRegex=/\t| |\n/;
     const sepRegex = /\n|\r/;
 
@@ -120,22 +123,25 @@ export default class DiffImpl {
       await this.createDestructiveChanges(deletedFiles, outputFolder);
     }
 
-    try {
-      MetadataFiles.copyFile(".forceignore", outputFolder);
-    } catch (e) {
-      if (e.code !== "EPERM") {
-        throw e;
+    this.buildOutput(outputFolder);
+
+    if (this.resultOutput.length > 0) {
+      try {
+        MetadataFiles.copyFile(".forceignore", outputFolder);
+      } catch (e) {
+        if (e.code !== "EPERM") {
+          throw e;
+        }
       }
-    }
-    try {
-      MetadataFiles.copyFile("sfdx-project.json", outputFolder);
-    } catch (e) {
-      if (e.code !== "EPERM") {
-        throw e;
+      try {
+        MetadataFiles.copyFile("sfdx-project.json", outputFolder);
+      } catch (e) {
+        if (e.code !== "EPERM") {
+          throw e;
+        }
       }
     }
 
-    this.buildOutput(outputFolder);
     return this.resultOutput;
   }
 
