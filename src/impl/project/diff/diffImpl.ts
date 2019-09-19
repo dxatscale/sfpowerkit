@@ -23,6 +23,7 @@ import DiffUtil, { DiffFile, DiffFileStatus } from "./diffUtil";
 import { core } from "@salesforce/command";
 
 const messages = core.Messages.loadMessages("sfpowerkit", "project_diff");
+import { SFPowerkit } from "../../../sfpowerkit";
 
 const deleteNotSupported = ["RecordType"];
 
@@ -266,6 +267,7 @@ export default class DiffImpl {
     }
 
     if (diffFile.path.endsWith(METADATA_INFO.Profile.sourceExtension)) {
+      //Deploy only what changed
       if (content2 === "") {
         //The profile is deleted or marked as renamed.
         //Delete the renamed one
@@ -294,30 +296,39 @@ export default class DiffImpl {
       }
     }
     if (diffFile.path.endsWith(METADATA_INFO.PermissionSet.sourceExtension)) {
-      if (content2 === "") {
-        //Deleted permissionSet
-        let permsetType: any = _.find(this.destructivePackageObjPost, function(
-          metaType: any
-        ) {
-          return metaType.name === METADATA_INFO.PermissionSet.xmlName;
-        });
-        if (permsetType === undefined) {
-          permsetType = {
-            name: METADATA_INFO.PermissionSet.xmlName,
-            members: []
-          };
-          this.destructivePackageObjPost.push(permsetType);
-        }
+      let sourceApiVersion = await SFPowerkit.getApiVersion();
+      if (sourceApiVersion <= 39.0) {
+        // in API 39 and erliar PermissionSet deployment are merged. deploy only what changed
+        if (content2 === "") {
+          //Deleted permissionSet
+          let permsetType: any = _.find(
+            this.destructivePackageObjPost,
+            function(metaType: any) {
+              return metaType.name === METADATA_INFO.PermissionSet.xmlName;
+            }
+          );
+          if (permsetType === undefined) {
+            permsetType = {
+              name: METADATA_INFO.PermissionSet.xmlName,
+              members: []
+            };
+            this.destructivePackageObjPost.push(permsetType);
+          }
 
-        let baseName = path.parse(diffFile.path).base;
-        let permsetName = baseName.split(".")[0];
-        permsetType.members.push(permsetName);
+          let baseName = path.parse(diffFile.path).base;
+          let permsetName = baseName.split(".")[0];
+          permsetType.members.push(permsetName);
+        } else {
+          await PermsetDiff.generatePermissionsetXml(
+            content1,
+            content2,
+            path.join(outputFolder, diffFile.path)
+          );
+        }
       } else {
-        await PermsetDiff.generatePermissionsetXml(
-          content1,
-          content2,
-          path.join(outputFolder, diffFile.path)
-        );
+        //PermissionSet deployment override in the target org
+        //So deploy the whole file
+        MetadataFiles.copyFile(diffFile.path, outputFolder);
       }
     }
   }
