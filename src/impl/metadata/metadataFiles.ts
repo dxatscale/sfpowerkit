@@ -167,14 +167,21 @@ export default class MetadataFiles {
 
     let copyOutputFolder = outputFolder;
 
+    if (!fs.existsSync(filePath)) {
+      return;
+    }
+
     let exists = fs.existsSync(path.join(outputFolder, filePath));
     if (exists) {
       return;
     }
 
     if (filePath.startsWith(".")) {
-      fs.copyFileSync(filePath, path.join(outputFolder, filePath));
-      return;
+      let parts = path.parse(filePath);
+      if (parts.dir === "") {
+        fs.copyFileSync(filePath, path.join(outputFolder, filePath));
+        return;
+      }
     }
 
     let fileName = path.parse(filePath).base;
