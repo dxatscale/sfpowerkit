@@ -897,7 +897,7 @@ USAGE
 OPTIONS
   -u, --username=username                         (required) Username of the org
 
-  -e, --email=email                               (required) Password of the org
+  -p, --password=password                          (required) Password of the org
 
   -r, --url=url                                    URL of the org, by default it points to test.salesforce.com
 
