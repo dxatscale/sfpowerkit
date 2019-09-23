@@ -169,14 +169,31 @@ Elements supported included in your package testPackage are
       const parseString = util.promisify(parser.parseString);
       const existing = await parseString(fs.readFileSync(targetFilename));
 
-      for (const types of existing.Package.types as JsonArray) {
-        if (this.coverageJSON.types[types["name"]] != undefined)
+      if (Array.isArray(existing.Package.types)) {
+        for (const types of existing.Package.types as JsonArray) {
+          if (this.coverageJSON.types[types["name"]] != undefined)
+            if (
+              this.coverageJSON.types[types["name"]].channels
+                .unlockedPackagingWithoutNamespace
+            )
+              sfdx_package.supportedTypes.push(`${types["name"]}`);
+            else sfdx_package.unsupportedtypes.push(`${types["name"]}`);
+        }
+      } else {
+        if (
+          this.coverageJSON.types[existing.Package.types["name"]] != undefined
+        )
           if (
-            this.coverageJSON.types[types["name"]].channels
+            this.coverageJSON.types[existing.Package.types["name"]].channels
               .unlockedPackagingWithoutNamespace
           )
-            sfdx_package.supportedTypes.push(`${types["name"]}`);
-          else sfdx_package.unsupportedtypes.push(`${types["name"]}`);
+            sfdx_package.supportedTypes.push(
+              `${existing.Package.types["name"]}`
+            );
+          else
+            sfdx_package.unsupportedtypes.push(
+              `${existing.Package.types["name"]}`
+            );
       }
 
       sfdx_package.processed = true;
