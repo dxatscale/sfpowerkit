@@ -90,7 +90,7 @@ export default class DiffImpl {
     }
 
     let content = data.split(sepRegex);
-    let diffFile: DiffFile = DiffUtil.parseContent(content);
+    let diffFile: DiffFile = await DiffUtil.parseContent(content);
     let filesToCopy = diffFile.addedEdited;
     let deletedFiles = diffFile.deleted;
     deletedFiles = deletedFiles.filter(deleted => {

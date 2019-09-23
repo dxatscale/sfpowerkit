@@ -10,6 +10,7 @@ import _ from "lodash";
 import ignore from "ignore";
 import * as fs from "fs";
 import * as glob from "glob";
+import { SFPowerkit } from "../../sfpowerkit";
 
 export default class MetadataFiles {
   public static sourceOnly: boolean = false;
@@ -148,6 +149,18 @@ export default class MetadataFiles {
   //Check if a component is accepted by forceignore.
   public accepts(filePath: string) {
     return !this.forceignore.ignores(path.relative(process.cwd(), filePath));
+  }
+
+  public async isInModuleFolder(filePath: string) {
+    const packageDirectories = await SFPowerkit.getProjectDirectories();
+    if (!packageDirectories || packageDirectories.length == 0) {
+      return false;
+    }
+    const moduleFolder = packageDirectories.find(packageFolder => {
+      let packageFolderNormalized = path.relative("", packageFolder);
+      return filePath.startsWith(packageFolderNormalized);
+    });
+    return moduleFolder !== undefined;
   }
 
   /**
