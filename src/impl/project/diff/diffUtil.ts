@@ -26,7 +26,7 @@ export default class DiffUtil {
     return result;
   }
 
-  public static parseContent(fileContents): DiffFile {
+  public static async parseContent(fileContents): Promise<DiffFile> {
     const statusRegEx = /\sA\t|\sM\t|\sD\t/;
     const renamedRegEx = /\sR[0-9]{3}\t|\sC[0-9]{3}\t/;
     const tabRegEx = /\t/;
@@ -50,6 +50,10 @@ export default class DiffUtil {
         );
         finalPath = finalPath.trim();
         finalPath = finalPath.replace("\\303\\251", "é");
+
+        if (!(await metadataFiles.isInModuleFolder(finalPath))) {
+          continue;
+        }
 
         if (!metadataFiles.accepts(finalPath)) {
           continue;
@@ -80,6 +84,10 @@ export default class DiffUtil {
         let revisionPart = lineParts[0].split(/\t|\s/);
 
         var paths = pathsParts.split(tabRegEx);
+
+        if (!(await metadataFiles.isInModuleFolder(finalPath))) {
+          continue;
+        }
 
         if (!metadataFiles.accepts(paths[0].trim())) {
           continue;

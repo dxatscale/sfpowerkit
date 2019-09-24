@@ -10,6 +10,7 @@ import _ from "lodash";
 import ignore from "ignore";
 import * as fs from "fs";
 import * as glob from "glob";
+import { SFPowerkit } from "../../sfpowerkit";
 
 export default class MetadataFiles {
   public static sourceOnly: boolean = false;
@@ -150,6 +151,18 @@ export default class MetadataFiles {
     return !this.forceignore.ignores(path.relative(process.cwd(), filePath));
   }
 
+  public async isInModuleFolder(filePath: string) {
+    const packageDirectories = await SFPowerkit.getProjectDirectories();
+    if (!packageDirectories || packageDirectories.length == 0) {
+      return false;
+    }
+    const moduleFolder = packageDirectories.find(packageFolder => {
+      let packageFolderNormalized = path.relative("", packageFolder);
+      return filePath.startsWith(packageFolderNormalized);
+    });
+    return moduleFolder !== undefined;
+  }
+
   /**
    * Copy a file to an outpu directory. If the filePath is a Metadata file Path,
    * All the metadata requirement are also copied. For example MyApexClass.cls-meta.xml will also copy MyApexClass.cls.
@@ -167,14 +180,21 @@ export default class MetadataFiles {
 
     let copyOutputFolder = outputFolder;
 
+    if (!fs.existsSync(filePath)) {
+      return;
+    }
+
     let exists = fs.existsSync(path.join(outputFolder, filePath));
     if (exists) {
       return;
     }
 
     if (filePath.startsWith(".")) {
-      fs.copyFileSync(filePath, path.join(outputFolder, filePath));
-      return;
+      let parts = path.parse(filePath);
+      if (parts.dir === "") {
+        fs.copyFileSync(filePath, path.join(outputFolder, filePath));
+        return;
+      }
     }
 
     let fileName = path.parse(filePath).base;
