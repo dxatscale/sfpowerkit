@@ -43,4 +43,10 @@ export class SFPowerkit {
     }
     return SFPowerkit.pluginConfig;
   }
+
+  public static async getApiVersion() {
+    const dxProject = await SfdxProject.resolve();
+    const project = await dxProject.retrieveSfdxProjectJson();
+    return project.get("sourceApiVersion");
+  }
 }
