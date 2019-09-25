@@ -22,8 +22,10 @@ import CustomLabelsDiff from "./customLabelsDiff";
 import DiffUtil, { DiffFile, DiffFileStatus } from "./diffUtil";
 import { core } from "@salesforce/command";
 
-const messages = core.Messages.loadMessages("sfpowerkit", "project_diff");
 import { SFPowerkit } from "../../../sfpowerkit";
+
+core.Messages.importMessagesDirectory(__dirname);
+const messages = core.Messages.loadMessages("sfpowerkit", "project_diff");
 
 const deleteNotSupported = ["RecordType"];
 
