@@ -23,16 +23,13 @@ export default class ProfileWriter {
         }
       }
     }
-    if (profileObj.fullName !== undefined) {
-      let builder = new xml2js.Builder({ rootName: "Profile" });
-      profileObj["$"] = {
-        xmlns: PROFILE_NAMESPACE
-      };
-      let xml = builder.buildObject(profileObj);
-      fs.writeFileSync(filePath, xml);
-    } else {
-      SFPowerkit.ux.log("No ful name on profile component");
-    }
+
+    let builder = new xml2js.Builder({ rootName: "Profile" });
+    profileObj["$"] = {
+      xmlns: PROFILE_NAMESPACE
+    };
+    let xml = builder.buildObject(profileObj);
+    fs.writeFileSync(filePath, xml);
   }
 
   public toProfile(profileObj: any): Profile {
