@@ -633,6 +633,7 @@ export default class ProfileMerge extends ProfileActions {
             SFPowerkit.ux.log("New Profile " + profileObjFromServer.fullName);
         }
 
+        profileObj.fullName = profileObjFromServer.fullName;
         profileWriter.writeProfile(profileObj, filePath);
 
         if (this.debugFlag)
