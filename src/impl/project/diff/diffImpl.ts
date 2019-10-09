@@ -89,14 +89,21 @@ export default class DiffImpl {
         throw new Error(messages.getMessage("sameCommitErrorMessage"));
       }
       data = await git.diff(["--raw", this.revisionFrom, this.revisionTo]);
-      console.log(`Git diff ${this.revisionFrom}  ${this.revisionTo} `);
+
+      console.log(
+        `Input Param: From: ${this.revisionFrom}  To: ${this.revisionTo} `
+      );
+      console.log(`SHA Found From: ${commitFrom} To:  ${commitTo} `);
+
       console.log(data);
     }
 
     let content = data.split(sepRegex);
     let diffFile: DiffFile = await DiffUtil.parseContent(content);
+
     let filesToCopy = diffFile.addedEdited;
     let deletedFiles = diffFile.deleted;
+
     deletedFiles = deletedFiles.filter(deleted => {
       let found = false;
       let deletedMetadata = MetadataFiles.getFullApiNameWithExtension(
@@ -139,8 +146,11 @@ export default class DiffImpl {
     }
 
     if (deletedFiles && deletedFiles.length > 0) {
+      SFPowerkit.ux.log("Creating Destructive Manifest..");
       await this.createDestructiveChanges(deletedFiles, outputFolder);
     }
+
+    SFPowerkit.ux.log("Building output folder..");
 
     this.buildOutput(outputFolder);
 
@@ -354,6 +364,7 @@ export default class DiffImpl {
     //returns root, dir, base and name
     for (let i = 0; i < filePaths.length; i++) {
       let filePath = filePaths[i].path;
+
       let matcher = filePath.match(SOURCE_EXTENSION_REGEX);
       let extension = "";
       if (matcher) {
@@ -370,10 +381,22 @@ export default class DiffImpl {
       let parsedPath = path.parse(filePath);
       let filename = parsedPath.base;
       let name = MetadataInfo.getMetadataName(filename);
+
       if (name) {
         if (!MetadataFiles.isCustomMetadata(filePath, name)) {
           // avoid to generate destructive for Standard Components
           //Support on Custom Fields and Custom Objects for now
+
+          this.resultOutput.push({
+            action: "Skip ",
+            componentName: MetadataFiles.getMemberNameFromFilepath(
+              filePath,
+              name
+            ),
+            metadataType: "StandardField/CustomMetadata",
+            path: "--"
+          });
+
           continue;
         }
         let member = MetadataFiles.getMemberNameFromFilepath(filePath, name);
@@ -392,6 +415,9 @@ export default class DiffImpl {
               member
             );
           }
+          SFPowerkit.ux.log(
+            `${filePath} ${MetadataFiles.isCustomMetadata(filePath, name)}`
+          );
           this.resultOutput.push({
             action: "Delete",
             componentName: member,
