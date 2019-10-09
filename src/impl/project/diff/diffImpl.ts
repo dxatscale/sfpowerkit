@@ -89,6 +89,8 @@ export default class DiffImpl {
         throw new Error(messages.getMessage("sameCommitErrorMessage"));
       }
       data = await git.diff(["--raw", this.revisionFrom, this.revisionTo]);
+      console.log(`Git diff ${this.revisionFrom}  ${this.revisionTo} `);
+      console.log(data);
     }
 
     let content = data.split(sepRegex);
