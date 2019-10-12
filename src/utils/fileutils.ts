@@ -5,7 +5,7 @@ const path = require("path");
 const _ = require("lodash");
 const os = require("os");
 
-export const PLUGIN_CACHE_FOLDER = os.homedir() + path.sep + "sfpowerkit";
+export const PLUGIN_CACHE_FOLDER = "sfpowerkit";
 
 export default class FileUtils {
   /**

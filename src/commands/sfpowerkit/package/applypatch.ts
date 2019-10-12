@@ -100,7 +100,7 @@ export default class Applypatch extends SfdxCommand {
     });
 
     if (fs.existsSync(path.resolve(zipFileName))) {
-      await extract("temp_sfpowerkit");
+      await extract(`./temp_sfpowerkit/unpackaged.zip`, "temp_sfpowerkit");
       fs.unlinkSync(zipFileName);
 
       let resultFile = `temp_sfpowerkit/staticresources/${this.flags.name}.resource`;

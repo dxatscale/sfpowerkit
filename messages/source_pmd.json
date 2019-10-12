@@ -1,0 +1,5 @@
+{
+  "commandDescription": "Runs PMD to static analyze the source for violations",
+  "packageFlagDescription": "the package to analyze",
+  "itemsToBypassValidationDescription": "metadatatypes to skip the package validation check"
+}

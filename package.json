@@ -49,8 +49,9 @@
     "request-promise-native": "^1.0.7",
     "simple-git": "^1.126.0",
     "tslib": "1",
-    "unzipper": "0.10.3",
-    "xml2js": "^0.4.22"
+    "unzipper": "0.10.5",
+    "xml2js": "^0.4.22",
+    "unzip-stream": "0.3.0"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.22.2",

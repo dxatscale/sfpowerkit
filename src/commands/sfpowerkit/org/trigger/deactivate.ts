@@ -90,7 +90,8 @@ export default class Deactivate extends SfdxCommand {
     fs.writeFileSync(zipFileName, metadata_retrieve_result.zipFile, {
       encoding: "base64"
     });
-    await extract("temp_sfpowerkit");
+
+    await extract(`./temp_sfpowerkit/unpackaged.zip`, "temp_sfpowerkit");
     fs.unlinkSync(zipFileName);
     let resultFile = `temp_sfpowerkit/triggers/${this.flags.name}.trigger-meta.xml`;
 
