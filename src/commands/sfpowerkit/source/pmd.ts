@@ -19,81 +19,101 @@ core.Messages.importMessagesDirectory(__dirname);
 const messages = core.Messages.loadMessages("sfpowerkit", "source_pmd");
 
 export default class Pmd extends SfdxCommand {
+  public static description = messages.getMessage("commandDescription");
+
+  public static examples = [`$ sfdx sfpowerkit:source:pmd`];
+
   protected static flagsConfig: FlagsConfig = {
-    package: flags.string({
+    directory: flags.string({
       required: false,
-      char: "p",
-      description: messages.getMessage("packageFlagDescription")
+      char: "d",
+      description: messages.getMessage("directoryFlagDescription")
     }),
 
     ruleset: flags.string({
       required: false,
       char: "r",
-      description: messages.getMessage("packageFlagDescription")
+      description: messages.getMessage("rulesetFlagDescription")
     }),
 
-    javahome: flags.string({
-      required: false,
-      description:
-        "path to java home directory, if not set the command will attempt to search for java home path"
-    }),
     format: flags.string({
       required: false,
       char: "f",
       default: "text",
-      description: "Format of the pmd report"
+      description: messages.getMessage("formatFlagDescription")
     }),
     report: flags.string({
       required: false,
       char: "o",
       default: "pmd-output",
-      description: "path to report"
+      description: messages.getMessage("reportFlagDescription")
+    }),
+    javahome: flags.string({
+      required: false,
+      description: messages.getMessage("javaHomeFlagDescription")
     }),
     supressoutput: flags.boolean({
       required: false,
       default: false,
-      description: "Supress the output to be displayed on the console"
+      description: messages.getMessage("supressoutputFlagDescription")
+    }),
+    version: flags.string({
+      required: false,
+      default: "6.18.0",
+      description: messages.getMessage("versionFlagDescription")
     })
   };
 
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   // protected static requiresProject = true;
 
+  private javahome;
+
   public async run(): Promise<any> {
     SFPowerkit.ux = this.ux;
 
-    const javahome = await this.findJavaHomeAsync();
-    this.ux.log(`Found Java Home at ${javahome}`);
+    if (isNullOrUndefined(this.flags.javahome)) {
+      this.javahome = await this.findJavaHomeAsync();
+      this.ux.log(`Found Java Home at ${this.javahome}`);
+    }
 
     //Download PMD
     let cache_directory = FileUtils.getGlobalCacheDir();
     let pmd_cache_directory = path.join(cache_directory, "pmd");
 
-    let version = "6.18.0";
-
-    if (!fs.existsSync(path.join(pmd_cache_directory, `pmd-bin-${version}`))) {
+    if (
+      !fs.existsSync(
+        path.join(pmd_cache_directory, `pmd-bin-${this.flags.version}`)
+      )
+    ) {
       this.ux.log("Initiating Download of  PMD");
       fs.mkdirSync(pmd_cache_directory);
-      await this.downloadPMD(version, pmd_cache_directory);
-      this.ux.log(`Downloaded PMD ${version}`);
+      await this.downloadPMD(this.flags.version, pmd_cache_directory);
+      this.ux.log(`Downloaded PMD ${this.flags.version}`);
       await extract(
         path.join(pmd_cache_directory, "pmd.zip"),
         pmd_cache_directory
       );
-      this.ux.log(`Extracted PMD ${version}`);
+      this.ux.log(`Extracted PMD ${this.flags.version}`);
     }
 
     const pmdClassPath = path.join(
       pmd_cache_directory,
-      `pmd-bin-${version}`,
+      `pmd-bin-${this.flags.version}`,
       "lib",
       "*"
     );
 
+    const pmdOutputPath = path.join(
+      pmd_cache_directory,
+      `pmd-bin-${this.flags.version}`,
+      "sf-pmd-output.xml"
+    );
+
     //Directory to be scanned
-    let packageDirectory = isNullOrUndefined(this.flags.package)
+    let packageDirectory = isNullOrUndefined(this.flags.directory)
       ? await SFPowerkit.getDefaultFolder()
-      : this.flags.package;
+      : this.flags.directory;
 
     //Default Ruleset
     let ruleset = isNullOrUndefined(this.flags.ruleset)
@@ -110,7 +130,7 @@ export default class Pmd extends SfdxCommand {
 
     console.log(`Now analyzing ${packageDirectory}`);
 
-    const pmdCmd = spawn(path.join(javahome, "bin", "java"), [
+    const pmdCmd = spawn(path.join(this.javahome, "bin", "java"), [
       "-cp",
       pmdClassPath,
       "net.sourceforge.pmd.PMD",
@@ -123,24 +143,27 @@ export default class Pmd extends SfdxCommand {
       "-f",
       "xml",
       "-r",
-      "sf-pmd-output.xml"
+      pmdOutputPath
     ]);
 
-    const pmdCmdForConsoleLogging = spawn(path.join(javahome, "bin", "java"), [
-      "-cp",
-      pmdClassPath,
-      "net.sourceforge.pmd.PMD",
-      "-l",
-      "apex",
-      "-d",
-      packageDirectory,
-      "-R",
-      ruleset,
-      "-f",
-      this.flags.format,
-      "-r",
-      this.flags.report
-    ]);
+    const pmdCmdForConsoleLogging = spawn(
+      path.join(this.javahome, "bin", "java"),
+      [
+        "-cp",
+        pmdClassPath,
+        "net.sourceforge.pmd.PMD",
+        "-l",
+        "apex",
+        "-d",
+        packageDirectory,
+        "-R",
+        ruleset,
+        "-f",
+        this.flags.format,
+        "-r",
+        this.flags.report
+      ]
+    );
 
     //capture pmd errors
     let pmd_error;
@@ -154,7 +177,7 @@ export default class Pmd extends SfdxCommand {
 
     pmdCmd.on("close", code => {
       if (code == 4 || code == 0) {
-        this.parseXmlReport("sf-pmd-output.xml", packageDirectory);
+        this.parseXmlReport(pmdOutputPath, packageDirectory);
 
         if (!this.flags.supressoutput) {
           let violations = fs.readFileSync(this.flags.report).toString();
@@ -232,7 +255,7 @@ export default class Pmd extends SfdxCommand {
       });
 
       console.debug(
-        `A PMD report was found for for module '${moduleName}' containing ${violationCount} issues -  See the report at ${xmlReport}`
+        `PMD analyzation complete  for module '${moduleName}' containing ${violationCount} issues, Report available at ${this.flags.report}`
       );
     });
 

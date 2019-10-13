@@ -114,6 +114,9 @@
       "sfpowerkit:source:profile": {
         "description": "Commands that operate on profiles"
       },
+      "sfpowerkit:source:pmd": {
+        "description": "This command is a wrapper around PMD ( downloads PMD for the first time) with some predefined defaults, such as ruleset, output format, output file. The command is to be run from the project directory"
+      },
       "sfpowerkit": {
         "description": "Salesforce DevOps Helper Extensions to use in CI/CD Pipelines"
       }
