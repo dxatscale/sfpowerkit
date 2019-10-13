@@ -5,6 +5,12 @@
 A Salesforce DX Plugin with multiple functionalities aimed at improving development and operational workflows
 Read the blog here https://accenture.github.io/blog/2019/06/27/sfpowerkit.html
 
+### Installation
+
+```
+$ sfdx plugins:install sfpowerkit
+```
+
 ## Source Related Functionalities
 
 These commands manipulate the metadata configuration/code locally or during the packaging process.
