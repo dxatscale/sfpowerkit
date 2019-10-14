@@ -1,14 +1,28 @@
 # sfpowerkit
 
-[![NPM](https://img.shields.io/npm/v/sfpowerkit.svg)](https://www.npmjs.com/package/sfpowerkit) ![npm (tag)](https://img.shields.io/npm/v/sfpowerkit/alpha) [![Board Status](https://dev.azure.com/cloudfirstanz/f7a91473-0e1c-490e-b0a0-80f9f8d82c14/c97f3cbd-bd4a-4d08-b123-9ebdd5c7c79f/_apis/work/boardbadge/6d1336f9-991b-4cb5-8cce-4173c4dcdca8?columnOptions=1)](https://dev.azure.com/cloudfirstanz/f7a91473-0e1c-490e-b0a0-80f9f8d82c14/_boards/board/t/c97f3cbd-bd4a-4d08-b123-9ebdd5c7c79f/Microsoft.RequirementCategory) [![Build status](https://dev.azure.com/cloudfirstanz/SFPowerkit/_apis/build/status/SFPowerkit-CI)](https://dev.azure.com/cloudfirstanz/SFPowerkit/_build/latest?definitionId=5) [![Greenkeeper badge](https://badges.greenkeeper.io/Accenture/sfpowerkit.svg)](https://greenkeeper.io/)![npm](https://img.shields.io/npm/dw/sfpowerkit)![Discord](https://img.shields.io/discord/623705153811251210)
+[![NPM](https://img.shields.io/npm/v/sfpowerkit.svg)](https://www.npmjs.com/package/sfpowerkit) ![npm (tag)](https://img.shields.io/npm/v/sfpowerkit/beta) [![Board Status](https://dev.azure.com/cloudfirstanz/f7a91473-0e1c-490e-b0a0-80f9f8d82c14/c97f3cbd-bd4a-4d08-b123-9ebdd5c7c79f/_apis/work/boardbadge/6d1336f9-991b-4cb5-8cce-4173c4dcdca8?columnOptions=1)](https://dev.azure.com/cloudfirstanz/f7a91473-0e1c-490e-b0a0-80f9f8d82c14/_boards/board/t/c97f3cbd-bd4a-4d08-b123-9ebdd5c7c79f/Microsoft.RequirementCategory) [![Build status](https://dev.azure.com/cloudfirstanz/SFPowerkit/_apis/build/status/SFPowerkit-CI)](https://dev.azure.com/cloudfirstanz/SFPowerkit/_build/latest?definitionId=5) [![Greenkeeper badge](https://badges.greenkeeper.io/Accenture/sfpowerkit.svg)](https://greenkeeper.io/)![npm](https://img.shields.io/npm/dw/sfpowerkit)![Discord](https://img.shields.io/discord/623705153811251210)
 
 A Salesforce DX Plugin with multiple functionalities aimed at improving development and operational workflows
 Read the blog here https://accenture.github.io/blog/2019/06/27/sfpowerkit.html
 
 ### Installation
 
+To install the stable version from the release branch, use the following command
+
 ```
 $ sfdx plugins:install sfpowerkit
+```
+
+Beta versions are the latest versions that are in development (reviewed, undergoing testing etc) and can be downloaded using the following command
+
+```
+$ sfdx plugins:install sfpowerkit@beta
+```
+
+To review a pull request (for contributors/reviewers), the fastest option is to install the specific version of the plugin using @ version
+
+```
+$ sfdx plugins:install sfpowerkit@<version>
 ```
 
 ## Source Related Functionalities
