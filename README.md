@@ -19,10 +19,10 @@ Beta versions are the latest versions that are in development (reviewed, undergo
 $ sfdx plugins:install sfpowerkit@beta
 ```
 
-To review a pull request (for contributors/reviewers), the fastest option is to install the specific version of the plugin using @ version
+To review a pull request (for contributors/reviewers), the best option is to clone the repository, checkout to the particular branch and utilize the following command from the project directory
 
 ```
-$ sfdx plugins:install sfpowerkit@<version>
+$ sfdx plugins:link
 ```
 
 ## Source Related Functionalities
