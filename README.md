@@ -39,9 +39,9 @@ USAGE
   $ sfdx sfpowerkit:source:pmd [-d <string>] [-r <string>] [-f <string>] [-o <string>] [--javahome <string>] [--supressoutput] [--version <string> [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -d, --directory=directory       [default: Default project directory as mentioned in sfdx-project.json ]                                                                           Override this to set a different directory in the project folder
+  -d, --directory=directory       [default: Default project directory as mentioned in sfdx-project.json ] Override this to set a different directory in the project folder
   -f, --format=format             [default: text] [default: text] The format for the pmd output, Possible values are available at https://pmd.github.io/latest/pmd_userdocs_cli_reference.html#available-report-formats
-  -o, --report=report             [default: pmd-output] [default: pmd-output] The path to where the output of the analysis should be written
+  -o, --report=report             [default: pmd-output] The path to where the output of the analysis should be written
   -r, --ruleset=ruleset           [default: sfpowerkit] The pmd ruleset that will be utilzied for analyzing  the apex classes,  Checkout https://pmd.github.io/pmd_userdocs_making_rulesets.html to create your own ruleset
   --javahome=javahome             The command will try to locate the javahome path to execute PMD  automatically, set this flag to override it to  another javahome path
   --supressoutput                 [default: false] Supress the ouptut of the analysis to be displayed in the console
