@@ -20,28 +20,8 @@ export default class Diff extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:project:diff --diffFile DiffFileName --encoding EncodingOfFile --output OutputFolder
-    {
-      "status": 0,
-      "result": {
-        "deleted": [],
-        "addedEdited": [
-          "scripts\\Alias.sh",
-          "sfdx-project.json",
-        ]
-       }
-      }`,
+    `$ sfdx sfpowerkit:project:diff --diffFile DiffFileName --encoding EncodingOfFile --output OutputFolder`,
     `$ sfdx sfpowerkit:project:diff --revisionfrom revisionfrom --revisionto revisionto --output OutputFolder
-   {
-    "status": 0,
-    "result": {
-      "deleted": [],
-      "addedEdited": [
-        "scripts\\Alias.sh",
-        "sfdx-project.json",
-      ]
-     }
-    }
    `
   ];
 
@@ -110,7 +90,7 @@ export default class Diff extends SfdxCommand {
       this.error("Provide either diffFile or revisionFrom parameters");
     }
 
-    let diffUtils = new DiffImpl(revisionfrom, revisionto);
+    let diffUtils = new DiffImpl(revisionfrom, revisionto, this.flags.loglevel);
 
     /* PATH TO DIFF FILE */
     let diffFilePath = "";

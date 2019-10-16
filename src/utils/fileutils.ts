@@ -5,7 +5,7 @@ const path = require("path");
 const _ = require("lodash");
 const os = require("os");
 
-export const PLUGIN_CACHE_FOLDER = os.homedir() + path.sep + "sfpowerkit";
+export const PLUGIN_CACHE_FOLDER = "sfpowerkit";
 
 export default class FileUtils {
   /**
@@ -54,6 +54,18 @@ export default class FileUtils {
     });
     return result;
   }
+
+  public static getGlobalCacheDir() {
+    let homedir = os.homedir();
+    let configDir = homedir + path.sep + PLUGIN_CACHE_FOLDER;
+    if (!fs.existsSync(configDir)) {
+      SFPowerkit.ux.log("Config folder does not exists");
+      fs.mkdirSync(configDir);
+    }
+
+    return configDir;
+  }
+
   /**
    * Get the cache path for the given cache file name
    * @param fileName

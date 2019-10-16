@@ -91,7 +91,7 @@ export default class Login extends SfdxCommand {
     await auth.save();
 
     if (this.flags.alias) {
-      const aliases = await Aliases.create({});
+      const aliases = await Aliases.create(null);
       aliases.set(this.flags.alias, this.flags.username);
       await aliases.write();
     }

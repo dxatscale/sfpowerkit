@@ -1,9 +1,9 @@
 import fs from "fs-extra";
-var unzipper = require("unzipper");
+var unzipper = require("unzip-stream");
 
-export async function extract(location: string) {
+export async function extract(path: string, location: string) {
   return new Promise((resolve, reject) => {
-    fs.createReadStream(`./${location}/unpackaged.zip`)
+    fs.createReadStream(path)
       .pipe(unzipper.Extract({ path: `${location}` }))
       .on("close", () => {
         resolve();

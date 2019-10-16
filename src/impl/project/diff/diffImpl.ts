@@ -49,7 +49,8 @@ export default class DiffImpl {
   }[];
   public constructor(
     private revisionFrom?: string,
-    private revisionTo?: string
+    private revisionTo?: string,
+    private debugLevel?: string
   ) {
     if (this.revisionTo == null || this.revisionTo.trim() === "") {
       this.revisionTo = "HEAD";
@@ -90,12 +91,12 @@ export default class DiffImpl {
       }
       data = await git.diff(["--raw", this.revisionFrom, this.revisionTo]);
 
-      console.log(
+      SFPowerkit.ux.log(
         `Input Param: From: ${this.revisionFrom}  To: ${this.revisionTo} `
       );
-      console.log(`SHA Found From: ${commitFrom} To:  ${commitTo} `);
+      SFPowerkit.ux.log(`SHA Found From: ${commitFrom} To:  ${commitTo} `);
 
-      console.log(data);
+      SFPowerkit.ux.log(data);
     }
 
     let content = data.split(sepRegex);
@@ -125,6 +126,11 @@ export default class DiffImpl {
       fs.mkdirSync(outputFolder);
     }
 
+    if (this.debugLevel == "debug") {
+      SFPowerkit.ux.log("Files to be copied");
+      SFPowerkit.ux.logJson(filesToCopy);
+    }
+
     if (filesToCopy && filesToCopy.length > 0) {
       for (var i = 0; i < filesToCopy.length; i++) {
         let filePath = filesToCopy[i].path;
@@ -141,6 +147,9 @@ export default class DiffImpl {
           await this.handleUnsplittedMetadata(filesToCopy[i], outputFolder);
         } else {
           MetadataFiles.copyFile(filePath, outputFolder);
+
+          if (this.debugLevel == "debug")
+            SFPowerkit.ux.log(`Copied file ${filePath} to ${outputFolder}`);
         }
       }
     }
@@ -150,7 +159,7 @@ export default class DiffImpl {
       await this.createDestructiveChanges(deletedFiles, outputFolder);
     }
 
-    SFPowerkit.ux.log("Building output folder..");
+    SFPowerkit.ux.log(`Generating output summary`);
 
     this.buildOutput(outputFolder);
 
@@ -188,12 +197,14 @@ export default class DiffImpl {
       if (METADATA_INFO[key].files && METADATA_INFO[key].files.length > 0) {
         METADATA_INFO[key].files.forEach(filePath => {
           let matcher = filePath.match(SOURCE_EXTENSION_REGEX);
+
           let extension = "";
           if (matcher) {
             extension = matcher[0];
           } else {
             extension = path.parse(filePath).ext;
           }
+
           if (!excludedFiles.includes(extension)) {
             let name = FileUtils.getFileNameWithoutExtension(
               filePath,
@@ -237,6 +248,8 @@ export default class DiffImpl {
     if (content1 === "") {
       //The metadata is added
       MetadataFiles.copyFile(diffFile.path, outputFolder);
+      if (this.debugLevel == "debug")
+        SFPowerkit.ux.log(`Copied file ${diffFile.path} to ${outputFolder}`);
       return;
     }
 

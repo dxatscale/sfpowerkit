@@ -1,13 +1,59 @@
 # sfpowerkit
 
-[![NPM](https://img.shields.io/npm/v/sfpowerkit.svg)](https://www.npmjs.com/package/sfpowerkit) ![npm (tag)](https://img.shields.io/npm/v/sfpowerkit/alpha) [![Board Status](https://dev.azure.com/cloudfirstanz/f7a91473-0e1c-490e-b0a0-80f9f8d82c14/c97f3cbd-bd4a-4d08-b123-9ebdd5c7c79f/_apis/work/boardbadge/6d1336f9-991b-4cb5-8cce-4173c4dcdca8?columnOptions=1)](https://dev.azure.com/cloudfirstanz/f7a91473-0e1c-490e-b0a0-80f9f8d82c14/_boards/board/t/c97f3cbd-bd4a-4d08-b123-9ebdd5c7c79f/Microsoft.RequirementCategory) [![Build status](https://dev.azure.com/cloudfirstanz/SFPowerkit/_apis/build/status/SFPowerkit-CI)](https://dev.azure.com/cloudfirstanz/SFPowerkit/_build/latest?definitionId=5) [![Greenkeeper badge](https://badges.greenkeeper.io/Accenture/sfpowerkit.svg)](https://greenkeeper.io/)![npm](https://img.shields.io/npm/dw/sfpowerkit)![Discord](https://img.shields.io/discord/623705153811251210)
+[![NPM](https://img.shields.io/npm/v/sfpowerkit.svg)](https://www.npmjs.com/package/sfpowerkit) ![npm (tag)](https://img.shields.io/npm/v/sfpowerkit/beta) [![Board Status](https://dev.azure.com/cloudfirstanz/f7a91473-0e1c-490e-b0a0-80f9f8d82c14/c97f3cbd-bd4a-4d08-b123-9ebdd5c7c79f/_apis/work/boardbadge/6d1336f9-991b-4cb5-8cce-4173c4dcdca8?columnOptions=1)](https://dev.azure.com/cloudfirstanz/f7a91473-0e1c-490e-b0a0-80f9f8d82c14/_boards/board/t/c97f3cbd-bd4a-4d08-b123-9ebdd5c7c79f/Microsoft.RequirementCategory) [![Build status](https://dev.azure.com/cloudfirstanz/SFPowerkit/_apis/build/status/SFPowerkit-CI)](https://dev.azure.com/cloudfirstanz/SFPowerkit/_build/latest?definitionId=5) [![Greenkeeper badge](https://badges.greenkeeper.io/Accenture/sfpowerkit.svg)](https://greenkeeper.io/)![npm](https://img.shields.io/npm/dw/sfpowerkit)
 
 A Salesforce DX Plugin with multiple functionalities aimed at improving development and operational workflows
 Read the blog here https://accenture.github.io/blog/2019/06/27/sfpowerkit.html
 
+## Installation
+
+To install the stable version from the release branch, use the following command
+
+```
+$ sfdx plugins:install sfpowerkit
+```
+
+Beta versions are the latest versions that are in being reviewed/ undergoing testing etc and built from the master branch and can be downloaded using the following command
+
+```
+$ sfdx plugins:install sfpowerkit@beta
+```
+
+To review a pull request (for contributors/reviewers), the best option is to clone the repository, checkout to the particular branch and utilize the following command from the project directory
+
+```
+$ sfdx plugins:link
+```
+
 ## Source Related Functionalities
 
 These commands manipulate the metadata configuration/code locally or during the packaging process.
+
+## `sfpowerkit:source:pmd`
+
+This command is a wrapper around PMD ( downloads PMD for the first time) with some predefined defaults, such as ruleset, output format, output file. The command is to be run from the project directory
+
+```
+
+USAGE
+  $ sfdx sfpowerkit:source:pmd [-d <string>] [-r <string>] [-f <string>] [-o <string>] [--javahome <string>] [--supressoutput] [--version <string> [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -d, --directory=directory       [default: Default project directory as mentioned in sfdx-project.json ] Override this to set a different directory in the project folder
+  -f, --format=format             [default: text] The format for the pmd output, Possible values are available at https://pmd.github.io/latest/pmd_userdocs_cli_reference.html#available-report-formats
+  -o, --report=report             [default: pmd-output] The path to where the output of the analysis should be written
+  -r, --ruleset=ruleset           [default: [sfpowerkit](https://github.com/Accenture/sfpowerkit/blob/master/resources/pmd-ruleset.xml)] The pmd ruleset that will be utilzied for analyzing  the apex classes,  Checkout https://pmd.github.io/pmd_userdocs_making_rulesets.html to create your own ruleset
+  --javahome=javahome             The command will try to locate the javahome path to execute PMD  automatically, set this flag to override it to  another javahome path
+  --supressoutput                 [default: false] Supress the ouptut of the analysis to be displayed in the console
+  --version=version               [default: 6.18.0] [default: 6.18.0] The version of the pmd to be utilized for the analysis, this version will be downloaded to sfpowerkit's cache directory
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:source:pmd
+
+```
+
+_See code: [src\commands\sfpowerkit\source\pmd.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/pmd.ts)_
 
 ## `sfpowerkit:source:profile:retrieve [BETA]`
 

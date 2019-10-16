@@ -97,7 +97,7 @@ export default class Retrieve extends SfdxCommand {
       encoding: "base64"
     });
 
-    await extract("temp_sfpowerkit");
+    await extract(`./temp_sfpowerkit/unpackaged.zip`, "temp_sfpowerkit");
 
     let resultFile = `temp_sfpowerkit/connectedApps/${this.flags.name}.connectedApp`;
     // if(!this.flags.json)
