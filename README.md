@@ -346,6 +346,7 @@ OPTIONS
   -f, --fixstandardvalueset                                                         Consider patching for standard value set controlled picklists, Warning: This modifies the source code in your package by removing references to standardvalueset from the particular picklist.
   -m. --mmovestandardvalueset                                                       Consider patching for standard valueset inside source repo, Warning: This modifies the source code in your package
   -r, --fixrecordtypes                                                              Consider patching for standard value set in RecordTypes, Warning: This modifies the source code in your package
+   --apiversion=apiversion                                                          The api version to be used for the static resource to be generated
 
 EXAMPLE
     sfdx sfpowerkit:source:picklist:generatepatch -p sfpowerkit_test -d force-app/main/default/objects/ -f
@@ -376,6 +377,7 @@ USAGE
 OPTIONS
   -d, --permsetdir=permsetdir                                                       Path for permissionset folder located in project
   -p, --package=package                                                             Name of the package to generate the permissionset patch
+  --apiversion=apiversion                                                           The api version to be used for the static resource to be generated
   --json                                                                            format output as json
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
