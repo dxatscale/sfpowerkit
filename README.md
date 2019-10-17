@@ -13,6 +13,12 @@ To install the stable version from the release branch, use the following command
 $ sfdx plugins:install sfpowerkit
 ```
 
+If you need to install automatically the plugin, via a CI process or Dockerfile, use the following line:
+
+```
+$ echo 'y' | sfdx plugins:install sfpowerkit
+```
+
 Beta versions are the latest versions that are in being reviewed/ undergoing testing etc and built from the master branch and can be downloaded using the following command
 
 ```
