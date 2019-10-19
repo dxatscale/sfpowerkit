@@ -55,6 +55,8 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
     super.setQuery(QUERY);
     if (this.org !== undefined) {
       this.conn = this.org.getConnection();
+      //Fix #133 Temporary fix, Salesforce has added LIMIT to EntityDefinition, which is breaking this. Need to test this before incrementing to 47.0
+      this.conn.setApiVersion("46.0");
     }
   }
 
