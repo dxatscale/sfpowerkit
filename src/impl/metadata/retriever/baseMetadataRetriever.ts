@@ -17,6 +17,7 @@ export default abstract class BaseMetadataRetriever<T> {
     let records: T[] = [];
 
     const conn = this.org.getConnection();
+    conn.setApiVersion("46.0");
 
     let result: QueryResult<T>;
 
