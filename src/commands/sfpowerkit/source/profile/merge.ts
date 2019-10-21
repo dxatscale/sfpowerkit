@@ -95,6 +95,7 @@ export default class Merge extends SfdxCommand {
   public async run(): Promise<any> {
     // tslint:disable-line:no-any
     SFPowerkit.ux = this.ux;
+    SFPowerkit.setLogLevel(this.flags.loglevel);
 
     let argFolder = this.flags.folder;
     let argProfileList = this.flags.profilelist;

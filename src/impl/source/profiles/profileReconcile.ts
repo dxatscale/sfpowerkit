@@ -194,6 +194,10 @@ export default class ProfileReconcile extends ProfileActions {
           validArray.push(cmpObj);
         }
       }
+      SFPowerkit.log(
+        `Application Visiblitilties reduced from ${profileObj.applicationVisibilities.length}  to  ${validArray.length}`,
+        "DEBUG"
+      );
       profileObj.applicationVisibilities = validArray;
     }
 
@@ -215,6 +219,11 @@ export default class ProfileReconcile extends ProfileActions {
           validArray.push(cmpObj);
         }
       }
+
+      SFPowerkit.log(
+        `Class Access reduced from ${profileObj.classAccesses.length}  to  ${validArray.length}`,
+        "DEBUG"
+      );
       profileObj.classAccesses = validArray;
     }
 
@@ -236,6 +245,10 @@ export default class ProfileReconcile extends ProfileActions {
         }
       }
 
+      SFPowerkit.log(
+        `Fields Level Security reduced from ${profileObj.fieldLevelSecurities.length}  to  ${validArray.length}`,
+        "DEBUG"
+      );
       profileObj.fieldLevelSecurities = validArray;
     }
 
@@ -277,6 +290,10 @@ export default class ProfileReconcile extends ProfileActions {
           validArray.push(cmpObj);
         }
       }
+      SFPowerkit.log(
+        `Layout Assignnments reduced from ${profileObj.layoutAssignments.length}  to  ${validArray.length}`,
+        "DEBUG"
+      );
       profileObj.layoutAssignments = validArray;
     }
     return profileObj;
@@ -297,6 +314,10 @@ export default class ProfileReconcile extends ProfileActions {
           validArray.push(cmpObj);
         }
       }
+      SFPowerkit.log(
+        `Object Permissions reduced from ${profileObj.objectPermissions.length}  to  ${validArray.length}`,
+        "DEBUG"
+      );
       profileObj.objectPermissions = validArray;
     }
     return profileObj;
@@ -315,6 +336,10 @@ export default class ProfileReconcile extends ProfileActions {
           validArray.push(cmpObj);
         }
       }
+      SFPowerkit.log(
+        `Page Access Permissions reduced from ${profileObj.pageAccesses.length}  to  ${validArray.length}`,
+        "DEBUG"
+      );
       profileObj.pageAccesses = validArray;
     }
     return profileObj;
@@ -335,6 +360,10 @@ export default class ProfileReconcile extends ProfileActions {
           validArray.push(cmpObj);
         }
       }
+      SFPowerkit.log(
+        `Record Type Visibilities reduced from ${profileObj.recordTypeVisibilities.length}  to  ${validArray.length}`,
+        "DEBUG"
+      );
       profileObj.recordTypeVisibilities = validArray;
     }
     return profileObj;
@@ -355,19 +384,31 @@ export default class ProfileReconcile extends ProfileActions {
           validArray.push(cmpObj);
         }
       }
+      SFPowerkit.log(
+        `Tab Visibilities reduced from ${profileObj.tabVisibilities.length}  to  ${validArray.length}`,
+        "DEBUG"
+      );
       profileObj.tabVisibilities = validArray;
     }
     return profileObj;
   }
 
   private async removePermissions(profileObj: Profile): Promise<Profile> {
+    SFPowerkit.log("Reconciling App", "DEBUG");
     profileObj = await this.reconcileApp(profileObj);
+    SFPowerkit.log("Reconciling Classes", "DEBUG");
     profileObj = await this.reconcileClasses(profileObj);
+    SFPowerkit.log("Reconciling Fields", "DEBUG");
     profileObj = await this.reconcileFields(profileObj);
+    SFPowerkit.log("Reconciling Objects", "DEBUG");
     profileObj = await this.reconcileObjects(profileObj);
+    SFPowerkit.log("Reconciling Pages", "DEBUG");
     profileObj = await this.reconcilePages(profileObj);
+    SFPowerkit.log("Reconciling Layouts", "DEBUG");
     profileObj = await this.reconcileLayouts(profileObj);
+    SFPowerkit.log("Reconciling Record Types", "DEBUG");
     profileObj = await this.reconcileRecordTypes(profileObj);
+    SFPowerkit.log("Reconciling  Tabs", "DEBUG");
     profileObj = await this.reconcileTabs(profileObj);
     return profileObj;
   }
