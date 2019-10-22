@@ -86,7 +86,7 @@ export default class Generatepatch extends SfdxCommand {
       packageToBeUsed = getDefaultPackageInfo(projectJson);
     }
 
-    this.flags.apiversion = this.flags.apiversion || "46.0";
+    this.flags.apiversion = this.flags.apiversion || "47.0";
 
     //set objects directory
     let objectsDirPath;
