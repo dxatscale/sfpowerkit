@@ -1,13 +1,14 @@
-import { Org } from "@salesforce/core";
+import { Org, LoggerLevel } from "@salesforce/core";
 import _ from "lodash";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 import { EntityDefinition } from "../schema";
 import { METADATA_INFO } from "../metadataInfo";
 import ProfileReconcile from "../../source/profiles/profileReconcile";
 import MetadataFiles from "../metadataFiles";
+import { SFPowerkit } from "../../../sfpowerkit";
 
 const QUERY =
-  "SELECT DurableId, DeveloperName, QualifiedApiName, NamespacePrefix FROM EntityDefinition order by QualifiedApiName";
+  "SELECT DurableId, DeveloperName, QualifiedApiName, NamespacePrefix FROM EntityDefinition order by QualifiedApiName LIMIT 200 OFFSET 0";
 export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
   EntityDefinition
 > {
@@ -19,9 +20,9 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
   }
 
   public static getInstance(org: Org): EntityDefinitionRetriever {
-    if (!EntityDefinitionRetriever.instance) {
-      EntityDefinitionRetriever.instance = new EntityDefinitionRetriever(org);
-    }
+    // if (!EntityDefinitionRetriever.instance) {
+    EntityDefinitionRetriever.instance = new EntityDefinitionRetriever(org);
+    //}
     return EntityDefinitionRetriever.instance;
   }
 
@@ -30,11 +31,16 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
       (this.data === undefined || this.data.length == 0) &&
       !this.dataLoaded
     ) {
+      SFPowerkit.ux.log(` Loading data ${QUERY}`);
+
       super.setQuery(QUERY);
       let entities = await super.getObjects();
+
       this.data = entities;
       this.dataLoaded = true;
     }
+    SFPowerkit.ux.log(` Already loaded  data ${QUERY}`);
+    SFPowerkit.ux.logJson(this.data);
     return this.data;
   }
   public async getEntityDefinitions(): Promise<EntityDefinition[]> {

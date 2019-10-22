@@ -8,7 +8,7 @@ import ProfileReconcile from "../../source/profiles/profileReconcile";
 import MetadataFiles from "../metadataFiles";
 
 const QUERY =
-  "SELECT Id, QualifiedApiName, EntityDefinitionId, DeveloperName, NamespacePrefix FROM FieldDefinition ";
+  "SELECT Id, QualifiedApiName, EntityDefinitionId, DeveloperName, NamespacePrefix FROM FieldDefinition";
 export default class FieldRetriever extends BaseMetadataRetriever<Field> {
   private static instance: FieldRetriever;
   private constructor(public org: Org) {
@@ -23,6 +23,7 @@ export default class FieldRetriever extends BaseMetadataRetriever<Field> {
   }
   public async getObjects(): Promise<Field[]> {
     let fieldsToReturn: Field[] = [];
+
     if (!this.data && !this.dataLoaded) {
       let entityDefinitionUtils = EntityDefinitionRetriever.getInstance(
         this.org

@@ -1,5 +1,6 @@
 import { QueryResult } from "jsforce";
 import { Org } from "@salesforce/core";
+import { SFPowerkit } from "../../../../src/sfpowerkit";
 
 export default abstract class BaseMetadataRetriever<T> {
   private query: string;
@@ -18,7 +19,9 @@ export default abstract class BaseMetadataRetriever<T> {
 
     const conn = this.org.getConnection();
     //Fix #133 Temporary fix, Salesforce has added LIMIT to EntityDefinition, which is breaking this
-    conn.setApiVersion("46.0");
+    conn.setApiVersion("47.0");
+
+    SFPowerkit.ux.log(` ${this.tooling}, ${this.query}`);
 
     let result: QueryResult<T>;
 
@@ -28,6 +31,8 @@ export default abstract class BaseMetadataRetriever<T> {
     } else {
       result = await conn.query<T>(this.query);
     }
+
+    SFPowerkit.ux.logJson(result);
 
     records.push(...result.records);
     while (!result.done) {

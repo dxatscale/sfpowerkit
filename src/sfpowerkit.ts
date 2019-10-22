@@ -1,9 +1,10 @@
 import { UX } from "@salesforce/command";
-import { SfdxProject } from "@salesforce/core";
+import { SfdxProject, Logger, LoggerLevel } from "@salesforce/core";
 import { isNullOrUndefined } from "util";
 
 export class SFPowerkit {
   static ux: UX;
+  static logger: Logger;
   private static defaultFolder: string;
   private static projectDirectories: string[];
   private static pluginConfig;
@@ -63,8 +64,28 @@ export class SFPowerkit {
    * @param message Message to print
    * @param messageLoglevel Log level for the message
    */
-  public static log(message: string, messageLoglevel: string) {
-    if (messageLoglevel == this.logLevel) this.ux.log(message);
+  public static log(message: string, logLevel: LoggerLevel) {
+    switch (logLevel) {
+      case LoggerLevel.TRACE:
+        this.logger.trace(message);
+        break;
+      case LoggerLevel.INFO:
+        this.logger.info(message);
+        break;
+      case LoggerLevel.DEBUG:
+        this.ux.log(message);
+        this.logger.debug(message);
+        break;
+      case LoggerLevel.WARN:
+        this.logger.warn(message);
+        break;
+      case LoggerLevel.ERROR:
+        this.logger.error(message);
+        break;
+      case LoggerLevel.FATAL:
+        this.logger.fatal(message);
+        break;
+    }
   }
 
   /**
@@ -72,9 +93,7 @@ export class SFPowerkit {
    * @param message Message to print in JSON Format
    * @param messageLoglevel  Log level for the message
    */
-  public static logJson(message: Object, messageLoglevel: string) {
-    if (!isNullOrUndefined(this.logLevel)) {
-      if (messageLoglevel == this.logLevel) this.ux.logJson(message);
-    }
+  public static logJson(message: Object, logLevel: LoggerLevel) {
+    this.ux.logJson(message);
   }
 }
