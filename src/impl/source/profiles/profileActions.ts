@@ -15,6 +15,8 @@ export default abstract class ProfileActions {
   public constructor(public org: Org, debugFlag?: boolean) {
     if (this.org !== undefined) {
       this.conn = this.org.getConnection();
+      //Fix #133 Temporary fix, Salesforce has added LIMIT to EntityDefinition, which is breaking this. Need to test this before incrementing to 47.0
+      this.conn.setApiVersion("46.0");
     }
     this.debugFlag = debugFlag;
     this.profileRetriever = new ProfileRetriever(org, debugFlag);
