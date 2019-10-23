@@ -1,6 +1,6 @@
 import { QueryResult } from "jsforce";
 import { Org } from "@salesforce/core";
-import { SFPowerkit } from "../../../../src/sfpowerkit";
+import { SFPowerkit } from "../../../sfpowerkit";
 
 export default abstract class BaseMetadataRetriever<T> {
   private query: string;
