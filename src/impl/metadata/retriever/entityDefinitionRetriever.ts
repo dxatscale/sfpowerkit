@@ -7,8 +7,10 @@ import ProfileReconcile from "../../source/profiles/profileReconcile";
 import MetadataFiles from "../metadataFiles";
 import { SFPowerkit } from "../../../sfpowerkit";
 
+const COUNT_QUERY = "SELECT COUNT() FROM EntityDefinition";
 const QUERY =
-  "SELECT DurableId, DeveloperName, QualifiedApiName, NamespacePrefix FROM EntityDefinition order by QualifiedApiName LIMIT 200 OFFSET 0";
+  "SELECT DurableId, DeveloperName, QualifiedApiName, NamespacePrefix FROM EntityDefinition order by QualifiedApiName";
+
 export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
   EntityDefinition
 > {
@@ -16,13 +18,14 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
   private objectForPermission: string[];
   private constructor(public org: Org) {
     super(org, true);
+    super.setCountQuery(COUNT_QUERY, 200);
     super.setQuery(QUERY);
   }
 
   public static getInstance(org: Org): EntityDefinitionRetriever {
-    // if (!EntityDefinitionRetriever.instance) {
-    EntityDefinitionRetriever.instance = new EntityDefinitionRetriever(org);
-    //}
+    if (!EntityDefinitionRetriever.instance) {
+      EntityDefinitionRetriever.instance = new EntityDefinitionRetriever(org);
+    }
     return EntityDefinitionRetriever.instance;
   }
 
@@ -31,16 +34,13 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
       (this.data === undefined || this.data.length == 0) &&
       !this.dataLoaded
     ) {
-      SFPowerkit.ux.log(` Loading data ${QUERY}`);
-
-      super.setQuery(QUERY);
       let entities = await super.getObjects();
 
       this.data = entities;
       this.dataLoaded = true;
     }
-    SFPowerkit.ux.log(` Already loaded  data ${QUERY}`);
-    SFPowerkit.ux.logJson(this.data);
+
+    SFPowerkit.ux.log(`Length of data at Enity Definition ${this.data.length}`);
     return this.data;
   }
   public async getEntityDefinitions(): Promise<EntityDefinition[]> {
