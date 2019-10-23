@@ -20,7 +20,7 @@ import _ from "lodash";
 import ProfileActions from "./profileActions";
 import FileUtils from "../../../utils/fileutils";
 import ProfileWriter from "../../../impl/metadata/writer/profileWriter";
-import { LoggerLevel } from "@salesforce/command/node_modules/@salesforce/core";
+import { LoggerLevel } from "@salesforce/core";
 
 const nonArayProperties = [
   "custom",
