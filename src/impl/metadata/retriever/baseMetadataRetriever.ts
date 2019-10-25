@@ -78,7 +78,7 @@ export default abstract class BaseMetadataRetriever<T> {
 
         records.push(...result.records);
 
-        offset++;
+        offset = offset + this.limit;
         this.queryWithOffsetsAndLimit = this.query.concat(
           ` LIMIT ${this.limit} OFFSET ${offset}`
         );
