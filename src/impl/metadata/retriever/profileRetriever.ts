@@ -10,8 +10,6 @@ import UserPermissionBuilder from "../builder/userPermissionBuilder";
 import * as fs from "fs";
 import xml2js = require("xml2js");
 import { ProfileTooling } from "../schema";
-
-import { SFPowerkit } from "../../../sfpowerkit";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 import EntityDefinitionRetriever from "./entityDefinitionRetriever";
 import _ from "lodash";

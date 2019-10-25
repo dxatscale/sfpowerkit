@@ -3,7 +3,6 @@ import _ from "lodash";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 import { EntityDefinition } from "../schema";
 import { METADATA_INFO } from "../metadataInfo";
-import ProfileReconcile from "../../source/profiles/profileReconcile";
 import MetadataFiles from "../metadataFiles";
 import { SFPowerkit } from "../../../sfpowerkit";
 

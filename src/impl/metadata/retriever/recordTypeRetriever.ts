@@ -3,7 +3,6 @@ import { Org } from "@salesforce/core";
 import { METADATA_INFO } from "../metadataInfo";
 import _ from "lodash";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
-import ProfileReconcile from "../../source/profiles/profileReconcile";
 import MetadataFiles from "../metadataFiles";
 
 const QUERY = "Select Id, Name, DeveloperName, SobjectType from RecordType";

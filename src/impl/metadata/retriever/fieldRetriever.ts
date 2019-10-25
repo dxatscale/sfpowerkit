@@ -4,9 +4,7 @@ import BaseMetadataRetriever from "./baseMetadataRetriever";
 import { Field } from "../schema";
 import EntityDefinitionRetriever from "./entityDefinitionRetriever";
 import { METADATA_INFO } from "../metadataInfo";
-import ProfileReconcile from "../../source/profiles/profileReconcile";
 import MetadataFiles from "../metadataFiles";
-import { SFPowerkit } from "../../../../src/sfpowerkit";
 import { isNullOrUndefined } from "util";
 
 const QUERY =

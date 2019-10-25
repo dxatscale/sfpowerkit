@@ -3,7 +3,6 @@ import _ from "lodash";
 import { METADATA_INFO } from "../metadataInfo";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 import { CustomApplication } from "../schema";
-import ProfileReconcile from "../../source/profiles/profileReconcile";
 import MetadataFiles from "../metadataFiles";
 
 const QUERY =
