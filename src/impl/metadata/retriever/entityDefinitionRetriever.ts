@@ -17,7 +17,7 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
   private objectForPermission: string[];
   private constructor(public org: Org) {
     super(org, true);
-    super.setCountQuery(COUNT_QUERY, 200);
+    super.setCountQuery(COUNT_QUERY, 2000);
     super.setQuery(QUERY);
   }
 
