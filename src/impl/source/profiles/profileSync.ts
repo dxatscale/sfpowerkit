@@ -1,4 +1,4 @@
-import { SFPowerkit } from "../../../sfpowerkit";
+import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import MetadataFiles from "../../metadata/metadataFiles";
 import * as fs from "fs";
 import * as path from "path";
@@ -22,12 +22,9 @@ export default class ProfileSync extends ProfileActions {
     deleted: string[];
     updated: string[];
   }> {
-    if (this.debugFlag) {
-      SFPowerkit.ux.log("Retrieving profiles");
-      SFPowerkit.ux.log("Requested  profiles are..");
-      SFPowerkit.ux.logJson(profiles);
-      SFPowerkit.ux.log("Retrieving profiles");
-    }
+    SFPowerkit.log("Retrieving profiles", LoggerLevel.DEBUG);
+    SFPowerkit.log("Requested  profiles are..", LoggerLevel.DEBUG);
+    SFPowerkit.log(profiles, LoggerLevel.DEBUG);
 
     let fetchNewProfiles = _.isNil(srcFolders) || srcFolders.length === 0;
     if (fetchNewProfiles) {
@@ -36,10 +33,8 @@ export default class ProfileSync extends ProfileActions {
 
     this.metadataFiles = new MetadataFiles();
 
-    if (this.debugFlag) {
-      SFPowerkit.ux.log("Source Folders are");
-      SFPowerkit.ux.logJson(srcFolders);
-    }
+    SFPowerkit.log("Source Folders are", LoggerLevel.DEBUG);
+    SFPowerkit.log(srcFolders, LoggerLevel.DEBUG);
 
     for (let i = 0; i < srcFolders.length; i++) {
       let srcFolder = srcFolders[i];
@@ -51,7 +46,7 @@ export default class ProfileSync extends ProfileActions {
     let profileNames: string[] = [];
     let profilePathAssoc = {};
     let profileStatus = await this.getProfileFullNamesWithLocalStatus(profiles);
-    if (this.debugFlag) SFPowerkit.ux.logJson(profileStatus);
+    SFPowerkit.log(profileStatus, LoggerLevel.DEBUG);
     let metadataFiles = profileStatus.updated || [];
     if (fetchNewProfiles) {
       metadataFiles = _.union(profileStatus.added, profileStatus.updated);
@@ -60,7 +55,7 @@ export default class ProfileSync extends ProfileActions {
     }
     metadataFiles.sort();
 
-    if (this.debugFlag) SFPowerkit.ux.logJson(metadataFiles);
+    SFPowerkit.log(metadataFiles, LoggerLevel.TRACE);
 
     for (var i = 0; i < metadataFiles.length; i++) {
       var profileComponent = metadataFiles[i];
@@ -80,15 +75,19 @@ export default class ProfileSync extends ProfileActions {
       j: number,
       chunk: number = 10;
     var temparray;
-    SFPowerkit.ux.log(
-      "Number of profiles found in the target org " + profileNames.length
+    SFPowerkit.log(
+      "Number of profiles found in the target org " + profileNames.length,
+      LoggerLevel.INFO
     );
     for (i = 0, j = profileNames.length; i < j; i += chunk) {
       temparray = profileNames.slice(i, i + chunk);
       //SfPowerKit.ux.log(temparray.length);
       let start = i + 1;
       let end = i + chunk;
-      SFPowerkit.ux.log("Loading profiles in batches " + start + " to " + end);
+      SFPowerkit.log(
+        "Loading profiles in batches " + start + " to " + end,
+        LoggerLevel.INFO
+      );
 
       var metadataList = await this.profileRetriever.loadProfiles(
         temparray,

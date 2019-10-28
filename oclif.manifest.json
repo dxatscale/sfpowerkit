@@ -2132,7 +2132,7 @@
             "ERROR",
             "FATAL"
           ],
-          "default": "warn"
+          "default": "info"
         },
         "targetusername": {
           "name": "targetusername",
@@ -2296,7 +2296,7 @@
             "ERROR",
             "FATAL"
           ],
-          "default": "warn"
+          "default": "info"
         },
         "targetusername": {
           "name": "targetusername",

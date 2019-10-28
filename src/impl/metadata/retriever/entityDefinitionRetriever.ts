@@ -39,6 +39,7 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
       this.data = entities;
       this.dataLoaded = true;
     }
+
     return this.data;
   }
   public async getEntityDefinitions(): Promise<EntityDefinition[]> {

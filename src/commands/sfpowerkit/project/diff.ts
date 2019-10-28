@@ -50,6 +50,25 @@ export default class Diff extends SfdxCommand {
       char: "d",
       description: messages.getMessage("outputFolderDescription"),
       required: true
+    }),
+    loglevel: flags.enum({
+      description: "logging level for this command invocation",
+      default: "info",
+      required: false,
+      options: [
+        "trace",
+        "debug",
+        "info",
+        "warn",
+        "error",
+        "fatal",
+        "TRACE",
+        "DEBUG",
+        "INFO",
+        "WARN",
+        "ERROR",
+        "FATAL"
+      ]
     })
   };
 
@@ -73,7 +92,6 @@ export default class Diff extends SfdxCommand {
   protected static requiresProject = true;
 
   public async run(): Promise<any> {
-    SFPowerkit.ux = this.ux;
     SFPowerkit.setLogLevel(this.flags.loglevel);
 
     const diffFile: string = this.flags.difffile;

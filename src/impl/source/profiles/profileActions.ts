@@ -1,5 +1,5 @@
 import { METADATA_INFO } from "../../metadata/metadataInfo";
-import { SFPowerkit } from "../../../sfpowerkit";
+import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import * as path from "path";
 import FileUtils from "../../../utils/fileutils";
 import { retrieveMetadata } from "../../../utils/retrieveMetadata";
@@ -15,8 +15,6 @@ export default abstract class ProfileActions {
   public constructor(public org: Org, debugFlag?: boolean) {
     if (this.org !== undefined) {
       this.conn = this.org.getConnection();
-      //Fix #133 Temporary fix, Salesforce has added LIMIT to EntityDefinition, which is breaking this. Need to test this before incrementing to 47.0
-      this.conn.setApiVersion("46.0");
     }
     this.debugFlag = debugFlag;
     this.profileRetriever = new ProfileRetriever(org, debugFlag);
@@ -96,10 +94,10 @@ export default abstract class ProfileActions {
         }
       }
     } else {
-      if (this.debugFlag)
-        SFPowerkit.ux.log(
-          "Load new profiles from server into the project directory"
-        );
+      SFPowerkit.log(
+        "Load new profiles from server into the project directory",
+        LoggerLevel.DEBUG
+      );
       // Query the org
       const profiles = await retrieveMetadata(
         [{ type: "Profile", folder: null }],
@@ -141,9 +139,9 @@ export default abstract class ProfileActions {
           return !found;
         });
         if (newProfiles && newProfiles.length > 0) {
-          if (this.debugFlag) SFPowerkit.ux.log("New profiles founds");
+          SFPowerkit.log("New profiles founds", LoggerLevel.DEBUG);
           for (let i = 0; i < newProfiles.length; i++) {
-            if (this.debugFlag) SFPowerkit.ux.log(newProfiles[i]);
+            SFPowerkit.log(newProfiles[i], LoggerLevel.DEBUG);
             let newPRofilePath = path.join(
               profilePath,
               newProfiles[i] + METADATA_INFO.Profile.sourceExtension
@@ -152,7 +150,10 @@ export default abstract class ProfileActions {
             profilesStatus.added.push(newPRofilePath);
           }
         } else {
-          SFPowerkit.ux.log("No new profile found, Updating existing profiles");
+          SFPowerkit.log(
+            "No new profile found, Updating existing profiles",
+            LoggerLevel.INFO
+          );
         }
       }
     }

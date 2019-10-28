@@ -1,10 +1,17 @@
-import { UX } from "@salesforce/command";
-import { SfdxProject, LoggerLevel } from "@salesforce/core";
+import { SfdxProject } from "@salesforce/core";
 import { isNullOrUndefined } from "util";
 import Logger = require("pino");
 
+export enum LoggerLevel {
+  TRACE = 10,
+  DEBUG = 20,
+  INFO = 30,
+  WARN = 40,
+  ERROR = 50,
+  FATAL = 60
+}
+
 export class SFPowerkit {
-  static ux: UX;
   private static logger: Logger;
   private static defaultFolder: string;
   private static projectDirectories: string[];
@@ -74,7 +81,7 @@ export class SFPowerkit {
    * @param message Message to print
    * @param messageLoglevel Log level for the message
    */
-  public static log(message: string, logLevel: LoggerLevel) {
+  public static log(message: any, logLevel: LoggerLevel) {
     switch (logLevel) {
       case LoggerLevel.TRACE:
         this.logger.trace(message);
@@ -94,19 +101,6 @@ export class SFPowerkit {
       case LoggerLevel.FATAL:
         this.logger.fatal(message);
         break;
-    }
-  }
-
-  /**
-   * Print log only if the log level for this commamnd matches the log level for the message
-   * @param message Message to print in JSON Format
-   * @param messageLoglevel  Log level for the message
-   */
-  public static logJson(message: Object, logLevel: LoggerLevel) {
-    switch (logLevel) {
-      case LoggerLevel.TRACE:
-      case LoggerLevel.DEBUG:
-        this.ux.logJson(message);
     }
   }
 }

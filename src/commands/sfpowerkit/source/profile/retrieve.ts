@@ -48,6 +48,25 @@ export default class Retrieve extends SfdxCommand {
       char: "d",
       description: messages.getMessage("deleteFlagDescription"),
       required: false
+    }),
+    loglevel: flags.enum({
+      description: "logging level for this command invocation",
+      default: "info",
+      required: false,
+      options: [
+        "trace",
+        "debug",
+        "info",
+        "warn",
+        "error",
+        "fatal",
+        "TRACE",
+        "DEBUG",
+        "INFO",
+        "WARN",
+        "ERROR",
+        "FATAL"
+      ]
     })
   };
 
@@ -74,7 +93,6 @@ export default class Retrieve extends SfdxCommand {
   };
 
   public async run(): Promise<any> {
-    SFPowerkit.ux = this.ux;
     SFPowerkit.setLogLevel(this.flags.loglevel);
 
     let argFolder: string = this.flags.folder;

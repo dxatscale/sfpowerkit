@@ -22,7 +22,7 @@ import CustomLabelsDiff from "./customLabelsDiff";
 import DiffUtil, { DiffFile, DiffFileStatus } from "./diffUtil";
 import { core } from "@salesforce/command";
 
-import { SFPowerkit } from "../../../sfpowerkit";
+import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 
 core.Messages.importMessagesDirectory(__dirname);
 const messages = core.Messages.loadMessages("sfpowerkit", "project_diff");
@@ -91,12 +91,16 @@ export default class DiffImpl {
       }
       data = await git.diff(["--raw", this.revisionFrom, this.revisionTo]);
 
-      SFPowerkit.ux.log(
-        `Input Param: From: ${this.revisionFrom}  To: ${this.revisionTo} `
+      SFPowerkit.log(
+        `Input Param: From: ${this.revisionFrom}  To: ${this.revisionTo} `,
+        LoggerLevel.INFO
       );
-      SFPowerkit.ux.log(`SHA Found From: ${commitFrom} To:  ${commitTo} `);
+      SFPowerkit.log(
+        `SHA Found From: ${commitFrom} To:  ${commitTo} `,
+        LoggerLevel.INFO
+      );
 
-      SFPowerkit.ux.log(data);
+      SFPowerkit.log(data, LoggerLevel.TRACE);
     }
 
     let content = data.split(sepRegex);
@@ -126,10 +130,8 @@ export default class DiffImpl {
       fs.mkdirSync(outputFolder);
     }
 
-    if (this.debugLevel == "debug") {
-      SFPowerkit.ux.log("Files to be copied");
-      SFPowerkit.ux.logJson(filesToCopy);
-    }
+    SFPowerkit.log("Files to be copied", LoggerLevel.DEBUG);
+    SFPowerkit.log(filesToCopy, LoggerLevel.DEBUG);
 
     if (filesToCopy && filesToCopy.length > 0) {
       for (var i = 0; i < filesToCopy.length; i++) {
@@ -148,18 +150,20 @@ export default class DiffImpl {
         } else {
           MetadataFiles.copyFile(filePath, outputFolder);
 
-          if (this.debugLevel == "debug")
-            SFPowerkit.ux.log(`Copied file ${filePath} to ${outputFolder}`);
+          SFPowerkit.log(
+            `Copied file ${filePath} to ${outputFolder}`,
+            LoggerLevel.DEBUG
+          );
         }
       }
     }
 
     if (deletedFiles && deletedFiles.length > 0) {
-      SFPowerkit.ux.log("Creating Destructive Manifest..");
+      SFPowerkit.log("Creating Destructive Manifest..", LoggerLevel.INFO);
       await this.createDestructiveChanges(deletedFiles, outputFolder);
     }
 
-    SFPowerkit.ux.log(`Generating output summary`);
+    SFPowerkit.log(`Generating output summary`, LoggerLevel.INFO);
 
     this.buildOutput(outputFolder);
 
@@ -248,8 +252,11 @@ export default class DiffImpl {
     if (content1 === "") {
       //The metadata is added
       MetadataFiles.copyFile(diffFile.path, outputFolder);
-      if (this.debugLevel == "debug")
-        SFPowerkit.ux.log(`Copied file ${diffFile.path} to ${outputFolder}`);
+
+      SFPowerkit.log(
+        `Copied file ${diffFile.path} to ${outputFolder}`,
+        LoggerLevel.DEBUG
+      );
       return;
     }
 
@@ -428,8 +435,9 @@ export default class DiffImpl {
               member
             );
           }
-          SFPowerkit.ux.log(
-            `${filePath} ${MetadataFiles.isCustomMetadata(filePath, name)}`
+          SFPowerkit.log(
+            `${filePath} ${MetadataFiles.isCustomMetadata(filePath, name)}`,
+            LoggerLevel.DEBUG
           );
           this.resultOutput.push({
             action: "Delete",
