@@ -89,11 +89,11 @@ EXAMPLES
 
 _See code: [src\commands\sfpowerkit\profile\retrieve.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/retrieve.ts)_
 
-## `sfpowerkit:source:profile:reconcile [BETA]`
+## `sfpowerkit:source:profile:reconcile`
 
 This command is used in the lower environments such as ScratchOrgs , Development / System Testing Sandboxes, where a retrieved profile from production has to be cleaned up only for the metadata that is contained in the environment or base it only as per the metadata that is contained in the packaging directory.
 
-This command is of sufficient quality, however proceed with caution while adopting in your workflow
+Please read more about the command especially for ignoring user permissions [here](https://github.com/Accenture/sfpowerkit/wiki/Profile-Reconcile-:-Ignore-User-Permissions)
 
 ```
 
