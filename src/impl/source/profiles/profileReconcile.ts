@@ -66,8 +66,9 @@ export default class ProfileReconcile extends ProfileActions {
         profileList.length == 0 ||
         profileList.includes(path.basename(profileComponent))
       ) {
-        SFPowerkit.ux.log(
-          "Reconciling profile " + path.basename(profileComponent)
+        SFPowerkit.log(
+          "Reconciling profile " + path.basename(profileComponent),
+          LoggerLevel.INFO
         );
 
         let profileXmlString = fs.readFileSync(profileComponent);

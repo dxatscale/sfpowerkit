@@ -9,6 +9,7 @@ import { SFPowerkit } from "../../../sfpowerkit";
 const COUNT_QUERY = "SELECT COUNT() FROM EntityDefinition";
 const QUERY =
   "SELECT DurableId, DeveloperName, QualifiedApiName, NamespacePrefix FROM EntityDefinition order by QualifiedApiName";
+const FETCH_SIZE = 2000;
 
 export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
   EntityDefinition
@@ -17,7 +18,7 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
   private objectForPermission: string[];
   private constructor(public org: Org) {
     super(org, true);
-    super.setCountQuery(COUNT_QUERY, 200);
+    super.setCountQuery(COUNT_QUERY, FETCH_SIZE);
     super.setQuery(QUERY);
   }
 
@@ -38,8 +39,6 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
       this.data = entities;
       this.dataLoaded = true;
     }
-
-    SFPowerkit.ux.log(`Length of data at Enity Definition ${this.data.length}`);
     return this.data;
   }
   public async getEntityDefinitions(): Promise<EntityDefinition[]> {

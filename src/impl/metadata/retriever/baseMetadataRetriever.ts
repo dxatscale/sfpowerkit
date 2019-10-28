@@ -1,12 +1,12 @@
 import { QueryResult } from "jsforce";
-import { Org } from "@salesforce/core";
+import { Org, LoggerLevel } from "@salesforce/core";
 import { SFPowerkit } from "../../../sfpowerkit";
 
 export default abstract class BaseMetadataRetriever<T> {
   private query: string;
   private countQuery: string;
 
-  private limit: number;
+  private fetchSize: number;
   private isLimitBasedQueryRetrieval: boolean = false;
   private totalSize: number;
   private queryWithOffsetsAndLimit: string;
@@ -18,17 +18,17 @@ export default abstract class BaseMetadataRetriever<T> {
 
   protected constructor(public org: Org, private tooling: boolean = false) {}
 
-  protected setCountQuery(countQuery: string, limit: number) {
+  protected setCountQuery(countQuery: string, fetchSize: number) {
     this.isLimitBasedQueryRetrieval = true;
     this.countQuery = countQuery;
-    this.limit = limit;
+    this.fetchSize = fetchSize;
   }
 
   protected setQuery(query: string) {
     this.query = query;
     if (this.isLimitBasedQueryRetrieval)
       this.queryWithOffsetsAndLimit = this.query.concat(
-        ` LIMIT ${this.limit} OFFSET 0`
+        ` LIMIT ${this.fetchSize} OFFSET 0`
       );
   }
 
@@ -38,8 +38,9 @@ export default abstract class BaseMetadataRetriever<T> {
 
     // Not Limit and Offset, based so old method
     if (!this.isLimitBasedQueryRetrieval) {
-      SFPowerkit.ux.log(
-        `Method: isTooling :  ${this.tooling}, QUERY:  ${this.query}`
+      SFPowerkit.log(
+        `Method: isTooling :  ${this.tooling}, QUERY:  ${this.query}`,
+        LoggerLevel.TRACE
       );
 
       let result: QueryResult<T>;
@@ -58,8 +59,9 @@ export default abstract class BaseMetadataRetriever<T> {
         records.push(...result.records);
       }
     } else {
-      SFPowerkit.ux.log(
-        `Method: isToolingandLimitBasedQueryRetrieval : true, QUERY:  ${this.query}`
+      SFPowerkit.log(
+        `Method: isToolingandLimitBasedQueryRetrieval : true, QUERY:  ${this.query}`,
+        LoggerLevel.TRACE
       );
 
       let retrievedRecordSize = 0;
@@ -67,20 +69,21 @@ export default abstract class BaseMetadataRetriever<T> {
       this.totalSize = await this.getCount();
 
       while (retrievedRecordSize < this.totalSize) {
-        SFPowerkit.ux.log(
-          `To Retrieve Total Size:  ${this.totalSize},Retrieved Size:   ${retrievedRecordSize} , Current Offset: ${offset}`
+        SFPowerkit.log(
+          `To Retrieve Total Size:  ${this.totalSize},Retrieved Size:   ${retrievedRecordSize} , Current Offset: ${offset}`,
+          LoggerLevel.TRACE
         );
 
         let result: QueryResult<T>;
-        SFPowerkit.ux.log(this.queryWithOffsetsAndLimit);
+        SFPowerkit.log(this.queryWithOffsetsAndLimit, LoggerLevel.TRACE);
         result = await conn.tooling.query<T>(this.queryWithOffsetsAndLimit);
         retrievedRecordSize += result.totalSize;
 
         records.push(...result.records);
 
-        offset = offset + this.limit;
+        offset = offset + this.fetchSize;
         this.queryWithOffsetsAndLimit = this.query.concat(
-          ` LIMIT ${this.limit} OFFSET ${offset}`
+          ` LIMIT ${this.fetchSize} OFFSET ${offset}`
         );
       }
     }
@@ -100,9 +103,9 @@ export default abstract class BaseMetadataRetriever<T> {
   }
 
   private async getCount() {
-    SFPowerkit.ux.log(`Count Query: ${this.countQuery}`);
+    SFPowerkit.log(`Count Query: ${this.countQuery}`, LoggerLevel.TRACE);
     let result = await this.org.getConnection().tooling.query(this.countQuery);
-    SFPowerkit.ux.log(`Retrieved count ${result.totalSize}`);
+    SFPowerkit.log(`Retrieved count ${result.totalSize}`, LoggerLevel.TRACE);
     return result.totalSize;
   }
 }
