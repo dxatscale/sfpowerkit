@@ -1,5 +1,5 @@
 {
-  "version": "1.25.3-4",
+  "version": "1.25.3-5",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -429,7 +429,7 @@
             "ERROR",
             "FATAL"
           ],
-          "default": "warn"
+          "default": "info"
         },
         "difffile": {
           "name": "difffile",
