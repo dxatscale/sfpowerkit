@@ -10,8 +10,6 @@ import UserPermissionBuilder from "../builder/userPermissionBuilder";
 import * as fs from "fs";
 import xml2js = require("xml2js");
 import { ProfileTooling } from "../schema";
-
-import { SFPowerkit } from "../../../sfpowerkit";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 import EntityDefinitionRetriever from "./entityDefinitionRetriever";
 import _ from "lodash";
@@ -55,8 +53,6 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
     super.setQuery(QUERY);
     if (this.org !== undefined) {
       this.conn = this.org.getConnection();
-      //Fix #133 Temporary fix, Salesforce has added LIMIT to EntityDefinition, which is breaking this. Need to test this before incrementing to 47.0
-      this.conn.setApiVersion("46.0");
     }
   }
 

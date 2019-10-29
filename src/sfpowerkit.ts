@@ -1,17 +1,28 @@
 import { UX } from "@salesforce/command";
-import { SfdxProject } from "@salesforce/core";
+import { SfdxProject, LoggerLevel } from "@salesforce/core";
 import { isNullOrUndefined } from "util";
+import Logger = require("pino");
 
 export class SFPowerkit {
   static ux: UX;
+  private static logger: Logger;
   private static defaultFolder: string;
   private static projectDirectories: string[];
   private static pluginConfig;
-  private static logLevel: string;
 
   public static setLogLevel(logLevel: string) {
-    if (!isNullOrUndefined(logLevel)) this.logLevel = logLevel.toUpperCase();
-    else this.logLevel = "WARN";
+    logLevel = logLevel.toLowerCase();
+
+    this.logger = Logger({
+      name: "sfpowerkit",
+      level: logLevel,
+      prettyPrint: {
+        levelFirst: true, // --levelFirst
+        colorize: true,
+        translateTime: true,
+        ignore: "pid,hostname" // --ignore
+      }
+    });
   }
 
   public static async getProjectDirectories() {
@@ -63,8 +74,27 @@ export class SFPowerkit {
    * @param message Message to print
    * @param messageLoglevel Log level for the message
    */
-  public static log(message: string, messageLoglevel: string) {
-    if (messageLoglevel == this.logLevel) this.ux.log(message);
+  public static log(message: string, logLevel: LoggerLevel) {
+    switch (logLevel) {
+      case LoggerLevel.TRACE:
+        this.logger.trace(message);
+        break;
+      case LoggerLevel.DEBUG:
+        this.logger.debug(message);
+        break;
+      case LoggerLevel.INFO:
+        this.logger.info(message);
+        break;
+      case LoggerLevel.WARN:
+        this.logger.warn(message);
+        break;
+      case LoggerLevel.ERROR:
+        this.logger.error(message);
+        break;
+      case LoggerLevel.FATAL:
+        this.logger.fatal(message);
+        break;
+    }
   }
 
   /**
@@ -72,9 +102,11 @@ export class SFPowerkit {
    * @param message Message to print in JSON Format
    * @param messageLoglevel  Log level for the message
    */
-  public static logJson(message: Object, messageLoglevel: string) {
-    if (!isNullOrUndefined(this.logLevel)) {
-      if (messageLoglevel == this.logLevel) this.ux.logJson(message);
+  public static logJson(message: Object, logLevel: LoggerLevel) {
+    switch (logLevel) {
+      case LoggerLevel.TRACE:
+      case LoggerLevel.DEBUG:
+        this.ux.logJson(message);
     }
   }
 }
