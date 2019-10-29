@@ -1,28 +1,42 @@
-import { UX } from "@salesforce/command";
-import { SfdxProject, LoggerLevel } from "@salesforce/core";
+import { SfdxProject } from "@salesforce/core";
 import { isNullOrUndefined } from "util";
 import Logger = require("pino");
+import FileUtils from "./utils/fileutils";
+
+export enum LoggerLevel {
+  TRACE = 10,
+  DEBUG = 20,
+  INFO = 30,
+  WARN = 40,
+  ERROR = 50,
+  FATAL = 60
+}
 
 export class SFPowerkit {
-  static ux: UX;
   private static logger: Logger;
   private static defaultFolder: string;
   private static projectDirectories: string[];
   private static pluginConfig;
+  private static isJsonFormatEnabled: boolean;
 
-  public static setLogLevel(logLevel: string) {
+  public static setLogLevel(logLevel: string, isJsonFormatEnabled: boolean) {
     logLevel = logLevel.toLowerCase();
+    this.isJsonFormatEnabled = isJsonFormatEnabled;
 
-    this.logger = Logger({
-      name: "sfpowerkit",
-      level: logLevel,
-      prettyPrint: {
-        levelFirst: true, // --levelFirst
-        colorize: true,
-        translateTime: true,
-        ignore: "pid,hostname" // --ignore
-      }
-    });
+    if (!isJsonFormatEnabled) {
+      this.logger = Logger({
+        name: "sfpowerkit",
+        level: logLevel,
+        prettyPrint: {
+          levelFirst: true, // --levelFirst
+          colorize: true,
+          translateTime: true,
+          ignore: "pid,hostname" // --ignore
+        }
+      });
+    } else {
+      //do nothing for now, need to put pino to move to file
+    }
   }
 
   public static async getProjectDirectories() {
@@ -74,7 +88,9 @@ export class SFPowerkit {
    * @param message Message to print
    * @param messageLoglevel Log level for the message
    */
-  public static log(message: string, logLevel: LoggerLevel) {
+  public static log(message: any, logLevel: LoggerLevel) {
+    if (this.isJsonFormatEnabled) return;
+
     switch (logLevel) {
       case LoggerLevel.TRACE:
         this.logger.trace(message);
@@ -94,19 +110,6 @@ export class SFPowerkit {
       case LoggerLevel.FATAL:
         this.logger.fatal(message);
         break;
-    }
-  }
-
-  /**
-   * Print log only if the log level for this commamnd matches the log level for the message
-   * @param message Message to print in JSON Format
-   * @param messageLoglevel  Log level for the message
-   */
-  public static logJson(message: Object, logLevel: LoggerLevel) {
-    switch (logLevel) {
-      case LoggerLevel.TRACE:
-      case LoggerLevel.DEBUG:
-        this.ux.logJson(message);
     }
   }
 }

@@ -64,6 +64,25 @@ export default class Merge extends SfdxCommand {
       char: "d",
       description: messages.getMessage("deleteFlagDescription"),
       required: false
+    }),
+    loglevel: flags.enum({
+      description: "logging level for this command invocation",
+      default: "info",
+      required: false,
+      options: [
+        "trace",
+        "debug",
+        "info",
+        "warn",
+        "error",
+        "fatal",
+        "TRACE",
+        "DEBUG",
+        "INFO",
+        "WARN",
+        "ERROR",
+        "FATAL"
+      ]
     })
   };
 
@@ -93,9 +112,7 @@ export default class Merge extends SfdxCommand {
   };
 
   public async run(): Promise<any> {
-    // tslint:disable-line:no-any
-    SFPowerkit.ux = this.ux;
-    SFPowerkit.setLogLevel(this.flags.loglevel);
+    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     let argFolder = this.flags.folder;
     let argProfileList = this.flags.profilelist;
