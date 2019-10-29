@@ -1,6 +1,7 @@
 import { SfdxProject } from "@salesforce/core";
 import { isNullOrUndefined } from "util";
 import Logger = require("pino");
+import FileUtils from "./utils/fileutils";
 
 export enum LoggerLevel {
   TRACE = 10,
@@ -22,7 +23,7 @@ export class SFPowerkit {
     logLevel = logLevel.toLowerCase();
     this.isJsonFormatEnabled = isJsonFormatEnabled;
 
-    if (!isJsonFormatEnabled)
+    if (!isJsonFormatEnabled) {
       this.logger = Logger({
         name: "sfpowerkit",
         level: logLevel,
@@ -33,6 +34,9 @@ export class SFPowerkit {
           ignore: "pid,hostname" // --ignore
         }
       });
+    } else {
+      //do nothing for now, need to put pino to move to file
+    }
   }
 
   public static async getProjectDirectories() {
@@ -85,6 +89,8 @@ export class SFPowerkit {
    * @param messageLoglevel Log level for the message
    */
   public static log(message: any, logLevel: LoggerLevel) {
+    if (this.isJsonFormatEnabled) return;
+
     switch (logLevel) {
       case LoggerLevel.TRACE:
         this.logger.trace(message);
