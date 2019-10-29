@@ -16,20 +16,23 @@ export class SFPowerkit {
   private static defaultFolder: string;
   private static projectDirectories: string[];
   private static pluginConfig;
+  private static isJsonFormatEnabled: boolean;
 
-  public static setLogLevel(logLevel: string) {
+  public static setLogLevel(logLevel: string, isJsonFormatEnabled: boolean) {
     logLevel = logLevel.toLowerCase();
+    this.isJsonFormatEnabled = isJsonFormatEnabled;
 
-    this.logger = Logger({
-      name: "sfpowerkit",
-      level: logLevel,
-      prettyPrint: {
-        levelFirst: true, // --levelFirst
-        colorize: true,
-        translateTime: true,
-        ignore: "pid,hostname" // --ignore
-      }
-    });
+    if (!isJsonFormatEnabled)
+      this.logger = Logger({
+        name: "sfpowerkit",
+        level: logLevel,
+        prettyPrint: {
+          levelFirst: true, // --levelFirst
+          colorize: true,
+          translateTime: true,
+          ignore: "pid,hostname" // --ignore
+        }
+      });
   }
 
   public static async getProjectDirectories() {

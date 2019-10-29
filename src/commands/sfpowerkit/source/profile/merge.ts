@@ -112,7 +112,7 @@ export default class Merge extends SfdxCommand {
   };
 
   public async run(): Promise<any> {
-    SFPowerkit.setLogLevel(this.flags.loglevel);
+    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     let argFolder = this.flags.folder;
     let argProfileList = this.flags.profilelist;

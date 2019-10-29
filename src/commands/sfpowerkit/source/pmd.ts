@@ -70,7 +70,7 @@ export default class Pmd extends SfdxCommand {
   private javahome;
 
   public async run(): Promise<any> {
-    SFPowerkit.setLogLevel(this.flags.loglevel);
+    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     if (isNullOrUndefined(this.flags.javahome)) {
       this.javahome = await this.findJavaHomeAsync();

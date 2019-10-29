@@ -92,7 +92,7 @@ export default class Diff extends SfdxCommand {
   protected static requiresProject = true;
 
   public async run(): Promise<any> {
-    SFPowerkit.setLogLevel(this.flags.loglevel);
+    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     const diffFile: string = this.flags.difffile;
     let encoding: string = this.flags.encoding;

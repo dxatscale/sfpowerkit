@@ -93,7 +93,7 @@ export default class Retrieve extends SfdxCommand {
   };
 
   public async run(): Promise<any> {
-    SFPowerkit.setLogLevel(this.flags.loglevel);
+    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     let argFolder: string = this.flags.folder;
     let argProfileList: string[] = this.flags.profilelist;
