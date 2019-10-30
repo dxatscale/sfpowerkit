@@ -4,7 +4,6 @@ import { METADATA_INFO } from "../metadataInfo";
 import _ from "lodash";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 import EntityDefinitionRetriever from "./entityDefinitionRetriever";
-import ProfileReconcile from "../../source/profiles/profileReconcile";
 import MetadataFiles from "../metadataFiles";
 
 const QUERY =
@@ -56,13 +55,45 @@ export default class LayoutRetriever extends BaseMetadataRetriever<Layout> {
             layouts[i].ObjectName +
             "-" +
             namespace +
-            layouts[i].Name.replace("/", "%2F");
+            layouts[i].Name.replace(/%/g, "%25")
+              .replace(/\//g, "%2F")
+              .replace(new RegExp(/\\/, "g"), "%5C")
+              .replace(/\(/g, "%28")
+              .replace(/\)/g, "%29")
+              .replace(/#/g, "%23")
+              .replace(/\$/g, "%24")
+              .replace(/&/g, "%26")
+              .replace(/~/g, "%7E")
+              .replace(/\[/g, "%5B")
+              .replace(/\]/g, "%5D")
+              .replace(/\^/g, "%5E")
+              .replace(/\{/g, "%7B")
+              .replace(/\}/g, "%7D")
+              .replace(/\|/g, "%7C")
+              .replace(/@/g, "%40")
+              .replace(/'/g, "%27");
         } else {
           layouts[i].FullName =
             layouts[i].EntityDefinitionId +
             "-" +
             namespace +
-            layouts[i].Name.replace("/", "%2F");
+            layouts[i].Name.replace(/%/g, "%25")
+              .replace(/\//g, "%2F")
+              .replace(new RegExp(/\\/, "g"), "%5C")
+              .replace(/\(/g, "%28")
+              .replace(/\)/g, "%29")
+              .replace(/#/g, "%23")
+              .replace(/\$/g, "%24")
+              .replace(/&/g, "%26")
+              .replace(/~/g, "%7E")
+              .replace(/\[/g, "%5B")
+              .replace(/\]/g, "%5D")
+              .replace(/\^/g, "%5E")
+              .replace(/\{/g, "%7B")
+              .replace(/\}/g, "%7D")
+              .replace(/\|/g, "%7C")
+              .replace(/@/g, "%40")
+              .replace(/'/g, "%27");
         }
       }
       this.data = layouts;

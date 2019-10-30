@@ -20,6 +20,7 @@ import _ from "lodash";
 import ProfileActions from "./profileActions";
 import FileUtils from "../../../utils/fileutils";
 import ProfileWriter from "../../../impl/metadata/writer/profileWriter";
+import { LoggerLevel } from "@salesforce/core";
 
 const nonArayProperties = [
   "custom",
@@ -65,8 +66,9 @@ export default class ProfileReconcile extends ProfileActions {
         profileList.length == 0 ||
         profileList.includes(path.basename(profileComponent))
       ) {
-        SFPowerkit.ux.log(
-          "Reconciling profile " + path.basename(profileComponent)
+        SFPowerkit.log(
+          "Reconciling profile " + path.basename(profileComponent),
+          LoggerLevel.INFO
         );
 
         let profileXmlString = fs.readFileSync(profileComponent);
@@ -194,6 +196,10 @@ export default class ProfileReconcile extends ProfileActions {
           validArray.push(cmpObj);
         }
       }
+      SFPowerkit.log(
+        `Application Visiblitilties reduced from ${profileObj.applicationVisibilities.length}  to  ${validArray.length}`,
+        LoggerLevel.DEBUG
+      );
       profileObj.applicationVisibilities = validArray;
     }
 
@@ -215,6 +221,11 @@ export default class ProfileReconcile extends ProfileActions {
           validArray.push(cmpObj);
         }
       }
+
+      SFPowerkit.log(
+        `Class Access reduced from ${profileObj.classAccesses.length}  to  ${validArray.length}`,
+        LoggerLevel.DEBUG
+      );
       profileObj.classAccesses = validArray;
     }
 
@@ -236,6 +247,10 @@ export default class ProfileReconcile extends ProfileActions {
         }
       }
 
+      SFPowerkit.log(
+        `Fields Level Security reduced from ${profileObj.fieldLevelSecurities.length}  to  ${validArray.length}`,
+        LoggerLevel.DEBUG
+      );
       profileObj.fieldLevelSecurities = validArray;
     }
 
@@ -277,6 +292,10 @@ export default class ProfileReconcile extends ProfileActions {
           validArray.push(cmpObj);
         }
       }
+      SFPowerkit.log(
+        `Layout Assignnments reduced from ${profileObj.layoutAssignments.length}  to  ${validArray.length}`,
+        LoggerLevel.DEBUG
+      );
       profileObj.layoutAssignments = validArray;
     }
     return profileObj;
@@ -297,6 +316,10 @@ export default class ProfileReconcile extends ProfileActions {
           validArray.push(cmpObj);
         }
       }
+      SFPowerkit.log(
+        `Object Permissions reduced from ${profileObj.objectPermissions.length}  to  ${validArray.length}`,
+        LoggerLevel.DEBUG
+      );
       profileObj.objectPermissions = validArray;
     }
     return profileObj;
@@ -315,6 +338,10 @@ export default class ProfileReconcile extends ProfileActions {
           validArray.push(cmpObj);
         }
       }
+      SFPowerkit.log(
+        `Page Access Permissions reduced from ${profileObj.pageAccesses.length}  to  ${validArray.length}`,
+        LoggerLevel.DEBUG
+      );
       profileObj.pageAccesses = validArray;
     }
     return profileObj;
@@ -335,6 +362,10 @@ export default class ProfileReconcile extends ProfileActions {
           validArray.push(cmpObj);
         }
       }
+      SFPowerkit.log(
+        `Record Type Visibilities reduced from ${profileObj.recordTypeVisibilities.length}  to  ${validArray.length}`,
+        LoggerLevel.DEBUG
+      );
       profileObj.recordTypeVisibilities = validArray;
     }
     return profileObj;
@@ -355,19 +386,31 @@ export default class ProfileReconcile extends ProfileActions {
           validArray.push(cmpObj);
         }
       }
+      SFPowerkit.log(
+        `Tab Visibilities reduced from ${profileObj.tabVisibilities.length}  to  ${validArray.length}`,
+        LoggerLevel.DEBUG
+      );
       profileObj.tabVisibilities = validArray;
     }
     return profileObj;
   }
 
   private async removePermissions(profileObj: Profile): Promise<Profile> {
+    SFPowerkit.log("Reconciling App", LoggerLevel.DEBUG);
     profileObj = await this.reconcileApp(profileObj);
+    SFPowerkit.log("Reconciling Classes", LoggerLevel.DEBUG);
     profileObj = await this.reconcileClasses(profileObj);
+    SFPowerkit.log("Reconciling Fields", LoggerLevel.DEBUG);
     profileObj = await this.reconcileFields(profileObj);
+    SFPowerkit.log("Reconciling Objects", LoggerLevel.DEBUG);
     profileObj = await this.reconcileObjects(profileObj);
+    SFPowerkit.log("Reconciling Pages", LoggerLevel.DEBUG);
     profileObj = await this.reconcilePages(profileObj);
+    SFPowerkit.log("Reconciling Layouts", LoggerLevel.DEBUG);
     profileObj = await this.reconcileLayouts(profileObj);
+    SFPowerkit.log("Reconciling Record Types", LoggerLevel.DEBUG);
     profileObj = await this.reconcileRecordTypes(profileObj);
+    SFPowerkit.log("Reconciling  Tabs", LoggerLevel.DEBUG);
     profileObj = await this.reconcileTabs(profileObj);
     return profileObj;
   }

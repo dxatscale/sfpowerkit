@@ -2,7 +2,7 @@ import { core, SfdxCommand, FlagsConfig, flags } from "@salesforce/command";
 import findJavaHome from "find-java-home";
 import { spawn } from "child_process";
 import FileUtils from "../../../utils/fileutils";
-import { SFPowerkit } from "../../../sfpowerkit";
+import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import { extract } from "../../../utils/extract";
 import { isNullOrUndefined } from "util";
 import xml2js = require("xml2js");
@@ -70,11 +70,11 @@ export default class Pmd extends SfdxCommand {
   private javahome;
 
   public async run(): Promise<any> {
-    SFPowerkit.ux = this.ux;
+    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     if (isNullOrUndefined(this.flags.javahome)) {
       this.javahome = await this.findJavaHomeAsync();
-      this.ux.log(`Found Java Home at ${this.javahome}`);
+      SFPowerkit.log(`Found Java Home at ${this.javahome}`, LoggerLevel.INFO);
     }
 
     //Download PMD
@@ -86,15 +86,15 @@ export default class Pmd extends SfdxCommand {
         path.join(pmd_cache_directory, `pmd-bin-${this.flags.version}`)
       )
     ) {
-      this.ux.log("Initiating Download of  PMD");
+      SFPowerkit.log("Initiating Download of  PMD", LoggerLevel.INFO);
       fs.mkdirSync(pmd_cache_directory);
       await this.downloadPMD(this.flags.version, pmd_cache_directory);
-      this.ux.log(`Downloaded PMD ${this.flags.version}`);
+      SFPowerkit.log(`Downloaded PMD ${this.flags.version}`, LoggerLevel.INFO);
       await extract(
         path.join(pmd_cache_directory, "pmd.zip"),
         pmd_cache_directory
       );
-      this.ux.log(`Extracted PMD ${this.flags.version}`);
+      SFPowerkit.log(`Extracted PMD ${this.flags.version}`, LoggerLevel.INFO);
     }
 
     const pmdClassPath = path.join(
@@ -181,11 +181,11 @@ export default class Pmd extends SfdxCommand {
 
         if (!this.flags.supressoutput) {
           let violations = fs.readFileSync(this.flags.report).toString();
-          this.ux.log(violations);
+          SFPowerkit.log(violations, LoggerLevel.INFO);
         }
       } else if (code == 1) {
-        this.ux.log("PMD Exited with some exceptions ");
-        this.ux.log(pmd_error.toString());
+        SFPowerkit.log("PMD Exited with some exceptions ", LoggerLevel.INFO);
+        SFPowerkit.log(pmd_error.toString(), LoggerLevel.ERROR);
       }
     });
   }
@@ -220,7 +220,7 @@ export default class Pmd extends SfdxCommand {
           reject(error);
         });
     }).catch(error => {
-      console.log(`Unable to download: ${error}`);
+      SFPowerkit.log(`Unable to download: ${error}`, LoggerLevel.ERROR);
     });
   }
 
@@ -235,14 +235,18 @@ export default class Pmd extends SfdxCommand {
     xml2js.parseString(reportContent, (err, data) => {
       // If the file is not XML, or is not from PMD, return immediately
       if (!data || !data.pmd) {
-        console.debug(`Empty or unrecognized PMD xml report ${xmlReport}`);
+        SFPowerkit.log(
+          `Empty or unrecognized PMD xml report ${xmlReport}`,
+          LoggerLevel.ERROR
+        );
         return null;
       }
 
       if (!data.pmd.file || data.pmd.file.length === 0) {
         // No files with violations, return now that it has been marked for upload
-        console.debug(
-          `A PMD report was found for module '${moduleName}' but it contains no violations`
+        SFPowerkit.log(
+          `A PMD report was found for module '${moduleName}' but it contains no violations`,
+          LoggerLevel.INFO
         );
         return null;
       }

@@ -1,13 +1,16 @@
-import { Org } from "@salesforce/core";
+import { Org, LoggerLevel } from "@salesforce/core";
 import _ from "lodash";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 import { EntityDefinition } from "../schema";
 import { METADATA_INFO } from "../metadataInfo";
-import ProfileReconcile from "../../source/profiles/profileReconcile";
 import MetadataFiles from "../metadataFiles";
+import { SFPowerkit } from "../../../sfpowerkit";
 
+const COUNT_QUERY = "SELECT COUNT() FROM EntityDefinition";
 const QUERY =
   "SELECT DurableId, DeveloperName, QualifiedApiName, NamespacePrefix FROM EntityDefinition order by QualifiedApiName";
+const FETCH_SIZE = 2000;
+
 export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
   EntityDefinition
 > {
@@ -15,6 +18,7 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
   private objectForPermission: string[];
   private constructor(public org: Org) {
     super(org, true);
+    super.setCountQuery(COUNT_QUERY, FETCH_SIZE);
     super.setQuery(QUERY);
   }
 
@@ -30,11 +34,12 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
       (this.data === undefined || this.data.length == 0) &&
       !this.dataLoaded
     ) {
-      super.setQuery(QUERY);
       let entities = await super.getObjects();
+
       this.data = entities;
       this.dataLoaded = true;
     }
+
     return this.data;
   }
   public async getEntityDefinitions(): Promise<EntityDefinition[]> {

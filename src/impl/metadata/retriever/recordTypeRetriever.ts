@@ -1,12 +1,12 @@
 import { RecordType } from "../schema";
-import { Org } from "@salesforce/core";
+import { Org, LoggerLevel } from "@salesforce/core";
 import { METADATA_INFO } from "../metadataInfo";
 import _ from "lodash";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
-import ProfileReconcile from "../../source/profiles/profileReconcile";
 import MetadataFiles from "../metadataFiles";
 
-const QUERY = "Select Id, Name, DeveloperName, SobjectType from RecordType";
+const QUERY =
+  "Select Id, Name, DeveloperName, SobjectType, NamespacePrefix from RecordType";
 
 export default class RecordTypeRetriever extends BaseMetadataRetriever<
   RecordType
@@ -31,12 +31,22 @@ export default class RecordTypeRetriever extends BaseMetadataRetriever<
     ) {
       let objects = await super.getObjects();
       objects = objects.map(elem => {
-        elem.FullName = elem.SobjectType + "." + elem.DeveloperName;
+        let namespace = "";
+        if (
+          elem.NamespacePrefix !== undefined &&
+          elem.NamespacePrefix !== "" &&
+          elem.NamespacePrefix !== null &&
+          elem.NamespacePrefix !== "null"
+        ) {
+          namespace = elem.NamespacePrefix + "__";
+        }
+        elem.FullName = elem.SobjectType + "." + namespace + elem.DeveloperName;
         if (
           elem.DeveloperName === "PersonAccount" &&
           elem.SobjectType === "Account"
         ) {
-          elem.FullName = "PersonAccount" + "." + elem.DeveloperName;
+          elem.FullName =
+            "PersonAccount" + "." + namespace + elem.DeveloperName;
         }
         return elem;
       });
