@@ -106,6 +106,8 @@ export default class DiffImpl {
     let content = data.split(sepRegex);
     let diffFile: DiffFile = await DiffUtil.parseContent(content);
 
+    await DiffUtil.fetchFileListRevisionTo(this.revisionTo);
+
     let filesToCopy = diffFile.addedEdited;
     let deletedFiles = diffFile.deleted;
 
@@ -148,7 +150,7 @@ export default class DiffImpl {
           //handle unsplited files
           await this.handleUnsplittedMetadata(filesToCopy[i], outputFolder);
         } else {
-          MetadataFiles.copyFile(filePath, outputFolder);
+          await DiffUtil.copyFile(filePath, outputFolder);
 
           SFPowerkit.log(
             `Copied file ${filePath} to ${outputFolder}`,
@@ -242,16 +244,20 @@ export default class DiffImpl {
     let content2 = "";
 
     try {
-      content1 = await git.show(["--raw", diffFile.revisionFrom]);
+      if (diffFile.revisionFrom !== "0000000") {
+        content1 = await git.show(["--raw", diffFile.revisionFrom]);
+      }
     } catch (e) {}
 
     try {
-      content2 = await git.show(["--raw", diffFile.revisionTo]);
+      if (diffFile.revisionTo !== "0000000") {
+        content2 = await git.show(["--raw", diffFile.revisionTo]);
+      }
     } catch (e) {}
 
     if (content1 === "") {
       //The metadata is added
-      MetadataFiles.copyFile(diffFile.path, outputFolder);
+      await DiffUtil.copyFile(diffFile.path, outputFolder);
 
       SFPowerkit.log(
         `Copied file ${diffFile.path} to ${outputFolder}`,
@@ -362,7 +368,7 @@ export default class DiffImpl {
       } else {
         //PermissionSet deployment override in the target org
         //So deploy the whole file
-        MetadataFiles.copyFile(diffFile.path, outputFolder);
+        await DiffUtil.copyFile(diffFile.path, outputFolder);
       }
     }
   }

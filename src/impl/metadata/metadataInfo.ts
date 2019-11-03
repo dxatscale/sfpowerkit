@@ -90,6 +90,7 @@ export interface MetadataInfo {
   AuraDefinitionBundle?: MetadataDescribe;
   Workflow?: MetadataDescribe;
   SharingRules?: MetadataDescribe;
+  LightningComponentBundle?: MetadataDescribe;
 }
 
 export class MetadataInfo {

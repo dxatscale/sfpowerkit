@@ -1,7 +1,10 @@
 import * as path from "path";
+import * as fs from "fs";
 import _ from "lodash";
 import simplegit = require("simple-git/promise");
 import MetadataFiles from "../../../impl/metadata/metadataFiles";
+import { SOURCE_EXTENSION_REGEX } from "../../../impl/metadata/metadataInfo";
+import { METADATA_INFO } from "../../../impl/metadata/metadataInfo";
 
 export interface DiffFileStatus {
   revisionFrom: string;
@@ -18,12 +21,149 @@ export interface DiffFile {
 const git = simplegit();
 
 export default class DiffUtil {
+  public static gitTreeRevisionTo: {
+    revision: string;
+    path: string;
+  }[];
   public static async isFormulaField(
     diffFile: DiffFileStatus
   ): Promise<boolean> {
     let content = await git.show(["--raw", diffFile.revisionFrom]);
     let result = content.includes("<formula>");
     return result;
+  }
+
+  public static async fetchFileListRevisionTo(revisionTo: string) {
+    DiffUtil.gitTreeRevisionTo = [];
+    let revisionTree = await git.raw(["ls-tree", "-r", revisionTo]);
+    const sepRegEx = /\t|\s/;
+    const sepRegex = /\n|\r/;
+    let lines = revisionTree.split(sepRegex);
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i] === "") continue;
+      let fields = lines[i].split(sepRegEx);
+      let oneFIle = {
+        revision: fields[2],
+        path: fields[3]
+      };
+      DiffUtil.gitTreeRevisionTo.push(oneFIle);
+    }
+    return DiffUtil.gitTreeRevisionTo;
+  }
+
+  public static async getRelativeFiles(
+    filePath: string
+  ): Promise<
+    {
+      revision: string;
+      path: string;
+    }[]
+  > {
+    let relativeFiles = [];
+
+    let filePathParts = filePath.split(path.sep);
+
+    const statResourcesRegExp = new RegExp(
+      METADATA_INFO.StaticResource.directoryName
+    );
+
+    if (
+      filePath.endsWith("Translation-meta.xml") &&
+      filePath.indexOf("globalValueSet") < 0
+    ) {
+      let parentFolder = filePathParts[filePathParts.length - 2];
+      let objectTranslation =
+        parentFolder + METADATA_INFO.CustomObjectTranslation.sourceExtension;
+
+      DiffUtil.gitTreeRevisionTo.forEach(file => {
+        if (file.path === filePath || file.path === objectTranslation) {
+          relativeFiles.push(file);
+        }
+      });
+    } else if (statResourcesRegExp.test(filePath)) {
+      // handle static recources
+      let baseFile = "";
+      for (let i = 0; i < filePathParts.length; i++) {
+        baseFile = path.join(baseFile, filePathParts[i]);
+        if (
+          filePathParts[i] === METADATA_INFO.StaticResource.directoryName ||
+          filePathParts[i] ==
+            METADATA_INFO.AuraDefinitionBundle.directoryName ||
+          filePathParts[i] ===
+            METADATA_INFO.LightningComponentBundle.directoryName
+        ) {
+          let fileOrDirname = filePathParts[i + 1];
+          if (SOURCE_EXTENSION_REGEX.test(fileOrDirname)) {
+            fileOrDirname = fileOrDirname.replace(SOURCE_EXTENSION_REGEX, "");
+          } else {
+            let extension = path.parse(fileOrDirname).ext;
+            fileOrDirname = fileOrDirname.replace(extension, "");
+          }
+          baseFile = path.join(baseFile, fileOrDirname);
+          break;
+        }
+      }
+
+      DiffUtil.gitTreeRevisionTo.forEach(file => {
+        let fileToCompare = file.path;
+        if (fileToCompare.startsWith(baseFile)) {
+          relativeFiles.push(file);
+        }
+      });
+    } else {
+      let baseFile = filePath;
+      if (SOURCE_EXTENSION_REGEX.test(filePath)) {
+        baseFile = filePath.replace(SOURCE_EXTENSION_REGEX, "");
+      } else {
+        let extension = path.parse(filePath).ext;
+        baseFile = filePath.replace(extension, "");
+      }
+      DiffUtil.gitTreeRevisionTo.forEach(file => {
+        let fileToCompare = file.path;
+        if (SOURCE_EXTENSION_REGEX.test(fileToCompare)) {
+          fileToCompare = fileToCompare.replace(SOURCE_EXTENSION_REGEX, "");
+        } else {
+          let extension = path.parse(fileToCompare).ext;
+          fileToCompare = fileToCompare.replace(extension, "");
+        }
+        if (baseFile === fileToCompare) {
+          relativeFiles.push(file);
+        }
+      });
+    }
+
+    return relativeFiles;
+  }
+
+  public static async copyFile(filePath: string, outputFolder: string) {
+    if (fs.existsSync(path.join(outputFolder, filePath))) {
+      return;
+    }
+
+    let gitFiles = await DiffUtil.getRelativeFiles(filePath);
+    let copyOutputFolder = outputFolder;
+    for (let i = 0; i < gitFiles.length; i++) {
+      outputFolder = copyOutputFolder;
+      let gitFile = gitFiles[i];
+
+      let outputPath = path.join(outputFolder, gitFile.path);
+
+      let filePathParts = gitFile.path.split(path.sep);
+
+      if (fs.existsSync(outputFolder) == false) {
+        fs.mkdirSync(outputFolder);
+      }
+      // Create folder structure
+      for (let i = 0; i < filePathParts.length - 1; i++) {
+        let folder = filePathParts[i].replace('"', "");
+        outputFolder = path.join(outputFolder, folder);
+        if (fs.existsSync(outputFolder) == false) {
+          fs.mkdirSync(outputFolder);
+        }
+      }
+      let fileContent = await git.show(["--raw", gitFile.revision]);
+      fs.writeFileSync(outputPath, fileContent);
+    }
   }
 
   public static async parseContent(fileContents): Promise<DiffFile> {
