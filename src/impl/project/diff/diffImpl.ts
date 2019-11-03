@@ -406,7 +406,7 @@ export default class DiffImpl {
 
       let parsedPath = path.parse(filePath);
       let filename = parsedPath.base;
-      let name = MetadataInfo.getMetadataName(filename);
+      let name = MetadataInfo.getMetadataName(filePath);
 
       if (name) {
         if (!MetadataFiles.isCustomMetadata(filePath, name)) {

@@ -159,17 +159,27 @@ export class MetadataInfo {
     }
     //SfPowerKit.ux.log(extension);
     let metadataName = "";
-    let keys = Object.keys(METADATA_INFO);
-    for (let i = 0; i < keys.length; i++) {
-      let metaDescribe = METADATA_INFO[keys[i]];
-      if (
-        metaDescribe.sourceExtension === extension ||
-        metaDescribe.folderExtension === extension
-      ) {
-        metadataName = metaDescribe.xmlName;
-        break;
+
+    const auaraRegExp = new RegExp("/aura/");
+    if (
+      auaraRegExp.test(metadataFile) &&
+      SOURCE_EXTENSION_REGEX.test(metadataFile)
+    ) {
+      metadataName = METADATA_INFO.AuraDefinitionBundle.xmlName;
+    } else {
+      let keys = Object.keys(METADATA_INFO);
+      for (let i = 0; i < keys.length; i++) {
+        let metaDescribe = METADATA_INFO[keys[i]];
+        if (
+          metaDescribe.sourceExtension === extension ||
+          metaDescribe.folderExtension === extension
+        ) {
+          metadataName = metaDescribe.xmlName;
+          break;
+        }
       }
     }
+
     return metadataName;
   }
 }
