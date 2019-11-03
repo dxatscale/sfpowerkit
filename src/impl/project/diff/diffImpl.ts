@@ -50,8 +50,7 @@ export default class DiffImpl {
   }[];
   public constructor(
     private revisionFrom?: string,
-    private revisionTo?: string,
-    private debugLevel?: string
+    private revisionTo?: string
   ) {
     if (this.revisionTo == null || this.revisionTo.trim() === "") {
       this.revisionTo = "HEAD";
@@ -78,6 +77,7 @@ export default class DiffImpl {
 
     if (diffFilePath !== null && diffFilePath !== "") {
       data = fs.readFileSync(diffFilePath, encoding);
+      this.isHead = true;
     } else {
       //check if same commit
       const commitFrom = await git.raw([
