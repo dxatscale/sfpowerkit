@@ -5,6 +5,8 @@ import simplegit = require("simple-git/promise");
 import MetadataFiles from "../../../impl/metadata/metadataFiles";
 import { SOURCE_EXTENSION_REGEX } from "../../../impl/metadata/metadataInfo";
 import { METADATA_INFO } from "../../../impl/metadata/metadataInfo";
+import { SFPowerkit } from "../../../sfpowerkit";
+import { LoggerLevel } from "@salesforce/core";
 
 export interface DiffFileStatus {
   revisionFrom: string;
@@ -34,6 +36,10 @@ export default class DiffUtil {
   }
 
   public static async fetchFileListRevisionTo(revisionTo: string) {
+    SFPowerkit.log(
+      "Fetching file list from target revision " + revisionTo,
+      LoggerLevel.INFO
+    );
     DiffUtil.gitTreeRevisionTo = [];
     let revisionTree = await git.raw(["ls-tree", "-r", revisionTo]);
     const sepRegEx = /\t|\s/;
@@ -136,7 +142,15 @@ export default class DiffUtil {
   }
 
   public static async copyFile(filePath: string, outputFolder: string) {
+    SFPowerkit.log(
+      `Copying file ${filePath} from git to ${outputFolder}`,
+      LoggerLevel.INFO
+    );
     if (fs.existsSync(path.join(outputFolder, filePath))) {
+      SFPowerkit.log(
+        `File ${filePath}  already in output folder. `,
+        LoggerLevel.TRACE
+      );
       return;
     }
 
@@ -145,6 +159,11 @@ export default class DiffUtil {
     for (let i = 0; i < gitFiles.length; i++) {
       outputFolder = copyOutputFolder;
       let gitFile = gitFiles[i];
+
+      SFPowerkit.log(
+        `Associated file ${i}: ${gitFile.path}  Revision: ${gitFile.revision}`,
+        LoggerLevel.TRACE
+      );
 
       let outputPath = path.join(outputFolder, gitFile.path);
 

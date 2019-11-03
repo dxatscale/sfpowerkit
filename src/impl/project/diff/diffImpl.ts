@@ -41,6 +41,7 @@ const permissionExtensions = PROFILE_PERMISSIONSET_EXTENSION.map(elem => {
 export default class DiffImpl {
   destructivePackageObjPre: any[];
   destructivePackageObjPost: any[];
+  isHead = false;
   resultOutput: {
     action: string;
     metadataType: string;
@@ -86,6 +87,8 @@ export default class DiffImpl {
         this.revisionFrom
       ]);
       const commitTo = await git.raw(["rev-list", "-n", "1", this.revisionTo]);
+      const headCommit = await git.raw(["rev-list", "-n", "1", "head"]);
+      this.isHead = commitTo === headCommit;
       if (commitFrom === commitTo) {
         throw new Error(messages.getMessage("sameCommitErrorMessage"));
       }
@@ -106,7 +109,9 @@ export default class DiffImpl {
     let content = data.split(sepRegex);
     let diffFile: DiffFile = await DiffUtil.parseContent(content);
 
-    await DiffUtil.fetchFileListRevisionTo(this.revisionTo);
+    if (!this.isHead) {
+      await DiffUtil.fetchFileListRevisionTo(this.revisionTo);
+    }
 
     let filesToCopy = diffFile.addedEdited;
     let deletedFiles = diffFile.deleted;
@@ -150,7 +155,11 @@ export default class DiffImpl {
           //handle unsplited files
           await this.handleUnsplittedMetadata(filesToCopy[i], outputFolder);
         } else {
-          await DiffUtil.copyFile(filePath, outputFolder);
+          if (this.isHead) {
+            MetadataFiles.copyFile(filePath, outputFolder);
+          } else {
+            await DiffUtil.copyFile(filePath, outputFolder);
+          }
 
           SFPowerkit.log(
             `Copied file ${filePath} to ${outputFolder}`,
@@ -257,7 +266,11 @@ export default class DiffImpl {
 
     if (content1 === "") {
       //The metadata is added
-      await DiffUtil.copyFile(diffFile.path, outputFolder);
+      if (this.isHead) {
+        MetadataFiles.copyFile(diffFile.path, outputFolder);
+      } else {
+        await DiffUtil.copyFile(diffFile.path, outputFolder);
+      }
 
       SFPowerkit.log(
         `Copied file ${diffFile.path} to ${outputFolder}`,
@@ -368,7 +381,11 @@ export default class DiffImpl {
       } else {
         //PermissionSet deployment override in the target org
         //So deploy the whole file
-        await DiffUtil.copyFile(diffFile.path, outputFolder);
+        if (this.isHead) {
+          MetadataFiles.copyFile(diffFile.path, outputFolder);
+        } else {
+          await DiffUtil.copyFile(diffFile.path, outputFolder);
+        }
       }
     }
   }
