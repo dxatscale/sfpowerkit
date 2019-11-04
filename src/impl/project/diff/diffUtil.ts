@@ -203,10 +203,7 @@ export default class DiffUtil {
       if (statusRegEx.test(fileContents[i])) {
         var lineParts = fileContents[i].split(statusRegEx);
 
-        var finalPath = path.join(
-          ".",
-          lineParts[1].replace(lineBreakRegEx, "")
-        );
+        var finalPath = lineParts[1].replace(lineBreakRegEx, "");
         finalPath = finalPath.trim();
         finalPath = finalPath.replace("\\303\\251", "é");
 
