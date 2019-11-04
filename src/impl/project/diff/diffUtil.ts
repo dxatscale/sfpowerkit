@@ -50,7 +50,7 @@ export default class DiffUtil {
       let fields = lines[i].split(sepRegEx);
       let oneFIle = {
         revision: fields[2],
-        path: fields[3]
+        path: path.join(".", fields[3])
       };
       DiffUtil.gitTreeRevisionTo.push(oneFIle);
     }
@@ -203,7 +203,10 @@ export default class DiffUtil {
       if (statusRegEx.test(fileContents[i])) {
         var lineParts = fileContents[i].split(statusRegEx);
 
-        var finalPath = lineParts[1].replace(lineBreakRegEx, "");
+        var finalPath = path.join(
+          ".",
+          lineParts[1].replace(lineBreakRegEx, "")
+        );
         finalPath = finalPath.trim();
         finalPath = finalPath.replace("\\303\\251", "é");
 
