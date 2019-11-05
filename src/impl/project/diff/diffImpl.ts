@@ -436,6 +436,18 @@ export default class DiffImpl {
               name,
               member
             );
+
+            SFPowerkit.log(
+              `${filePath} ${MetadataFiles.isCustomMetadata(filePath, name)}`,
+              LoggerLevel.DEBUG
+            );
+
+            this.resultOutput.push({
+              action: "Delete",
+              componentName: member,
+              metadataType: name,
+              path: "destructiveChangesPre.xml"
+            });
           } else {
             this.destructivePackageObjPost = this.buildDestructiveTypeObj(
               this.destructivePackageObjPost,
@@ -447,11 +459,12 @@ export default class DiffImpl {
             `${filePath} ${MetadataFiles.isCustomMetadata(filePath, name)}`,
             LoggerLevel.DEBUG
           );
+
           this.resultOutput.push({
             action: "Delete",
             componentName: member,
             metadataType: name,
-            path: "destructiveChanges.xml"
+            path: "destructiveChangesPost.xml"
           });
         } else {
           if (!deleteNotSupported.includes(name)) {
@@ -464,7 +477,7 @@ export default class DiffImpl {
               action: "Delete",
               componentName: member,
               metadataType: name,
-              path: "destructiveChanges.xml"
+              path: "destructiveChangesPost.xml"
             });
           } else {
             //add the component in the manual action list
