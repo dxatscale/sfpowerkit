@@ -446,7 +446,7 @@ export default class DiffImpl {
               action: "Delete",
               componentName: member,
               metadataType: name,
-              path: "destructiveChangesPre.xml"
+              path: "Manual Intervention Required"
             });
           } else {
             this.destructivePackageObjPost = this.buildDestructiveTypeObj(
@@ -464,7 +464,7 @@ export default class DiffImpl {
             action: "Delete",
             componentName: member,
             metadataType: name,
-            path: "destructiveChangesPost.xml"
+            path: "destructiveChanges.xml"
           });
         } else {
           if (!deleteNotSupported.includes(name)) {
@@ -477,7 +477,7 @@ export default class DiffImpl {
               action: "Delete",
               componentName: member,
               metadataType: name,
-              path: "destructiveChangesPost.xml"
+              path: "destructiveChanges.xml"
             });
           } else {
             //add the component in the manual action list
@@ -487,15 +487,15 @@ export default class DiffImpl {
       }
     }
 
-    this.writeDestructivechanges(
-      this.destructivePackageObjPre,
-      outputFolder,
-      "destructiveChangesPre.xml"
-    );
+    // this.writeDestructivechanges(
+    //   this.destructivePackageObjPre,
+    //   outputFolder,
+    //   "destructiveChangesPre.xml"
+    // );
     this.writeDestructivechanges(
       this.destructivePackageObjPost,
       outputFolder,
-      "destructiveChangesPost.xml"
+      "destructiveChanges.xml"
     );
   }
 
