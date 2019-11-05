@@ -72,6 +72,12 @@ export default class DiffUtil {
     const statResourcesRegExp = new RegExp(
       METADATA_INFO.StaticResource.directoryName
     );
+    const auraRegExp = new RegExp(
+      METADATA_INFO.AuraDefinitionBundle.directoryName
+    );
+    const lwcRegExp = new RegExp(
+      METADATA_INFO.LightningComponentBundle.directoryName
+    );
 
     if (
       filePath.endsWith("Translation-meta.xml") &&
@@ -86,14 +92,18 @@ export default class DiffUtil {
           relativeFiles.push(file);
         }
       });
-    } else if (statResourcesRegExp.test(filePath)) {
+    } else if (
+      statResourcesRegExp.test(filePath) ||
+      auraRegExp.test(filePath) ||
+      lwcRegExp.test(filePath)
+    ) {
       // handle static recources
       let baseFile = "";
       for (let i = 0; i < filePathParts.length; i++) {
         baseFile = path.join(baseFile, filePathParts[i]);
         if (
           filePathParts[i] === METADATA_INFO.StaticResource.directoryName ||
-          filePathParts[i] ==
+          filePathParts[i] ===
             METADATA_INFO.AuraDefinitionBundle.directoryName ||
           filePathParts[i] ===
             METADATA_INFO.LightningComponentBundle.directoryName
