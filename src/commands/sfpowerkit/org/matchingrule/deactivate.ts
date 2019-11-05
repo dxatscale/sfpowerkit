@@ -108,17 +108,25 @@ export default class Deactivate extends SfdxCommand {
 
       this.ux.log(`Retrieved Matching Rule  for Object : ${this.flags.name}`);
 
-      //Deactivate Rule
-      this.ux.log(`Preparing Deactivation`);
-
       if (isJsonArray(retrieve_matchingRule.MatchingRules.matchingRules)) {
         retrieve_matchingRule.MatchingRules.matchingRules.forEach(element => {
           element.ruleStatus = "Inactive";
         });
       } else {
-        retrieve_matchingRule.MatchingRules.matchingRules.ruleStatus =
-          "Inactive";
+        if (
+          !util.isNullOrUndefined(
+            retrieve_matchingRule.MatchingRules.matchingRules
+          )
+        )
+          retrieve_matchingRule.MatchingRules.matchingRules.ruleStatus =
+            "Inactive";
+        else {
+          throw new SfdxError("No Custom Matching Rule  found in the org");
+        }
       }
+
+      //Deactivate Rule
+      this.ux.log(`Preparing Deactivation`);
 
       let builder = new xml2js.Builder();
       var xml = builder.buildObject(retrieve_matchingRule);
