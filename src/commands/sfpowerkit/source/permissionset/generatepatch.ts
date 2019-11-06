@@ -10,6 +10,7 @@ import {
 import { searchFilesInDirectory } from "../../../../utils/searchFilesInDirectory";
 import { zipDirectory } from "../../../../utils/zipDirectory";
 import MetadataFiles from "../../../../impl/metadata/metadataFiles";
+import { SFPowerkit } from "../../../../sfpowerkit";
 
 var path = require("path");
 const spawn = require("child-process-promise").spawn;
@@ -53,6 +54,8 @@ export default class Generatepatch extends SfdxCommand {
   public async run(): Promise<AnyJson> {
     //clean any existing temp sf powerkit source folder
     rimraf.sync("temp_sfpowerkit");
+
+    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     // Getting Project config
     const project = await SfdxProject.resolve();

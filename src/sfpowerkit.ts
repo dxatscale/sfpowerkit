@@ -89,6 +89,7 @@ export class SFPowerkit {
    * @param messageLoglevel Log level for the message
    */
   public static log(message: any, logLevel: LoggerLevel) {
+    if (isNullOrUndefined(this.logger)) return;
     if (this.isJsonFormatEnabled) return;
 
     switch (logLevel) {
