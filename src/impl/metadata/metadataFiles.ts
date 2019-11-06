@@ -11,6 +11,7 @@ import ignore from "ignore";
 import * as fs from "fs";
 import * as glob from "glob";
 import { SFPowerkit } from "../../sfpowerkit";
+import { LoggerLevel } from "@salesforce/core";
 
 export default class MetadataFiles {
   public static sourceOnly: boolean = false;
@@ -171,6 +172,10 @@ export default class MetadataFiles {
    * @param outputFolder
    */
   public static copyFile(filePath: string, outputFolder: string) {
+    SFPowerkit.log(
+      `Copying file ${filePath} from file system to ${outputFolder}`,
+      LoggerLevel.INFO
+    );
     const LWC_IGNORE_FILES = ["jsconfig.json", ".eslintrc.json"];
     const pairStatResources = METADATA_INFO.StaticResource.directoryName;
     const pairStatResourcesRegExp = new RegExp(pairStatResources);

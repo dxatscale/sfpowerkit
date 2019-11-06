@@ -110,7 +110,7 @@ export default class Diff extends SfdxCommand {
       this.error("Provide either diffFile or revisionFrom parameters");
     }
 
-    let diffUtils = new DiffImpl(revisionfrom, revisionto, this.flags.loglevel);
+    let diffUtils = new DiffImpl(revisionfrom, revisionto);
 
     /* PATH TO DIFF FILE */
     let diffFilePath = "";

@@ -49,8 +49,7 @@ export default class DiffImpl {
   }[];
   public constructor(
     private revisionFrom?: string,
-    private revisionTo?: string,
-    private debugLevel?: string
+    private revisionTo?: string
   ) {
     if (this.revisionTo == null || this.revisionTo.trim() === "") {
       this.revisionTo = "HEAD";
@@ -86,6 +85,7 @@ export default class DiffImpl {
         this.revisionFrom
       ]);
       const commitTo = await git.raw(["rev-list", "-n", "1", this.revisionTo]);
+      const headCommit = await git.raw(["rev-list", "-n", "1", "head"]);
       if (commitFrom === commitTo) {
         throw new Error(messages.getMessage("sameCommitErrorMessage"));
       }
@@ -105,6 +105,8 @@ export default class DiffImpl {
 
     let content = data.split(sepRegex);
     let diffFile: DiffFile = await DiffUtil.parseContent(content);
+
+    await DiffUtil.fetchFileListRevisionTo(this.revisionTo);
 
     let filesToCopy = diffFile.addedEdited;
     let deletedFiles = diffFile.deleted;
@@ -148,7 +150,7 @@ export default class DiffImpl {
           //handle unsplited files
           await this.handleUnsplittedMetadata(filesToCopy[i], outputFolder);
         } else {
-          MetadataFiles.copyFile(filePath, outputFolder);
+          await DiffUtil.copyFile(filePath, outputFolder);
 
           SFPowerkit.log(
             `Copied file ${filePath} to ${outputFolder}`,
@@ -169,14 +171,14 @@ export default class DiffImpl {
 
     if (this.resultOutput.length > 0) {
       try {
-        MetadataFiles.copyFile(".forceignore", outputFolder);
+        DiffUtil.copyFile(".forceignore", outputFolder);
       } catch (e) {
         if (e.code !== "EPERM") {
           throw e;
         }
       }
       try {
-        MetadataFiles.copyFile("sfdx-project.json", outputFolder);
+        DiffUtil.copyFile("sfdx-project.json", outputFolder);
       } catch (e) {
         if (e.code !== "EPERM") {
           throw e;
@@ -242,16 +244,21 @@ export default class DiffImpl {
     let content2 = "";
 
     try {
-      content1 = await git.show(["--raw", diffFile.revisionFrom]);
+      if (diffFile.revisionFrom !== "0000000") {
+        content1 = await git.show(["--raw", diffFile.revisionFrom]);
+      }
     } catch (e) {}
 
     try {
-      content2 = await git.show(["--raw", diffFile.revisionTo]);
+      if (diffFile.revisionTo !== "0000000") {
+        content2 = await git.show(["--raw", diffFile.revisionTo]);
+      }
     } catch (e) {}
 
     if (content1 === "") {
       //The metadata is added
-      MetadataFiles.copyFile(diffFile.path, outputFolder);
+
+      await DiffUtil.copyFile(diffFile.path, outputFolder);
 
       SFPowerkit.log(
         `Copied file ${diffFile.path} to ${outputFolder}`,
@@ -362,7 +369,8 @@ export default class DiffImpl {
       } else {
         //PermissionSet deployment override in the target org
         //So deploy the whole file
-        MetadataFiles.copyFile(diffFile.path, outputFolder);
+
+        await DiffUtil.copyFile(diffFile.path, outputFolder);
       }
     }
   }
@@ -400,7 +408,7 @@ export default class DiffImpl {
 
       let parsedPath = path.parse(filePath);
       let filename = parsedPath.base;
-      let name = MetadataInfo.getMetadataName(filename);
+      let name = MetadataInfo.getMetadataName(filePath);
 
       if (name) {
         if (!MetadataFiles.isCustomMetadata(filePath, name)) {
@@ -428,6 +436,18 @@ export default class DiffImpl {
               name,
               member
             );
+
+            SFPowerkit.log(
+              `${filePath} ${MetadataFiles.isCustomMetadata(filePath, name)}`,
+              LoggerLevel.DEBUG
+            );
+
+            this.resultOutput.push({
+              action: "Delete",
+              componentName: member,
+              metadataType: name,
+              path: "Manual Intervention Required"
+            });
           } else {
             this.destructivePackageObjPost = this.buildDestructiveTypeObj(
               this.destructivePackageObjPost,
@@ -439,6 +459,7 @@ export default class DiffImpl {
             `${filePath} ${MetadataFiles.isCustomMetadata(filePath, name)}`,
             LoggerLevel.DEBUG
           );
+
           this.resultOutput.push({
             action: "Delete",
             componentName: member,
@@ -466,15 +487,15 @@ export default class DiffImpl {
       }
     }
 
-    this.writeDestructivechanges(
-      this.destructivePackageObjPre,
-      outputFolder,
-      "destructiveChangesPre.xml"
-    );
+    // this.writeDestructivechanges(
+    //   this.destructivePackageObjPre,
+    //   outputFolder,
+    //   "destructiveChangesPre.xml"
+    // );
     this.writeDestructivechanges(
       this.destructivePackageObjPost,
       outputFolder,
-      "destructiveChangesPost.xml"
+      "destructiveChanges.xml"
     );
   }
 
