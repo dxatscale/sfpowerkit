@@ -22,7 +22,8 @@ export default class SharingRuleDiff {
     outputFilePath: string,
     objectName: string,
     destructivePackageObj: any[],
-    resultOutput: any[]
+    resultOutput: any[],
+    isDestructive: boolean
   ) {
     const parseString = util.promisify(parser.parseString);
     let sharingRulesObj1: any = {};
@@ -60,14 +61,15 @@ export default class SharingRuleDiff {
       "Deploy",
       outputFilePath
     );
-    SharingRuleDiff.updateOutput(
-      addedEditedOrDeleted.deleted,
-      resultOutput,
-      objectName,
-      "Delete",
-      "destructiveChanges.xml"
-    );
-
+    if (isDestructive) {
+      SharingRuleDiff.updateOutput(
+        addedEditedOrDeleted.deleted,
+        resultOutput,
+        objectName,
+        "Delete",
+        "destructiveChanges.xml"
+      );
+    }
     return destructivePackageObj;
   }
 

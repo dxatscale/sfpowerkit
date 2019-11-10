@@ -267,6 +267,7 @@ OPTIONS
   -e, --encoding=encoding                         [default:utf8] Diff file encoding
   -r, --revisionfrom=revisionfrom                 Base revision from where diff is to be generated, required if diff file is ommited
   -t, --revisionto=revisionto                     [default:HEAD]Target revision to generate the diff
+  -x, --adddestructive                            If set to true, the command will also generate a destructiveChangePost.xml file in the output folder.
 
   --json                                          format output as json
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
@@ -275,13 +276,20 @@ EXAMPLE
   $  sfdx sfpowerkit:project:diff --revisionfrom revisionfrom --revisionto revisionto --output OutputFolder
   {
   "status": 0,
-  "result": {
-    "deleted": [],
-    "addedEdited": [
-      "scripts\\Alias.sh",
-      "sfdx-project.json",
-    ]
-   }
+  "result": [
+    {
+      "action": "Deploy",
+      "metadataType": "CustomLabel",
+      "componentName": "Access_Request",
+      "path": "output/force-app/main/default/labels/CustomLabels.labels-meta.xml"
+    },
+    {
+      "action": "Deploy",
+      "metadataType": "CustomLabel",
+      "componentName": "Account_Access_Request_add",
+      "path": "output/force-app/main/default/labels/CustomLabels.labels-meta.xml"
+    }
+  ]
   }
 ```
 

@@ -5,5 +5,6 @@
   "encodingDescription": "Encoding of the file default to utf8",
   "revisionFromDescription": "Base revision from where diff is to be generated, required if diff file is ommited",
   "revisionToDescription": " [default:HEAD] Target revision to generate the diff ",
-  "sameCommitErrorMessage": "Same commit: Please provide to differents revisions"
+  "sameCommitErrorMessage": "Same commit: Please provide to differents revisions",
+  "addDestructiveDescription": "If set to true, the command will also generate a destructiveChangePost.xml file in the output folder."
 }
