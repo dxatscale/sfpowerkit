@@ -51,9 +51,11 @@ export default class Diff extends SfdxCommand {
       description: messages.getMessage("outputFolderDescription"),
       required: true
     }),
-    adddestructive: flags.boolean({
+    generatedestructive: flags.boolean({
       char: "x",
-      description: messages.getMessage("addDestructiveDescription"),
+      description: messages.getMessage(
+        "generativeDestructiveManifestDescription"
+      ),
       required: false
     }),
     loglevel: flags.enum({
@@ -118,7 +120,7 @@ export default class Diff extends SfdxCommand {
     let diffUtils = new DiffImpl(
       revisionfrom,
       revisionto,
-      this.flags.adddestructive
+      this.flags.generatedestructive
     );
 
     /* PATH TO DIFF FILE */
