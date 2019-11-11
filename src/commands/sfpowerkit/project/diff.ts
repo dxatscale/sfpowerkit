@@ -51,6 +51,13 @@ export default class Diff extends SfdxCommand {
       description: messages.getMessage("outputFolderDescription"),
       required: true
     }),
+    generatedestructive: flags.boolean({
+      char: "x",
+      description: messages.getMessage(
+        "generativeDestructiveManifestDescription"
+      ),
+      required: false
+    }),
     loglevel: flags.enum({
       description: "logging level for this command invocation",
       default: "info",
@@ -110,7 +117,11 @@ export default class Diff extends SfdxCommand {
       this.error("Provide either diffFile or revisionFrom parameters");
     }
 
-    let diffUtils = new DiffImpl(revisionfrom, revisionto);
+    let diffUtils = new DiffImpl(
+      revisionfrom,
+      revisionto,
+      this.flags.generatedestructive
+    );
 
     /* PATH TO DIFF FILE */
     let diffFilePath = "";

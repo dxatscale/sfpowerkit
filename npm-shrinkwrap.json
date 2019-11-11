@@ -1,6 +1,6 @@
 {
   "name": "sfpowerkit",
-  "version": "1.26.0-6",
+  "version": "1.27.0-1",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -958,18 +958,15 @@
       "dev": true
     },
     "array-differ": {
-      "version": "2.1.0",
+      "version": "3.0.0",
       "dev": true
     },
     "array-from": {
       "version": "2.1.1"
     },
     "array-union": {
-      "version": "1.0.2",
-      "dev": true,
-      "requires": {
-        "array-uniq": "^1.0.1"
-      }
+      "version": "2.1.0",
+      "dev": true
     },
     "array-uniq": {
       "version": "1.0.3",
@@ -980,7 +977,7 @@
       "dev": true
     },
     "arrify": {
-      "version": "1.0.1",
+      "version": "2.0.1",
       "dev": true
     },
     "asap": {
@@ -1790,11 +1787,11 @@
       "dev": true
     },
     "execa": {
-      "version": "0.8.0",
+      "version": "1.0.0",
       "dev": true,
       "requires": {
-        "cross-spawn": "^5.0.1",
-        "get-stream": "^3.0.0",
+        "cross-spawn": "^6.0.0",
+        "get-stream": "^4.0.0",
         "is-stream": "^1.1.0",
         "npm-run-path": "^2.0.0",
         "p-finally": "^1.0.0",
@@ -1802,13 +1799,11 @@
         "strip-eof": "^1.0.0"
       },
       "dependencies": {
-        "cross-spawn": {
-          "version": "5.1.0",
+        "get-stream": {
+          "version": "4.1.0",
           "dev": true,
           "requires": {
-            "lru-cache": "^4.0.1",
-            "shebang-command": "^1.2.0",
-            "which": "^1.2.9"
+            "pump": "^3.0.0"
           }
         }
       }
@@ -2188,12 +2183,6 @@
         "ignore": "^5.1.1",
         "merge2": "^1.2.3",
         "slash": "^3.0.0"
-      },
-      "dependencies": {
-        "array-union": {
-          "version": "2.1.0",
-          "dev": true
-        }
       }
     },
     "graceful-fs": {
@@ -2323,28 +2312,6 @@
         "read-pkg": "^5.1.1",
         "run-node": "^1.0.0",
         "slash": "^3.0.0"
-      },
-      "dependencies": {
-        "execa": {
-          "version": "1.0.0",
-          "dev": true,
-          "requires": {
-            "cross-spawn": "^6.0.0",
-            "get-stream": "^4.0.0",
-            "is-stream": "^1.1.0",
-            "npm-run-path": "^2.0.0",
-            "p-finally": "^1.0.0",
-            "signal-exit": "^3.0.0",
-            "strip-eof": "^1.0.0"
-          }
-        },
-        "get-stream": {
-          "version": "4.1.0",
-          "dev": true,
-          "requires": {
-            "pump": "^3.0.0"
-          }
-        }
       }
     },
     "hyperlinker": {
@@ -2897,6 +2864,10 @@
         "source-map": "^0.6.1"
       }
     },
+    "merge-stream": {
+      "version": "2.0.0",
+      "dev": true
+    },
     "merge2": {
       "version": "1.2.3",
       "dev": true
@@ -2917,6 +2888,10 @@
       "requires": {
         "mime-db": "1.40.0"
       }
+    },
+    "mimic-fn": {
+      "version": "2.1.0",
+      "dev": true
     },
     "minimatch": {
       "version": "3.0.4",
@@ -3031,12 +3006,13 @@
       "version": "2.1.2"
     },
     "multimatch": {
-      "version": "3.0.0",
+      "version": "4.0.0",
       "dev": true,
       "requires": {
-        "array-differ": "^2.0.3",
-        "array-union": "^1.0.2",
-        "arrify": "^1.0.1",
+        "@types/minimatch": "^3.0.3",
+        "array-differ": "^3.0.0",
+        "array-union": "^2.1.0",
+        "arrify": "^2.0.1",
         "minimatch": "^3.0.4"
       }
     },
@@ -3281,6 +3257,13 @@
         "wrappy": "1"
       }
     },
+    "onetime": {
+      "version": "5.1.0",
+      "dev": true,
+      "requires": {
+        "mimic-fn": "^2.1.0"
+      }
+    },
     "opencollective-postinstall": {
       "version": "2.0.2",
       "dev": true
@@ -3522,53 +3505,110 @@
       "dev": true
     },
     "pretty-quick": {
-      "version": "1.11.1",
+      "version": "2.0.0",
       "dev": true,
       "requires": {
-        "chalk": "^2.3.0",
-        "execa": "^0.8.0",
-        "find-up": "^2.1.0",
-        "ignore": "^3.3.7",
-        "mri": "^1.1.0",
-        "multimatch": "^3.0.0"
+        "chalk": "^2.4.2",
+        "execa": "^2.1.0",
+        "find-up": "^4.1.0",
+        "ignore": "^5.1.4",
+        "mri": "^1.1.4",
+        "multimatch": "^4.0.0"
       },
       "dependencies": {
-        "find-up": {
+        "cross-spawn": {
+          "version": "7.0.1",
+          "dev": true,
+          "requires": {
+            "path-key": "^3.1.0",
+            "shebang-command": "^2.0.0",
+            "which": "^2.0.1"
+          }
+        },
+        "execa": {
           "version": "2.1.0",
           "dev": true,
           "requires": {
-            "locate-path": "^2.0.0"
+            "cross-spawn": "^7.0.0",
+            "get-stream": "^5.0.0",
+            "is-stream": "^2.0.0",
+            "merge-stream": "^2.0.0",
+            "npm-run-path": "^3.0.0",
+            "onetime": "^5.1.0",
+            "p-finally": "^2.0.0",
+            "signal-exit": "^3.0.2",
+            "strip-final-newline": "^2.0.0"
           }
         },
-        "ignore": {
-          "version": "3.3.10",
+        "find-up": {
+          "version": "4.1.0",
+          "dev": true,
+          "requires": {
+            "locate-path": "^5.0.0",
+            "path-exists": "^4.0.0"
+          }
+        },
+        "get-stream": {
+          "version": "5.1.0",
+          "dev": true,
+          "requires": {
+            "pump": "^3.0.0"
+          }
+        },
+        "is-stream": {
+          "version": "2.0.0",
           "dev": true
         },
         "locate-path": {
-          "version": "2.0.0",
+          "version": "5.0.0",
           "dev": true,
           "requires": {
-            "p-locate": "^2.0.0",
-            "path-exists": "^3.0.0"
+            "p-locate": "^4.1.0"
           }
         },
-        "p-limit": {
-          "version": "1.3.0",
+        "npm-run-path": {
+          "version": "3.1.0",
           "dev": true,
           "requires": {
-            "p-try": "^1.0.0"
+            "path-key": "^3.0.0"
           }
+        },
+        "p-finally": {
+          "version": "2.0.1",
+          "dev": true
         },
         "p-locate": {
+          "version": "4.1.0",
+          "dev": true,
+          "requires": {
+            "p-limit": "^2.2.0"
+          }
+        },
+        "path-exists": {
+          "version": "4.0.0",
+          "dev": true
+        },
+        "path-key": {
+          "version": "3.1.0",
+          "dev": true
+        },
+        "shebang-command": {
           "version": "2.0.0",
           "dev": true,
           "requires": {
-            "p-limit": "^1.1.0"
+            "shebang-regex": "^3.0.0"
           }
         },
-        "p-try": {
-          "version": "1.0.0",
+        "shebang-regex": {
+          "version": "3.0.0",
           "dev": true
+        },
+        "which": {
+          "version": "2.0.1",
+          "dev": true,
+          "requires": {
+            "isexe": "^2.0.0"
+          }
         }
       }
     },
@@ -3621,6 +3661,17 @@
       "dependencies": {
         "@nodelib/fs.stat": {
           "version": "1.1.3",
+          "dev": true
+        },
+        "array-union": {
+          "version": "1.0.2",
+          "dev": true,
+          "requires": {
+            "array-uniq": "^1.0.1"
+          }
+        },
+        "arrify": {
+          "version": "1.0.1",
           "dev": true
         },
         "braces": {
@@ -4497,6 +4548,10 @@
     },
     "strip-eof": {
       "version": "1.0.0",
+      "dev": true
+    },
+    "strip-final-newline": {
+      "version": "2.0.0",
       "dev": true
     },
     "strip-json-comments": {

@@ -21,7 +21,8 @@ export default class CustomLabelsDiff {
     customLabelsXml2: string,
     outputFilePath: string,
     destructivePackageObj: any[],
-    resultOutput: any[]
+    resultOutput: any[],
+    isDestructive: boolean
   ) {
     let customLabelsObj1: any = {};
     let customLabelsObj2: any = {};
@@ -67,13 +68,14 @@ export default class CustomLabelsDiff {
       "Deploy",
       outputFilePath
     );
-    CustomLabelsDiff.updateOutput(
-      addedEditedOrDeleted.deleted,
-      resultOutput,
-      "Delete",
-      "destructiveChanges.xml"
-    );
-
+    if (isDestructive) {
+      CustomLabelsDiff.updateOutput(
+        addedEditedOrDeleted.deleted,
+        resultOutput,
+        "Delete",
+        "destructiveChanges.xml"
+      );
+    }
     return destructivePackageObj;
   }
 
