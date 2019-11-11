@@ -21,6 +21,9 @@ import ProfileActions from "./profileActions";
 import FileUtils from "../../../utils/fileutils";
 import ProfileWriter from "../../../impl/metadata/writer/profileWriter";
 import { LoggerLevel } from "@salesforce/core";
+import ExternalDataSourceRetriever from "../../../impl/metadata/retriever/externalDataSourceRetriever";
+import FlowRetriever from "../../../impl/metadata/retriever/flowRetriever";
+import CustomPermissionRetriever from "../../../impl/metadata/retriever/customPermissionRetriever";
 
 const nonArayProperties = [
   "custom",
@@ -324,6 +327,113 @@ export default class ProfileReconcile extends ProfileActions {
     }
     return profileObj;
   }
+
+  private async reconcileCustomMetadata(profileObj: Profile): Promise<Profile> {
+    let utils = EntityDefinitionRetriever.getInstance(this.org);
+
+    if (profileObj.customMetadataTypeAccesses !== undefined) {
+      if (!Array.isArray(profileObj.customMetadataTypeAccesses)) {
+        profileObj.customMetadataTypeAccesses = [
+          profileObj.customMetadataTypeAccesses
+        ];
+      }
+      let validArray = [];
+      for (let i = 0; i < profileObj.customMetadataTypeAccesses.length; i++) {
+        let cmpCM = profileObj.customMetadataTypeAccesses[i];
+        let exist = await utils.existCustomMetadata(cmpCM.name);
+        if (exist) {
+          validArray.push(cmpCM);
+        }
+      }
+      SFPowerkit.log(
+        `CustomMetadata Access reduced from ${profileObj.customMetadataTypeAccesses.length}  to  ${validArray.length}`,
+        LoggerLevel.DEBUG
+      );
+      profileObj.customMetadataTypeAccesses = validArray;
+    }
+    return profileObj;
+  }
+
+  private async reconcileExternalDataSource(
+    profileObj: Profile
+  ): Promise<Profile> {
+    let utils = ExternalDataSourceRetriever.getInstance(this.org);
+
+    if (profileObj.externalDataSourceAccesses !== undefined) {
+      if (!Array.isArray(profileObj.externalDataSourceAccesses)) {
+        profileObj.externalDataSourceAccesses = [
+          profileObj.externalDataSourceAccesses
+        ];
+      }
+      let validArray = [];
+      for (let i = 0; i < profileObj.externalDataSourceAccesses.length; i++) {
+        let dts = profileObj.externalDataSourceAccesses[i];
+        let exist = await utils.externalDataSourceExists(
+          dts.externalDataSource
+        );
+        if (exist) {
+          validArray.push(dts);
+        }
+      }
+      SFPowerkit.log(
+        `ExternalDataSource Access reduced from ${profileObj.externalDataSourceAccesses.length}  to  ${validArray.length}`,
+        LoggerLevel.DEBUG
+      );
+      profileObj.externalDataSourceAccesses = validArray;
+    }
+    return profileObj;
+  }
+
+  private async reconcileFlow(profileObj: Profile): Promise<Profile> {
+    let utils = FlowRetriever.getInstance(this.org);
+
+    if (profileObj.flowAccesses !== undefined) {
+      if (!Array.isArray(profileObj.flowAccesses)) {
+        profileObj.flowAccesses = [profileObj.flowAccesses];
+      }
+      let validArray = [];
+      for (let i = 0; i < profileObj.flowAccesses.length; i++) {
+        let flow = profileObj.flowAccesses[i];
+        let exist = await utils.flowExists(flow.flow);
+        if (exist) {
+          validArray.push(flow);
+        }
+      }
+      SFPowerkit.log(
+        `Flow Access reduced from ${profileObj.flowAccesses.length}  to  ${validArray.length}`,
+        LoggerLevel.DEBUG
+      );
+      profileObj.flowAccesses = validArray;
+    }
+    return profileObj;
+  }
+
+  private async reconcileCustomPermission(
+    profileObj: Profile
+  ): Promise<Profile> {
+    let utils = CustomPermissionRetriever.getInstance(this.org);
+
+    if (profileObj.customPermissions !== undefined) {
+      if (!Array.isArray(profileObj.customPermissions)) {
+        profileObj.customPermissions = [profileObj.customPermissions];
+      }
+      let validArray = [];
+      for (let i = 0; i < profileObj.customPermissions.length; i++) {
+        let customPermission = profileObj.customPermissions[i];
+        let exist = await utils.customPermissionExists(customPermission.name);
+        if (exist) {
+          validArray.push(customPermission);
+        }
+      }
+      SFPowerkit.log(
+        `CustomPermission reduced from ${profileObj.customPermissions.length}  to  ${validArray.length}`,
+        LoggerLevel.DEBUG
+      );
+      profileObj.customPermissions = validArray;
+    }
+    return profileObj;
+  }
+
   private async reconcilePages(profileObj: Profile): Promise<Profile> {
     let utils = ApexPageRetriever.getInstance(this.org);
     if (profileObj.pageAccesses !== undefined) {
@@ -412,6 +522,14 @@ export default class ProfileReconcile extends ProfileActions {
     profileObj = await this.reconcileRecordTypes(profileObj);
     SFPowerkit.log("Reconciling  Tabs", LoggerLevel.DEBUG);
     profileObj = await this.reconcileTabs(profileObj);
+    SFPowerkit.log("Reconciling  ExternalDataSources", LoggerLevel.DEBUG);
+    profileObj = await this.reconcileExternalDataSource(profileObj);
+    SFPowerkit.log("Reconciling  CustomPermissions", LoggerLevel.DEBUG);
+    profileObj = await this.reconcileCustomPermission(profileObj);
+    SFPowerkit.log("Reconciling  CustomMetadata", LoggerLevel.DEBUG);
+    profileObj = await this.reconcileCustomMetadata(profileObj);
+    SFPowerkit.log("Reconciling  Flow", LoggerLevel.DEBUG);
+    profileObj = await this.reconcileFlow(profileObj);
     return profileObj;
   }
 }
