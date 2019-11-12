@@ -15,7 +15,10 @@ import Profile, {
   RecordTypeVisibility,
   ProfileTabVisibility,
   ProfileUserPermission,
-  ProfileCustomPermissions
+  ProfileCustomPermissions,
+  FlowAccess,
+  CustomMetadataTypeAccess,
+  PermissionSetExternalDataSourceAccess
 } from "../../../impl/metadata/schema";
 import util = require("util");
 import ProfileActions from "./profileActions";
@@ -478,6 +481,134 @@ export default class ProfileMerge extends ProfileActions {
 
     return profileObj;
   }
+  private mergeCustomMetadataAccesses(
+    profileObj: Profile,
+    custonMetadataAccesses: CustomMetadataTypeAccess[]
+  ): Profile {
+    if (
+      profileObj.customMetadataTypeAccesses === null ||
+      profileObj.customMetadataTypeAccesses === undefined
+    ) {
+      profileObj.customMetadataTypeAccesses = [];
+    } else if (!Array.isArray(profileObj.customMetadataTypeAccesses)) {
+      profileObj.customMetadataTypeAccesses = [
+        profileObj.customMetadataTypeAccesses
+      ];
+    }
+    for (let i = 0; i < custonMetadataAccesses.length; i++) {
+      let customMetadata = custonMetadataAccesses[i];
+      let found = false;
+      for (let j = 0; j < profileObj.customMetadataTypeAccesses.length; j++) {
+        if (
+          customMetadata.name === profileObj.customMetadataTypeAccesses[j].name
+        ) {
+          profileObj.customMetadataTypeAccesses[j].enabled =
+            customMetadata.enabled;
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        profileObj.customMetadataTypeAccesses.push(customMetadata);
+      }
+    }
+
+    profileObj.customMetadataTypeAccesses.sort((cm1, cm2) => {
+      let order = 0;
+      if (cm1.name < cm2.name) {
+        order = -1;
+      } else if (cm1.name > cm2.name) {
+        order = 1;
+      }
+      return order;
+    });
+
+    return profileObj;
+  }
+
+  private mergeFlowAccesses(
+    profileObj: Profile,
+    flowAccesses: FlowAccess[]
+  ): Profile {
+    if (
+      profileObj.flowAccesses === null ||
+      profileObj.flowAccesses === undefined
+    ) {
+      profileObj.flowAccesses = [];
+    } else if (!Array.isArray(profileObj.flowAccesses)) {
+      profileObj.flowAccesses = [profileObj.flowAccesses];
+    }
+    for (let i = 0; i < flowAccesses.length; i++) {
+      let flowAccess = flowAccesses[i];
+      let found = false;
+      for (let j = 0; j < profileObj.flowAccesses.length; j++) {
+        if (flowAccess.flow === profileObj.flowAccesses[j].flow) {
+          profileObj.flowAccesses[j].enabled = flowAccess.enabled;
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        profileObj.flowAccesses.push(flowAccess);
+      }
+    }
+
+    profileObj.flowAccesses.sort((flow1, flow2) => {
+      let order = 0;
+      if (flow1.flow < flow2.flow) {
+        order = -1;
+      } else if (flow1.flow > flow2.flow) {
+        order = 1;
+      }
+      return order;
+    });
+
+    return profileObj;
+  }
+  private mergeExternalDatasourceAccesses(
+    profileObj: Profile,
+    externalDatasources: PermissionSetExternalDataSourceAccess[]
+  ): Profile {
+    if (
+      profileObj.externalDataSourceAccesses === null ||
+      profileObj.externalDataSourceAccesses === undefined
+    ) {
+      profileObj.externalDataSourceAccesses = [];
+    } else if (!Array.isArray(profileObj.externalDataSourceAccesses)) {
+      profileObj.externalDataSourceAccesses = [
+        profileObj.externalDataSourceAccesses
+      ];
+    }
+    for (let i = 0; i < externalDatasources.length; i++) {
+      let dataSource = externalDatasources[i];
+      let found = false;
+      for (let j = 0; j < profileObj.externalDataSourceAccesses.length; j++) {
+        if (
+          dataSource.externalDataSource ===
+          profileObj.externalDataSourceAccesses[j].externalDataSource
+        ) {
+          profileObj.externalDataSourceAccesses[j].enabled = dataSource.enabled;
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        profileObj.externalDataSourceAccesses.push(dataSource);
+      }
+    }
+
+    profileObj.externalDataSourceAccesses.sort((ds1, ds2) => {
+      let order = 0;
+      if (ds1.externalDataSource < ds2.externalDataSource) {
+        order = -1;
+      } else if (ds1.externalDataSource > ds2.externalDataSource) {
+        order = 1;
+      }
+      return order;
+    });
+
+    return profileObj;
+  }
 
   /**
    * Merge two profile and make sure that profile 1 contains all config present in the profile 2
@@ -494,8 +625,26 @@ export default class ProfileMerge extends ProfileActions {
     if (profile2.classAccesses !== undefined) {
       this.mergeClasses(profile1, profile2.classAccesses);
     }
+    if (profile2.customMetadataTypeAccesses !== undefined) {
+      this.mergeCustomMetadataAccesses(
+        profile1,
+        profile2.customMetadataTypeAccesses
+      );
+    }
+    if (profile2.customPermissions !== undefined) {
+      this.mergeCustomPermissions(profile1, profile2.customPermissions);
+    }
+    if (profile2.externalDataSourceAccesses !== undefined) {
+      this.mergeExternalDatasourceAccesses(
+        profile1,
+        profile2.externalDataSourceAccesses
+      );
+    }
     if (profile2.fieldPermissions !== undefined) {
       this.mergeFields(profile1, profile2.fieldPermissions);
+    }
+    if (profile2.flowAccesses !== undefined) {
+      this.mergeFlowAccesses(profile1, profile2.flowAccesses);
     }
     if (profile2.layoutAssignments !== undefined) {
       this.mergeLayouts(profile1, profile2.layoutAssignments);
@@ -508,9 +657,6 @@ export default class ProfileMerge extends ProfileActions {
     }
     if (profile2.userPermissions !== undefined) {
       this.mergePermissions(profile1, profile2.userPermissions);
-    }
-    if (profile2.customPermissions !== undefined) {
-      this.mergeCustomPermissions(profile1, profile2.customPermissions);
     }
     if (profile2.recordTypeVisibilities !== undefined) {
       this.mergeRecordTypes(profile1, profile2.recordTypeVisibilities);
@@ -529,7 +675,6 @@ export default class ProfileMerge extends ProfileActions {
     } else {
       delete profile1.loginIpRanges;
     }
-
     return profile1;
   }
 

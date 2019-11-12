@@ -41,6 +41,11 @@ export interface WebLink extends BaseObject {
 }
 
 export interface ListView extends BaseObject {}
+export interface ExternalDataSource extends BaseObject {}
+export interface Flow extends BaseObject {}
+export interface CustomPermission extends BaseObject {
+  MasterLabel: string;
+}
 
 export interface BusinessProcess extends BaseObject {
   TableEnumOrId?: string;
@@ -133,10 +138,12 @@ export default interface Profile {
   classAccesses?: ProfileApexClassAccess[];
   custom: boolean;
   customPermissions?: ProfileCustomPermissions[];
+  customMetadataTypeAccesses?: CustomMetadataTypeAccess[];
   description?: string;
   externalDataSourceAccesses?: ProfileExternalDataSourceAccess[];
   fieldLevelSecurities?: ProfileFieldLevelSecurity[];
   fieldPermissions?: ProfileFieldLevelSecurity[];
+  flowAccesses?: FlowAccess[];
   fullName?: string;
   layoutAssignments?: ProfileLayoutAssignments[];
   loginHours?: ProfileLoginHours[];
@@ -162,6 +169,15 @@ export interface ProfileApexClassAccess {
 }
 
 export interface ProfileCustomPermissions {
+  name: string;
+  enabled: boolean;
+}
+
+export interface FlowAccess {
+  flow: string;
+  enabled: boolean;
+}
+export interface CustomMetadataTypeAccess {
   name: string;
   enabled: boolean;
 }

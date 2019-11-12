@@ -62,6 +62,9 @@ export interface MetadataInfo {
   ApexPage?: MetadataDescribe;
   CustomField?: MetadataDescribe;
   CustomObject?: MetadataDescribe;
+  CustomPermission?: MetadataDescribe;
+  ExternalDataSource?: MetadataDescribe;
+  Flow?: MetadataDescribe;
   RecordType?: MetadataDescribe;
   ListView?: MetadataDescribe;
   WebLink?: MetadataDescribe;
