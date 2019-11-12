@@ -49,7 +49,8 @@ export default class DiffImpl {
   }[];
   public constructor(
     private revisionFrom?: string,
-    private revisionTo?: string
+    private revisionTo?: string,
+    private isDestructive?: boolean
   ) {
     if (this.revisionTo == null || this.revisionTo.trim() === "") {
       this.revisionTo = "HEAD";
@@ -85,7 +86,6 @@ export default class DiffImpl {
         this.revisionFrom
       ]);
       const commitTo = await git.raw(["rev-list", "-n", "1", this.revisionTo]);
-      const headCommit = await git.raw(["rev-list", "-n", "1", "head"]);
       if (commitFrom === commitTo) {
         throw new Error(messages.getMessage("sameCommitErrorMessage"));
       }
@@ -160,7 +160,7 @@ export default class DiffImpl {
       }
     }
 
-    if (deletedFiles && deletedFiles.length > 0) {
+    if (deletedFiles && deletedFiles.length > 0 && this.isDestructive) {
       SFPowerkit.log("Creating Destructive Manifest..", LoggerLevel.INFO);
       await this.createDestructiveChanges(deletedFiles, outputFolder);
     }
@@ -255,18 +255,6 @@ export default class DiffImpl {
       }
     } catch (e) {}
 
-    if (content1 === "") {
-      //The metadata is added
-
-      await DiffUtil.copyFile(diffFile.path, outputFolder);
-
-      SFPowerkit.log(
-        `Copied file ${diffFile.path} to ${outputFolder}`,
-        LoggerLevel.DEBUG
-      );
-      return;
-    }
-
     FileUtils.mkDirByPathSync(
       path.join(outputFolder, path.parse(diffFile.path).dir)
     );
@@ -281,7 +269,8 @@ export default class DiffImpl {
         path.join(outputFolder, diffFile.path),
         objectName,
         this.destructivePackageObjPost,
-        this.resultOutput
+        this.resultOutput,
+        this.isDestructive
       );
     }
 
@@ -294,7 +283,8 @@ export default class DiffImpl {
         path.join(outputFolder, diffFile.path),
         objectName,
         this.destructivePackageObjPost,
-        this.resultOutput
+        this.resultOutput,
+        this.isDestructive
       );
     }
     if (diffFile.path.endsWith(METADATA_INFO.CustomLabels.sourceExtension)) {
@@ -303,13 +293,21 @@ export default class DiffImpl {
         content2,
         path.join(outputFolder, diffFile.path),
         this.destructivePackageObjPost,
-        this.resultOutput
+        this.resultOutput,
+        this.isDestructive
       );
     }
 
     if (diffFile.path.endsWith(METADATA_INFO.Profile.sourceExtension)) {
       //Deploy only what changed
-      if (content2 === "") {
+      if (content1 === "") {
+        await DiffUtil.copyFile(diffFile.path, outputFolder);
+
+        SFPowerkit.log(
+          `Copied file ${diffFile.path} to ${outputFolder}`,
+          LoggerLevel.DEBUG
+        );
+      } else if (content2 === "") {
         //The profile is deleted or marked as renamed.
         //Delete the renamed one
         let profileType: any = _.find(this.destructivePackageObjPost, function(
@@ -338,7 +336,14 @@ export default class DiffImpl {
     }
     if (diffFile.path.endsWith(METADATA_INFO.PermissionSet.sourceExtension)) {
       let sourceApiVersion = await SFPowerkit.getApiVersion();
-      if (sourceApiVersion <= 39.0) {
+      if (content1 === "") {
+        await DiffUtil.copyFile(diffFile.path, outputFolder);
+
+        SFPowerkit.log(
+          `Copied file ${diffFile.path} to ${outputFolder}`,
+          LoggerLevel.DEBUG
+        );
+      } else if (sourceApiVersion <= 39.0) {
         // in API 39 and erliar PermissionSet deployment are merged. deploy only what changed
         if (content2 === "") {
           //Deleted permissionSet
@@ -371,6 +376,10 @@ export default class DiffImpl {
         //So deploy the whole file
 
         await DiffUtil.copyFile(diffFile.path, outputFolder);
+        SFPowerkit.log(
+          `Copied file ${diffFile.path} to ${outputFolder}`,
+          LoggerLevel.DEBUG
+        );
       }
     }
   }

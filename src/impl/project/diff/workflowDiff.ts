@@ -23,7 +23,8 @@ export default class WorkflowDiff {
     outputFilePath: string,
     objectName: string,
     destructivePackageObj: any[],
-    resultOutput: any[]
+    resultOutput: any[],
+    isDestructive: boolean
   ) {
     let workflowObj1: any = {};
     let workflowObj2: any = {};
@@ -63,14 +64,16 @@ export default class WorkflowDiff {
       "Deploy",
       outputFilePath
     );
-    WorkflowDiff.updateOutput(
-      addedEditedOrDeleted.deleted,
-      resultOutput,
-      objectName,
-      "Delete",
-      "destructiveChanges.xml"
-    );
 
+    if (isDestructive) {
+      WorkflowDiff.updateOutput(
+        addedEditedOrDeleted.deleted,
+        resultOutput,
+        objectName,
+        "Delete",
+        "destructiveChanges.xml"
+      );
+    }
     return destructivePackageObj;
   }
 
