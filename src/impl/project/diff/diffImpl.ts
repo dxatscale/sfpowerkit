@@ -86,6 +86,7 @@ export default class DiffImpl {
         this.revisionFrom
       ]);
       const commitTo = await git.raw(["rev-list", "-n", "1", this.revisionTo]);
+      const headCommit = await git.raw(["rev-list", "-n", "1", "head"]);
       if (commitFrom === commitTo) {
         throw new Error(messages.getMessage("sameCommitErrorMessage"));
       }
