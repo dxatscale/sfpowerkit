@@ -1,0 +1,4 @@
+{
+  "commandDescription": "This is a helper command to ease the deployment of destructiveChanges.xml. The command will create the empty package.xml and package the passed destructive manifest and deploy it to the org",
+  "destructiveManifestFlagDescription": "The path to xml containing the members that need to be destructed,follow the instructions here to create such a file https://developer.salesforce.com/docs/atlas.en-us.daas.meta/daas/daas_destructive_changes.htm"
+}
