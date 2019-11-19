@@ -3,6 +3,7 @@ import fs from "fs-extra";
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import rimraf = require("rimraf");
 import { SfdxProject } from "@salesforce/core";
+import ignore from "ignore";
 import {
   getPackageInfo,
   getDefaultPackageInfo
@@ -11,6 +12,7 @@ import { searchFilesInDirectory } from "../../../../utils/searchFilesInDirectory
 import { zipDirectory } from "../../../../utils/zipDirectory";
 import MetadataFiles from "../../../../impl/metadata/metadataFiles";
 import { SFPowerkit } from "../../../../sfpowerkit";
+import { LoggerLevel } from "@salesforce/core";
 
 var path = require("path");
 const spawn = require("child-process-promise").spawn;
@@ -48,6 +50,25 @@ export default class Generatepatch extends SfdxCommand {
     }),
     apiversion: flags.builtin({
       description: messages.getMessage("apiversion")
+    }),
+    loglevel: flags.enum({
+      description: messages.getMessage("loglevel"),
+      default: "info",
+      required: false,
+      options: [
+        "trace",
+        "debug",
+        "info",
+        "warn",
+        "error",
+        "fatal",
+        "TRACE",
+        "DEBUG",
+        "INFO",
+        "WARN",
+        "ERROR",
+        "FATAL"
+      ]
     })
   };
 
@@ -78,7 +99,7 @@ export default class Generatepatch extends SfdxCommand {
       permsetDirPath = packageToBeUsed.path + `/main/default/permissionsets/`;
     }
 
-    this.ux.log("Scanning for Permissionsets");
+    SFPowerkit.log("Scanning for Permissionsets", LoggerLevel.INFO);
 
     let permissionsetList: any[] = searchFilesInDirectory(
       permsetDirPath,
@@ -87,12 +108,22 @@ export default class Generatepatch extends SfdxCommand {
     );
 
     if (permissionsetList && permissionsetList.length > 0) {
-      this.ux.log("Found " + `${permissionsetList.length}` + " Permissionsets");
+      SFPowerkit.log(
+        "Found " + `${permissionsetList.length}` + " Permissionsets",
+        LoggerLevel.INFO
+      );
 
       fs.mkdirSync("temp_sfpowerkit");
-
+      let forceignore = ignore().add(
+        fs.readFileSync(".forceignore", "utf8").toString()
+      );
       permissionsetList.forEach(file => {
-        MetadataFiles.copyFile(file, "temp_sfpowerkit");
+        let isIgnored = forceignore.ignores(path.relative(process.cwd(), file));
+        if (!isIgnored) {
+          MetadataFiles.copyFile(file, "temp_sfpowerkit");
+        } else {
+          SFPowerkit.log(`${file} is ignored`, LoggerLevel.INFO);
+        }
       });
 
       var sfdx_project_json: string = `{
@@ -148,20 +179,22 @@ export default class Generatepatch extends SfdxCommand {
         packageToBeUsed.path +
         `/main/default/staticresources/${packageToBeUsed.package}_permissionsets.resource-meta.xml`;
 
-      this.ux.log(
-        "Generating static resource file : " + `${targetmetadatapath}`
+      SFPowerkit.log(
+        "Generating static resource file : " + `${targetmetadatapath}`,
+        LoggerLevel.INFO
       );
 
       fs.outputFileSync(targetmetadatapath, metadata);
 
-      this.ux.log(
-        `Patch ${packageToBeUsed.package}_permissionsets generated successfully.`
+      SFPowerkit.log(
+        `Patch ${packageToBeUsed.package}_permissionsets generated successfully.`,
+        LoggerLevel.INFO
       );
 
       //clean temp sf powerkit source folder
       rimraf.sync("temp_sfpowerkit");
     } else {
-      this.ux.log("No permissionsets found");
+      SFPowerkit.log("No permissionsets found", LoggerLevel.INFO);
     }
 
     return 0;
