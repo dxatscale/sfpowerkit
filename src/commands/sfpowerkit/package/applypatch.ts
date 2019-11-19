@@ -22,6 +22,7 @@ var path = require("path");
 import { checkRetrievalStatus } from "../../../utils/checkRetrievalStatus";
 import { checkDeploymentStatus } from "../../../utils/checkDeploymentStatus";
 import { extract } from "../../../utils/extract";
+import { SFPowerkit } from "../../../sfpowerkit";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -49,6 +50,25 @@ export default class Applypatch extends SfdxCommand {
       required: true,
       char: "n",
       description: messages.getMessage("nameFlagDescription")
+    }),
+    loglevel: flags.enum({
+      description: "logging level for this command invocation",
+      default: "info",
+      required: false,
+      options: [
+        "trace",
+        "debug",
+        "info",
+        "warn",
+        "error",
+        "fatal",
+        "TRACE",
+        "DEBUG",
+        "INFO",
+        "WARN",
+        "ERROR",
+        "FATAL"
+      ]
     })
   };
 
@@ -57,6 +77,7 @@ export default class Applypatch extends SfdxCommand {
 
   public async run(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
+    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     //Connect to the org
     await this.org.refreshAuth();
@@ -140,7 +161,7 @@ export default class Applypatch extends SfdxCommand {
 
         this.ux.log(`Patch ${this.flags.name} Deployed successfully.`);
         rimraf.sync("temp_sfpowerkit");
-        return { status: 1 };
+        return 1;
       } else {
         this.ux.log(`Patch ${this.flags.name} not found in the org`);
         rimraf.sync("temp_sfpowerkit");
