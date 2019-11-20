@@ -465,9 +465,9 @@ USAGE
   <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
-  -m, --manifest                                 (required) The path to xml containing the members that need to be destructed,follow the instructions here to                                                 create such a file https://developer.salesforce.com/docs/atlas.en-us.daas.meta/daas/daas_destructive_changes.htm
+  -m, --manifest                                  (required) The path to xml containing the members that need to be destructed,follow the instructions here to                                                 create such a file https://developer.salesforce.com/docs/atlas.en-us.daas.meta/daas/daas_destructive_changes.htm
 
-  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
+  -u, --targetusername=targetusername             (required) username or alias for the target org; overrides default target org
 
   --apiversion=apiversion                         override the api version used for api requests made by this command
 
@@ -476,7 +476,7 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: info] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx sfpowerkit:org:connectedapp:create -u myOrg@example.com -m destructiveChanges.xml
+  $ sfdx sfpowerkit:org:destruct -u myOrg@example.com -m destructiveChanges.xml
 
 ```
 
