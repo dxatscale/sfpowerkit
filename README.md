@@ -455,6 +455,32 @@ _See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/Accentu
 
 These commands are helpful in managing functionalities are related to a Salesforce Org
 
+## `sfpowerkit org:destruct`
+
+This is a helper command to ease the deployment of destructiveChanges.xml. The command will create the empty package.xml and package the passed destructive manifest and deploy it to the org
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:destruct -m <filepath>  [-u <string>] [--apiversion  <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+
+OPTIONS
+  -m, --manifest                                 (required) The path to xml containing the members that need to be destructed,follow the instructions here to                                                create such a file [here](https://developer.salesforce.com/docs/atlas.en-us.daas.meta/daas/daas_destructive_changes.htm)
+
+  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
+
+  --apiversion=apiversion                         override the api version used for api requests made by this command
+
+  --json                                          format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal)  [default: info] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:org:destruct -u myOrg@example.com -m destructiveChanges.xml
+
+```
+
+_See code: [src\commands\sfpowerkit\org\destruct.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/destruct.ts)_
+
 ## `sfpowerkit org:connectedapp:create`
 
 Creates a connected app in the target org for JWT based authentication, Please note it only creates Connected App with All users may self authorize option, You would need to manually edit the policies to enable admin users are pre-approved and add your profile to this connected app. API, Web and RefreshToken Scope are added to every app that is being created.

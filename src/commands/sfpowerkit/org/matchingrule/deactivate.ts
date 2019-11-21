@@ -13,6 +13,7 @@ import { checkRetrievalStatus } from "../../../../utils/checkRetrievalStatus";
 import { checkDeploymentStatus } from "../../../../utils/checkDeploymentStatus";
 import { extract } from "../../../../utils/extract";
 import { zipDirectory } from "../../../../utils/zipDirectory";
+import { SFPowerkit } from "../../../../sfpowerkit";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -45,6 +46,25 @@ export default class Deactivate extends SfdxCommand {
       required: true,
       char: "n",
       description: messages.getMessage("nameFlagDescription")
+    }),
+    loglevel: flags.enum({
+      description: "logging level for this command invocation",
+      default: "info",
+      required: false,
+      options: [
+        "trace",
+        "debug",
+        "info",
+        "warn",
+        "error",
+        "fatal",
+        "TRACE",
+        "DEBUG",
+        "INFO",
+        "WARN",
+        "ERROR",
+        "FATAL"
+      ]
     })
   };
 
@@ -53,6 +73,7 @@ export default class Deactivate extends SfdxCommand {
 
   public async run(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
+    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     //Connect to the org
     await this.org.refreshAuth();
@@ -167,7 +188,7 @@ export default class Deactivate extends SfdxCommand {
         );
 
       this.ux.log(`Matching Rule for ${this.flags.name} deactivated`);
-      return { status: 1 };
+      return 0;
     } else {
       throw new SfdxError("Matching Rule not found in the org");
     }
