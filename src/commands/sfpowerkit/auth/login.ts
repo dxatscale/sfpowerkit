@@ -3,7 +3,7 @@ import { core, flags, SfdxCommand } from "@salesforce/command";
 import rimraf = require("rimraf");
 import { Connection } from "jsforce";
 
-import { SfdxError, AuthInfo, Aliases } from "@salesforce/core";
+import { SfdxError, AuthInfo, Aliases, ConfigGroup } from "@salesforce/core";
 // tslint:disable-next-line:ordered-imports
 var jsforce = require("jsforce");
 
@@ -91,7 +91,9 @@ export default class Login extends SfdxCommand {
     await auth.save();
 
     if (this.flags.alias) {
-      const aliases = await Aliases.create(null);
+      const aliases = await Aliases.create(
+        ConfigGroup.getOptions("orgs", "alias.json")
+      );
       aliases.set(this.flags.alias, this.flags.username);
       await aliases.write();
     }
