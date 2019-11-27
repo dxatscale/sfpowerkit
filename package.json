@@ -1,7 +1,7 @@
 {
   "name": "sfpowerkit",
   "description": "A Salesforce DX Plugin with multiple functionalities aimed at improving development and operational workflows",
-  "version": "1.27.1",
+  "version": "1.29.1-4",
   "author": {
     "name": "Azlam Abdulsalam",
     "email": "azlam.abdulsalam@accenture.com",

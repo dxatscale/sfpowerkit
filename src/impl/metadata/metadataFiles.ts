@@ -174,7 +174,7 @@ export default class MetadataFiles {
   public static copyFile(filePath: string, outputFolder: string) {
     SFPowerkit.log(
       `Copying file ${filePath} from file system to ${outputFolder}`,
-      LoggerLevel.INFO
+      LoggerLevel.DEBUG
     );
     const LWC_IGNORE_FILES = ["jsconfig.json", ".eslintrc.json"];
     const pairStatResources = METADATA_INFO.StaticResource.directoryName;

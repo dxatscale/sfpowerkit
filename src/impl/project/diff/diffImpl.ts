@@ -161,7 +161,7 @@ export default class DiffImpl {
       }
     }
 
-    if (deletedFiles && deletedFiles.length > 0 && this.isDestructive) {
+    if (this.isDestructive) {
       SFPowerkit.log("Creating Destructive Manifest..", LoggerLevel.INFO);
       await this.createDestructiveChanges(deletedFiles, outputFolder);
     }

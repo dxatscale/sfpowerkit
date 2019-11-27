@@ -8,6 +8,7 @@ import { zipDirectory } from "../../../../utils/zipDirectory";
 import { AsyncResult, DeployResult } from "jsforce";
 import { checkDeploymentStatus } from "../../../../utils/checkDeploymentStatus";
 import { SfdxError } from "@salesforce/core";
+import { SFPowerkit } from "../../../../sfpowerkit";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -48,6 +49,25 @@ export default class Create extends SfdxCommand {
       required: true,
       char: "e",
       description: messages.getMessage("emailFlagDescription")
+    }),
+    loglevel: flags.enum({
+      description: "logging level for this command invocation",
+      default: "info",
+      required: false,
+      options: [
+        "trace",
+        "debug",
+        "info",
+        "warn",
+        "error",
+        "fatal",
+        "TRACE",
+        "DEBUG",
+        "INFO",
+        "WARN",
+        "ERROR",
+        "FATAL"
+      ]
     })
   };
 
@@ -62,6 +82,7 @@ export default class Create extends SfdxCommand {
 
   public async run(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
+    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     await this.org.refreshAuth();
 
