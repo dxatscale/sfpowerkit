@@ -5,5 +5,6 @@
   "fixStandardValueSetDescription": "Consider patching for standard value set controlled picklists, Warning: This modifies the source code in your package",
   "fixRecordTypes": "Consider patching for standard value set in RecordTypes, Warning: This modifies the source code in your package",
   "movestandardvalueSetDescription": "Consider patching for standard valueset inside source repo, Warning: This modifies the source code in your package",
-  "apiversion": "The api version to be used for the static resource to be generated"
+  "apiversion": "The api version to be used for the static resource to be generated",
+  "loglevel": "[default: info] logging level for this command invocation"
 }
