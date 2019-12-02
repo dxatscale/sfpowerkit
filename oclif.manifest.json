@@ -1791,12 +1791,12 @@
     "sfpowerkit:package:version:codecoverage": {
       "id": "sfpowerkit:package:version:codecoverage",
       "description": "This command is used to get the apex test coverage details of an unlocked package",
-      "usage": "<%= command.id %> [-p <string>] [-n <string>] [-i <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "usage": "<%= command.id %> [-p <string>] [-n <string>] [-i <array>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],
       "examples": [
-        "$ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -i 04tXXXXXXXXXXXXXXX \n$ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -p core -n 1.2.0.45"
+        "$ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -i 04tXXXXXXXXXXXXXXX \n$ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -i 04tXXXXXXXXXXXXXXX,04tXXXXXXXXXXXXXXX,04tXXXXXXXXXXXXXXX \n$ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -p core -n 1.2.0.45 \n$ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -p 0HoXXXXXXXXXXXXXXX -n 1.2.0.45"
       ],
       "flags": {
         "json": {
@@ -1842,14 +1842,14 @@
           "name": "package",
           "type": "option",
           "char": "p",
-          "description": "Name of the unlocked package to check the code coverage",
+          "description": "Name of the unlocked package to check the code coverage, packageVersionNumber is required when packageName is used",
           "required": false
         },
         "versionnumber": {
           "name": "versionnumber",
           "type": "option",
           "char": "n",
-          "description": "The complete version number format is major.minor.patch (Beta build)—for example, 1.2.0 (Beta 5)",
+          "description": "The complete version number format is major.minor.patch (Beta build)—for example, 1.2.0 (Beta 5), packageName is required when packageVersionNumber is used",
           "required": false
         },
         "versionid": {

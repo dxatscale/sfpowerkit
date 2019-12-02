@@ -1,7 +1,7 @@
 {
   "commandDescription": "This command is used to get the apex test coverage details of an unlocked package",
-  "packageName": "Name of the unlocked package to check the code coverage",
-  "packageVersionNumber": "The complete version number format is major.minor.patch (Beta build)—for example, 1.2.0 (Beta 5)",
+  "packageName": "Name of the unlocked package to check the code coverage, packageVersionNumber is required when packageName is used",
+  "packageVersionNumber": "The complete version number format is major.minor.patch (Beta build)—for example, 1.2.0 (Beta 5), packageName is required when packageVersionNumber is used",
   "packageVersionId": "Package version Id to check the code coverage",
   "apiversion": "API version",
   "loglevel": "[default: info] logging level for this command invocation"
