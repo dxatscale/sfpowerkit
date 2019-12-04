@@ -1,5 +1,6 @@
 import { core } from "@salesforce/command";
 import { SFPowerkit } from "../../../sfpowerkit";
+import { AnyJson } from "@salesforce/ts-types";
 import { LoggerLevel, SfdxError } from "@salesforce/core";
 
 const QUERY_string = `SELECT SubscriberPackageVersionId,Package2Id, Package2.Name,MajorVersion,MinorVersion,PatchVersion,BuildNumber, CodeCoverage, HasPassedCodeCoverageCheck, Name FROM Package2Version WHERE `;
@@ -10,7 +11,7 @@ export default class PackageVersionCoverage {
   public async getCoverage(
     whereClause: string,
     conn: core.Connection
-  ): Promise<PackageCoverage[]> {
+  ): Promise<AnyJson> {
     var output = [];
     SFPowerkit.log(
       `Retrieving package version details ...................[INPROGRESS]`,
@@ -20,10 +21,8 @@ export default class PackageVersionCoverage {
       `${QUERY_string} ${whereClause} ORDER BY ${DEFAULT_ORDER_BY_FIELDS}`
     )) as any;
     if (result && result.size > 0) {
-      var packageCoverage = new PackageCoverage();
-
       result.records.forEach(record => {
-        packageCoverage = new PackageCoverage();
+        var packageCoverage = <PackageCoverage>{};
         packageCoverage.HasPassedCodeCoverageCheck =
           record.HasPassedCodeCoverageCheck;
         packageCoverage.coverage = record.CodeCoverage
@@ -54,25 +53,25 @@ export default class PackageVersionCoverage {
   ): Promise<string> {
     var whereClause = "";
     if (versionId && versionId.length > 0) {
-      whereClause = this._buildWhereFilter(
+      whereClause = this.buildWhereFilter(
         "SubscriberPackageVersionId",
         versionId
       );
     } else if (versionNumber && packageName) {
       whereClause =
-        this._buildWhereOnNameOrId(
+        this.buildWhereOnNameOrId(
           "0Ho",
           "Package2Id",
           "Package2.Name",
           packageName
         ) +
         " AND " +
-        this._buildVersionNumberFilter(versionNumber);
+        this.buildVersionNumberFilter(versionNumber);
     }
     return whereClause;
   }
   // buid the where clause IN or = based on length
-  _buildWhereFilter(key: string, value: string[]) {
+  public buildWhereFilter(key: string, value: string[]) {
     var result = "";
     if (value.length > 1) {
       result = `${key} IN ('${value.join("','")}')`;
@@ -82,7 +81,7 @@ export default class PackageVersionCoverage {
     return result;
   }
   //build where clause based of id or name
-  _buildWhereOnNameOrId(
+  public buildWhereOnNameOrId(
     idFilter: string,
     idKey: string,
     nameKey: string,
@@ -96,7 +95,7 @@ export default class PackageVersionCoverage {
     }
     return result;
   }
-  _buildVersionNumberFilter(versionNumber: string) {
+  public buildVersionNumberFilter(versionNumber: string) {
     var result = "";
     let versionNumberList = versionNumber.split(".");
     if (versionNumberList.length === 4) {
@@ -109,11 +108,11 @@ export default class PackageVersionCoverage {
     return result;
   }
 }
-export class PackageCoverage {
-  public coverage: number;
-  public packageName: string;
-  public packageId: string;
-  public packageVersionNumber: string;
-  public packageVersionId: string;
-  public HasPassedCodeCoverageCheck: Boolean;
+interface PackageCoverage {
+  coverage: number;
+  packageName: string;
+  packageId: string;
+  packageVersionNumber: string;
+  packageVersionId: string;
+  HasPassedCodeCoverageCheck: Boolean;
 }
