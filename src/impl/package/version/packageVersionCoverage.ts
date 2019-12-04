@@ -11,7 +11,7 @@ export default class PackageVersionCoverage {
   public async getCoverage(
     whereClause: string,
     conn: core.Connection
-  ): Promise<AnyJson> {
+  ): Promise<PackageCoverage[]> {
     var output = [];
     SFPowerkit.log(
       `Retrieving package version details ...................[INPROGRESS]`,
