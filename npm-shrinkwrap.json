@@ -198,6 +198,14 @@
             }
           }
         },
+        "@oclif/parser": {
+          "version": "3.8.1",
+          "requires": {
+            "@oclif/linewrap": "^1.0.0",
+            "chalk": "^2.4.2",
+            "tslib": "^1.9.3"
+          }
+        },
         "@oclif/plugin-help": {
           "version": "2.2.0",
           "dev": true,
@@ -307,6 +315,14 @@
             "@oclif/parser": "^3.7.3",
             "debug": "^4.1.1",
             "semver": "^5.6.0"
+          }
+        },
+        "@oclif/parser": {
+          "version": "3.8.1",
+          "requires": {
+            "@oclif/linewrap": "^1.0.0",
+            "chalk": "^2.4.2",
+            "tslib": "^1.9.3"
           }
         }
       }
@@ -445,8 +461,40 @@
         },
         "@oclif/test": {
           "version": "1.2.5",
+          "resolved": "https://registry.npmjs.org/@oclif/test/-/test-1.2.5.tgz",
+          "integrity": "sha512-8Y+Ix4A3Zhm87aL0ldVonDK7vFWyLfnFHzP3goYaLyIeh/60KL37lMxfmbp/kBN6/Y0Ru17iR1pdDi/hTDClLQ==",
           "requires": {
             "fancy-test": "^1.4.3"
+          }
+        },
+        "@salesforce/core": {
+          "version": "2.1.1",
+          "requires": {
+            "@salesforce/kit": "^1.0.0",
+            "@salesforce/ts-sinon": "^1.0.0",
+            "@salesforce/ts-types": "^1.0.0",
+            "@types/jsforce": "1.9.2",
+            "bunyan-sfdx-no-dtrace": "1.8.2",
+            "jsen": "0.6.6",
+            "jsforce": "1.8.5",
+            "jsonwebtoken": "8.5.0",
+            "mkdirp": "0.5.1",
+            "sfdx-faye": "^1.0.9"
+          },
+          "dependencies": {
+            "@salesforce/kit": {
+              "version": "1.1.1",
+              "requires": {
+                "@salesforce/ts-types": "^1.1.4",
+                "tslib": "^1"
+              }
+            },
+            "@salesforce/ts-types": {
+              "version": "1.1.4",
+              "requires": {
+                "tslib": "^1"
+              }
+            }
           }
         },
         "@salesforce/kit": {
@@ -1280,6 +1328,14 @@
             "@oclif/parser": "^3.7.3",
             "debug": "^4.1.1",
             "semver": "^5.6.0"
+          }
+        },
+        "@oclif/parser": {
+          "version": "3.8.1",
+          "requires": {
+            "@oclif/linewrap": "^1.0.0",
+            "chalk": "^2.4.2",
+            "tslib": "^1.9.3"
           }
         },
         "fs-extra": {
@@ -4197,6 +4253,16 @@
         "supports-color": "^5.5.0"
       },
       "dependencies": {
+        "@sinonjs/formatio": {
+          "version": "3.2.2",
+          "resolved": "https://registry.npmjs.org/@sinonjs/formatio/-/formatio-3.2.2.tgz",
+          "integrity": "sha512-B8SEsgd8gArBLMD6zpRw3juQ2FVSsmdd7qlevyDqzS9WTCtvF55/gAL+h6gue8ZvPYcdiPdvueM/qm//9XzyTQ==",
+          "dev": true,
+          "requires": {
+            "@sinonjs/commons": "^1",
+            "@sinonjs/samsam": "^3.1.0"
+          }
+        },
         "@sinonjs/samsam": {
           "version": "3.3.3",
           "dev": true,

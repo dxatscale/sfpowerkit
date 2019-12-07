@@ -1,7 +1,6 @@
-import { core } from "@salesforce/command";
 import { SFPowerkit } from "../../../sfpowerkit";
-import { AnyJson } from "@salesforce/ts-types";
-import { LoggerLevel, SfdxError } from "@salesforce/core";
+import { LoggerLevel } from "@salesforce/core";
+import { Connection } from "jsforce";
 
 const QUERY_string = `SELECT SubscriberPackageVersionId,Package2Id, Package2.Name,MajorVersion,MinorVersion,PatchVersion,BuildNumber, CodeCoverage, HasPassedCodeCoverageCheck, Name FROM Package2Version WHERE `;
 const DEFAULT_ORDER_BY_FIELDS =
@@ -10,7 +9,7 @@ export default class PackageVersionCoverage {
   public constructor() {}
   public async getCoverage(
     whereClause: string,
-    conn: core.Connection
+    conn: Connection
   ): Promise<PackageCoverage[]> {
     var output = [];
     SFPowerkit.log(
@@ -40,7 +39,7 @@ export default class PackageVersionCoverage {
         LoggerLevel.INFO
       );
     } else {
-      throw new SfdxError(
+      throw new Error(
         `Package version doesnot exist, Please check the version details`
       );
     }
@@ -101,7 +100,7 @@ export default class PackageVersionCoverage {
     if (versionNumberList.length === 4) {
       result = `MajorVersion = ${versionNumberList[0]} AND MinorVersion = ${versionNumberList[1]} AND PatchVersion = ${versionNumberList[2]} AND BuildNumber = ${versionNumberList[3]}`;
     } else {
-      throw new SfdxError(
+      throw new Error(
         "Provide complete version number format in major.minor.patch (Beta build)—for example, 1.2.0.5"
       );
     }
