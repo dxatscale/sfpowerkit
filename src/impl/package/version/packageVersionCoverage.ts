@@ -7,15 +7,27 @@ const DEFAULT_ORDER_BY_FIELDS =
   "Package2Id, MajorVersion, MinorVersion, PatchVersion, BuildNumber";
 export default class PackageVersionCoverage {
   public constructor() {}
+
   public async getCoverage(
-    whereClause: string,
+    versionId: string[],
+    versionNumber: string,
+    packageName: string,
     conn: Connection
   ): Promise<PackageCoverage[]> {
-    var output = [];
-    SFPowerkit.log(
-      `Retrieving package version details ...................[INPROGRESS]`,
-      LoggerLevel.INFO
-    );
+    let whereClause = (await this.getWhereClause(
+      versionId,
+      versionNumber,
+      packageName
+    )) as string;
+
+    if (!whereClause) {
+      throw new Error(
+        "Either versionId or versionNumber and packageName is mandatory"
+      );
+    }
+
+    let output = [];
+
     const result = (await conn.tooling.query(
       `${QUERY_string} ${whereClause} ORDER BY ${DEFAULT_ORDER_BY_FIELDS}`
     )) as any;
@@ -45,7 +57,7 @@ export default class PackageVersionCoverage {
     }
     return output;
   }
-  public async getWhereClause(
+  private async getWhereClause(
     versionId: string[],
     versionNumber: string,
     packageName: string
@@ -70,7 +82,7 @@ export default class PackageVersionCoverage {
     return whereClause;
   }
   // buid the where clause IN or = based on length
-  public buildWhereFilter(key: string, value: string[]) {
+  private buildWhereFilter(key: string, value: string[]) {
     var result = "";
     if (value.length > 1) {
       result = `${key} IN ('${value.join("','")}')`;
@@ -80,7 +92,7 @@ export default class PackageVersionCoverage {
     return result;
   }
   //build where clause based of id or name
-  public buildWhereOnNameOrId(
+  private buildWhereOnNameOrId(
     idFilter: string,
     idKey: string,
     nameKey: string,
@@ -94,7 +106,7 @@ export default class PackageVersionCoverage {
     }
     return result;
   }
-  public buildVersionNumberFilter(versionNumber: string) {
+  private buildVersionNumberFilter(versionNumber: string) {
     var result = "";
     let versionNumberList = versionNumber.split(".");
     if (versionNumberList.length === 4) {

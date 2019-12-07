@@ -2,7 +2,7 @@ import { core, flags, SfdxCommand } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import { SFPowerkit } from "../../../../sfpowerkit";
 import { SfdxError } from "@salesforce/core";
-import packageVersionCoverage from "../../../../impl/package/version/packageVersionCoverage";
+import PackageVersionCoverage from "../../../../impl/package/version/packageVersionCoverage";
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
 
@@ -88,21 +88,14 @@ export default class CodeCoverage extends SfdxCommand {
       packageName = this.flags.package;
     }
 
-    var coverageUtil = new packageVersionCoverage();
+    let packageVersionCoverageImpl: PackageVersionCoverage = new PackageVersionCoverage();
 
-    var whereClause = (await coverageUtil.getWhereClause(
+    const result = (await packageVersionCoverageImpl.getCoverage(
       versionId,
       versionNumber,
-      packageName
-    )) as string;
-
-    if (!whereClause) {
-      throw new SfdxError(
-        "Either versionId or versionNumber and packageName is mandatory"
-      );
-    }
-
-    const result = (await coverageUtil.getCoverage(whereClause, conn)) as any;
+      packageName,
+      conn
+    )) as any;
 
     this.ux.table(result, [
       "packageName",
