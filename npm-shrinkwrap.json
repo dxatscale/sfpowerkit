@@ -198,6 +198,14 @@
             }
           }
         },
+        "@oclif/parser": {
+          "version": "3.8.1",
+          "requires": {
+            "@oclif/linewrap": "^1.0.0",
+            "chalk": "^2.4.2",
+            "tslib": "^1.9.3"
+          }
+        },
         "@oclif/plugin-help": {
           "version": "2.2.0",
           "dev": true,
@@ -307,6 +315,14 @@
             "@oclif/parser": "^3.7.3",
             "debug": "^4.1.1",
             "semver": "^5.6.0"
+          }
+        },
+        "@oclif/parser": {
+          "version": "3.8.1",
+          "requires": {
+            "@oclif/linewrap": "^1.0.0",
+            "chalk": "^2.4.2",
+            "tslib": "^1.9.3"
           }
         }
       }
@@ -1312,6 +1328,14 @@
             "@oclif/parser": "^3.7.3",
             "debug": "^4.1.1",
             "semver": "^5.6.0"
+          }
+        },
+        "@oclif/parser": {
+          "version": "3.8.1",
+          "requires": {
+            "@oclif/linewrap": "^1.0.0",
+            "chalk": "^2.4.2",
+            "tslib": "^1.9.3"
           }
         },
         "fs-extra": {
