@@ -92,7 +92,21 @@ export default class MetadataFiles {
       cmpPath = cmpPath.substring(0, cmpPath.indexOf("."));
       member = cmpPath.replace(path.sep, "/");
     } else {
-      member = splitFilepath[lastIndex].replace(SOURCE_EXTENSION_REGEX, "");
+      if (SOURCE_EXTENSION_REGEX.test(splitFilepath[lastIndex])) {
+        member = splitFilepath[lastIndex].replace(SOURCE_EXTENSION_REGEX, "");
+      } else {
+        const auraRegExp = new RegExp("aura");
+        const lwcRegExp = new RegExp("lwc");
+        if (auraRegExp.test(filepath) || lwcRegExp.test(filepath)) {
+          member = splitFilepath[lastIndex - 1];
+        } else {
+          let extension = path.parse(splitFilepath[lastIndex]).ext;
+          member = splitFilepath[lastIndex].replace(
+            new RegExp(extension + "$"),
+            ""
+          );
+        }
+      }
     }
     return member;
   }

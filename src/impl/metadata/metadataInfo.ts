@@ -152,7 +152,10 @@ export class MetadataInfo {
     return metadataInfo;
   }
 
-  static getMetadataName(metadataFile: string): string {
+  static getMetadataName(
+    metadataFile: string,
+    validateSourceExtension = true
+  ): string {
     let matcher = metadataFile.match(SOURCE_EXTENSION_REGEX);
     let extension = "";
     if (matcher) {
@@ -163,18 +166,26 @@ export class MetadataInfo {
     //SfPowerKit.ux.log(extension);
     let metadataName = "";
 
-    const auaraRegExp = new RegExp("/aura/");
+    const auraRegExp = new RegExp("aura");
+    const lwcRegExp = new RegExp("lwc");
     if (
-      auaraRegExp.test(metadataFile) &&
-      SOURCE_EXTENSION_REGEX.test(metadataFile)
+      auraRegExp.test(metadataFile) &&
+      (SOURCE_EXTENSION_REGEX.test(metadataFile) || !validateSourceExtension)
     ) {
       metadataName = METADATA_INFO.AuraDefinitionBundle.xmlName;
+    } else if (
+      lwcRegExp.test(metadataFile) &&
+      (SOURCE_EXTENSION_REGEX.test(metadataFile) || !validateSourceExtension)
+    ) {
+      metadataName = METADATA_INFO.LightningComponentBundle.xmlName;
     } else {
       let keys = Object.keys(METADATA_INFO);
       for (let i = 0; i < keys.length; i++) {
         let metaDescribe = METADATA_INFO[keys[i]];
         if (
           metaDescribe.sourceExtension === extension ||
+          ("." + metaDescribe.suffix === extension &&
+            !validateSourceExtension) ||
           metaDescribe.folderExtension === extension
         ) {
           metadataName = metaDescribe.xmlName;
@@ -182,7 +193,6 @@ export class MetadataInfo {
         }
       }
     }
-
     return metadataName;
   }
 }
