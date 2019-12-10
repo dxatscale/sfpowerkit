@@ -11,8 +11,9 @@ import { checkRetrievalStatus } from "../../../utils/checkRetrievalStatus";
 import { AsyncResult } from "jsforce";
 import { extract } from "../../../utils/extract";
 import rimraf = require("rimraf");
-import { StatusCodeError } from "request-promise/errors";
 const jsdiff = require("diff");
+
+const { execSync } = require("child_process");
 
 export default class OrgDiffImpl {
   private output = [];
@@ -59,12 +60,16 @@ export default class OrgDiffImpl {
 
     await this.retrievePackage(packageobj);
     this.compare();
-
+    rimraf.sync("temp_sfpowerkit");
     return this.output;
   }
 
   private async compare() {
-    let fetchedFiles = FileUtils.getAllFilesSync(`./temp_sfpowerkit/mdapi`, "");
+    // let fetchedFiles = FileUtils.getAllFilesSync(`./temp_sfpowerkit/mdapi`, "");
+    let fetchedFiles = FileUtils.getAllFilesSync(
+      `./temp_sfpowerkit/force-app`,
+      ""
+    );
 
     this.filesOrFolders.forEach(fileOrFolder => {
       fileOrFolder = path.normalize(fileOrFolder);
@@ -88,9 +93,23 @@ export default class OrgDiffImpl {
   }
 
   private async processFile(localFile: string, fetchedFiles: string[]) {
+    let metaType = MetadataInfo.getMetadataName(localFile, false);
+    let member = MetadataFiles.getMemberNameFromFilepath(localFile, metaType);
+    let extension = path.parse(localFile).ext;
     // find the files
     let foundFile = fetchedFiles.find(fetchFile => {
-      return path.basename(localFile) === path.basename(fetchFile);
+      let fetchedMetaType = MetadataInfo.getMetadataName(fetchFile, false);
+      let fetchedMember = MetadataFiles.getMemberNameFromFilepath(
+        fetchFile,
+        fetchedMetaType
+      );
+      let fetchedExtension = path.parse(fetchFile).ext;
+      return (
+        fetchedMetaType === metaType &&
+        member === fetchedMember &&
+        extension === fetchedExtension
+      );
+      //return path.basename(localFile) === path.basename(fetchFile);
     });
 
     if (foundFile !== undefined) {
@@ -100,8 +119,6 @@ export default class OrgDiffImpl {
       //Process the diff result add add conflict marker on the files
       this.processResult(localFile, diffResult);
     } else {
-      let metaType = MetadataInfo.getMetadataName(localFile, false);
-      let member = MetadataFiles.getMemberNameFromFilepath(localFile, metaType);
       this.output.push({
         status: "Local Added / Remote Deleted",
         metadataType: metaType,
@@ -246,5 +263,28 @@ export default class OrgDiffImpl {
     });
 
     await extract(`./temp_sfpowerkit/unpackaged.zip`, "temp_sfpowerkit/mdapi");
+
+    let maxApiVersion = await this.org.retrieveMaxApiVersion();
+
+    fs.mkdirSync("temp_sfpowerkit/force-app");
+
+    let sfdxProjectJson = `{
+        "packageDirectories": [
+          {
+            "path": "force-app",
+            "default": true
+          }
+        ],
+        "namespace": "",
+        "sfdcLoginUrl": "https://login.salesforce.com",
+        "sourceApiVersion": "${maxApiVersion}"
+      }`;
+    fs.writeFileSync("temp_sfpowerkit/sfdx-project.json", sfdxProjectJson);
+    execSync("sfdx force:mdapi:convert -r mdapi -d force-app", {
+      cwd: "temp_sfpowerkit"
+    });
+
+    //Should remove the mdapi folder
+    rimraf.sync("temp_sfpowerkit/mdapi");
   }
 }
