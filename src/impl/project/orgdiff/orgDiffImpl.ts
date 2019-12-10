@@ -286,5 +286,6 @@ export default class OrgDiffImpl {
 
     //Should remove the mdapi folder
     rimraf.sync("temp_sfpowerkit/mdapi");
+    rimraf.sync("temp_sfpowerkit/unpackaged.zip");
   }
 }
