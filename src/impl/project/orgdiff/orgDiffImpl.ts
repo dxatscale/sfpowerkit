@@ -1,4 +1,8 @@
-import { MetadataInfo } from "../../../impl/metadata/metadataInfo";
+import {
+  MetadataInfo,
+  MetadataDescribe,
+  METADATA_INFO
+} from "../../../impl/metadata/metadataInfo";
 
 import * as fs from "fs";
 import * as path from "path";
@@ -64,7 +68,7 @@ export default class OrgDiffImpl {
     return this.output;
   }
 
-  private async compare() {
+  private compare() {
     // let fetchedFiles = FileUtils.getAllFilesSync(`./temp_sfpowerkit/mdapi`, "");
     let fetchedFiles = FileUtils.getAllFilesSync(
       `./temp_sfpowerkit/force-app`,
@@ -92,10 +96,23 @@ export default class OrgDiffImpl {
     });
   }
 
-  private async processFile(localFile: string, fetchedFiles: string[]) {
+  private processFile(localFile: string, fetchedFiles: string[]) {
     let metaType = MetadataInfo.getMetadataName(localFile, false);
     let member = MetadataFiles.getMemberNameFromFilepath(localFile, metaType);
-    let extension = path.parse(localFile).ext;
+    // let extension = path.parse(localFile).ext;
+    let cmpPath = path.parse(localFile).base;
+
+    let metadataDescribe: MetadataDescribe = METADATA_INFO[metaType];
+    const staticResourceRegExp = new RegExp("staticresources");
+    if (metadataDescribe.inFolder || staticResourceRegExp.test(localFile)) {
+      let folderName = "staticresources";
+      if (metadataDescribe.inFolder) {
+        folderName = metadataDescribe.directoryName;
+      }
+      let baseIndex = localFile.indexOf(folderName) + folderName.length;
+      cmpPath = localFile.substring(baseIndex + 1);
+    }
+
     // find the files
     let foundFile = fetchedFiles.find(fetchFile => {
       let fetchedMetaType = MetadataInfo.getMetadataName(fetchFile, false);
@@ -103,13 +120,28 @@ export default class OrgDiffImpl {
         fetchFile,
         fetchedMetaType
       );
-      let fetchedExtension = path.parse(fetchFile).ext;
+      //let fetchedExtension = path.parse(fetchFile).ext;
+      let fetchedCmpPath = path.parse(fetchFile).base;
+
+      let fetchedMetadataDescribe: MetadataDescribe =
+        METADATA_INFO[fetchedMetaType];
+      if (
+        fetchedMetadataDescribe.inFolder ||
+        staticResourceRegExp.test(fetchFile)
+      ) {
+        let fetchedFolderName = "staticresources";
+        if (fetchedMetadataDescribe.inFolder) {
+          fetchedFolderName = fetchedMetadataDescribe.directoryName;
+        }
+        let fetchedBaseIndex =
+          fetchFile.indexOf(fetchedFolderName) + fetchedFolderName.length;
+        fetchedCmpPath = fetchFile.substring(fetchedBaseIndex + 1);
+      }
       return (
         fetchedMetaType === metaType &&
         member === fetchedMember &&
-        extension === fetchedExtension
+        cmpPath === fetchedCmpPath
       );
-      //return path.basename(localFile) === path.basename(fetchFile);
     });
 
     if (foundFile !== undefined) {
@@ -142,15 +174,21 @@ export default class OrgDiffImpl {
     let changedLocaly = false;
     let changedRemote = false;
     let conflict = false;
-    diffResult.forEach((result, index, originalArray) => {
+
+    for (let i = 0; i < diffResult.length; i++) {
+      let result = diffResult[i];
+      let index = i;
+      let originalArray = diffResult;
+
       if (result.removed) {
         if (firstChunkProcessed) {
           content = content + `${result.value}>>>>>>> Remote:${filePath}\n`;
           firstChunkProcessed = false;
           conflict = true;
         } else if (
-          originalArray.length > index &&
-          originalArray[index + 1].added == undefined
+          (originalArray.length > index + 1 &&
+            originalArray[index + 1].added == undefined) ||
+          index + 1 === originalArray.length
         ) {
           //Line added locally and remove remote
           content =
@@ -170,9 +208,10 @@ export default class OrgDiffImpl {
           firstChunkProcessed = false;
           conflict = true;
         } else if (
-          originalArray.length > index &&
-          originalArray[index + 1].removed == undefined &&
-          originalArray[index + 1].added == undefined
+          (originalArray.length > index + 1 &&
+            originalArray[index + 1].removed == undefined &&
+            originalArray[index + 1].added == undefined) ||
+          index + 1 === originalArray.length
         ) {
           //Line added locally and remove remote
           content =
@@ -190,7 +229,8 @@ export default class OrgDiffImpl {
       } else {
         content = content + result.value;
       }
-    });
+    }
+
     if (this.addConflictMarkers) {
       fs.writeFileSync(filePath, content);
     }

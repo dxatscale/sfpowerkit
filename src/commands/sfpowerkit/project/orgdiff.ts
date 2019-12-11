@@ -85,7 +85,7 @@ export default class OrgDiff extends SfdxCommand {
     let orgDiff = new OrgDiffImpl(
       filesOrFolders,
       this.org,
-      !this.flags.addconflictmarkers
+      !this.flags.noconflictmarkers
     );
 
     let output = await orgDiff.orgDiff();

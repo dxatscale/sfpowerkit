@@ -168,6 +168,8 @@ export class MetadataInfo {
 
     const auraRegExp = new RegExp("aura");
     const lwcRegExp = new RegExp("lwc");
+    const staticResourceRegExp = new RegExp("staticresources");
+    const documentRegExp = new RegExp("documents");
     if (
       auraRegExp.test(metadataFile) &&
       (SOURCE_EXTENSION_REGEX.test(metadataFile) || !validateSourceExtension)
@@ -178,6 +180,16 @@ export class MetadataInfo {
       (SOURCE_EXTENSION_REGEX.test(metadataFile) || !validateSourceExtension)
     ) {
       metadataName = METADATA_INFO.LightningComponentBundle.xmlName;
+    } else if (
+      staticResourceRegExp.test(metadataFile) &&
+      (SOURCE_EXTENSION_REGEX.test(metadataFile) || !validateSourceExtension)
+    ) {
+      metadataName = METADATA_INFO.StaticResource.xmlName;
+    } else if (
+      documentRegExp.test(metadataFile) &&
+      (SOURCE_EXTENSION_REGEX.test(metadataFile) || !validateSourceExtension)
+    ) {
+      metadataName = METADATA_INFO.Document.xmlName;
     } else {
       let keys = Object.keys(METADATA_INFO);
       for (let i = 0; i < keys.length; i++) {

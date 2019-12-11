@@ -343,7 +343,9 @@ export default class DiffUtil {
     for (let i = 0; i < packageObj.length; i++) {
       if (packageObj[i].name === name) {
         typeIsPresent = true;
-        packageObj[i].members.push(member);
+        if (!packageObj[i].members.includes(member)) {
+          packageObj[i].members.push(member);
+        }
         break;
       }
     }
