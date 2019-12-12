@@ -23,6 +23,7 @@ import DiffUtil, { DiffFile, DiffFileStatus } from "./diffUtil";
 import { core } from "@salesforce/command";
 
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
+import { DXProjectManifestUtils } from "../../../utils/dxProjectManifestUtils";
 
 core.Messages.importMessagesDirectory(__dirname);
 const messages = core.Messages.loadMessages("sfpowerkit", "project_diff");
@@ -179,7 +180,13 @@ export default class DiffImpl {
         }
       }
       try {
-        DiffUtil.copyFile("sfdx-project.json", outputFolder);
+        //Copy project manifest
+        await DiffUtil.copyFile("sfdx-project.json", outputFolder);
+        //Remove Project Directories that doesnt  have any components in ths diff  Fix #178
+        let dxProjectManifestUtils: DXProjectManifestUtils = new DXProjectManifestUtils(
+          outputFolder
+        );
+        dxProjectManifestUtils.removePackagesNotInDirectory();
       } catch (e) {
         if (e.code !== "EPERM") {
           throw e;
