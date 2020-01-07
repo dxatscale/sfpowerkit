@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { METADATA_INFO } from "../../metadata/metadataInfo";
 import Profile from "../../../impl/metadata/schema";
-import _ from "lodash";
+import * as _ from "lodash";
 import ProfileActions from "./profileActions";
 import ProfileWriter from "../../../impl/metadata/writer/profileWriter";
 

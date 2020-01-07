@@ -6,7 +6,7 @@ import {
   SOURCE_EXTENSION_REGEX
 } from "./metadataInfo";
 import FileUtils from "../../utils/fileutils";
-import _ from "lodash";
+import * as _ from "lodash";
 import ignore from "ignore";
 import * as fs from "fs";
 import * as glob from "glob";

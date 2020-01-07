@@ -1,7 +1,7 @@
 import { RecordType } from "../schema";
 import { Org, LoggerLevel } from "@salesforce/core";
 import { METADATA_INFO } from "../metadataInfo";
-import _ from "lodash";
+import * as _ from "lodash";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 import MetadataFiles from "../metadataFiles";
 
