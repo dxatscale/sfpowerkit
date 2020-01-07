@@ -3,7 +3,7 @@ import { Org } from "@salesforce/core";
 import { Connection } from "@salesforce/core";
 import xml2js = require("xml2js");
 import util = require("util");
-import _ from "lodash";
+import * as _ from "lodash";
 import DiffUtil from "./diffUtil";
 
 const nonArayProperties = [

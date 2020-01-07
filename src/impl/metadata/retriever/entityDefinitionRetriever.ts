@@ -1,5 +1,5 @@
 import { Org } from "@salesforce/core";
-import _ from "lodash";
+import * as _ from "lodash";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 import { EntityDefinition } from "../schema";
 import { METADATA_INFO } from "../metadataInfo";

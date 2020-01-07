@@ -1,6 +1,6 @@
 import { UserLicence } from "../schema";
 import { Org } from "@salesforce/core";
-import _ from "lodash";
+import * as _ from "lodash";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 
 const QUERY = "Select Id, Name, LicenseDefinitionKey From UserLicense";
