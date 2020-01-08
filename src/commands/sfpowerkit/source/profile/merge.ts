@@ -150,6 +150,7 @@ export default class Merge extends SfdxCommand {
     if (!_.isNil(argFolder) && argFolder.length !== 0) {
       SFPowerkit.setDefaultFolder(argFolder[0]);
     }
+    ``;
 
     const profileUtils = new ProfileMerge(
       this.org,
