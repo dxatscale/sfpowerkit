@@ -8,6 +8,7 @@ import {
 import DiffImpl from "../../../impl/project/diff/diffImpl";
 import * as path from "path";
 import { SFPowerkit } from "../../../sfpowerkit";
+import SFPowerkitCommandBase from "../sfpowerkitCommandBase";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -16,7 +17,10 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages("sfpowerkit", "project_diff");
 
-export default class Diff extends SfdxCommand {
+export default class Diff extends SFPowerkitCommandBase {
+  getCommandNameForTracking(): string {
+    return "project-diff";
+  }
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
@@ -57,25 +61,6 @@ export default class Diff extends SfdxCommand {
         "generativeDestructiveManifestDescription"
       ),
       required: false
-    }),
-    loglevel: flags.enum({
-      description: "logging level for this command invocation",
-      default: "info",
-      required: false,
-      options: [
-        "trace",
-        "debug",
-        "info",
-        "warn",
-        "error",
-        "fatal",
-        "TRACE",
-        "DEBUG",
-        "INFO",
-        "WARN",
-        "ERROR",
-        "FATAL"
-      ]
     })
   };
 
@@ -98,9 +83,7 @@ export default class Diff extends SfdxCommand {
   protected static requiresUsername = false;
   protected static requiresProject = true;
 
-  public async run(): Promise<any> {
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
-
+  public async executeCommand(): Promise<any> {
     const diffFile: string = this.flags.difffile;
     let encoding: string = this.flags.encoding;
     const outputFolder: string = this.flags.output;

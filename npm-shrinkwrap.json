@@ -873,6 +873,15 @@
         "default-require-extensions": "^2.0.0"
       }
     },
+    "applicationinsights": {
+      "version": "1.6.0",
+      "requires": {
+        "cls-hooked": "^4.2.2",
+        "continuation-local-storage": "^3.2.1",
+        "diagnostic-channel": "0.2.0",
+        "diagnostic-channel-publishers": "^0.3.3"
+      }
+    },
     "archiver": {
       "version": "3.1.1",
       "requires": {
@@ -1025,6 +1034,19 @@
         "lodash": {
           "version": "4.17.15"
         }
+      }
+    },
+    "async-hook-jl": {
+      "version": "1.7.6",
+      "requires": {
+        "stack-chain": "^1.3.7"
+      }
+    },
+    "async-listener": {
+      "version": "0.6.10",
+      "requires": {
+        "semver": "^5.3.0",
+        "shimmer": "^1.1.0"
       }
     },
     "asynckit": {
@@ -1368,6 +1390,19 @@
         }
       }
     },
+    "cls-hooked": {
+      "version": "4.2.2",
+      "requires": {
+        "async-hook-jl": "^1.7.6",
+        "emitter-listener": "^1.0.1",
+        "semver": "^5.4.1"
+      },
+      "dependencies": {
+        "semver": {
+          "version": "5.7.1"
+        }
+      }
+    },
     "co-prompt": {
       "version": "1.0.0",
       "requires": {
@@ -1426,6 +1461,13 @@
     "content-type": {
       "version": "1.0.4",
       "dev": true
+    },
+    "continuation-local-storage": {
+      "version": "3.2.1",
+      "requires": {
+        "async-listener": "^0.6.0",
+        "emitter-listener": "^1.1.1"
+      }
     },
     "convert-source-map": {
       "version": "1.6.0",
@@ -1719,6 +1761,15 @@
       "version": "5.0.0",
       "dev": true
     },
+    "diagnostic-channel": {
+      "version": "0.2.0",
+      "requires": {
+        "semver": "^5.3.0"
+      }
+    },
+    "diagnostic-channel-publishers": {
+      "version": "0.3.3"
+    },
     "diff": {
       "version": "3.5.0"
     },
@@ -1759,6 +1810,12 @@
       "version": "1.0.11",
       "requires": {
         "safe-buffer": "^5.0.1"
+      }
+    },
+    "emitter-listener": {
+      "version": "1.1.2",
+      "requires": {
+        "shimmer": "^1.2.0"
       }
     },
     "emoji-regex": {
@@ -4230,6 +4287,9 @@
     "shebang-regex": {
       "version": "1.0.0"
     },
+    "shimmer": {
+      "version": "1.2.1"
+    },
     "signal-exit": {
       "version": "3.0.2",
       "dev": true
@@ -4499,6 +4559,9 @@
         "safer-buffer": "^2.0.2",
         "tweetnacl": "~0.14.0"
       }
+    },
+    "stack-chain": {
+      "version": "1.3.7"
     },
     "static-extend": {
       "version": "0.1.2",

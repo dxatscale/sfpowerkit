@@ -32,6 +32,7 @@
     "@oclif/errors": "1",
     "@salesforce/command": "^2.1.0",
     "@salesforce/core": "^2.1.0",
+    "applicationinsights": "^1.6.0",
     "archiver": "3.1.1",
     "child-process": "^1.0.2",
     "child-process-promise": "^2.2.1",
