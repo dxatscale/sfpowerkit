@@ -3,8 +3,8 @@ import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import * as path from "path";
 import FileUtils from "../../../utils/fileutils";
 import { retrieveMetadata } from "../../../utils/retrieveMetadata";
-import { Org } from "@salesforce/core";
-import { Connection } from "@salesforce/core";
+
+import { Connection, Org } from "@salesforce/core";
 import ProfileRetriever from "../../metadata/retriever/profileRetriever";
 
 export default abstract class ProfileActions {

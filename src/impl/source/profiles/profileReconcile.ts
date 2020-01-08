@@ -16,7 +16,7 @@ import UserLicenseRetriever from "../../../impl/metadata/retriever/userLicenseRe
 import UserPermissionBuilder from "../../../impl/metadata/builder/userPermissionBuilder";
 import Profile, { ProfileFieldLevelSecurity } from "../../metadata/schema";
 import util = require("util");
-import _ from "lodash";
+import * as _ from "lodash";
 import ProfileActions from "./profileActions";
 import FileUtils from "../../../utils/fileutils";
 import ProfileWriter from "../../../impl/metadata/writer/profileWriter";

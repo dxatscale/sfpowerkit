@@ -1,6 +1,6 @@
 import { ApexPage } from "../schema";
 import { Org } from "@salesforce/core";
-import _ from "lodash";
+import * as _ from "lodash";
 import { METADATA_INFO } from "../metadataInfo";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 import MetadataFiles from "../metadataFiles";

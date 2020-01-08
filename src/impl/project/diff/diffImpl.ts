@@ -13,7 +13,7 @@ import {
   PROFILE_PERMISSIONSET_EXTENSION
 } from "../../metadata/metadataInfo";
 import FileUtils from "../../../utils/fileutils";
-import _ from "lodash";
+import * as _ from "lodash";
 import ProfileDiff from "./profileDiff";
 import PermsetDiff from "./permsetDiff";
 import WorkflowDiff from "./workflowDiff";

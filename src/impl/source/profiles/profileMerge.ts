@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 import xml2js = require("xml2js");
 import { METADATA_INFO } from "../../metadata/metadataInfo";
-import _ from "lodash";
+import * as _ from "lodash";
 import Profile, {
   ApplicationVisibility,
   ProfileApexClassAccess,
