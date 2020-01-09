@@ -1,4 +1,4 @@
-const fs = require("fs-extra");
+import * as fs from "fs-extra";
 var unzipper = require("unzip-stream");
 
 export async function extract(path: string, location: string) {

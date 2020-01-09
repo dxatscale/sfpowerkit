@@ -1,7 +1,9 @@
 import {
   MetadataInfo,
   MetadataDescribe,
-  METADATA_INFO
+  METADATA_INFO,
+  SOURCE_EXTENSION_REGEX,
+  UNSPLITED_METADATA
 } from "../../../impl/metadata/metadataInfo";
 
 import * as fs from "fs";
@@ -15,9 +17,14 @@ import { checkRetrievalStatus } from "../../../utils/checkRetrievalStatus";
 import { AsyncResult } from "jsforce";
 import { extract } from "../../../utils/extract";
 import rimraf = require("rimraf");
+import CustomLabelsDiff from "../diff/customLabelsDiff";
 const jsdiff = require("diff");
 
 const { execSync } = require("child_process");
+
+const unsplitedMetadataExtensions = UNSPLITED_METADATA.map(elem => {
+  return elem.sourceExtension;
+});
 
 export default class OrgDiffImpl {
   private output = [];
@@ -30,7 +37,7 @@ export default class OrgDiffImpl {
   public async orgDiff() {
     let packageobj = new Array();
 
-    this.filesOrFolders.forEach(fileOrFolder => {
+    this.filesOrFolders.forEach(async fileOrFolder => {
       fileOrFolder = path.normalize(fileOrFolder);
 
       let pathExists = fs.existsSync(fileOrFolder);
@@ -38,19 +45,12 @@ export default class OrgDiffImpl {
         let stats = fs.statSync(fileOrFolder);
         if (stats.isFile()) {
           //Process File
-          let name = MetadataInfo.getMetadataName(fileOrFolder, false);
-          let member = MetadataFiles.getMemberNameFromFilepath(
-            fileOrFolder,
-            name
-          );
-          packageobj = DiffUtil.addMemberToPackage(packageobj, name, member);
+          packageobj = await this.buildPackageObj(fileOrFolder, packageobj);
         } else if (stats.isDirectory()) {
           //Process File
           let files = FileUtils.getAllFilesSync(fileOrFolder);
-          files.forEach(oneFile => {
-            let name = MetadataInfo.getMetadataName(oneFile, false);
-            let member = MetadataFiles.getMemberNameFromFilepath(oneFile, name);
-            packageobj = DiffUtil.addMemberToPackage(packageobj, name, member);
+          files.forEach(async oneFile => {
+            packageobj = await this.buildPackageObj(oneFile, packageobj);
           });
         }
       } else {
@@ -66,6 +66,36 @@ export default class OrgDiffImpl {
     this.compare();
     rimraf.sync("temp_sfpowerkit");
     return this.output;
+  }
+
+  private async buildPackageObj(filePath, packageobj) {
+    let matcher = filePath.match(SOURCE_EXTENSION_REGEX);
+    let extension = "";
+    if (matcher) {
+      extension = matcher[0];
+    } else {
+      extension = path.parse(filePath).ext;
+    }
+    if (unsplitedMetadataExtensions.includes(extension)) {
+      //handle unsplited metadata
+      await this.handleUnsplitedMetadatas(filePath, packageobj);
+    } else {
+      let name = MetadataInfo.getMetadataName(filePath, false);
+      let member = MetadataFiles.getMemberNameFromFilepath(filePath, name);
+      packageobj = DiffUtil.addMemberToPackage(packageobj, name, member);
+    }
+    return packageobj;
+  }
+
+  private async handleUnsplitedMetadatas(filePath: string, packageobj: any[]) {
+    if (filePath.endsWith(METADATA_INFO.CustomLabels.sourceExtension)) {
+      let members = await CustomLabelsDiff.getMembers(filePath);
+      packageobj.push({
+        name: "CustomLabel",
+        members: members
+      });
+    }
+    //Handle other types here
   }
 
   private compare() {
