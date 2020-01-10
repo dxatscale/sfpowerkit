@@ -18,11 +18,17 @@ import { AsyncResult } from "jsforce";
 import { extract } from "../../../utils/extract";
 import rimraf = require("rimraf");
 import CustomLabelsDiff from "../diff/customLabelsDiff";
+import SharingRuleDiff from "../diff/sharingRuleDiff";
 const jsdiff = require("diff");
 
 const { execSync } = require("child_process");
 
-const unsplitedMetadataExtensions = UNSPLITED_METADATA.map(elem => {
+const unsplitedMetadataExtensions = UNSPLITED_METADATA.filter(elem => {
+  return (
+    elem.xmlName !== METADATA_INFO.Profile.xmlName &&
+    elem.xmlName !== METADATA_INFO.PermissionSet.xmlName
+  );
+}).map(elem => {
   return elem.sourceExtension;
 });
 
@@ -93,6 +99,19 @@ export default class OrgDiffImpl {
       packageobj.push({
         name: "CustomLabel",
         members: members
+      });
+    }
+    if (filePath.endsWith(METADATA_INFO.SharingRules.sourceExtension)) {
+      let name = MetadataInfo.getMetadataName(filePath, false);
+      let objectName = MetadataFiles.getMemberNameFromFilepath(filePath, name);
+      let members = await SharingRuleDiff.getMembers(filePath);
+      Object.keys(members).forEach(key => {
+        packageobj.push({
+          name: key,
+          members: members[key].map(elem => {
+            return objectName + "." + elem;
+          })
+        });
       });
     }
     //Handle other types here
