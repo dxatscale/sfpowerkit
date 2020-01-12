@@ -153,6 +153,81 @@ export default class WorkflowDiff {
     return workflowObj;
   }
 
+  public static async getMembers(filePath: string) {
+    let fileContent = fs.readFileSync(filePath, "utf8").toString();
+    const parseString = util.promisify(parser.parseString);
+    let members = {};
+    if (fileContent !== "") {
+      let parseResult = await parseString(fileContent);
+      let workFlowObj = parseResult.Workflow || {};
+      if (!_.isNil(workFlowObj.alerts)) {
+        if (!Array.isArray(workFlowObj.alerts)) {
+          members["WorkflowAlert"] = [workFlowObj.alerts.fullName];
+        } else {
+          members["WorkflowAlert"] = workFlowObj.alerts.map(workFlowAlert => {
+            return workFlowAlert.fullName;
+          });
+        }
+      }
+      if (!_.isNil(workFlowObj.fieldUpdates)) {
+        if (!Array.isArray(workFlowObj.fieldUpdates)) {
+          members["WorkflowFieldUpdate"] = [workFlowObj.fieldUpdates.fullName];
+        } else {
+          members["WorkflowFieldUpdate"] = workFlowObj.fieldUpdates.map(
+            workFlowFU => {
+              return workFlowFU.fullName;
+            }
+          );
+        }
+      }
+      if (!_.isNil(workFlowObj.knowledgePublishes)) {
+        if (!Array.isArray(workFlowObj.knowledgePublishes)) {
+          members["WorkflowKnowledgePublish"] = [
+            workFlowObj.knowledgePublishes.label
+          ];
+        } else {
+          members[
+            "WorkflowKnowledgePublish"
+          ] = workFlowObj.knowledgePublishes.map(workflowKnowledgePublish => {
+            return workflowKnowledgePublish.label;
+          });
+        }
+      }
+      if (!_.isNil(workFlowObj.outboundMessages)) {
+        if (!Array.isArray(workFlowObj.outboundMessages)) {
+          members["WorkflowOutboundMessage"] = [
+            workFlowObj.outboundMessages.fullName
+          ];
+        } else {
+          members["WorkflowOutboundMessage"] = workFlowObj.outboundMessages.map(
+            workflowOutboundMessage => {
+              return workflowOutboundMessage.fullName;
+            }
+          );
+        }
+      }
+      if (!_.isNil(workFlowObj.rules)) {
+        if (!Array.isArray(workFlowObj.rules)) {
+          members["WorkflowRule"] = [workFlowObj.rules.fullName];
+        } else {
+          members["WorkflowRule"] = workFlowObj.rules.map(workflowRule => {
+            return workflowRule.fullName;
+          });
+        }
+      }
+      if (!_.isNil(workFlowObj.tasks)) {
+        if (!Array.isArray(workFlowObj.tasks)) {
+          members["WorkflowTask"] = [workFlowObj.tasks.fullName];
+        } else {
+          members["WorkflowTask"] = workFlowObj.tasks.map(workflowTask => {
+            return workflowTask.fullName;
+          });
+        }
+      }
+    }
+    return members;
+  }
+
   private static buildNewWorkflowObj(workflowObj1: any, workflowObj2: any) {
     workflowObj1 = WorkflowDiff.ensureArray(workflowObj1);
     workflowObj2 = WorkflowDiff.ensureArray(workflowObj2);

@@ -19,6 +19,7 @@ import { extract } from "../../../utils/extract";
 import rimraf = require("rimraf");
 import CustomLabelsDiff from "../diff/customLabelsDiff";
 import SharingRuleDiff from "../diff/sharingRuleDiff";
+import WorkflowDiff from "../diff/workflowDiff";
 const jsdiff = require("diff");
 
 const { execSync } = require("child_process");
@@ -114,7 +115,19 @@ export default class OrgDiffImpl {
         });
       });
     }
-    //Handle other types here
+    if (filePath.endsWith(METADATA_INFO.Workflow.sourceExtension)) {
+      let name = MetadataInfo.getMetadataName(filePath, false);
+      let objectName = MetadataFiles.getMemberNameFromFilepath(filePath, name);
+      let members = await WorkflowDiff.getMembers(filePath);
+      Object.keys(members).forEach(key => {
+        packageobj.push({
+          name: key,
+          members: members[key].map(elem => {
+            return objectName + "." + elem;
+          })
+        });
+      });
+    }
   }
 
   private compare() {
