@@ -5,8 +5,6 @@ import {
   flags,
   SfdxResult
 } from "@salesforce/command";
-import DiffImpl from "../../../impl/project/diff/diffImpl";
-import * as path from "path";
 import { SFPowerkit } from "../../../sfpowerkit";
 import OrgDiffImpl from "../../../impl/project/orgdiff/orgDiffImpl";
 
@@ -78,6 +76,8 @@ export default class OrgDiff extends SfdxCommand {
   protected static requiresProject = true;
 
   public async run(): Promise<any> {
+    SFPowerkit.setUx(this.ux);
+    this.ux.startSpinner("Running...");
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     let filesOrFolders = this.flags.filesorfolders;
@@ -89,7 +89,7 @@ export default class OrgDiff extends SfdxCommand {
     );
 
     let output = await orgDiff.orgDiff();
-
+    this.ux.stopSpinner("Completed");
     return output;
   }
 }
