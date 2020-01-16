@@ -24,6 +24,9 @@ const jsdiff = require("diff");
 
 const { execSync } = require("child_process");
 
+const CRLF_REGEX = /\r\n/;
+const LF_REGEX = /\n/;
+
 const unsplitedMetadataExtensions = UNSPLITED_METADATA.filter(elem => {
   return (
     elem.xmlName !== METADATA_INFO.Profile.xmlName &&
@@ -209,6 +212,16 @@ export default class OrgDiffImpl {
     if (foundFile !== undefined) {
       let contentLocalFile = fs.readFileSync(localFile, "utf8");
       let contentFetchedFile = fs.readFileSync(foundFile, "utf8");
+
+      //Normalise line ending on windows
+      let matcherLocal = contentLocalFile.match(CRLF_REGEX);
+      let matcherFetched = contentFetchedFile.match(CRLF_REGEX);
+      let lineEnd = "";
+      if (matcherLocal && !matcherFetched) {
+        lineEnd = matcherLocal[0];
+        contentFetchedFile = contentFetchedFile.split(LF_REGEX).join(lineEnd);
+      }
+
       let diffResult = jsdiff.diffLines(contentLocalFile, contentFetchedFile);
       //Process the diff result add add conflict marker on the files
       this.processResult(localFile, diffResult);
