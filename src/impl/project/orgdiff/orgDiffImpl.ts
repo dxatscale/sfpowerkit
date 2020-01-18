@@ -219,10 +219,27 @@ export default class OrgDiffImpl {
       //Normalise line ending on windows
       let matcherLocal = contentLocalFile.match(CRLF_REGEX);
       let matcherFetched = contentFetchedFile.match(CRLF_REGEX);
-      let lineEnd = "";
+      let lineEnd = "\n";
       if (matcherLocal && !matcherFetched) {
         lineEnd = matcherLocal[0];
         contentFetchedFile = contentFetchedFile.split(LF_REGEX).join(lineEnd);
+      }
+
+      if (
+        !contentLocalFile.endsWith(lineEnd) &&
+        contentFetchedFile.endsWith(lineEnd)
+      ) {
+        contentFetchedFile = contentFetchedFile.substr(
+          0,
+          contentFetchedFile.lastIndexOf(lineEnd)
+        );
+      }
+
+      if (
+        contentLocalFile.endsWith(lineEnd) &&
+        !contentFetchedFile.endsWith(lineEnd)
+      ) {
+        contentFetchedFile = contentFetchedFile + lineEnd;
       }
 
       let diffResult = jsdiff.diffLines(contentLocalFile, contentFetchedFile);
