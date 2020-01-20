@@ -341,12 +341,14 @@ export default class OrgDiffImpl {
 
     let metaType = MetadataInfo.getMetadataName(filePath, false);
     let member = MetadataFiles.getMemberNameFromFilepath(filePath, metaType);
-    this.output.push({
-      status: status,
-      metadataType: metaType,
-      componentName: member,
-      path: filePath
-    });
+    if (conflict || changedLocaly || changedRemote) {
+      this.output.push({
+        status: status,
+        metadataType: metaType,
+        componentName: member,
+        path: filePath
+      });
+    }
   }
 
   private async retrievePackage(packageObj) {
