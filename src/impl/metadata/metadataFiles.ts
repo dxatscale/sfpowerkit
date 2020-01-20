@@ -92,7 +92,31 @@ export default class MetadataFiles {
       cmpPath = cmpPath.substring(0, cmpPath.indexOf("."));
       member = cmpPath.replace(path.sep, "/");
     } else {
-      member = splitFilepath[lastIndex].replace(SOURCE_EXTENSION_REGEX, "");
+      if (SOURCE_EXTENSION_REGEX.test(splitFilepath[lastIndex])) {
+        member = splitFilepath[lastIndex].replace(SOURCE_EXTENSION_REGEX, "");
+      } else {
+        const auraRegExp = new RegExp("aura");
+        const lwcRegExp = new RegExp("lwc");
+        const staticResourceRegExp = new RegExp("staticresources");
+        if (auraRegExp.test(filepath) || lwcRegExp.test(filepath)) {
+          member = splitFilepath[lastIndex - 1];
+        } else if (staticResourceRegExp.test(filepath)) {
+          //Return the fileName
+          let baseName = "staticresources";
+          let baseIndex = filepath.indexOf(baseName) + baseName.length;
+          let cmpPath = filepath.substring(baseIndex + 1); // add 1 to remove the path seperator
+          member = cmpPath.split(path.sep)[0];
+          let extension = path.parse(member).ext;
+
+          member = member.replace(new RegExp(extension + "$"), "");
+        } else {
+          let extension = path.parse(splitFilepath[lastIndex]).ext;
+          member = splitFilepath[lastIndex].replace(
+            new RegExp(extension + "$"),
+            ""
+          );
+        }
+      }
     }
     return member;
   }

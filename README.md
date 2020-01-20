@@ -276,6 +276,28 @@ EXAMPLE
   $  sfdx sfpowerkit:project:diff --revisionfrom revisionfrom --revisionto revisionto --output OutputFolder
 ```
 
+## `sfpowerkit:project:orgdiff`
+
+Compare source files again the salesforce org and display differences. The command also add diff conflict markers in changed files to let the developer accept or reject changes manually using a git merge tool.
+
+```
+
+USAGE
+  $ sfdx sfpowerkit:project:orgdiff -f <array> [-c] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -c, --noconflictmarkers                         If set to true, the command will not add diff conflict marker to each compared file.
+  -f, --filesorfolders=filesorfolders             (required) List of fils or folder to compare. Should be only Apex classes, trigger, Aura Components, Lightning Web Components or                                                    any unsplitted metadata.
+  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
+  --apiversion=apiversion                         override the api version used for api requests made by this command
+  --json                                          format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:project:orgdiff --folder directory --noconflictmarkers --targetusername sandbox
+  $ sfdx sfpowerkit:project:orgdiff  --filename fileName --targetusername sandbox
+```
+
 ## Unlocked Package Related Functionalities
 
 Various helper commands in aiding with Salesforce DX Unlocked Package Development

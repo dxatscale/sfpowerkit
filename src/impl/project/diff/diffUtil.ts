@@ -337,4 +337,26 @@ export default class DiffUtil {
     }
     return result;
   }
+
+  public static addMemberToPackage(packageObj, name, member) {
+    let typeIsPresent: boolean = false;
+    for (let i = 0; i < packageObj.length; i++) {
+      if (packageObj[i].name === name) {
+        typeIsPresent = true;
+        if (!packageObj[i].members.includes(member)) {
+          packageObj[i].members.push(member);
+        }
+        break;
+      }
+    }
+    let typeNode: any;
+    if (typeIsPresent === false) {
+      typeNode = {
+        name: name,
+        members: [member]
+      };
+      packageObj.push(typeNode);
+    }
+    return packageObj;
+  }
 }
