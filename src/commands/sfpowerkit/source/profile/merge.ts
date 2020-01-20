@@ -6,9 +6,9 @@ import {
   SfdxResult
 } from "@salesforce/command";
 
-import { SfdxProject, SfdxError } from "@salesforce/core";
+import { SfdxError } from "@salesforce/core";
 
-import _ from "lodash";
+import * as _ from "lodash";
 import { SFPowerkit } from "../../../../sfpowerkit";
 import * as path from "path";
 import { METADATA_INFO } from "../../../../impl/metadata/metadataInfo";
@@ -150,6 +150,7 @@ export default class Merge extends SfdxCommand {
     if (!_.isNil(argFolder) && argFolder.length !== 0) {
       SFPowerkit.setDefaultFolder(argFolder[0]);
     }
+    ``;
 
     const profileUtils = new ProfileMerge(
       this.org,

@@ -12,7 +12,7 @@ import xml2js = require("xml2js");
 import { ProfileTooling } from "../schema";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 import EntityDefinitionRetriever from "./entityDefinitionRetriever";
-import _ from "lodash";
+import * as _ from "lodash";
 
 const unsuportedObjects = ["PersonAccount"];
 /**

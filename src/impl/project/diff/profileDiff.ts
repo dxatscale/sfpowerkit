@@ -1,7 +1,7 @@
 import xml2js = require("xml2js");
 import util = require("util");
 import Profile from "../../metadata/schema";
-import _ from "lodash";
+import * as _ from "lodash";
 
 import DiffUtil from "./diffUtil";
 import ProfileWriter from "../../../impl/metadata/writer/profileWriter";

@@ -8,9 +8,7 @@
       "xmlName": "InstalledPackage"
     },
     {
-      "childXmlNames": [
-        "CustomLabel"
-      ],
+      "childXmlNames": ["CustomLabel"],
       "directoryName": "labels",
       "inFolder": false,
       "metaFile": false,
@@ -199,6 +197,7 @@
       "directoryName": "documents",
       "inFolder": true,
       "metaFile": true,
+      "suffix": "document",
       "xmlName": "Document"
     },
     {
@@ -295,9 +294,7 @@
       "xmlName": "Workflow"
     },
     {
-      "childXmlNames": [
-        "AssignmentRule"
-      ],
+      "childXmlNames": ["AssignmentRule"],
       "directoryName": "assignmentRules",
       "inFolder": false,
       "metaFile": false,
@@ -305,9 +302,7 @@
       "xmlName": "AssignmentRules"
     },
     {
-      "childXmlNames": [
-        "AutoResponseRule"
-      ],
+      "childXmlNames": ["AutoResponseRule"],
       "directoryName": "autoResponseRules",
       "inFolder": false,
       "metaFile": false,
@@ -315,9 +310,7 @@
       "xmlName": "AutoResponseRules"
     },
     {
-      "childXmlNames": [
-        "EscalationRule"
-      ],
+      "childXmlNames": ["EscalationRule"],
       "directoryName": "escalationRules",
       "inFolder": false,
       "metaFile": false,
@@ -458,9 +451,7 @@
       "xmlName": "CspTrustedSite"
     },
     {
-      "childXmlNames": [
-        "MatchingRule"
-      ],
+      "childXmlNames": ["MatchingRule"],
       "directoryName": "matchingRules",
       "inFolder": false,
       "metaFile": false,
@@ -559,10 +550,7 @@
       "xmlName": "ContentAsset"
     },
     {
-      "childXmlNames": [
-        "SharingOwnerRule",
-        "SharingCriteriaRule"
-      ],
+      "childXmlNames": ["SharingOwnerRule", "SharingCriteriaRule"],
       "directoryName": "sharingRules",
       "inFolder": false,
       "metaFile": false,
@@ -717,9 +705,7 @@
       "xmlName": "Prompt"
     },
     {
-      "childXmlNames": [
-        "ManagedTopic"
-      ],
+      "childXmlNames": ["ManagedTopic"],
       "directoryName": "managedTopics",
       "inFolder": false,
       "metaFile": false,

@@ -1,4 +1,4 @@
-import { Connection } from "@salesforce/core";
+import { Connection } from "jsforce";
 import * as _ from "lodash";
 import * as xml2js from "xml2js";
 import * as fs from "fs";
@@ -318,6 +318,7 @@ export class Packagexml {
 
     if (
       type &&
+      !(typeof type === "object") &&
       !(
         this.configs.excludeManaged &&
         (this.ipRegex.test(member.fullName) ||
@@ -325,21 +326,25 @@ export class Packagexml {
           member.manageableState === "installed")
       )
     ) {
-      if (member.fileName.includes("ValueSetTranslation")) {
-        const x =
-          member.fileName
-            .split(".")[1]
-            .substring(0, 1)
-            .toUpperCase() + member.fileName.split(".")[1].substring(1);
-        if (!this.packageTypes[x]) {
-          this.packageTypes[x] = [];
+      try {
+        if (member.fileName.includes("ValueSetTranslation")) {
+          const x =
+            member.fileName
+              .split(".")[1]
+              .substring(0, 1)
+              .toUpperCase() + member.fileName.split(".")[1].substring(1);
+          if (!this.packageTypes[x]) {
+            this.packageTypes[x] = [];
+          }
+          this.packageTypes[x].push(member.fullName);
+        } else {
+          if (!this.packageTypes[type]) {
+            this.packageTypes[type] = [];
+          }
+          this.packageTypes[type].push(member.fullName);
         }
-        this.packageTypes[x].push(member.fullName);
-      } else {
-        if (!this.packageTypes[type]) {
-          this.packageTypes[type] = [];
-        }
-        this.packageTypes[type].push(member.fullName);
+      } catch (ex) {
+        console.log("Type " + JSON.stringify(type));
       }
     }
   }
