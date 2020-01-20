@@ -280,7 +280,7 @@ EXAMPLE
 
 ## `sfpowerkit:project:orgdiff [BETA]`
 
-Compare source files again the salesforce org and display differences. The command also add diff conflict markers in changed files to let the developer accept or reject changes manually using a git merge tool.
+Compare source files of a project against the salesforce org and display differences. The command also add diff conflict markers in changed files to let the developer accept or reject changes manually using a git merge tool. The idea behind this command is used to track changes done on an unlocked package or a modular repo against the changes done in a higher environment. This command is not yet ready to work on a single repo against the whole metadata in the org
 
 This command is of sufficient quality, however proceed with caution while adopting in your workflow
 
