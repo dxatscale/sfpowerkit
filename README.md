@@ -250,11 +250,13 @@ EXAMPLE
     "ABC2,ABC1Test"
 ```
 
-## `sfpowerkit:project:diff`
+## `sfpowerkit:project:diff [BETA]`
 
 Generate a delta 'changeset' between two diff commits so that the incremental changes can be deployed to the target org.To be used for an org based deployment when the size of the metadata is large that the project cannot not be deployed in a single attempt.
 
 This command works with a source format based repository only. Utilize the command during a transition phase where an org is transformed to a modular architecture composing of multiple projects.
+
+This command is of sufficient quality, however proceed with caution while adopting in your workflow
 
 ```
 
@@ -276,9 +278,11 @@ EXAMPLE
   $  sfdx sfpowerkit:project:diff --revisionfrom revisionfrom --revisionto revisionto --output OutputFolder
 ```
 
-## `sfpowerkit:project:orgdiff`
+## `sfpowerkit:project:orgdiff [BETA]`
 
 Compare source files again the salesforce org and display differences. The command also add diff conflict markers in changed files to let the developer accept or reject changes manually using a git merge tool.
+
+This command is of sufficient quality, however proceed with caution while adopting in your workflow
 
 ```
 
