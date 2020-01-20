@@ -84,9 +84,25 @@ export class Packagexml {
   private ipRegex: RegExp;
   private ipPromise;
 
+  public result: {
+    type: string;
+    createdById?: string;
+    createdByName?: string;
+    createdDate?: string;
+    fileName?: string;
+    fullName: string;
+    id?: string;
+    lastModifiedById?: string;
+    lastModifiedByName?: string;
+    lastModifiedDate?: string;
+    manageableState?: string;
+    namespacePrefix?: string;
+  }[];
+
   constructor(conn: Connection, configs: BuildConfig) {
     this.conn = conn;
     this.configs = configs;
+    this.result = [];
   }
 
   public async build() {
@@ -107,6 +123,10 @@ export class Packagexml {
       }
       STANDARD_VALUE_SETS.forEach(member => {
         this.packageTypes["StandardValueSet"].push(member);
+        this.result.push({
+          type: "StandardValueSet",
+          fullName: member
+        });
       });
 
       let packageXml = this.generateXml();
@@ -216,21 +236,24 @@ export class Packagexml {
       }
       if (folderItems.length > 0) {
         for await (const folderItem of folderItems) {
-          let objectType = folderItem.type.replace("Folder", "");
-          if (objectType === "Email") {
-            objectType += "Template";
+          if (folderItem) {
+            this.result.push(folderItem);
+            let objectType = folderItem.type.replace("Folder", "");
+            if (objectType === "Email") {
+              objectType += "Template";
+            }
+
+            this.addMember(objectType, folderItem);
+
+            const promise = this.conn.metadata.list(
+              {
+                type: objectType,
+                folder: folderItem.fullName
+              },
+              this.configs.apiVersion
+            );
+            folderedObjects.push(promise);
           }
-
-          this.addMember(objectType, folderItem);
-
-          const promise = this.conn.metadata.list(
-            {
-              type: objectType,
-              folder: folderItem.fullName
-            },
-            this.configs.apiVersion
-          );
-          folderedObjects.push(promise);
         }
       }
     }
@@ -247,6 +270,7 @@ export class Packagexml {
           folderedObjectItems.forEach(metadataEntries => {
             if (metadataEntries) {
               this.addMember(metadataEntries.type, metadataEntries);
+              this.result.push(metadataEntries);
             } else {
               console.log("No metadataEntry available");
             }
@@ -273,6 +297,7 @@ export class Packagexml {
           unfolderedObjectItems.forEach(metadataEntries => {
             if (metadataEntries) {
               this.addMember(metadataEntries.type, metadataEntries);
+              this.result.push(metadataEntries);
             } else {
               console.log("No metadataEntry available");
             }
