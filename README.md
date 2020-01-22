@@ -250,11 +250,13 @@ EXAMPLE
     "ABC2,ABC1Test"
 ```
 
-## `sfpowerkit:project:diff`
+## `sfpowerkit:project:diff [BETA]`
 
 Generate a delta 'changeset' between two diff commits so that the incremental changes can be deployed to the target org.To be used for an org based deployment when the size of the metadata is large that the project cannot not be deployed in a single attempt.
 
 This command works with a source format based repository only. Utilize the command during a transition phase where an org is transformed to a modular architecture composing of multiple projects.
+
+This command is of sufficient quality, however proceed with caution while adopting in your workflow
 
 ```
 
@@ -274,6 +276,30 @@ OPTIONS
 
 EXAMPLE
   $  sfdx sfpowerkit:project:diff --revisionfrom revisionfrom --revisionto revisionto --output OutputFolder
+```
+
+## `sfpowerkit:project:orgdiff [BETA]`
+
+Compare source files of a project against the salesforce org and display differences. The command also add diff conflict markers in changed files to let the developer accept or reject changes manually using a git merge tool. The idea behind this command is used to track changes done on an unlocked package or a modular repo against the changes done in a higher environment. This command is not yet ready to work on a single repo against the whole metadata in the org
+
+This command is of sufficient quality, however proceed with caution while adopting in your workflow
+
+```
+
+USAGE
+  $ sfdx sfpowerkit:project:orgdiff -f <array> [-c] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -c, --noconflictmarkers                         If set to true, the command will not add diff conflict marker to each compared file.
+  -f, --filesorfolders=filesorfolders             (required) List of fils or folder to compare. Should be only Apex classes, trigger, Aura Components, Lightning Web Components or                                                    any unsplitted metadata.
+  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
+  --apiversion=apiversion                         override the api version used for api requests made by this command
+  --json                                          format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:project:orgdiff --folder directory --noconflictmarkers --targetusername sandbox
+  $ sfdx sfpowerkit:project:orgdiff  --filename fileName --targetusername sandbox
 ```
 
 ## Unlocked Package Related Functionalities
@@ -322,7 +348,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/dependencies/install.ts)_
 
-## `sfpowerkit:source:picklist:generatepatch`
+## `sfpowerkit:source:picklist:generatepatch [DEPRECATED]`
 
 This command generates a patch in the format of a metadata packed together as a static resource with the intent of solving the following issues.
 
@@ -331,6 +357,8 @@ This command generates a patch in the format of a metadata packed together as a 
 3. Fix for business process and recordtype, that depend on a modified standard valueset and fail to package.
 
 These command is to be run just before the package:version: create command and any changes made by the command should not be committed to the repo. Once a patch is generated and the package is installed in the target org, run the apply patch command tofix the above issues.
+
+This command is now deprecated and will be removed shortly, please use standard methods.
 
 ```
 USAGE
@@ -362,9 +390,11 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\source\picklist\generatepatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/picklist/generatepatch.ts)_
 
-## `sfpowerkit:source:permissionset:generatepatch`
+## `sfpowerkit:source:permissionset:generatepatch [DEPRECATED]`
 
-Search permissionsets inside project and create a static resource file with permissionsets, used to solve the recordtype assignment upgrade issue in dx unlock package
+Search permissionsets inside project and create a static resource file with permissionsets, used to solve the recordtype assignment upgrade issue in dx unlock package.
+
+This command is now deprecated and will be removed shortly, please use standard methods. refer https://success.salesforce.com/issues_view?id=a1p3A0000003UjTQAU for more information.
 
 ```
 USAGE

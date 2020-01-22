@@ -16,6 +16,25 @@ const parser = new xml2js.Parser({
 });
 
 export default class CustomLabelsDiff {
+  public static async getMembers(filePath: string) {
+    let fileContent = fs.readFileSync(filePath, "utf8").toString();
+    const parseString = util.promisify(parser.parseString);
+    let members = [];
+    if (fileContent !== "") {
+      let parseResult = await parseString(fileContent);
+      let customLabelsObj = parseResult.CustomLabels || {};
+      if (!_.isNil(customLabelsObj.labels)) {
+        if (!Array.isArray(customLabelsObj.labels)) {
+          members.push(customLabelsObj.labels.fullName);
+        } else {
+          members = customLabelsObj.labels.map(label => {
+            return label.fullName;
+          });
+        }
+      }
+    }
+    return members;
+  }
   public static async generateCustomLabelsXml(
     customLabelsXml1: string,
     customLabelsXml2: string,

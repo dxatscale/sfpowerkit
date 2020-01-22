@@ -44,7 +44,10 @@ export default class FileUtils {
       let curFile = path.join(folder, file);
       let stats = fs.statSync(curFile);
       if (stats.isFile()) {
-        if (extension.indexOf(path.extname(curFile)) != -1) {
+        if (
+          extension.indexOf(path.extname(curFile)) != -1 ||
+          extension === ""
+        ) {
           result.push(curFile);
         }
       } else if (stats.isDirectory()) {
