@@ -541,6 +541,19 @@
       "version": "3.0.0",
       "dev": true
     },
+    "@types/fs-extra": {
+      "version": "8.0.1",
+      "dev": true,
+      "requires": {
+        "@types/node": "*"
+      },
+      "dependencies": {
+        "@types/node": {
+          "version": "12.6.2",
+          "dev": true
+        }
+      }
+    },
     "@types/glob": {
       "version": "7.1.1",
       "dev": true,
