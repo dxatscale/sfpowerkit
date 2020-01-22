@@ -348,7 +348,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/dependencies/install.ts)_
 
-## `sfpowerkit:source:picklist:generatepatch`
+## `sfpowerkit:source:picklist:generatepatch [Deprecate]`
 
 This command generates a patch in the format of a metadata packed together as a static resource with the intent of solving the following issues.
 
@@ -357,6 +357,8 @@ This command generates a patch in the format of a metadata packed together as a 
 3. Fix for business process and recordtype, that depend on a modified standard valueset and fail to package.
 
 These command is to be run just before the package:version: create command and any changes made by the command should not be committed to the repo. Once a patch is generated and the package is installed in the target org, run the apply patch command tofix the above issues.
+
+This command is now deprecated and will be removed shortly, please use standard methods.
 
 ```
 USAGE
@@ -388,9 +390,11 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\source\picklist\generatepatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/picklist/generatepatch.ts)_
 
-## `sfpowerkit:source:permissionset:generatepatch`
+## `sfpowerkit:source:permissionset:generatepatch [Deprecate]`
 
-Search permissionsets inside project and create a static resource file with permissionsets, used to solve the recordtype assignment upgrade issue in dx unlock package
+Search permissionsets inside project and create a static resource file with permissionsets, used to solve the recordtype assignment upgrade issue in dx unlock package.
+
+This command is now deprecated and will be removed shortly, please use standard methods. refer https://success.salesforce.com/issues_view?id=a1p3A0000003UjTQAU for more information.
 
 ```
 USAGE
