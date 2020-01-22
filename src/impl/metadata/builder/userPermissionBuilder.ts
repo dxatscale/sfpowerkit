@@ -1,7 +1,7 @@
 import { Connection } from "@salesforce/core";
 import { DescribeSObjectResult } from "jsforce/describe-result";
 import { ProfileObjectPermissions, ProfileUserPermission } from "../schema";
-import _ from "lodash";
+import * as _ from "lodash";
 
 const userPermissionDependencies = [
   {

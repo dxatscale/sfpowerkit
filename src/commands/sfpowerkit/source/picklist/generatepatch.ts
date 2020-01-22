@@ -94,7 +94,13 @@ export default class Generatepatch extends SfdxCommand {
     rimraf.sync("temp_sfpowerkit");
 
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
-    //
+    //Deprecation notice
+    SFPowerkit.log(
+      "--------DEPRECATION NOTICE--------\n" +
+        "This command is now deprecated and will be removed shortly, please use standard methods.\n" +
+        "-------------------------------------------------------------------------------",
+      LoggerLevel.WARN
+    );
 
     // Getting Project config
     const project = await SfdxProject.resolve();

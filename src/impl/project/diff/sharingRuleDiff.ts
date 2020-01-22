@@ -118,6 +118,70 @@ export default class SharingRuleDiff {
     });
     return sharingObj;
   }
+
+  public static async getMembers(filePath: string) {
+    let fileContent = fs.readFileSync(filePath, "utf8").toString();
+    const parseString = util.promisify(parser.parseString);
+    let members = {};
+    if (fileContent !== "") {
+      let parseResult = await parseString(fileContent);
+      let sharingRulesObj = parseResult.SharingRules || {};
+      if (!_.isNil(sharingRulesObj.sharingCriteriaRules)) {
+        if (!Array.isArray(sharingRulesObj.sharingCriteriaRules)) {
+          members["SharingCriteriaRule"] = [
+            sharingRulesObj.sharingCriteriaRules.fullName
+          ];
+        } else {
+          members[
+            "SharingCriteriaRule"
+          ] = sharingRulesObj.sharingCriteriaRules.map(sharingRule => {
+            return sharingRule.fullName;
+          });
+        }
+      }
+      if (!_.isNil(sharingRulesObj.sharingOwnerRules)) {
+        if (!Array.isArray(sharingRulesObj.sharingOwnerRules)) {
+          members["SharingOwnerRule"] = [
+            sharingRulesObj.sharingOwnerRules.fullName
+          ];
+        } else {
+          members["SharingOwnerRule"] = sharingRulesObj.sharingOwnerRules.map(
+            sharingRule => {
+              return sharingRule.fullName;
+            }
+          );
+        }
+      }
+      if (!_.isNil(sharingRulesObj.sharingTerritoryRules)) {
+        if (!Array.isArray(sharingRulesObj.sharingTerritoryRules)) {
+          members["SharingTerritoryRule"] = [
+            sharingRulesObj.sharingTerritoryRules.fullName
+          ];
+        } else {
+          members[
+            "SharingTerritoryRule"
+          ] = sharingRulesObj.sharingTerritoryRules.map(sharingRule => {
+            return sharingRule.fullName;
+          });
+        }
+      }
+      if (!_.isNil(sharingRulesObj.sharingGuestRules)) {
+        if (!Array.isArray(sharingRulesObj.sharingGuestRules)) {
+          members["SharingGuestRule"] = [
+            sharingRulesObj.sharingGuestRules.fullName
+          ];
+        } else {
+          members["SharingGuestRule"] = sharingRulesObj.sharingGuestRules.map(
+            sharingRule => {
+              return sharingRule.fullName;
+            }
+          );
+        }
+      }
+    }
+    return members;
+  }
+
   private static buildSharingRulesObj(
     sharingRuleObj1: any,
     sharingRulesObj2: any
@@ -126,7 +190,8 @@ export default class SharingRuleDiff {
       $: { xmlns: "http://soap.sforce.com/2006/04/metadata" },
       sharingCriteriaRules: [],
       sharingOwnerRules: [],
-      sharingTerritoryRules: []
+      sharingTerritoryRules: [],
+      sharingGuestRules: []
     };
 
     sharingRuleObj1 = SharingRuleDiff.ensureArray(sharingRuleObj1);
@@ -136,7 +201,8 @@ export default class SharingRuleDiff {
       $: { xmlns: "http://soap.sforce.com/2006/04/metadata" },
       sharingCriteriaRules: [],
       sharingOwnerRules: [],
-      sharingTerritoryRules: []
+      sharingTerritoryRules: [],
+      sharingGuestRules: []
     };
 
     let addedDeleted = DiffUtil.getChangedOrAdded(
@@ -165,6 +231,15 @@ export default class SharingRuleDiff {
 
     newSharingRuleObj.sharingTerritoryRules = addedDeleted.addedEdited;
     deletedSharingObj.sharingTerritoryRules = addedDeleted.deleted;
+
+    addedDeleted = DiffUtil.getChangedOrAdded(
+      sharingRuleObj1.sharingGuestRules,
+      sharingRulesObj2.sharingGuestRules,
+      "fullName"
+    );
+
+    newSharingRuleObj.sharingGuestRules = addedDeleted.addedEdited;
+    deletedSharingObj.sharingGuestRules = addedDeleted.deleted;
 
     return {
       addedEdited: newSharingRuleObj,

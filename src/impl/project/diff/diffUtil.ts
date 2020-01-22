@@ -1,6 +1,6 @@
 import * as path from "path";
 import * as fs from "fs";
-import _ from "lodash";
+import * as _ from "lodash";
 import simplegit = require("simple-git/promise");
 import MetadataFiles from "../../../impl/metadata/metadataFiles";
 import { SOURCE_EXTENSION_REGEX } from "../../../impl/metadata/metadataInfo";
@@ -42,15 +42,16 @@ export default class DiffUtil {
     );
     DiffUtil.gitTreeRevisionTo = [];
     let revisionTree = await git.raw(["ls-tree", "-r", revisionTo]);
-    const sepRegEx = /\t|\s/;
     const sepRegex = /\n|\r/;
     let lines = revisionTree.split(sepRegex);
     for (let i = 0; i < lines.length; i++) {
       if (lines[i] === "") continue;
-      let fields = lines[i].split(sepRegEx);
+      let fields = lines[i].split(/\t/);
+      let pathStr = fields[1];
+      let revisionSha = fields[0].split(/\s/)[2];
       let oneFIle = {
-        revision: fields[2],
-        path: path.join(".", fields[3])
+        revision: revisionSha,
+        path: path.join(".", pathStr)
       };
       DiffUtil.gitTreeRevisionTo.push(oneFIle);
     }
@@ -335,5 +336,27 @@ export default class DiffUtil {
       }
     }
     return result;
+  }
+
+  public static addMemberToPackage(packageObj, name, member) {
+    let typeIsPresent: boolean = false;
+    for (let i = 0; i < packageObj.length; i++) {
+      if (packageObj[i].name === name) {
+        typeIsPresent = true;
+        if (!packageObj[i].members.includes(member)) {
+          packageObj[i].members.push(member);
+        }
+        break;
+      }
+    }
+    let typeNode: any;
+    if (typeIsPresent === false) {
+      typeNode = {
+        name: name,
+        members: [member]
+      };
+      packageObj.push(typeNode);
+    }
+    return packageObj;
   }
 }

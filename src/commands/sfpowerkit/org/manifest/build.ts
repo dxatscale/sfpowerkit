@@ -60,7 +60,10 @@ export default class Build extends SfdxCommand {
     const result = await packageXML.build();
 
     //console.log(result);
-    this.ux.log(result.toString());
-    return { result: result.toString() };
+    if (!this.flags.json) {
+      this.ux.log(result.toString());
+    }
+
+    return { result: packageXML.result };
   }
 }

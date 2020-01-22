@@ -1,7 +1,7 @@
 import { SfdxProject } from "@salesforce/core";
 import { isNullOrUndefined } from "util";
 import Logger = require("pino");
-import FileUtils from "./utils/fileutils";
+import { UX } from "@salesforce/command";
 
 export enum LoggerLevel {
   TRACE = 10,
@@ -18,6 +18,7 @@ export class SFPowerkit {
   private static projectDirectories: string[];
   private static pluginConfig;
   private static isJsonFormatEnabled: boolean;
+  private static ux: UX;
 
   public static setLogLevel(logLevel: string, isJsonFormatEnabled: boolean) {
     logLevel = logLevel.toLowerCase();
@@ -112,5 +113,12 @@ export class SFPowerkit {
         this.logger.fatal(message);
         break;
     }
+  }
+
+  public static setUx(ux: UX) {
+    this.ux = ux;
+  }
+  public static setStatus(status: string) {
+    this.ux.setSpinnerStatus(status);
   }
 }

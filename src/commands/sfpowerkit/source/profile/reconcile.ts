@@ -6,14 +6,13 @@ import {
   SfdxResult
 } from "@salesforce/command";
 
-import { SfdxProject, Org } from "@salesforce/core";
-import _ from "lodash";
+import { Org } from "@salesforce/core";
+import * as _ from "lodash";
 import { SFPowerkit } from "../../../../sfpowerkit";
 import { METADATA_INFO } from "../../../../impl/metadata/metadataInfo";
 import * as path from "path";
 import ProfileReconcile from "../../../../impl/source/profiles/profileReconcile";
 import MetadataFiles from "../../../../impl/metadata/metadataFiles";
-import { LogLevel } from "bunyan";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
