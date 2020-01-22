@@ -348,7 +348,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/dependencies/install.ts)_
 
-## `sfpowerkit:source:picklist:generatepatch [Deprecate]`
+## `sfpowerkit:source:picklist:generatepatch [DEPRECATED]`
 
 This command generates a patch in the format of a metadata packed together as a static resource with the intent of solving the following issues.
 
@@ -390,7 +390,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\source\picklist\generatepatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/picklist/generatepatch.ts)_
 
-## `sfpowerkit:source:permissionset:generatepatch [Deprecate]`
+## `sfpowerkit:source:permissionset:generatepatch [DEPRECATED]`
 
 Search permissionsets inside project and create a static resource file with permissionsets, used to solve the recordtype assignment upgrade issue in dx unlock package.
 
