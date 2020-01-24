@@ -58,6 +58,11 @@ export default class Diff extends SfdxCommand {
       ),
       required: false
     }),
+    bypass: flags.array({
+      required: false,
+      char: "b",
+      description: messages.getMessage("itemsToBypass")
+    }),
     loglevel: flags.enum({
       description: "logging level for this command invocation",
       default: "info",
@@ -120,7 +125,8 @@ export default class Diff extends SfdxCommand {
     let diffUtils = new DiffImpl(
       revisionfrom,
       revisionto,
-      this.flags.generatedestructive
+      this.flags.generatedestructive,
+      this.flags.bypass
     );
 
     /* PATH TO DIFF FILE */

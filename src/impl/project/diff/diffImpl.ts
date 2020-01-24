@@ -51,7 +51,8 @@ export default class DiffImpl {
   public constructor(
     private revisionFrom?: string,
     private revisionTo?: string,
-    private isDestructive?: boolean
+    private isDestructive?: boolean,
+    private pathToIgnore?: any[]
   ) {
     if (this.revisionTo == null || this.revisionTo.trim() === "") {
       this.revisionTo = "HEAD";
@@ -140,24 +141,26 @@ export default class DiffImpl {
     if (filesToCopy && filesToCopy.length > 0) {
       for (var i = 0; i < filesToCopy.length; i++) {
         let filePath = filesToCopy[i].path;
-        let matcher = filePath.match(SOURCE_EXTENSION_REGEX);
-        let extension = "";
-        if (matcher) {
-          extension = matcher[0];
-        } else {
-          extension = path.parse(filePath).ext;
-        }
+        if (DiffImpl.checkForIngore(this.pathToIgnore, filePath)) {
+          let matcher = filePath.match(SOURCE_EXTENSION_REGEX);
+          let extension = "";
+          if (matcher) {
+            extension = matcher[0];
+          } else {
+            extension = path.parse(filePath).ext;
+          }
 
-        if (unsplitedMetadataExtensions.includes(extension)) {
-          //handle unsplited files
-          await this.handleUnsplittedMetadata(filesToCopy[i], outputFolder);
-        } else {
-          await DiffUtil.copyFile(filePath, outputFolder);
+          if (unsplitedMetadataExtensions.includes(extension)) {
+            //handle unsplited files
+            await this.handleUnsplittedMetadata(filesToCopy[i], outputFolder);
+          } else {
+            await DiffUtil.copyFile(filePath, outputFolder);
 
-          SFPowerkit.log(
-            `Copied file ${filePath} to ${outputFolder}`,
-            LoggerLevel.DEBUG
-          );
+            SFPowerkit.log(
+              `Copied file ${filePath} to ${outputFolder}`,
+              LoggerLevel.DEBUG
+            );
+          }
         }
       }
     }
@@ -197,6 +200,22 @@ export default class DiffImpl {
     return this.resultOutput;
   }
 
+  private static checkForIngore(pathToIgnore: any[], filePath: string) {
+    if (pathToIgnore.length === 0) {
+      return true;
+    }
+
+    let returnVal = true;
+    pathToIgnore.forEach(ignore => {
+      if (
+        path.resolve(ignore) === path.resolve(filePath) ||
+        path.resolve(filePath).includes(path.resolve(ignore))
+      ) {
+        returnVal = false;
+      }
+    });
+    return returnVal;
+  }
   private buildOutput(outputFolder) {
     let metadataFiles = new MetadataFiles();
     metadataFiles.loadComponents(outputFolder, false);
