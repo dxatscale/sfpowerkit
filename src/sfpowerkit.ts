@@ -40,6 +40,9 @@ export class SFPowerkit {
     }
   }
 
+  public static setProjectDirectories(packagedirectories: string[]) {
+    SFPowerkit.projectDirectories = packagedirectories;
+  }
   public static async getProjectDirectories() {
     if (!SFPowerkit.projectDirectories) {
       SFPowerkit.projectDirectories = [];

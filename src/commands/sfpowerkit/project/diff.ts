@@ -63,6 +63,11 @@ export default class Diff extends SfdxCommand {
       char: "b",
       description: messages.getMessage("itemsToBypass")
     }),
+    packagedirectories: flags.array({
+      required: false,
+      char: "p",
+      description: messages.getMessage("packagedirectories")
+    }),
     loglevel: flags.enum({
       description: "logging level for this command invocation",
       default: "info",
@@ -138,7 +143,8 @@ export default class Diff extends SfdxCommand {
     let diffOutput = await diffUtils.build(
       diffFilePath,
       encoding,
-      outputFolder
+      outputFolder,
+      this.flags.packagedirectories
     );
     //if (!this.flags.json) this.ux.logJson(diffOutput);
     return diffOutput;

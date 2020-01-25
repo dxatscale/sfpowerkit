@@ -68,10 +68,14 @@ export default class DiffImpl {
   public async build(
     diffFilePath: string,
     encoding: string,
-    outputFolder: string
+    outputFolder: string,
+    packagedirectories: string[]
   ) {
     rimraf.sync(outputFolder);
 
+    if (packagedirectories) {
+      SFPowerkit.setProjectDirectories(packagedirectories);
+    }
     //const sepRegex=/\t| |\n/;
     const sepRegex = /\n|\r/;
 
@@ -93,7 +97,6 @@ export default class DiffImpl {
         throw new Error(messages.getMessage("sameCommitErrorMessage"));
       }
       data = await git.diff(["--raw", this.revisionFrom, this.revisionTo]);
-
       SFPowerkit.log(
         `Input Param: From: ${this.revisionFrom}  To: ${this.revisionTo} `,
         LoggerLevel.INFO
@@ -108,7 +111,6 @@ export default class DiffImpl {
 
     let content = data.split(sepRegex);
     let diffFile: DiffFile = await DiffUtil.parseContent(content);
-
     await DiffUtil.fetchFileListRevisionTo(this.revisionTo);
 
     let filesToCopy = diffFile.addedEdited;
@@ -176,11 +178,9 @@ export default class DiffImpl {
 
     if (this.resultOutput.length > 0) {
       try {
-        DiffUtil.copyFile(".forceignore", outputFolder);
+        await DiffUtil.copyFile(".forceignore", outputFolder);
       } catch (e) {
-        if (e.code !== "EPERM") {
-          throw e;
-        }
+        SFPowerkit.log(`.forceignore not found, skipping..`, LoggerLevel.INFO);
       }
       try {
         //Copy project manifest
@@ -191,9 +191,10 @@ export default class DiffImpl {
         );
         dxProjectManifestUtils.removePackagesNotInDirectory();
       } catch (e) {
-        if (e.code !== "EPERM") {
-          throw e;
-        }
+        SFPowerkit.log(
+          `sfdx-project.json not found, skipping..`,
+          LoggerLevel.INFO
+        );
       }
     }
 
@@ -201,12 +202,12 @@ export default class DiffImpl {
   }
 
   private static checkForIngore(pathToIgnore: any[], filePath: string) {
-    if (pathToIgnore.length === 0) {
+    if (pathToIgnore?.length === 0) {
       return true;
     }
 
     let returnVal = true;
-    pathToIgnore.forEach(ignore => {
+    pathToIgnore?.forEach(ignore => {
       if (
         path.resolve(ignore) === path.resolve(filePath) ||
         path.resolve(filePath).includes(path.resolve(ignore))
