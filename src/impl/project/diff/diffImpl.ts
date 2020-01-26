@@ -3,7 +3,7 @@ import simplegit = require("simple-git/promise");
 
 import * as xml2js from "xml2js";
 import * as path from "path";
-import * as fs from "fs";
+import * as fs from "fs-extra";
 import rimraf = require("rimraf");
 import {
   SOURCE_EXTENSION_REGEX,
@@ -69,12 +69,16 @@ export default class DiffImpl {
     diffFilePath: string,
     encoding: string,
     outputFolder: string,
-    packagedirectories: string[]
+    packagedirectories: string[],
+    apiversion: any
   ) {
     rimraf.sync(outputFolder);
 
     if (packagedirectories) {
       SFPowerkit.setProjectDirectories(packagedirectories);
+    }
+    if (apiversion) {
+      SFPowerkit.setapiversion(apiversion);
     }
     //const sepRegex=/\t| |\n/;
     const sepRegex = /\n|\r/;
@@ -183,8 +187,29 @@ export default class DiffImpl {
         SFPowerkit.log(`.forceignore not found, skipping..`, LoggerLevel.INFO);
       }
       try {
-        //Copy project manifest
-        await DiffUtil.copyFile("sfdx-project.json", outputFolder);
+        //check if package path is provided
+        if (packagedirectories) {
+          let sourceApiVersion = await SFPowerkit.getApiVersion();
+          let packageDirectorieslist = [];
+          packagedirectories.forEach(path => {
+            packageDirectorieslist.push({
+              path: path
+            });
+          });
+          let sfdx_project = {
+            packageDirectories: packageDirectorieslist,
+            namespace: "",
+            sourceApiVersion: sourceApiVersion
+          };
+
+          fs.outputFileSync(
+            `${outputFolder}/sfdx-project.json`,
+            JSON.stringify(sfdx_project)
+          );
+        } else {
+          //Copy project manifest
+          await DiffUtil.copyFile("sfdx-project.json", outputFolder);
+        }
         //Remove Project Directories that doesnt  have any components in ths diff  Fix #178
         let dxProjectManifestUtils: DXProjectManifestUtils = new DXProjectManifestUtils(
           outputFolder

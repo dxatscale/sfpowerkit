@@ -68,6 +68,9 @@ export default class Diff extends SfdxCommand {
       char: "p",
       description: messages.getMessage("packagedirectories")
     }),
+    apiversion: flags.builtin({
+      description: messages.getMessage("apiversion")
+    }),
     loglevel: flags.enum({
       description: "logging level for this command invocation",
       default: "info",
@@ -144,7 +147,8 @@ export default class Diff extends SfdxCommand {
       diffFilePath,
       encoding,
       outputFolder,
-      this.flags.packagedirectories
+      this.flags.packagedirectories,
+      this.flags.apiversion
     );
     //if (!this.flags.json) this.ux.logJson(diffOutput);
     return diffOutput;

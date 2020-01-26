@@ -19,6 +19,7 @@ export class SFPowerkit {
   private static pluginConfig;
   private static isJsonFormatEnabled: boolean;
   private static ux: UX;
+  private static sourceApiVersion: any;
 
   public static setLogLevel(logLevel: string, isJsonFormatEnabled: boolean) {
     logLevel = logLevel.toLowerCase();
@@ -81,10 +82,17 @@ export class SFPowerkit {
     return SFPowerkit.pluginConfig;
   }
 
+  public static setapiversion(apiversion: any) {
+    SFPowerkit.sourceApiVersion = apiversion;
+  }
+
   public static async getApiVersion(): Promise<any> {
-    const dxProject = await SfdxProject.resolve();
-    const project = await dxProject.retrieveSfdxProjectJson();
-    return project.get("sourceApiVersion");
+    if (!SFPowerkit.sourceApiVersion) {
+      const dxProject = await SfdxProject.resolve();
+      const project = await dxProject.retrieveSfdxProjectJson();
+      SFPowerkit.sourceApiVersion = project.get("sourceApiVersion");
+    }
+    return SFPowerkit.sourceApiVersion;
   }
 
   /**

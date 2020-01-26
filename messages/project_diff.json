@@ -8,5 +8,6 @@
   "sameCommitErrorMessage": "Same commit: Please provide to differents revisions",
   "generativeDestructiveManifestDescription": "If set to true, the command will also generate a destructiveChangePost.xml file in the output folder.",
   "itemsToBypass": "list of path to ignore, if diff found on the repo",
-  "packagedirectories": "project paths to run diff, if this is passed then override the path in sfdx-project.json"
+  "packagedirectories": "project paths to run diff, if this is passed then override the path in sfdx-project.json",
+  "apiversion": "override the api version used for api requests made by this command"
 }
