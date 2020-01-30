@@ -3,7 +3,7 @@ import simplegit = require("simple-git/promise");
 
 import * as xml2js from "xml2js";
 import * as path from "path";
-import * as fs from "fs";
+import * as fs from "fs-extra";
 import rimraf = require("rimraf");
 import {
   SOURCE_EXTENSION_REGEX,
@@ -51,7 +51,8 @@ export default class DiffImpl {
   public constructor(
     private revisionFrom?: string,
     private revisionTo?: string,
-    private isDestructive?: boolean
+    private isDestructive?: boolean,
+    private pathToIgnore?: any[]
   ) {
     if (this.revisionTo == null || this.revisionTo.trim() === "") {
       this.revisionTo = "HEAD";
@@ -67,10 +68,18 @@ export default class DiffImpl {
   public async build(
     diffFilePath: string,
     encoding: string,
-    outputFolder: string
+    outputFolder: string,
+    packagedirectories: string[],
+    apiversion: string
   ) {
     rimraf.sync(outputFolder);
 
+    if (packagedirectories) {
+      SFPowerkit.setProjectDirectories(packagedirectories);
+    }
+    if (apiversion) {
+      SFPowerkit.setapiversion(apiversion);
+    }
     //const sepRegex=/\t| |\n/;
     const sepRegex = /\n|\r/;
 
@@ -92,7 +101,6 @@ export default class DiffImpl {
         throw new Error(messages.getMessage("sameCommitErrorMessage"));
       }
       data = await git.diff(["--raw", this.revisionFrom, this.revisionTo]);
-
       SFPowerkit.log(
         `Input Param: From: ${this.revisionFrom}  To: ${this.revisionTo} `,
         LoggerLevel.INFO
@@ -107,7 +115,6 @@ export default class DiffImpl {
 
     let content = data.split(sepRegex);
     let diffFile: DiffFile = await DiffUtil.parseContent(content);
-
     await DiffUtil.fetchFileListRevisionTo(this.revisionTo);
 
     let filesToCopy = diffFile.addedEdited;
@@ -140,24 +147,26 @@ export default class DiffImpl {
     if (filesToCopy && filesToCopy.length > 0) {
       for (var i = 0; i < filesToCopy.length; i++) {
         let filePath = filesToCopy[i].path;
-        let matcher = filePath.match(SOURCE_EXTENSION_REGEX);
-        let extension = "";
-        if (matcher) {
-          extension = matcher[0];
-        } else {
-          extension = path.parse(filePath).ext;
-        }
+        if (DiffImpl.checkForIngore(this.pathToIgnore, filePath)) {
+          let matcher = filePath.match(SOURCE_EXTENSION_REGEX);
+          let extension = "";
+          if (matcher) {
+            extension = matcher[0];
+          } else {
+            extension = path.parse(filePath).ext;
+          }
 
-        if (unsplitedMetadataExtensions.includes(extension)) {
-          //handle unsplited files
-          await this.handleUnsplittedMetadata(filesToCopy[i], outputFolder);
-        } else {
-          await DiffUtil.copyFile(filePath, outputFolder);
+          if (unsplitedMetadataExtensions.includes(extension)) {
+            //handle unsplited files
+            await this.handleUnsplittedMetadata(filesToCopy[i], outputFolder);
+          } else {
+            await DiffUtil.copyFile(filePath, outputFolder);
 
-          SFPowerkit.log(
-            `Copied file ${filePath} to ${outputFolder}`,
-            LoggerLevel.DEBUG
-          );
+            SFPowerkit.log(
+              `Copied file ${filePath} to ${outputFolder}`,
+              LoggerLevel.DEBUG
+            );
+          }
         }
       }
     }
@@ -173,30 +182,66 @@ export default class DiffImpl {
 
     if (this.resultOutput.length > 0) {
       try {
-        DiffUtil.copyFile(".forceignore", outputFolder);
+        await DiffUtil.copyFile(".forceignore", outputFolder);
       } catch (e) {
-        if (e.code !== "EPERM") {
-          throw e;
-        }
+        SFPowerkit.log(`.forceignore not found, skipping..`, LoggerLevel.INFO);
       }
       try {
-        //Copy project manifest
-        await DiffUtil.copyFile("sfdx-project.json", outputFolder);
+        //check if package path is provided
+        if (packagedirectories) {
+          let sourceApiVersion = await SFPowerkit.getApiVersion();
+          let packageDirectorieslist = [];
+          packagedirectories.forEach(path => {
+            packageDirectorieslist.push({
+              path: path
+            });
+          });
+          let sfdx_project = {
+            packageDirectories: packageDirectorieslist,
+            namespace: "",
+            sourceApiVersion: sourceApiVersion
+          };
+
+          fs.outputFileSync(
+            `${outputFolder}/sfdx-project.json`,
+            JSON.stringify(sfdx_project)
+          );
+        } else {
+          //Copy project manifest
+          await DiffUtil.copyFile("sfdx-project.json", outputFolder);
+        }
         //Remove Project Directories that doesnt  have any components in ths diff  Fix #178
         let dxProjectManifestUtils: DXProjectManifestUtils = new DXProjectManifestUtils(
           outputFolder
         );
         dxProjectManifestUtils.removePackagesNotInDirectory();
       } catch (e) {
-        if (e.code !== "EPERM") {
-          throw e;
-        }
+        SFPowerkit.log(
+          `sfdx-project.json not found, skipping..`,
+          LoggerLevel.INFO
+        );
       }
     }
 
     return this.resultOutput;
   }
 
+  private static checkForIngore(pathToIgnore: any[], filePath: string) {
+    if (pathToIgnore?.length === 0) {
+      return true;
+    }
+
+    let returnVal = true;
+    pathToIgnore?.forEach(ignore => {
+      if (
+        path.resolve(ignore) === path.resolve(filePath) ||
+        path.resolve(filePath).includes(path.resolve(ignore))
+      ) {
+        returnVal = false;
+      }
+    });
+    return returnVal;
+  }
   private buildOutput(outputFolder) {
     let metadataFiles = new MetadataFiles();
     metadataFiles.loadComponents(outputFolder, false);

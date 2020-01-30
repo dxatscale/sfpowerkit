@@ -58,6 +58,19 @@ export default class Diff extends SfdxCommand {
       ),
       required: false
     }),
+    bypass: flags.array({
+      required: false,
+      char: "b",
+      description: messages.getMessage("itemsToBypass")
+    }),
+    packagedirectories: flags.array({
+      required: false,
+      char: "p",
+      description: messages.getMessage("packagedirectories")
+    }),
+    apiversion: flags.builtin({
+      description: messages.getMessage("apiversion")
+    }),
     loglevel: flags.enum({
       description: "logging level for this command invocation",
       default: "info",
@@ -120,7 +133,8 @@ export default class Diff extends SfdxCommand {
     let diffUtils = new DiffImpl(
       revisionfrom,
       revisionto,
-      this.flags.generatedestructive
+      this.flags.generatedestructive,
+      this.flags.bypass
     );
 
     /* PATH TO DIFF FILE */
@@ -132,7 +146,9 @@ export default class Diff extends SfdxCommand {
     let diffOutput = await diffUtils.build(
       diffFilePath,
       encoding,
-      outputFolder
+      outputFolder,
+      this.flags.packagedirectories,
+      this.flags.apiversion
     );
     //if (!this.flags.json) this.ux.logJson(diffOutput);
     return diffOutput;

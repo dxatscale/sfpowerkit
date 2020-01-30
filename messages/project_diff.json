@@ -6,5 +6,8 @@
   "revisionFromDescription": "Base revision from where diff is to be generated, required if diff file is ommited",
   "revisionToDescription": " [default:HEAD] Target revision to generate the diff ",
   "sameCommitErrorMessage": "Same commit: Please provide to differents revisions",
-  "generativeDestructiveManifestDescription": "If set to true, the command will also generate a destructiveChangePost.xml file in the output folder."
+  "generativeDestructiveManifestDescription": "If set to true, the command will also generate a destructiveChangePost.xml file in the output folder.",
+  "itemsToBypass": "[EXPERIMENTAL] Ignore comma seperated paths from the diff being generated, the  diff command doesnt generate a diff on the following paths",
+  "packagedirectories": "[EXPERIMENTAL] Run diff only on specific paths, also generate a sfdx-project.json to support the corresponding package directory",
+  "apiversion": "override the api version used for api requests made by this command"
 }
