@@ -70,7 +70,7 @@ export default class DiffImpl {
     encoding: string,
     outputFolder: string,
     packagedirectories: string[],
-    apiversion: any
+    apiversion: string
   ) {
     rimraf.sync(outputFolder);
 
