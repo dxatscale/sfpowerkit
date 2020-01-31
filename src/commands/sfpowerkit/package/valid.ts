@@ -45,6 +45,9 @@ Elements supported included in your package testPackage are
       required: false,
       char: "b",
       description: messages.getMessage("itemsToBypassValidationDescription")
+    }),
+    apiversion: flags.builtin({
+      description: messages.getMessage("apiversion")
     })
   };
 
@@ -75,8 +78,12 @@ Elements supported included in your package testPackage are
       "metadata.json"
     );
 
-    const fileData = fs.readFileSync(resourcePath, "utf8");
+    let fileData = fs.readFileSync(resourcePath, "utf8");
     this.coverageJSON = JSON.parse(fileData);
+
+    if (this.isNotDefaultApiVersion()) {
+      this.useCustomCoverageJSON();
+    }
 
     let packageToBeScanned = this.flags.package;
     this.ux.log("package:" + packageToBeScanned);
@@ -258,6 +265,33 @@ Elements supported included in your package testPackage are
     }
 
     return sfdx_package;
+  }
+
+  public useCustomCoverageJSON(): void {
+    try {
+      let resourcePath = path.join(
+        __dirname,
+        "..",
+        "..",
+        "..",
+        "..",
+        "resources",
+        `metadata_v${this.flags.apiversion}.json`
+      );
+      let fileData = fs.readFileSync(resourcePath, "utf8");
+      this.coverageJSON = JSON.parse(fileData);
+    } catch (fileError) {
+      throw new SfdxError(
+        `Unable to read version ${this.flags.apiversion} of metadata coverage JSON`
+      );
+    }
+  }
+
+  public isNotDefaultApiVersion(): boolean {
+    return (
+      this.flags.apiversion &&
+      this.coverageJSON.versions.selected != this.flags.apiversion
+    );
   }
 
   public async clearDirectory() {

@@ -139,6 +139,7 @@ export default interface Profile {
   custom: boolean;
   customPermissions?: ProfileCustomPermissions[];
   customMetadataTypeAccesses?: CustomMetadataTypeAccess[];
+  customSettingAccesses?: CustomSettingAccess[];
   description?: string;
   externalDataSourceAccesses?: ProfileExternalDataSourceAccess[];
   fieldLevelSecurities?: ProfileFieldLevelSecurity[];
@@ -178,6 +179,11 @@ export interface FlowAccess {
   enabled: boolean;
 }
 export interface CustomMetadataTypeAccess {
+  name: string;
+  enabled: boolean;
+}
+
+export interface CustomSettingAccess {
   name: string;
   enabled: boolean;
 }
