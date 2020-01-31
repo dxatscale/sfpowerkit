@@ -26,10 +26,13 @@ export default abstract class ProfileDiff {
       fullName: profileObj2.fullName,
       applicationVisibilities: [],
       classAccesses: [],
+      customMetadataTypeAccesses: [],
       customPermissions: [],
+      customSettingAccesses: [],
       externalDataSourceAccesses: [],
       fieldLevelSecurities: [],
       fieldPermissions: [],
+      flowAccesses: [],
       layoutAssignments: [],
       loginHours: [],
       loginIpRanges: [],
@@ -123,6 +126,27 @@ export default abstract class ProfileDiff {
       profileObj1.layoutAssignments,
       profileObj2.layoutAssignments
     );
+
+    newProObj.customMetadataTypeAccesses = DiffUtil.getChangedOrAdded(
+      profileObj1.customMetadataTypeAccesses,
+      profileObj2.customMetadataTypeAccesses,
+      "name"
+    ).addedEdited;
+    newProObj.customSettingAccesses = DiffUtil.getChangedOrAdded(
+      profileObj1.customSettingAccesses,
+      profileObj2.customSettingAccesses,
+      "name"
+    ).addedEdited;
+
+    newProObj.flowAccesses = DiffUtil.getChangedOrAdded(
+      profileObj1.flowAccesses,
+      profileObj2.flowAccesses,
+      "flow"
+    ).addedEdited;
+
+    if (newProObj.fullName === undefined || newProObj.fullName === "") {
+      delete newProObj.fullName;
+    }
 
     profileWriter.writeProfile(newProObj, outputFilePath);
   }
