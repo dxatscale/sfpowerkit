@@ -354,6 +354,30 @@ export default class ProfileReconcile extends ProfileActions {
     return profileObj;
   }
 
+  private async reconcileCustomSettins(profileObj: Profile): Promise<Profile> {
+    let utils = EntityDefinitionRetriever.getInstance(this.org);
+
+    if (profileObj.customSettingAccesses !== undefined) {
+      if (!Array.isArray(profileObj.customSettingAccesses)) {
+        profileObj.customSettingAccesses = [profileObj.customSettingAccesses];
+      }
+      let validArray = [];
+      for (let i = 0; i < profileObj.customSettingAccesses.length; i++) {
+        let cmpCS = profileObj.customSettingAccesses[i];
+        let exist = await utils.existCustomMetadata(cmpCS.name);
+        if (exist) {
+          validArray.push(cmpCS);
+        }
+      }
+      SFPowerkit.log(
+        `CustomSettings Access reduced from ${profileObj.customSettingAccesses.length}  to  ${validArray.length}`,
+        LoggerLevel.DEBUG
+      );
+      profileObj.customSettingAccesses = validArray;
+    }
+    return profileObj;
+  }
+
   private async reconcileExternalDataSource(
     profileObj: Profile
   ): Promise<Profile> {
@@ -528,6 +552,8 @@ export default class ProfileReconcile extends ProfileActions {
     profileObj = await this.reconcileCustomPermission(profileObj);
     SFPowerkit.log("Reconciling  CustomMetadata", LoggerLevel.DEBUG);
     profileObj = await this.reconcileCustomMetadata(profileObj);
+    SFPowerkit.log("Reconciling  CustomSettings", LoggerLevel.DEBUG);
+    profileObj = await this.reconcileCustomSettins(profileObj);
     SFPowerkit.log("Reconciling  Flow", LoggerLevel.DEBUG);
     profileObj = await this.reconcileFlow(profileObj);
     return profileObj;
