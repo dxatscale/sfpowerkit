@@ -66,8 +66,6 @@ export default class DiffImpl {
   }
 
   public async build(
-    diffFilePath: string,
-    encoding: string,
     outputFolder: string,
     packagedirectories: string[],
     apiversion: string
@@ -85,9 +83,6 @@ export default class DiffImpl {
 
     let data = "";
 
-    if (diffFilePath !== null && diffFilePath !== "") {
-      data = fs.readFileSync(diffFilePath, encoding);
-    } else {
       //check if same commit
       const commitFrom = await git.raw([
         "rev-list",
@@ -96,7 +91,6 @@ export default class DiffImpl {
         this.revisionFrom
       ]);
       const commitTo = await git.raw(["rev-list", "-n", "1", this.revisionTo]);
-      const headCommit = await git.raw(["rev-list", "-n", "1", "HEAD"]);
       if (commitFrom === commitTo) {
         throw new Error(messages.getMessage("sameCommitErrorMessage"));
       }
@@ -111,7 +105,7 @@ export default class DiffImpl {
       );
 
       SFPowerkit.log(data, LoggerLevel.TRACE);
-    }
+    
 
     let content = data.split(sepRegex);
     let diffFile: DiffFile = await DiffUtil.parseContent(content);

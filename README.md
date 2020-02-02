@@ -261,17 +261,12 @@ This command is of sufficient quality, however proceed with caution while adopti
 ```
 
 USAGE
-  $ sfdx sfpowerkit:project:diff -d <string> [-f <string>] [-e <string>] [-r <string>] [-t <string>] [-x] [-b <array>] [-p <array>] [--apiversion <string>] [--json]
+  $ sfdx sfpowerkit:project:diff -d <string> [-r <string>] [-t <string>] [-x] [-b <array>] [-p <array>] [--apiversion <string>] [--json]
   [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
   -b, --bypass=bypass                                                               list of path to ignore, if diff found on the repo
   -d, --output=output                                                               (required)  The output dir where the incremental project will be created
-  -e, --encoding=encoding                                                           Encoding of the file default to utf8
-
-  -f, --difffile=difffile                                                           The diff file from which the incremental project should be generated [git diff --raw].
-                                                                                    Its an optional parameter, you can skip this parameter and set the revisionfrom and
-                                                                                    revisionto parameter instead
 
   -p, --packagedirectories=packagedirectories                                       project paths to run diff, if this is passed then override the path in sfdx-project.json
 
