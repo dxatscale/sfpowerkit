@@ -6,5 +6,5 @@
   "formatFlagDescription": "[default: text] The format for the pmd output, Possible values are available at https://pmd.github.io/latest/pmd_userdocs_cli_reference.html#available-report-formats",
   "reportFlagDescription": "[default: pmd-output] The path to where the output of the analysis should be written",
   "supressoutputFlagDescription": "[default: false] Supress the ouptut of the analysis to be displayed in the console",
-  "versionFlagDescription": "[default: 6.18.0] The version of the pmd to be utilized for the analysis, this version will be downloaded to sfpowerkit's cache directory"
+  "versionFlagDescription": "[default: 6.21.0] The version of the pmd to be utilized for the analysis, this version will be downloaded to sfpowerkit's cache directory"
 }
