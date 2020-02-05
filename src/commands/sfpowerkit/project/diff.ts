@@ -26,20 +26,10 @@ export default class Diff extends SfdxCommand {
   ];
 
   protected static flagsConfig: FlagsConfig = {
-    difffile: flags.string({
-      char: "f",
-      description: messages.getMessage("diffFileDescription"),
-      required: false
-    }),
-    encoding: flags.string({
-      char: "e",
-      description: messages.getMessage("encodingDescription"),
-      required: false
-    }),
     revisionfrom: flags.string({
       char: "r",
       description: messages.getMessage("revisionFromDescription"),
-      required: false
+      required: true
     }),
     revisionto: flags.string({
       char: "t",
@@ -57,6 +47,19 @@ export default class Diff extends SfdxCommand {
         "generativeDestructiveManifestDescription"
       ),
       required: false
+    }),
+    bypass: flags.array({
+      required: false,
+      char: "b",
+      description: messages.getMessage("itemsToBypass")
+    }),
+    packagedirectories: flags.array({
+      required: false,
+      char: "p",
+      description: messages.getMessage("packagedirectories")
+    }),
+    apiversion: flags.builtin({
+      description: messages.getMessage("apiversion")
     }),
     loglevel: flags.enum({
       description: "logging level for this command invocation",
@@ -101,38 +104,21 @@ export default class Diff extends SfdxCommand {
   public async run(): Promise<any> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
-    const diffFile: string = this.flags.difffile;
-    let encoding: string = this.flags.encoding;
     const outputFolder: string = this.flags.output;
     const revisionfrom: string = this.flags.revisionfrom;
     const revisionto: string = this.flags.revisionto;
-    if (!encoding || encoding === "") {
-      encoding = "utf8";
-    }
-
-    if (
-      (diffFile === undefined || diffFile === "") &&
-      (revisionfrom === undefined || revisionfrom === "")
-    ) {
-      this.error("Provide either diffFile or revisionFrom parameters");
-    }
 
     let diffUtils = new DiffImpl(
       revisionfrom,
       revisionto,
-      this.flags.generatedestructive
+      this.flags.generatedestructive,
+      this.flags.bypass
     );
 
-    /* PATH TO DIFF FILE */
-    let diffFilePath = "";
-    if (diffFile) {
-      diffFilePath = path.join(process.cwd(), diffFile);
-    }
-
     let diffOutput = await diffUtils.build(
-      diffFilePath,
-      encoding,
-      outputFolder
+      outputFolder,
+      this.flags.packagedirectories,
+      this.flags.apiversion
     );
     //if (!this.flags.json) this.ux.logJson(diffOutput);
     return diffOutput;

@@ -18,6 +18,7 @@ import Profile, {
   ProfileCustomPermissions,
   FlowAccess,
   CustomMetadataTypeAccess,
+  CustomSettingAccess,
   PermissionSetExternalDataSourceAccess
 } from "../../../impl/metadata/schema";
 import util = require("util");
@@ -525,6 +526,45 @@ export default class ProfileMerge extends ProfileActions {
 
     return profileObj;
   }
+  private mergeCustomSettingAccesses(
+    profileObj: Profile,
+    customSettingAccesses: CustomSettingAccess[]
+  ): Profile {
+    if (
+      profileObj.customSettingAccesses === null ||
+      profileObj.customSettingAccesses === undefined
+    ) {
+      profileObj.customSettingAccesses = [];
+    } else if (!Array.isArray(profileObj.customSettingAccesses)) {
+      profileObj.customSettingAccesses = [profileObj.customSettingAccesses];
+    }
+    for (let i = 0; i < customSettingAccesses.length; i++) {
+      let customSetting = customSettingAccesses[i];
+      let found = false;
+      for (let j = 0; j < profileObj.customSettingAccesses.length; j++) {
+        if (customSetting.name === profileObj.customSettingAccesses[j].name) {
+          profileObj.customSettingAccesses[j].enabled = customSetting.enabled;
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        profileObj.customSettingAccesses.push(customSetting);
+      }
+    }
+
+    profileObj.customSettingAccesses.sort((cs1, cs2) => {
+      let order = 0;
+      if (cs1.name < cs2.name) {
+        order = -1;
+      } else if (cs1.name > cs2.name) {
+        order = 1;
+      }
+      return order;
+    });
+
+    return profileObj;
+  }
 
   private mergeFlowAccesses(
     profileObj: Profile,
@@ -630,6 +670,9 @@ export default class ProfileMerge extends ProfileActions {
         profile1,
         profile2.customMetadataTypeAccesses
       );
+    }
+    if (profile2.customSettingAccesses !== undefined) {
+      this.mergeCustomSettingAccesses(profile1, profile2.customSettingAccesses);
     }
     if (profile2.customPermissions !== undefined) {
       this.mergeCustomPermissions(profile1, profile2.customPermissions);

@@ -126,6 +126,8 @@ export default class MetadataFiles {
     let keys = Object.keys(METADATA_INFO);
     if (Array.isArray(metadataFiles) && metadataFiles.length > 0) {
       metadataFiles.forEach(metadataFile => {
+        let found = false;
+
         for (let i = 0; i < keys.length; i++) {
           let match = false;
           if (metadataFile.endsWith(METADATA_INFO[keys[i]].sourceExtension)) {
@@ -157,8 +159,27 @@ export default class MetadataFiles {
 
               METADATA_INFO[keys[i]].components.push(name);
             }
-
+            found = true;
             break;
+          }
+        }
+
+        if (!found) {
+          const auraRegExp = new RegExp("aura");
+          if (
+            auraRegExp.test(metadataFile) &&
+            SOURCE_EXTENSION_REGEX.test(metadataFile)
+          ) {
+            if (_.isNil(METADATA_INFO.AuraDefinitionBundle.files)) {
+              METADATA_INFO.AuraDefinitionBundle.files = [];
+              METADATA_INFO.AuraDefinitionBundle.components = [];
+            }
+            if (!checkIgnore || (checkIgnore && this.accepts(metadataFile))) {
+              METADATA_INFO.AuraDefinitionBundle.files.push(metadataFile);
+
+              let name = FileUtils.getFileNameWithoutExtension(metadataFile);
+              METADATA_INFO.AuraDefinitionBundle.components.push(name);
+            }
           }
         }
       });
