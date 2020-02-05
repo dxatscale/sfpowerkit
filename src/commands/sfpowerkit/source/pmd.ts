@@ -59,7 +59,7 @@ export default class Pmd extends SfdxCommand {
     }),
     version: flags.string({
       required: false,
-      default: "6.18.0",
+      default: "6.21.0",
       description: messages.getMessage("versionFlagDescription")
     })
   };
@@ -87,7 +87,8 @@ export default class Pmd extends SfdxCommand {
       )
     ) {
       SFPowerkit.log("Initiating Download of  PMD", LoggerLevel.INFO);
-      fs.mkdirSync(pmd_cache_directory);
+      if (!fs.existsSync(pmd_cache_directory))
+        fs.mkdirSync(pmd_cache_directory);
       await this.downloadPMD(this.flags.version, pmd_cache_directory);
       SFPowerkit.log(`Downloaded PMD ${this.flags.version}`, LoggerLevel.INFO);
       await extract(
@@ -128,6 +129,7 @@ export default class Pmd extends SfdxCommand {
         )
       : this.flags.ruleset;
 
+    console.log(`PMD release ${this.flags.version}`);
     console.log(`Now analyzing ${packageDirectory}`);
 
     const pmdCmd = spawn(path.join(this.javahome, "bin", "java"), [

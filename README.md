@@ -261,18 +261,27 @@ This command is of sufficient quality, however proceed with caution while adopti
 ```
 
 USAGE
-  $ sfdx sfpowerkit:project:diff  -d <string> [-f <string>] [  -e <string> ] [  -r <string> ] [  -t <string> ] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+  $ sfdx sfpowerkit:project:diff -d <string> [-r <string>] [-t <string>] [-x] [-b <array>] [-p <array>] [--apiversion <string>] [--json]
+  [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -d, --output=output                             (required) The output dir where the incremental project will be created
-  -f, --difffile=difffile                         The diff file from which the incremental project should be generated [git diff --raw]. Its an optional parameter, you can skip this parameter and set the revisionfrom and  revisionto parameter instead
-  -e, --encoding=encoding                         [default:utf8] Diff file encoding
-  -r, --revisionfrom=revisionfrom                 Base revision from where diff is to be generated, required if diff file is ommited
-  -t, --revisionto=revisionto                     [default:HEAD]Target revision to generate the diff
-  -x, --generatedestructive                       If set, the command will also generate a destructiveChange.xml file in the output folder.
+  -b, --bypass=bypass                                                               list of path to ignore, if diff found on the repo
+  -d, --output=output                                                               (required)  The output dir where the incremental project will be created
 
-  --json                                          format output as json
-  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
+  -p, --packagedirectories=packagedirectories                                       project paths to run diff, if this is passed then override the path in sfdx-project.json
+
+  -r, --revisionfrom=revisionfrom                                                   Base revision from where diff is to be generated, required if diff file is ommited
+
+  -t, --revisionto=revisionto                                                       [default:HEAD] Target revision to generate the diff
+
+  -x, --generatedestructive                                                         If set to true, the command will also generate a destructiveChangePost.xml file in the
+                                                                                    output folder.
+
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+
+  --json                                                                            format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
 
 EXAMPLE
   $  sfdx sfpowerkit:project:diff --revisionfrom revisionfrom --revisionto revisionto --output OutputFolder
