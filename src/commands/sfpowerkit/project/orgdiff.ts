@@ -7,6 +7,7 @@ import {
 } from "@salesforce/command";
 import { SFPowerkit } from "../../../sfpowerkit";
 import OrgDiffImpl from "../../../impl/project/orgdiff/orgDiffImpl";
+import { fs } from "@salesforce/core";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -90,6 +91,7 @@ export default class OrgDiff extends SfdxCommand {
 
     let output = await orgDiff.orgDiff();
     this.ux.stopSpinner("Completed");
+    fs.writeJson("orgdiff.json", output);
     return output;
   }
 }
