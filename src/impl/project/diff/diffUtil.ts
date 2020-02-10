@@ -212,9 +212,9 @@ export default class DiffUtil {
 
     for (var i = 0; i < fileContents.length; i++) {
       if (statusRegEx.test(fileContents[i])) {
-        var lineParts = fileContents[i].split(statusRegEx);
+        let lineParts = fileContents[i].split(statusRegEx);
 
-        var finalPath = path.join(
+        let finalPath = path.join(
           ".",
           lineParts[1].replace(lineBreakRegEx, "")
         );
@@ -247,13 +247,13 @@ export default class DiffUtil {
           });
         }
       } else if (renamedRegEx.test(fileContents[i])) {
-        var lineParts = fileContents[i].split(renamedRegEx);
+        let lineParts = fileContents[i].split(renamedRegEx);
 
-        var pathsParts = path.join(".", lineParts[1].trim());
-        pathsParts = pathsParts.replace("\\303\\251", "é");
+        let paths = lineParts[1].trim().split(tabRegEx);
+
+        let finalPath = path.join(".", paths[1].trim());
+        finalPath = finalPath.replace("\\303\\251", "é");
         let revisionPart = lineParts[0].split(/\t|\s/);
-
-        var paths = pathsParts.split(tabRegEx);
 
         if (!(await metadataFiles.isInModuleFolder(finalPath))) {
           continue;
@@ -264,16 +264,16 @@ export default class DiffUtil {
         }
 
         diffFile.addedEdited.push({
-          revisionFrom: "000000000",
+          revisionFrom: "0000000",
           revisionTo: revisionPart[3],
-          renamedPath: paths[0].trim(),
-          path: paths[1].trim()
+          renamedPath: path.join(".", paths[0].trim()),
+          path: finalPath
         });
 
         //allow deletion of renamed components
         diffFile.deleted.push({
           revisionFrom: revisionPart[2],
-          revisionTo: "000000000",
+          revisionTo: "0000000",
           path: paths[0].trim()
         });
       }
