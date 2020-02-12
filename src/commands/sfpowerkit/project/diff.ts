@@ -8,6 +8,7 @@ import {
 import DiffImpl from "../../../impl/project/diff/diffImpl";
 import * as path from "path";
 import { SFPowerkit } from "../../../sfpowerkit";
+import { fs } from "@salesforce/core";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -120,7 +121,7 @@ export default class Diff extends SfdxCommand {
       this.flags.packagedirectories,
       this.flags.apiversion
     );
-    //if (!this.flags.json) this.ux.logJson(diffOutput);
+    fs.writeJson(path.join(outputFolder, "diff.json"), diffOutput);
     return diffOutput;
   }
 }
