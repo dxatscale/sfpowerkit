@@ -82,7 +82,7 @@ export default class Usage extends SfdxCommand {
   }
   private async getScratchOrgInfo(conn: core.Connection) {
     let query =
-      "SELECT count(id) In_Use, SignupEmail FROM ActiveScratchOrg group by SignupEmail";
+      "SELECT count(id) In_Use, SignupEmail FROM ActiveScratchOrg GROUP BY SignupEmail ORDER BY count(id) DESC";
 
     const results = (await conn.query(query)) as any;
 
