@@ -46,21 +46,20 @@ export default class Usage extends SfdxCommand {
 
     this.ux.log("");
 
-    const devhub_username = this.flags.targetdevhubusername;
-    // Split arguments to use spawn
-    const args = [];
-    args.push("force:data:soql:query");
-
-    //query
-    args.push("-q");
-    args.push(
-      `SELECT count(id) In_Use, SignupEmail  FROM ActiveScratchOrg group by SignupEmail`
-    );
-
-    args.push("-u");
-    args.push(devhub_username);
-
-    await spawn("sfdx", args, { stdio: "inherit" });
+    if (limits.ActiveScratchOrgs.Remaining !== limits.ActiveScratchOrgs.Max) {
+      let scratchOrgs = await this.getScratchOrgInfo(conn);
+      //this.ux.log(scratchOrgs);
+      const output = [];
+      scratchOrgs.records.forEach(element => {
+        output.push({
+          In_Use: element.In_Use,
+          SignupEmail: element.SignupEmail
+        });
+      });
+      this.ux.table(output, ["In_Use", "SignupEmail"]);
+    } else {
+      this.ux.log(`No Scratch org used currently.`);
+    }
 
     return 1;
   }
@@ -80,5 +79,13 @@ export default class Usage extends SfdxCommand {
     });
 
     return limits;
+  }
+  private async getScratchOrgInfo(conn: core.Connection) {
+    let query =
+      "SELECT count(id) In_Use, SignupEmail FROM ActiveScratchOrg GROUP BY SignupEmail ORDER BY count(id) DESC";
+
+    const results = (await conn.query(query)) as any;
+
+    return results;
   }
 }

@@ -222,7 +222,7 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx sfpowerkit:source:customlabel:reconcile -p path/to/customlabelfile.xml -d core
+  $ sfdx sfpowerkit:source:customlabel:reconcile -d path/to/customlabelfile.xml -p core
   Package ::: core
   Reconciled The Custom Labels, only to have core labels (labels with full name beginning with core_)
 ``
