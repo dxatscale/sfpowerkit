@@ -87,9 +87,12 @@ export default class OrgCoverage extends SfdxCommand {
     );
     this.ux.log(`coverage:${apexcoverage.coverage}`);
 
-    await this.getApexCoverageByDetails(conn, this.flags.output);
+    const classCoverage = await this.getApexCoverageByDetails(
+      conn,
+      this.flags.output
+    );
 
-    return { coverage: apexcoverage.coverage };
+    return { coverage: apexcoverage.coverage, classCoverage: classCoverage };
   }
 
   public async getApexCoverage(conn: core.Connection) {
@@ -119,8 +122,8 @@ export default class OrgCoverage extends SfdxCommand {
       "SELECT ApexClassOrTriggerId, ApexClassOrTrigger.Name, NumLinesCovered, NumLinesUncovered, coverage FROM ApexCodeCoverageAggregate ORDER BY ApexClassOrTrigger.Name";
 
     const results = (await conn.tooling.query(query)) as any;
+    const output = [];
     if (results.size > 0) {
-      const output = [];
       results.records.forEach(element => {
         let percentage =
           element.NumLinesCovered === 0
@@ -162,6 +165,7 @@ export default class OrgCoverage extends SfdxCommand {
         await this.generateCSVOutput(output, outputDir);
       }
     }
+    return output;
   }
   public async generateJsonOutput(testResult: AnyJson, outputDir: string) {
     let outputJsonPath = `${outputDir}/output.json`;
