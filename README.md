@@ -864,19 +864,31 @@ Gets the apex tests coverage of an org
 
 ```
 USAGE
-  $ sfdx sfpowerkit:org:orgcoverage [-u <string>] [--apiversion <string>] [--json] [--loglevel
-  trace|debug|info|warn|error|fatal]
+  $ sfdx sfpowerkit:org:orgcoverage [-d <string>] [-f json|csv] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -u, --targetusername=targetusername             username or alias for the target org;
-  --apiversion=apiversion                         override the api version used for api requests made by this command
-  --json                                          format output as json
-  --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
+  -d, --output=output                                                               The output dir where the output will be created
+  -f, --format=(json|csv)                                                           The format for the test result output, Possible values are json/csv
+  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
 EXAMPLE
   $ sfdx sfpowerkit:org:orgcoverage  -u myOrg@example.com
-     Successfully Retrieved the Apex Test Coverage of the org 00D0k000000DmdpEAC
-     coverage:85
+    sfdx sfpowerkit:org:orgcoverage  -u myOrg@example.com -d testResult -f csv
+    sfdx sfpowerkit:org:orgcoverage  -u myOrg@example.com -d testResult -f json
+
+
+    Successfully Retrieved the Apex Test Coverage of the org XXXX
+    coverage:85
+    ID                 NAME                  TYPE          PERCENTAGE    COMMENTS                              UNCOVERED LINES
+    ───────            ──────────────────    ────────      ──────────    ───────────────────────────────────   ──────────────────
+    01pxxxx            sampleController      ApexClass     100%
+    01pxxxx            sampletriggerHandler  ApexClass     80%           Looks fine but target more than 85%   62;76;77;
+    01pxxxx            sampleHelper          ApexClass     72%           Action required                       62;76;77;78;98;130;131
+    01qxxxx            sampleTrigger         ApexTrigger   100%
+    Output testResult/output.csv is generated successfully
 ```
 
 _See code: [src\commands\sfpowerkit\org\orgcoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/orgcoverage.ts)_
