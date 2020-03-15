@@ -5,6 +5,7 @@ import * as fs from "fs";
 import * as path from "path";
 import FileUtils from "../../utils/fileutils";
 import { FileProperties } from "jsforce";
+import { SFPowerkit, LoggerLevel } from "../../sfpowerkit";
 
 if (Symbol["asyncIterator"] === undefined) {
   // tslint:disable-next-line:no-any
@@ -341,10 +342,23 @@ export class Packagexml {
           if (!this.packageTypes[type]) {
             this.packageTypes[type] = [];
           }
-          this.packageTypes[type].push(member.fullName);
+          if (
+            member.type === "Layout" &&
+            member.namespacePrefix &&
+            member.manageableState === "installed"
+          ) {
+            const { fullName, namespacePrefix } = member;
+            let objectName = fullName.substr(0, fullName.indexOf("-"));
+            let layoutName = fullName.substr(fullName.indexOf("-") + 1);
+            this.packageTypes[type].push(
+              objectName + "-" + namespacePrefix + "__" + layoutName
+            );
+          } else {
+            this.packageTypes[type].push(member.fullName);
+          }
         }
       } catch (ex) {
-        console.log("Type " + JSON.stringify(type));
+        SFPowerkit.log("Type " + JSON.stringify(type), LoggerLevel.DEBUG);
       }
     }
   }
