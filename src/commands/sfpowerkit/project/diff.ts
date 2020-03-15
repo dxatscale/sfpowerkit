@@ -94,7 +94,22 @@ export default class Diff extends SfdxCommand {
     },
     display() {
       if (Array.isArray(this.data) && this.data.length) {
-        this.ux.table(this.data, this.tableColumnData);
+        this.ux.table(this.data.filter(element=>{
+          return element['action']!=='ERROR';
+        }), this.tableColumnData);
+
+        let errors = this.data.filter(element=>{
+          return element['action']==='ERROR';
+        });
+        if(errors && errors.length>0){
+          this.ux.log('ERRORS');
+          this.ux.table(errors, {
+            columns: [
+              { key: "path", label: "Path" },
+              { key: "message", label: "Error Message" }
+            ]
+          });
+        }
       }
     }
   };
