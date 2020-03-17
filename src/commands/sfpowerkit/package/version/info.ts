@@ -16,7 +16,7 @@ export default class Info extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:package:info -u myOrg@example.com `
+    `$ sfdx sfpowerkit:package:version:info -u myOrg@example.com `
   ];
 
   protected static flagsConfig = {
@@ -64,11 +64,17 @@ export default class Info extends SfdxCommand {
 
     const result = (await packageInfoImpl.getPackages()) as any;
 
+    result.sort((a, b) => (a.packageName > b.packageName ? 1 : -1));
+
     this.ux.table(result, [
       "packageName",
       "packageNamespacePrefix",
       "packageVersionNumber",
-      "packageVersionId"
+      "packageVersionId",
+      "allowedLicenses",
+      "usedLicenses",
+      "expirationDate",
+      "status"
     ]);
     return result;
   }
