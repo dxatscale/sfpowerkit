@@ -1873,7 +1873,9 @@
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],
-      "examples": ["$ sfdx sfpowerkit:package:info -u myOrg@example.com "],
+      "examples": [
+        "$ sfdx sfpowerkit:package:version:info -u myOrg@example.com "
+      ],
       "flags": {
         "json": {
           "name": "json",
