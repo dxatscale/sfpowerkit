@@ -99,6 +99,9 @@
       "sfpowerkit:package": {
         "description": "Helper commands for unlocked package"
       },
+      "sfpowerkit:package:version": {
+        "description": "Commands related to details of package"
+      },
       "sfpowerkit:org": {
         "description": "Helper commands for org such as connectedapp, creation of sandbox etc"
       },
