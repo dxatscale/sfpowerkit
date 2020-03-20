@@ -46,6 +46,7 @@ export default class DiffImpl {
     action: string;
     metadataType: string;
     componentName: string;
+    message: string;
     path: string;
   }[];
   public constructor(
@@ -83,29 +84,28 @@ export default class DiffImpl {
 
     let data = "";
 
-      //check if same commit
-      const commitFrom = await git.raw([
-        "rev-list",
-        "-n",
-        "1",
-        this.revisionFrom
-      ]);
-      const commitTo = await git.raw(["rev-list", "-n", "1", this.revisionTo]);
-      if (commitFrom === commitTo) {
-        throw new Error(messages.getMessage("sameCommitErrorMessage"));
-      }
-      data = await git.diff(["--raw", this.revisionFrom, this.revisionTo]);
-      SFPowerkit.log(
-        `Input Param: From: ${this.revisionFrom}  To: ${this.revisionTo} `,
-        LoggerLevel.INFO
-      );
-      SFPowerkit.log(
-        `SHA Found From: ${commitFrom} To:  ${commitTo} `,
-        LoggerLevel.INFO
-      );
+    //check if same commit
+    const commitFrom = await git.raw([
+      "rev-list",
+      "-n",
+      "1",
+      this.revisionFrom
+    ]);
+    const commitTo = await git.raw(["rev-list", "-n", "1", this.revisionTo]);
+    if (commitFrom === commitTo) {
+      throw new Error(messages.getMessage("sameCommitErrorMessage"));
+    }
+    data = await git.diff(["--raw", this.revisionFrom, this.revisionTo]);
+    SFPowerkit.log(
+      `Input Param: From: ${this.revisionFrom}  To: ${this.revisionTo} `,
+      LoggerLevel.INFO
+    );
+    SFPowerkit.log(
+      `SHA Found From: ${commitFrom} To:  ${commitTo} `,
+      LoggerLevel.INFO
+    );
 
-      SFPowerkit.log(data, LoggerLevel.TRACE);
-    
+    SFPowerkit.log(data, LoggerLevel.TRACE);
 
     let content = data.split(sepRegex);
     let diffFile: DiffFile = await DiffUtil.parseContent(content);
@@ -141,26 +141,36 @@ export default class DiffImpl {
     if (filesToCopy && filesToCopy.length > 0) {
       for (var i = 0; i < filesToCopy.length; i++) {
         let filePath = filesToCopy[i].path;
-        if (DiffImpl.checkForIngore(this.pathToIgnore, filePath)) {
-          let matcher = filePath.match(SOURCE_EXTENSION_REGEX);
-          let extension = "";
-          if (matcher) {
-            extension = matcher[0];
-          } else {
-            extension = path.parse(filePath).ext;
-          }
+        try {
+          if (DiffImpl.checkForIngore(this.pathToIgnore, filePath)) {
+            let matcher = filePath.match(SOURCE_EXTENSION_REGEX);
+            let extension = "";
+            if (matcher) {
+              extension = matcher[0];
+            } else {
+              extension = path.parse(filePath).ext;
+            }
 
-          if (unsplitedMetadataExtensions.includes(extension)) {
-            //handle unsplited files
-            await this.handleUnsplittedMetadata(filesToCopy[i], outputFolder);
-          } else {
-            await DiffUtil.copyFile(filePath, outputFolder);
+            if (unsplitedMetadataExtensions.includes(extension)) {
+              //handle unsplited files
+              await this.handleUnsplittedMetadata(filesToCopy[i], outputFolder);
+            } else {
+              await DiffUtil.copyFile(filePath, outputFolder);
 
-            SFPowerkit.log(
-              `Copied file ${filePath} to ${outputFolder}`,
-              LoggerLevel.DEBUG
-            );
+              SFPowerkit.log(
+                `Copied file ${filePath} to ${outputFolder}`,
+                LoggerLevel.DEBUG
+              );
+            }
           }
+        } catch (ex) {
+          this.resultOutput.push({
+            action: "ERROR",
+            componentName: '',
+            metadataType: '',
+            message: ex.message,
+            path: filePath
+          });
         }
       }
     }
@@ -221,12 +231,13 @@ export default class DiffImpl {
   }
 
   private static checkForIngore(pathToIgnore: any[], filePath: string) {
-    if (pathToIgnore?.length === 0) {
+    pathToIgnore = pathToIgnore || []
+    if (pathToIgnore.length === 0) {
       return true;
     }
 
     let returnVal = true;
-    pathToIgnore?.forEach(ignore => {
+    pathToIgnore.forEach(ignore => {
       if (
         path.resolve(ignore) === path.resolve(filePath) ||
         path.resolve(filePath).includes(path.resolve(ignore))
@@ -274,6 +285,7 @@ export default class DiffImpl {
               action: "Deploy",
               metadataType: METADATA_INFO[key].xmlName,
               componentName: name,
+              message: '',
               path: filePath
             });
           }
@@ -448,51 +460,71 @@ export default class DiffImpl {
     //returns root, dir, base and name
     for (let i = 0; i < filePaths.length; i++) {
       let filePath = filePaths[i].path;
-
-      let matcher = filePath.match(SOURCE_EXTENSION_REGEX);
-      let extension = "";
-      if (matcher) {
-        extension = matcher[0];
-      } else {
-        extension = path.parse(filePath).ext;
-      }
-      if (unsplitedMetadataExtensions.includes(extension)) {
-        //handle unsplited files
-        await this.handleUnsplittedMetadata(filePaths[i], outputFolder);
-        continue;
-      }
-
-      let parsedPath = path.parse(filePath);
-      let filename = parsedPath.base;
-      let name = MetadataInfo.getMetadataName(filePath);
-
-      if (name) {
-        if (!MetadataFiles.isCustomMetadata(filePath, name)) {
-          // avoid to generate destructive for Standard Components
-          //Support on Custom Fields and Custom Objects for now
-
-          this.resultOutput.push({
-            action: "Skip ",
-            componentName: MetadataFiles.getMemberNameFromFilepath(
-              filePath,
-              name
-            ),
-            metadataType: "StandardField/CustomMetadata",
-            path: "--"
-          });
-
+      try {
+        let matcher = filePath.match(SOURCE_EXTENSION_REGEX);
+        let extension = "";
+        if (matcher) {
+          extension = matcher[0];
+        } else {
+          extension = path.parse(filePath).ext;
+        }
+        if (unsplitedMetadataExtensions.includes(extension)) {
+          //handle unsplited files
+          await this.handleUnsplittedMetadata(filePaths[i], outputFolder);
           continue;
         }
-        let member = MetadataFiles.getMemberNameFromFilepath(filePath, name);
-        if (name === METADATA_INFO.CustomField.xmlName) {
-          let isFormular = await DiffUtil.isFormulaField(filePaths[i]);
-          if (isFormular) {
-            this.destructivePackageObjPre = this.buildDestructiveTypeObj(
-              this.destructivePackageObjPre,
-              name,
-              member
-            );
 
+        let parsedPath = path.parse(filePath);
+        let filename = parsedPath.base;
+        let name = MetadataInfo.getMetadataName(filePath);
+
+        if (name) {
+          if (!MetadataFiles.isCustomMetadata(filePath, name)) {
+            // avoid to generate destructive for Standard Components
+            //Support on Custom Fields and Custom Objects for now
+
+            this.resultOutput.push({
+              action: "Skip",
+              componentName: MetadataFiles.getMemberNameFromFilepath(
+                filePath,
+                name
+              ),
+              metadataType: "StandardField/CustomMetadata",
+              message: '',
+              path: "--"
+            });
+
+            continue;
+          }
+          let member = MetadataFiles.getMemberNameFromFilepath(filePath, name);
+          if (name === METADATA_INFO.CustomField.xmlName) {
+            let isFormular = await DiffUtil.isFormulaField(filePaths[i]);
+            if (isFormular) {
+              this.destructivePackageObjPre = this.buildDestructiveTypeObj(
+                this.destructivePackageObjPre,
+                name,
+                member
+              );
+
+              SFPowerkit.log(
+                `${filePath} ${MetadataFiles.isCustomMetadata(filePath, name)}`,
+                LoggerLevel.DEBUG
+              );
+
+              this.resultOutput.push({
+                action: "Delete",
+                componentName: member,
+                metadataType: name,
+                message: '',
+                path: "Manual Intervention Required"
+              });
+            } else {
+              this.destructivePackageObjPost = this.buildDestructiveTypeObj(
+                this.destructivePackageObjPost,
+                name,
+                member
+              );
+            }
             SFPowerkit.log(
               `${filePath} ${MetadataFiles.isCustomMetadata(filePath, name)}`,
               LoggerLevel.DEBUG
@@ -502,44 +534,37 @@ export default class DiffImpl {
               action: "Delete",
               componentName: member,
               metadataType: name,
-              path: "Manual Intervention Required"
-            });
-          } else {
-            this.destructivePackageObjPost = this.buildDestructiveTypeObj(
-              this.destructivePackageObjPost,
-              name,
-              member
-            );
-          }
-          SFPowerkit.log(
-            `${filePath} ${MetadataFiles.isCustomMetadata(filePath, name)}`,
-            LoggerLevel.DEBUG
-          );
-
-          this.resultOutput.push({
-            action: "Delete",
-            componentName: member,
-            metadataType: name,
-            path: "destructiveChanges.xml"
-          });
-        } else {
-          if (!deleteNotSupported.includes(name)) {
-            this.destructivePackageObjPost = this.buildDestructiveTypeObj(
-              this.destructivePackageObjPost,
-              name,
-              member
-            );
-            this.resultOutput.push({
-              action: "Delete",
-              componentName: member,
-              metadataType: name,
+              message: '',
               path: "destructiveChanges.xml"
             });
           } else {
-            //add the component in the manual action list
-            // TODO
+            if (!deleteNotSupported.includes(name)) {
+              this.destructivePackageObjPost = this.buildDestructiveTypeObj(
+                this.destructivePackageObjPost,
+                name,
+                member
+              );
+              this.resultOutput.push({
+                action: "Delete",
+                componentName: member,
+                metadataType: name,
+                message: '',
+                path: "destructiveChanges.xml"
+              });
+            } else {
+              //add the component in the manual action list
+              // TODO
+            }
           }
         }
+      } catch (ex) {
+        this.resultOutput.push({
+          action: "ERROR",
+          componentName: '',
+          metadataType: '',
+          message: ex.message,
+          path: filePath
+        });
       }
     }
 
