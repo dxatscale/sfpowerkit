@@ -332,6 +332,20 @@
       "xmlName": "ApprovalProcess"
     },
     {
+      "directoryName": "entitlementProcesses",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "entitlementProcess",
+      "xmlName": "EntitlementProcess"
+    },
+    {
+      "directoryName": "milestoneTypes",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "milestoneType",
+      "xmlName": "MilestoneType"
+    },
+    {
       "directoryName": "homePageComponents",
       "inFolder": false,
       "metaFile": false,
@@ -351,6 +365,13 @@
       "metaFile": false,
       "suffix": "objectTranslation",
       "xmlName": "CustomObjectTranslation"
+    },
+    {
+      "directoryName": "objectTranslations",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "fieldTranslation",
+      "xmlName": "CustomFieldTranslation"
     },
     {
       "directoryName": "translations",
