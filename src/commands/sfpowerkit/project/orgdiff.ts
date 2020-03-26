@@ -58,7 +58,7 @@ export default class OrgDiff extends SfdxCommand {
     outputformat: flags.enum({
       required: false,
       char: "o",
-      description: messages.getMessage("formatFlagDescription"),
+      description: messages.getMessage("outputFormatFlagDescription"),
       options: ["json", "csv"]
     })
   };
