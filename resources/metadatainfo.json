@@ -37,6 +37,13 @@
       "xmlName": "Certificate"
     },
     {
+      "directoryName": "messageChannels",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "messageChannel",
+      "xmlName": "LightningMessageChannel"
+    },
+    {
       "directoryName": "aura",
       "inFolder": false,
       "metaFile": false,
@@ -332,20 +339,6 @@
       "xmlName": "ApprovalProcess"
     },
     {
-      "directoryName": "entitlementProcesses",
-      "inFolder": false,
-      "metaFile": false,
-      "suffix": "entitlementProcess",
-      "xmlName": "EntitlementProcess"
-    },
-    {
-      "directoryName": "milestoneTypes",
-      "inFolder": false,
-      "metaFile": false,
-      "suffix": "milestoneType",
-      "xmlName": "MilestoneType"
-    },
-    {
       "directoryName": "homePageComponents",
       "inFolder": false,
       "metaFile": false,
@@ -430,6 +423,20 @@
       "xmlName": "PermissionSet"
     },
     {
+      "directoryName": "mutingpermissionsets",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "mutingpermissionset",
+      "xmlName": "MutingPermissionSet"
+    },
+    {
+      "directoryName": "permissionsetgroups",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "permissionsetgroup",
+      "xmlName": "PermissionSetGroup"
+    },
+    {
       "directoryName": "profilePasswordPolicies",
       "inFolder": false,
       "metaFile": false,
@@ -442,6 +449,13 @@
       "metaFile": false,
       "suffix": "profileSessionSetting",
       "xmlName": "ProfileSessionSetting"
+    },
+    {
+      "directoryName": "myDomainDiscoverableLogins",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "myDomainDiscoverableLogin",
+      "xmlName": "MyDomainDiscoverableLogin"
     },
     {
       "directoryName": "oauthcustomscopes",
@@ -470,6 +484,13 @@
       "metaFile": false,
       "suffix": "cspTrustedSite",
       "xmlName": "CspTrustedSite"
+    },
+    {
+      "directoryName": "redirectWhitelistUrls",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "redirectWhitelistUrl",
+      "xmlName": "RedirectWhitelistUrl"
     },
     {
       "childXmlNames": ["MatchingRule"],
@@ -571,6 +592,13 @@
       "xmlName": "ContentAsset"
     },
     {
+      "directoryName": "sites",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "site",
+      "xmlName": "CustomSite"
+    },
+    {
       "childXmlNames": ["SharingOwnerRule", "SharingCriteriaRule"],
       "directoryName": "sharingRules",
       "inFolder": false,
@@ -607,11 +635,60 @@
       "xmlName": "PlatformEventChannel"
     },
     {
+      "directoryName": "platformEventChannelMembers",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "platformEventChannelMember",
+      "xmlName": "PlatformEventChannelMember"
+    },
+    {
       "directoryName": "callCenters",
       "inFolder": false,
       "metaFile": false,
       "suffix": "callCenter",
       "xmlName": "CallCenter"
+    },
+    {
+      "directoryName": "milestoneTypes",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "milestoneType",
+      "xmlName": "MilestoneType"
+    },
+    {
+      "directoryName": "entitlementProcesses",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "entitlementProcess",
+      "xmlName": "EntitlementProcess"
+    },
+    {
+      "directoryName": "entitlementTemplates",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "entitlementTemplate",
+      "xmlName": "EntitlementTemplate"
+    },
+    {
+      "directoryName": "timeSheetTemplates",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "timeSheetTemplate",
+      "xmlName": "TimeSheetTemplate"
+    },
+    {
+      "directoryName": "Canvases",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "Canvas",
+      "xmlName": "CanvasMetadata"
+    },
+    {
+      "directoryName": "MobileApplicationDetails",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "MobileApplicationDetail",
+      "xmlName": "MobileApplicationDetail"
     },
     {
       "directoryName": "notificationtypes",
@@ -633,6 +710,13 @@
       "metaFile": false,
       "suffix": "appMenu",
       "xmlName": "AppMenu"
+    },
+    {
+      "directoryName": "notificationTypeConfig",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "config",
+      "xmlName": "NotificationTypeConfig"
     },
     {
       "directoryName": "delegateGroups",
@@ -691,6 +775,13 @@
       "xmlName": "CommunityTemplateDefinition"
     },
     {
+      "directoryName": "navigationMenus",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "navigationMenu",
+      "xmlName": "NavigationMenu"
+    },
+    {
       "directoryName": "flowCategories",
       "inFolder": false,
       "metaFile": false,
@@ -710,6 +801,13 @@
       "metaFile": false,
       "suffix": "lightningExperienceTheme",
       "xmlName": "LightningExperienceTheme"
+    },
+    {
+      "directoryName": "lightningOnboardingConfigs",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "lightningOnboardingConfig",
+      "xmlName": "LightningOnboardingConfig"
     },
     {
       "directoryName": "customHelpMenuSections",
@@ -762,6 +860,13 @@
       "xmlName": "CMSConnectSource"
     },
     {
+      "directoryName": "managedContentTypes",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "managedContentType",
+      "xmlName": "ManagedContentType"
+    },
+    {
       "directoryName": "samlssoconfigs",
       "inFolder": false,
       "metaFile": false,
@@ -804,6 +909,20 @@
       "xmlName": "LiveChatAgentConfig"
     },
     {
+      "directoryName": "liveChatSensitiveDataRule",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "liveChatSensitiveDataRule",
+      "xmlName": "LiveChatSensitiveDataRule"
+    },
+    {
+      "directoryName": "transactionSecurityPolicies",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "transactionSecurityPolicy",
+      "xmlName": "TransactionSecurityPolicy"
+    },
+    {
       "directoryName": "synonymDictionaries",
       "inFolder": false,
       "metaFile": false,
@@ -830,13 +949,6 @@
       "metaFile": false,
       "suffix": "LeadConvertSetting",
       "xmlName": "LeadConvertSettings"
-    },
-    {
-      "directoryName": "liveChatSensitiveDataRule",
-      "inFolder": false,
-      "metaFile": false,
-      "suffix": "liveChatSensitiveDataRule",
-      "xmlName": "LiveChatSensitiveDataRule"
     },
     {
       "directoryName": "cachePartitions",
@@ -874,11 +986,25 @@
       "xmlName": "RecordActionDeployment"
     },
     {
-      "directoryName": "EmbeddedServiceConfig",
+      "directoryName": "salesAgreementSettings",
       "inFolder": false,
       "metaFile": false,
-      "suffix": "EmbeddedServiceConfig",
-      "xmlName": "EmbeddedServiceConfig"
+      "suffix": "salesAgreementSetting",
+      "xmlName": "SalesAgreementSettings"
+    },
+    {
+      "directoryName": "AccountForecastSettings",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "accountForecastSetting",
+      "xmlName": "AccountForecastSettings"
+    },
+    {
+      "directoryName": "icons",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "icon",
+      "xmlName": "Icon"
     },
     {
       "directoryName": "EmbeddedServiceLiveAgent",
@@ -886,6 +1012,13 @@
       "metaFile": false,
       "suffix": "EmbeddedServiceLiveAgent",
       "xmlName": "EmbeddedServiceLiveAgent"
+    },
+    {
+      "directoryName": "EmbeddedServiceConfig",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "EmbeddedServiceConfig",
+      "xmlName": "EmbeddedServiceConfig"
     },
     {
       "directoryName": "EmbeddedServiceBranding",
@@ -900,6 +1033,27 @@
       "metaFile": false,
       "suffix": "EmbeddedServiceFlowConfig",
       "xmlName": "EmbeddedServiceFlowConfig"
+    },
+    {
+      "directoryName": "EmbeddedServiceMenuSettings",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "EmbeddedServiceMenuSettings",
+      "xmlName": "EmbeddedServiceMenuSettings"
+    },
+    {
+      "directoryName": "uiObjectRelationConfigs",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "uiObjectRelationConfig",
+      "xmlName": "UIObjectRelationConfig"
+    },
+    {
+      "directoryName": "careProviderSearchConfigs",
+      "inFolder": false,
+      "metaFile": false,
+      "suffix": "careProviderSearchConfig",
+      "xmlName": "CareProviderSearchConfig"
     },
     {
       "directoryName": "settings",
