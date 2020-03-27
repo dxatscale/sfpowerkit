@@ -1,5 +1,5 @@
 {
-  "version": "1.42.1-0",
+  "version": "1.43.1-0",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -475,7 +475,7 @@
     "sfpowerkit:project:orgdiff": {
       "id": "sfpowerkit:project:orgdiff",
       "description": "Compare source file again the salesforce and display differences. Can optionally add diff conflict markers on file to let the developer accept or rejest changes manually using a git merge tool.",
-      "usage": "<%= command.id %> -f <array> [-c] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "usage": "<%= command.id %> -f <array> [-c] [-o json|csv] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],
@@ -537,6 +537,15 @@
           "description": "If set to true, the command will not add diff conflict marker to each compared file.",
           "required": false,
           "allowNo": false
+        },
+        "outputformat": {
+          "name": "outputformat",
+          "type": "option",
+          "char": "o",
+          "description": " [default: json]The format for the diff output, Possible values are json/csv.",
+          "required": false,
+          "helpValue": "(json|csv)",
+          "options": ["json", "csv"]
         }
       },
       "args": []

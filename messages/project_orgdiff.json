@@ -1,5 +1,6 @@
 {
   "commandDescription": "Compare source file again the salesforce and display differences. Can optionally add diff conflict markers on file to let the developer accept or rejest changes manually using a git merge tool.",
   "filesOrFoldersFlagDescription": "List of fils or folder to compare. Should be only Apex classes, trigger, Aura Components, Lightning Web Components or any unsplitted metadata.",
-  "noConflictMarkersDescription": "If set to true, the command will not add diff conflict marker to each compared file."
+  "noConflictMarkersDescription": "If set to true, the command will not add diff conflict marker to each compared file.",
+  "outputFormatFlagDescription": " [default: json]The format for the diff output, Possible values are json/csv."
 }

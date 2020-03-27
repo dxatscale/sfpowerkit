@@ -54,6 +54,12 @@ export default class OrgDiff extends SfdxCommand {
         "ERROR",
         "FATAL"
       ]
+    }),
+    outputformat: flags.enum({
+      required: false,
+      char: "o",
+      description: messages.getMessage("outputFormatFlagDescription"),
+      options: ["json", "csv"]
     })
   };
 
@@ -91,7 +97,19 @@ export default class OrgDiff extends SfdxCommand {
 
     let output = await orgDiff.orgDiff();
     this.ux.stopSpinner("Completed");
-    fs.writeJson("orgdiff.json", output);
+    if (!this.flags.outputformat || this.flags.outputformat == "json") {
+      fs.writeJson("orgdiff.json", output);
+    } else if (this.flags.outputformat == "csv") {
+      await this.generateCSVOutput(output);
+    }
     return output;
+  }
+  public async generateCSVOutput(result: any[]) {
+    let newLine = "\r\n";
+    let output = "status,metadataType,componentName,path" + newLine;
+    result.forEach(element => {
+      output = `${output}${element.status},${element.metadataType},${element.componentName},${element.path}${newLine}`;
+    });
+    fs.writeFile("orgdiff.csv", output);
   }
 }
