@@ -234,13 +234,10 @@ Converts an apex test suite to its consituent apex classes as a single line sepa
 
 ```
 USAGE
-  $ sfdx sfpowerkit:source:apextestsuite:convert  -n <string> [  -p <string> ] [  -o <string> ] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+  $ sfdx sfpowerkit:source:apextestsuite:convert  -n <string> [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
   -n, --name=name                                 (required) the name of the apextestsuite (the file name minus the apex test suite)
-  -p, --package=package                           [default:picks up the default package] The package where the apex test suite exists
-  -o, --pathoverride=pathoverride                 [default:/main/default] Use this if your path to test suite is in a different folder location
-                                                   within the package directory
 
   --json                                          format output as json
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
