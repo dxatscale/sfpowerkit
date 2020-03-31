@@ -1,0 +1,5 @@
+{
+  "commandDescription": "This command is list all the installed (managed/unmanaged) packages in an org",
+  "loglevel": "[default: info] logging level for this command invocation",
+  "apiversion": "API version"
+}

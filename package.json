@@ -1,7 +1,7 @@
 {
   "name": "sfpowerkit",
   "description": "A Salesforce DX Plugin with multiple functionalities aimed at improving development and operational workflows",
-  "version": "1.42.1",
+  "version": "1.43.1",
   "author": {
     "name": "Azlam Abdulsalam",
     "email": "azlam.abdulsalam@accenture.com",
@@ -39,6 +39,7 @@
     "copy-dir": "^1.2.0",
     "decompress": "^4.2.0",
     "diff": "^4.0.1",
+    "fast-glob": "^3.2.2",
     "find-java-home": "^1.0.1",
     "fs-extra": "^8.1.0",
     "ignore": "^5.1.4",
@@ -98,6 +99,9 @@
     "topics": {
       "sfpowerkit:package": {
         "description": "Helper commands for unlocked package"
+      },
+      "sfpowerkit:package:version": {
+        "description": "Commands related to details of package"
       },
       "sfpowerkit:org": {
         "description": "Helper commands for org such as connectedapp, creation of sandbox etc"

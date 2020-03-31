@@ -234,13 +234,10 @@ Converts an apex test suite to its consituent apex classes as a single line sepa
 
 ```
 USAGE
-  $ sfdx sfpowerkit:source:apextestsuite:convert  -n <string> [  -p <string> ] [  -o <string> ] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+  $ sfdx sfpowerkit:source:apextestsuite:convert  -n <string> [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
   -n, --name=name                                 (required) the name of the apextestsuite (the file name minus the apex test suite)
-  -p, --package=package                           [default:picks up the default package] The package where the apex test suite exists
-  -o, --pathoverride=pathoverride                 [default:/main/default] Use this if your path to test suite is in a different folder location
-                                                   within the package directory
 
   --json                                          format output as json
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
@@ -484,6 +481,29 @@ EXAMPLE
   $ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -i 04tXXXXXXXXXXXXXXX,04tXXXXXXXXXXXXXXX,04tXXXXXXXXXXXXXXX
   $ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -p core -n 1.2.0.45
   $ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -p 0HoXXXXXXXXXXXXXXX -n 1.2.0.45
+```
+
+_See code: [src\commands\sfpowerkit\package\version\codecoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/version/codecoverage.ts)_
+
+## `sfpowerkit:package:version:info`
+
+This command is used to fetch the version number, namespace prefix, and version id of all the installed managed/unmanaged packages in an org.
+
+```
+USAGE
+  $ sfdx sfpowerkit:package:version:info  -u <string> [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
+
+  --apiversion=apiversion                                                           API version
+
+  --json                                                                            format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] [default: info] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:package:version:info -u myOrg@example.com
 ```
 
 _See code: [src\commands\sfpowerkit\package\version\codecoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/version/codecoverage.ts)_

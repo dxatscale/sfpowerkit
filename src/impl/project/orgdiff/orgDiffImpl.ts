@@ -88,13 +88,17 @@ export default class OrgDiffImpl {
     } else {
       extension = path.parse(filePath).ext;
     }
-    if (unsplitedMetadataExtensions.includes(extension)) {
-      //handle unsplited metadata
-      await this.handleUnsplitedMetadatas(filePath, packageobj);
-    } else {
-      let name = MetadataInfo.getMetadataName(filePath, false);
-      let member = MetadataFiles.getMemberNameFromFilepath(filePath, name);
-      packageobj = DiffUtil.addMemberToPackage(packageobj, name, member);
+    try {
+      if (unsplitedMetadataExtensions.includes(extension)) {
+        //handle unsplited metadata
+        await this.handleUnsplitedMetadatas(filePath, packageobj);
+      } else {
+        let name = MetadataInfo.getMetadataName(filePath, false);
+        let member = MetadataFiles.getMemberNameFromFilepath(filePath, name);
+        packageobj = DiffUtil.addMemberToPackage(packageobj, name, member);
+      }
+    } catch (err) {
+      throw new Error(err + ",Error file path : " + filePath);
     }
     return packageobj;
   }
