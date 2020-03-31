@@ -225,7 +225,27 @@ EXAMPLE
   $ sfdx sfpowerkit:source:customlabel:reconcile -d path/to/customlabelfile.xml -p core
   Package ::: core
   Reconciled The Custom Labels, only to have core labels (labels with full name beginning with core_)
-``
+```
+
+## `sfpowerkit:source:customlabel:reconcile`
+
+create/update a package.xml with from source customlables file. sfdx force:source:convert builds a package.xml with customlabels wildcard, this command helps to update the package.xml with list of label names.
+
+```
+USAGE
+  $ sfdx sfpowerkit:source:customlabel:buildmainfest -p <array> -x <string> [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -p, --path=path                                                                   (required) Path to the CustomLabels.labels-meta.xml file
+  -x, --manifest=manifest                                                           (required) path to existing package.xml file or create new package.xml
+  --apiversion=apiversion                                                           The api version to be used create package.xml
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] [default: info] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:source:customlabel:buildmainfest -p project1/path/to/customlabelfile.xml -x mdapiout/package.xml
+  $ sfdx sfpowerkit:source:customlabel:buildmainfest -p project1/path/to/customlabelfile.xml,project2/path/to/customlabelfile.xml -x mdapiout/package.xml
 ```
 
 ## `sfpowerkit:source:apextestsuite:convert`
@@ -306,6 +326,48 @@ OPTIONS
 EXAMPLE
   $ sfdx sfpowerkit:project:orgdiff --folder directory --noconflictmarkers --targetusername sandbox
   $ sfdx sfpowerkit:project:orgdiff  --filename fileName --targetusername sandbox
+```
+
+## `sfpowerkit:project:mainfest:diff`
+
+run diff between two package.xml and get the difference
+
+```
+USAGE
+  $ sfdx sfpowerkit:project:mainfest:diff -s <string> -t <string> -d <string> [-f json|csv|xml] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -d, --output=output                                                               (required) path to the diff output package.xml
+  -f, --format=(json|csv|xml)                                                       [default: json] The format for the output, Possible values are json/csv/xml
+  -s, --sourcepath=sourcepath                                                       (required) Paths to the source package.xml file
+  -t, --targetpath=targetpath                                                       (required) Paths to the target package.xml file
+  --apiversion=apiversion                                                           The api version to be used create package.xml
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] [default: info] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:project:mainfest:diff -f source/package.xml -t target/package.xml -d output
+```
+
+## `sfpowerkit:project:mainfest:merge`
+
+Merge multiple package.xml into single collective package.xml
+
+```
+USAGE
+  $ sfdx sfpowerkit:project:mainfest:merge -p <array> -d <string> [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -d, --manifest=manifest                                                           (required) output path to create collective package.xml
+  -p, --path=path                                                                   (required) Paths to the package.xml file
+  --apiversion=apiversion                                                           The api version to be used create package.xml
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] [default: info] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:project:mainfest:merge -p project1/path/to/package.xml -d result/package.xml
+  $ sfdx sfpowerkit:project:mainfest:merge -p project1/path/to/package.xml,project2/path/to/package.xml -d result/package.xml
 ```
 
 ## Unlocked Package Related Functionalities
