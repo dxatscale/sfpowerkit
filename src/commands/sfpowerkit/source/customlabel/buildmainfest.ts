@@ -16,13 +16,13 @@ const messages = core.Messages.loadMessages(
   "source_customlabel_buildmainfest"
 );
 
-export default class Reconcile extends SfdxCommand {
+export default class Buildmainfest extends SfdxCommand {
   public output: string[];
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:source:customlabel:buildmainfest -p project1/path/to/customlabelfile.xml -x mdapiout/package.xml
-    sfdx sfpowerkit:source:customlabel:buildmainfest -p project1/path/to/customlabelfile.xml,project2/path/to/customlabelfile.xml -x mdapiout/package.xml`
+    `$ sfdx sfpowerkit:source:customlabel:buildmainfest -p project1/path/to/customlabelfile.xml -x mdapiout/package.xml\n` +
+      `$ sfdx sfpowerkit:source:customlabel:buildmainfest -p project1/path/to/customlabelfile.xml,project2/path/to/customlabelfile.xml -x mdapiout/package.xml`
   ];
 
   protected static flagsConfig = {
@@ -85,7 +85,6 @@ export default class Reconcile extends SfdxCommand {
     await this.setlabels(this.flags.manifest);
 
     if (!this.flags.json) {
-      //SFPowerkit.log(this.output,LoggerLevel.INFO);
       let result = [];
       for (let i = 0; i < this.output.length; i++) {
         result.push({ sno: i + 1, label: this.output[i] });
