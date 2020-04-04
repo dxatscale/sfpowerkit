@@ -1,11 +1,9 @@
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
-import xml2js = require("xml2js");
-import util = require("util");
 import fs = require("fs-extra");
 import path from "path";
 import { SFPowerkit } from "../../../../sfpowerkit";
-
+import xmlUtil from "../../../../utils/xmlUtil";
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
 
@@ -98,19 +96,9 @@ export default class Buildmainfest extends SfdxCommand {
       this.output.push(label);
     }
   }
-  private async xmlToJSON(directory: string) {
-    const parser = new xml2js.Parser({ explicitArray: false });
-    const parseString = util.promisify(parser.parseString);
-    let obj = await parseString(fs.readFileSync(path.resolve(directory)));
-    return obj;
-  }
-  private jSONToXML(obj: AnyJson) {
-    const builder = new xml2js.Builder();
-    let xml = builder.buildObject(obj);
-    return xml;
-  }
+
   public async getlabels(labelpath: string) {
-    let retrieved_customlabels = await this.xmlToJSON(labelpath);
+    let retrieved_customlabels = await xmlUtil.xmlToJSON(labelpath);
     let labels = retrieved_customlabels.CustomLabels.labels;
     if (labels.constructor === Array) {
       labels.forEach(label => {
@@ -152,7 +140,7 @@ export default class Buildmainfest extends SfdxCommand {
     fs.outputFileSync(manifest, package_xml);
   }
   public async checklabelspackagexml(manifest: string) {
-    let package_xml = await this.xmlToJSON(manifest);
+    let package_xml = await xmlUtil.xmlToJSON(manifest);
     let isLabelexist = false;
     if (package_xml.Package.types.constructor === Array) {
       for (const item of package_xml.Package.types) {
@@ -172,7 +160,7 @@ export default class Buildmainfest extends SfdxCommand {
       let label = { name: "CustomLabel", members: "*" };
       package_xml.Package.types.push(label);
     }
-    fs.outputFileSync(manifest, this.jSONToXML(package_xml));
+    fs.outputFileSync(manifest, xmlUtil.jSONToXML(package_xml));
   }
   setlabelutil(members: any) {
     if (members.constructor === Array) {
@@ -184,7 +172,7 @@ export default class Buildmainfest extends SfdxCommand {
     }
   }
   public async setlabels(manifest: string) {
-    let package_xml = await this.xmlToJSON(manifest);
+    let package_xml = await xmlUtil.xmlToJSON(manifest);
     if (package_xml.Package.types.constructor === Array) {
       for (const item of package_xml.Package.types) {
         if (item.name === "CustomLabel") {
@@ -195,6 +183,6 @@ export default class Buildmainfest extends SfdxCommand {
     } else if (package_xml.Package.types.name === "CustomLabel") {
       package_xml.Package.types.members = this.output;
     }
-    fs.outputFileSync(manifest, this.jSONToXML(package_xml));
+    fs.outputFileSync(manifest, xmlUtil.jSONToXML(package_xml));
   }
 }

@@ -1,10 +1,9 @@
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
-import xml2js = require("xml2js");
-import util = require("util");
 import fs = require("fs-extra");
 import path from "path";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
+import xmlUtil from "../../../../utils/xmlUtil";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -100,19 +99,8 @@ export default class Merge extends SfdxCommand {
     return metadataTypes;
   }
 
-  private async xmlToJSON(directory: string) {
-    const parser = new xml2js.Parser({ explicitArray: false });
-    const parseString = util.promisify(parser.parseString);
-    let obj = await parseString(fs.readFileSync(path.resolve(directory)));
-    return obj;
-  }
-  private jSONToXML(obj: AnyJson) {
-    const builder = new xml2js.Builder();
-    let xml = builder.buildObject(obj);
-    return xml;
-  }
   public async processMainfest(dir: string) {
-    let package_xml = await this.xmlToJSON(dir);
+    let package_xml = await xmlUtil.xmlToJSON(dir);
     let metadataTypes = package_xml.Package.types;
     if (metadataTypes.constructor === Array) {
       for (const item of metadataTypes) {
@@ -149,7 +137,7 @@ export default class Merge extends SfdxCommand {
     };
     fs.outputFileSync(
       `${this.flags.manifest}/package.xml`,
-      this.jSONToXML(package_xml)
+      xmlUtil.jSONToXML(package_xml)
     );
   }
 }

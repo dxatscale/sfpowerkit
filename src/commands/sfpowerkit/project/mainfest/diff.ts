@@ -1,10 +1,9 @@
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
-import xml2js = require("xml2js");
-import util = require("util");
 import fs = require("fs-extra");
 import path from "path";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
+import xmlUtil from "../../../../utils/xmlUtil";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -124,24 +123,13 @@ export default class Diff extends SfdxCommand {
     return output;
   }
 
-  private async xmlToJSON(directory: string) {
-    const parser = new xml2js.Parser({ explicitArray: false });
-    const parseString = util.promisify(parser.parseString);
-    let obj = await parseString(fs.readFileSync(path.resolve(directory)));
-    return obj;
-  }
-  private jSONToXML(obj: AnyJson) {
-    const builder = new xml2js.Builder();
-    let xml = builder.buildObject(obj);
-    return xml;
-  }
   public async processMainfest(pathToManifest: string) {
     let output = new Map<string, string[]>();
     if (
       fs.existsSync(path.resolve(pathToManifest)) &&
       path.extname(pathToManifest) == ".xml"
     ) {
-      let package_xml = await this.xmlToJSON(pathToManifest);
+      let package_xml = await xmlUtil.xmlToJSON(pathToManifest);
       let metadataTypes = package_xml.Package.types;
       if (metadataTypes.constructor === Array) {
         metadataTypes.forEach(type => {
@@ -187,7 +175,7 @@ export default class Diff extends SfdxCommand {
     };
     fs.outputFileSync(
       `${this.flags.output}/package.xml`,
-      this.jSONToXML(package_xml)
+      xmlUtil.jSONToXML(package_xml)
     );
   }
   generateCSVOutput(output: any[]) {
