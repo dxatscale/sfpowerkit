@@ -37,21 +37,19 @@ $ sfdx plugins:link
 
 - [Source Related Functionalities](#source-related-functionalities)
   - [`sfpowerkit:source:pmd`](#sfpowerkitsourcepmd)
-  - [`sfpowerkit:source:profile:retrieve [BETA]`](#sfpowerkitsourceprofileretrieve-beta)
+  - [`sfpowerkit:source:profile:retrieve`](#sfpowerkitsourceprofileretrieve)
   - [`sfpowerkit:source:profile:reconcile`](#sfpowerkitsourceprofilereconcile)
-  - [`sfpowerkit:source:profile:merge [BETA]`](#sfpowerkitsourceprofilemerge-beta)
+  - [`sfpowerkit:source:profile:merge`](#sfpowerkitsourceprofilemerge)
   - [`sfpowerkit:source:customlabel:create`](#sfpowerkitsourcecustomlabelcreate)
   - [`sfpowerkit:source:customlabel:reconcile`](#sfpowerkitsourcecustomlabelreconcile)
   - [`sfpowerkit:source:customlabel:buildmainfest`](#sfpowerkitsourcecustomlabelbuildmainfest)
   - [`sfpowerkit:source:apextestsuite:convert`](#sfpowerkitsourceapextestsuiteconvert)
-  - [`sfpowerkit:project:diff [BETA]`](#sfpowerkitprojectdiff-beta)
-  - [`sfpowerkit:project:orgdiff [BETA]`](#sfpowerkitprojectorgdiff-beta)
+  - [`sfpowerkit:project:diff`](#sfpowerkitprojectdiff)
+  - [`sfpowerkit:project:orgdiff`](#sfpowerkitprojectorgdiff)
   - [`sfpowerkit:project:mainfest:diff`](#sfpowerkitprojectmainfestdiff)
   - [`sfpowerkit:project:mainfest:merge`](#sfpowerkitprojectmainfestmerge)
 - [Unlocked Package Related Functionalities](#unlocked-package-related-functionalities)
   - [`sfpowerkit:package:dependencies:install`](#sfpowerkitpackagedependenciesinstall)
-  - [`sfpowerkit:source:picklist:generatepatch [DEPRECATED]`](#sfpowerkitsourcepicklistgeneratepatch-deprecated)
-  - [`sfpowerkit:source:permissionset:generatepatch [DEPRECATED]`](#sfpowerkitsourcepermissionsetgeneratepatch-deprecated)
   - [`sfpowerkit:package:applypatch`](#sfpowerkitpackageapplypatch)
   - [`sfpowerkit:package:version:codecoverage`](#sfpowerkitpackageversioncodecoverage)
   - [`sfpowerkit:package:version:info`](#sfpowerkitpackageversioninfo)
@@ -67,7 +65,7 @@ $ sfdx plugins:link
   - [`sfpowerkit:org:trigger:deactivate`](#sfpowerkitorgtriggerdeactivate)
   - [`sfpowerkit:org:trigger:activate`](#sfpowerkitorgtriggeractivate)
   - [`sfpowerkit:org:healthcheck`](#sfpowerkitorghealthcheck)
-  - [`sfpowerkit:org:manifest:build [BETA]`](#sfpowerkitorgmanifestbuild-beta)
+  - [`sfpowerkit:org:manifest:build`](#sfpowerkitorgmanifestbuild)
   - [`sfpowerkit:org:orgcoverage`](#sfpowerkitorgorgcoverage)
   - [`sfpowerkit:org:sandbox:create`](#sfpowerkitorgsandboxcreate)
   - [`sfpowerkit:org:sandbox:info`](#sfpowerkitorgsandboxinfo)
@@ -107,7 +105,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\source\pmd.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/pmd.ts)_
 
-## `sfpowerkit:source:profile:retrieve [BETA]`
+## `sfpowerkit:source:profile:retrieve`
 
 Retrieve profiles from the salesforce org with all its associated permissions. Common use case for this command is to migrate profile changes from a integration environment to other higher environments [overcomes SFDX CLI Profile retrieve issue where it doesnt fetch the full profile unless the entire metadata is present in source], or retrieving profiles from production to lower environments for testing.
 
@@ -165,7 +163,7 @@ EXAMPLES
 
 _See code: [src\commands\sfpowerkit\profile\reconcile.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/reconcile.ts)_
 
-## `sfpowerkit:source:profile:merge [BETA]`
+## `sfpowerkit:source:profile:merge`
 
 This command is used in the lower environments such as ScratchOrgs , Development / System Testing Sandboxes, inorder to apply the changes made in the environment to retrieved profile, so that it can be deployed to the higher environments
 
@@ -313,7 +311,7 @@ EXAMPLE
     "ABC2,ABC1Test"
 ```
 
-## `sfpowerkit:project:diff [BETA]`
+## `sfpowerkit:project:diff`
 
 Generate a delta 'changeset' between two diff commits so that the incremental changes can be deployed to the target org.To be used for an org based deployment when the size of the metadata is large that the project cannot not be deployed in a single attempt.
 
@@ -350,7 +348,7 @@ EXAMPLE
   $  sfdx sfpowerkit:project:diff --revisionfrom revisionfrom --revisionto revisionto --output OutputFolder
 ```
 
-## `sfpowerkit:project:orgdiff [BETA]`
+## `sfpowerkit:project:orgdiff`
 
 Compare source files of a project against the salesforce org and display differences. The command also add diff conflict markers in changed files to let the developer accept or reject changes manually using a git merge tool. The idea behind this command is used to track changes done on an unlocked package or a modular repo against the changes done in a higher environment. This command is not yet ready to work on a single repo against the whole metadata in the org
 
@@ -461,77 +459,6 @@ EXAMPLE
 ```
 
 _See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/dependencies/install.ts)_
-
-## `sfpowerkit:source:picklist:generatepatch [DEPRECATED]`
-
-This command generates a patch in the format of a metadata packed together as a static resource with the intent of solving the following issues.
-
-1. Changes to picklist values are not updated in the target org through a unlocked package upgrade.
-2. Standard Value are non packageable, hence any picklist that has a modified standardvalueset as the controlling field will fail to package, The optional fixstandardvalueset flag will strip of the controlling field and puts the original code into the patch
-3. Fix for business process and recordtype, that depend on a modified standard valueset and fail to package.
-
-These command is to be run just before the package:version: create command and any changes made by the command should not be committed to the repo. Once a patch is generated and the package is installed in the target org, run the apply patch command tofix the above issues.
-
-This command is now deprecated and will be removed shortly, please use standard methods.
-
-```
-USAGE
-  $ sfdx sfpowerkit:source:picklist:generatepatch [-p <string>] [-d <string>] [-f <boolean>]  [-r <boolean>]
-
-OPTIONS
-  -d, --objectsdir=objectsdir                                                       Path for Objects folder located in project
-  -p, --package=package                                                             Name of the package to generate the picklist
-  patch
-  -f, --fixstandardvalueset                                                         Consider patching for standard value set controlled picklists, Warning: This modifies the source code in your package by removing references to standardvalueset from the particular picklist.
-  -m. --mmovestandardvalueset                                                       Consider patching for standard valueset inside source repo, Warning: This modifies the source code in your package
-  -r, --fixrecordtypes                                                              Consider patching for standard value set in RecordTypes, Warning: This modifies the source code in your package
-   --apiversion=apiversion                                                          The api version to be used for the static resource to be generated
-
-EXAMPLE
-    sfdx sfpowerkit:source:picklist:generatepatch -p sfpowerkit_test -d force-app/main/default/objects/ -f
-    Scanning for fields of type picklist
-    Found 2 fields of type picklist
-    Processing and adding the following fields to patch
-    Copied Original to Patch:         force-app\main\default\objects\Case\fields\test_standard2__c.field-meta.xml
-    Modified Original in Packaging:         force-app\main\default\objects\Case\fields\test_standard2__c.field-meta.xml
-    Copied Original to Patch:         force-app\main\default\objects\Case\fields\test_standard__c.field-meta.xml
-    Added  2 fields of field type picklist into patch after'removing fields picklist fields in cmdt objects
-    Added  1 fields of field type picklist that have standard value sets as controlling types
-    Source was successfully converted to Metadata API format and written to the location: C:\Projects\sfpowerkit_test\temp_sfpowerkit\mdapi
-    Generating static resource file : force-app/main/default/staticresources/sfpowerkit_test_picklist.resource-meta.xml
-    Patch sfpowerkit_test_picklist generated successfully.
-```
-
-_See code: [src\commands\sfpowerkit\source\picklist\generatepatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/picklist/generatepatch.ts)_
-
-## `sfpowerkit:source:permissionset:generatepatch [DEPRECATED]`
-
-Search permissionsets inside project and create a static resource file with permissionsets, used to solve the recordtype assignment upgrade issue in dx unlock package.
-
-This command is now deprecated and will be removed shortly, please use standard methods. refer https://success.salesforce.com/issues_view?id=a1p3A0000003UjTQAU for more information.
-
-```
-USAGE
-  $ sfdx sfpowerkit:source:permissionset:generatepatch [-p <string>] [-d <string>] [--json] [--loglevel
-  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
-
-OPTIONS
-  -d, --permsetdir=permsetdir                                                       Path for permissionset folder located in project
-  -p, --package=package                                                             Name of the package to generate the permissionset patch
-  --apiversion=apiversion                                                           The api version to be used for the static resource to be generated
-  --json                                                                            format output as json
-  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
-
-EXAMPLE
-  $ sfdx sfpowerkit:source:permissionset:generatepatch -p Core -d src/core/main/default/permissionsets
-  Scanning for permissionsets
-  Found 30 permissionsets
-  Source was successfully converted to Metadata API format and written to the location: .../temp_sfpowerkit/mdapi
-  Generating static resource file : src/core/main/default/staticresources/Core_permissionsets.resource-meta.xml
-  Patch Core_permissionsets generated successfully.
-```
-
-_See code: [src\commands\sfpowerkit\source\permissionset\generatepatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/permissionset/generatepatch.ts)_
 
 ## `sfpowerkit:package:applypatch`
 
@@ -947,7 +874,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\healthcheck.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/healthcheck.ts)_
 
-## `sfpowerkit:org:manifest:build [BETA]`
+## `sfpowerkit:org:manifest:build`
 
 Generate a complete manifest of all the metadata from the specified org. Once the manifest is generated use source:retrieve or mdapi:retrieve to retrieve the metadata.
 
