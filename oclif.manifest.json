@@ -1,5 +1,5 @@
 {
-  "version": "1.43.1-2",
+  "version": "1.44.1",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -1930,7 +1930,7 @@
     },
     "sfpowerkit:project:mainfest:diff": {
       "id": "sfpowerkit:project:mainfest:diff",
-      "description": "run  diff between two package.xml and get the difference",
+      "description": "run diff between two package.xml and get the difference",
       "usage": "<%= command.id %> -s <string> -t <string> -d <string> [-f json|csv|xml] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
@@ -2013,7 +2013,7 @@
       "pluginType": "core",
       "aliases": [],
       "examples": [
-        "$ sfdx sfpowerkit:project:mainfest:merge -p project1/path/to/package.xml -d result/package.xml\n    sfdx sfpowerkit:project:mainfest:merge -p project1/path/to/package.xml,project2/path/to/package.xml -d result/package.xml"
+        "$ sfdx sfpowerkit:project:mainfest:merge -p project1/path/to/package.xml -d result/package.xml\n$ sfdx sfpowerkit:project:mainfest:merge -p project1/path/to/package.xml,project2/path/to/package.xml -d result/package.xml"
       ],
       "flags": {
         "json": {
@@ -2123,7 +2123,7 @@
       "pluginType": "core",
       "aliases": [],
       "examples": [
-        "$ sfdx sfpowerkit:source:customlabel:buildmainfest -p project1/path/to/customlabelfile.xml -x mdapiout/package.xml\n    sfdx sfpowerkit:source:customlabel:buildmainfest -p project1/path/to/customlabelfile.xml,project2/path/to/customlabelfile.xml -x mdapiout/package.xml"
+        "$ sfdx sfpowerkit:source:customlabel:buildmainfest -p project1/path/to/customlabelfile.xml -x mdapiout/package.xml\n$ sfdx sfpowerkit:source:customlabel:buildmainfest -p project1/path/to/customlabelfile.xml,project2/path/to/customlabelfile.xml -x mdapiout/package.xml"
       ],
       "flags": {
         "json": {
