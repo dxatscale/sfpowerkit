@@ -1,5 +1,7 @@
 import { Connection, DeployResult } from "jsforce";
 import { delay } from "./delay";
+import { SFPowerkit } from "../sfpowerkit";
+import { LoggerLevel, SfdxError } from "@salesforce/core";
 
 export async function checkRetrievalStatus(
   conn: Connection,
@@ -14,13 +16,14 @@ export async function checkRetrievalStatus(
       result
     ) {
       if (error) {
-        return console.error(error);
+        return new SfdxError(error.message);
       }
       metadata_result = result;
     });
 
     if (metadata_result.done === "false") {
-      if (isToBeLoggedToConsole) console.log(`Polling for Retrieval Status`);
+      if (isToBeLoggedToConsole)
+        SFPowerkit.log(`Polling for Retrieval Status`, LoggerLevel.INFO);
       await delay(5000);
     } else {
       //this.ux.logJson(metadata_result);
