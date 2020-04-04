@@ -108,7 +108,8 @@ export default class Applypatch extends SfdxCommand {
     //Retrieve Patch
     let metadata_retrieve_result = await checkRetrievalStatus(
       conn,
-      retrievedId
+      retrievedId,
+      !this.flags.json
     );
     if (!metadata_retrieve_result.zipFile)
       throw new SfdxError("Unable to find the requested Static Resource");
