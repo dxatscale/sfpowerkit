@@ -124,13 +124,13 @@ export default class Diff extends SfdxCommand {
     return output;
   }
 
-  public async xmlToJSON(directory: string) {
+  private async xmlToJSON(directory: string) {
     const parser = new xml2js.Parser({ explicitArray: false });
     const parseString = util.promisify(parser.parseString);
     let obj = await parseString(fs.readFileSync(path.resolve(directory)));
     return obj;
   }
-  public jSONToXML(obj: AnyJson) {
+  private jSONToXML(obj: AnyJson) {
     const builder = new xml2js.Builder();
     let xml = builder.buildObject(obj);
     return xml;
