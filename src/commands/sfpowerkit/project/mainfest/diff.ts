@@ -72,7 +72,7 @@ export default class Diff extends SfdxCommand {
   public async run(): Promise<AnyJson> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
-    this.flags.apiversion = this.flags.apiversion || "47.0";
+    this.flags.apiversion = this.flags.apiversion || "48.0";
 
     if (!this.flags.format || this.flags.json) {
       this.flags.format = "json";
@@ -124,21 +124,24 @@ export default class Diff extends SfdxCommand {
     return output;
   }
 
-  public async xmltojson(directory: string) {
+  public async xmlToJSON(directory: string) {
     const parser = new xml2js.Parser({ explicitArray: false });
     const parseString = util.promisify(parser.parseString);
     let obj = await parseString(fs.readFileSync(path.resolve(directory)));
     return obj;
   }
-  public jsontoxml(obj: AnyJson) {
+  public jSONToXML(obj: AnyJson) {
     const builder = new xml2js.Builder();
     let xml = builder.buildObject(obj);
     return xml;
   }
-  public async processMainfest(dir: string) {
+  public async processMainfest(pathToManifest: string) {
     let output = new Map<string, string[]>();
-    if (fs.existsSync(path.resolve(dir)) && path.extname(dir) == ".xml") {
-      let package_xml = await this.xmltojson(dir);
+    if (
+      fs.existsSync(path.resolve(pathToManifest)) &&
+      path.extname(pathToManifest) == ".xml"
+    ) {
+      let package_xml = await this.xmlToJSON(pathToManifest);
       let metadataTypes = package_xml.Package.types;
       if (metadataTypes.constructor === Array) {
         metadataTypes.forEach(type => {
@@ -160,7 +163,7 @@ export default class Diff extends SfdxCommand {
         }
       }
     } else {
-      throw new Error(`Error : ${dir} is not valid package.xml`);
+      throw new Error(`Error : ${pathToManifest} is not valid package.xml`);
     }
     return output;
   }
@@ -184,7 +187,7 @@ export default class Diff extends SfdxCommand {
     };
     fs.outputFileSync(
       `${this.flags.output}/package.xml`,
-      this.jsontoxml(package_xml)
+      this.jSONToXML(package_xml)
     );
   }
   generateCSVOutput(output: any[]) {

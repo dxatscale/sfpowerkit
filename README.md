@@ -227,9 +227,9 @@ EXAMPLE
   Reconciled The Custom Labels, only to have core labels (labels with full name beginning with core_)
 ```
 
-## `sfpowerkit:source:customlabel:reconcile`
+## `sfpowerkit:source:customlabel:buildmainfest`
 
-create/update a package.xml with from source customlables file. sfdx force:source:convert builds a package.xml with customlabels wildcard, this command helps to update the package.xml with list of label names.
+This Command is used to build package.xml with all customlabels as members rather than wildcard \*. sfdx force:source:convert creates a package.xml with customlabels wildcard, this command helps to update the package.xml with list of label names.
 
 ```
 USAGE

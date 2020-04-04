@@ -66,7 +66,7 @@ export default class Merge extends SfdxCommand {
 
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
-    this.flags.apiversion = this.flags.apiversion || "47.0";
+    this.flags.apiversion = this.flags.apiversion || "48.0";
 
     let paths = [];
     paths =
@@ -100,19 +100,19 @@ export default class Merge extends SfdxCommand {
     return metadataTypes;
   }
 
-  public async xmltojson(directory: string) {
+  public async xmlToJSON(directory: string) {
     const parser = new xml2js.Parser({ explicitArray: false });
     const parseString = util.promisify(parser.parseString);
     let obj = await parseString(fs.readFileSync(path.resolve(directory)));
     return obj;
   }
-  public jsontoxml(obj: AnyJson) {
+  public jSONToXML(obj: AnyJson) {
     const builder = new xml2js.Builder();
     let xml = builder.buildObject(obj);
     return xml;
   }
   public async processMainfest(dir: string) {
-    let package_xml = await this.xmltojson(dir);
+    let package_xml = await this.xmlToJSON(dir);
     let metadataTypes = package_xml.Package.types;
     if (metadataTypes.constructor === Array) {
       for (const item of metadataTypes) {
@@ -149,7 +149,7 @@ export default class Merge extends SfdxCommand {
     };
     fs.outputFileSync(
       `${this.flags.manifest}/package.xml`,
-      this.jsontoxml(package_xml)
+      this.jSONToXML(package_xml)
     );
   }
 }
