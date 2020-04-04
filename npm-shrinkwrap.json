@@ -1,6 +1,6 @@
 {
   "name": "sfpowerkit",
-  "version": "1.43.1",
+  "version": "1.44.1",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -428,14 +428,6 @@
         "tslib": "^1.10.0"
       },
       "dependencies": {
-        "@sinonjs/commons": {
-          "version": "1.4.0",
-          "resolved": "https://registry.npmjs.org/@sinonjs/commons/-/commons-1.4.0.tgz",
-          "integrity": "sha512-9jHK3YF/8HtJ9wCAbG+j8cD0i0+ATS9A7gXFqS36TblLPNy6rEEc+SB0imo91eCboGaBYGV/MT1/br/J+EE7Tw==",
-          "requires": {
-            "type-detect": "4.0.8"
-          }
-        },
         "@sinonjs/formatio": {
           "version": "2.0.0",
           "requires": {
@@ -474,7 +466,10 @@
               }
             },
             "lolex": {
-              "version": "5.1.2"
+              "version": "5.1.2",
+              "requires": {
+                "@sinonjs/commons": "^1.7.0"
+              }
             }
           }
         },
@@ -500,7 +495,6 @@
     },
     "@sinonjs/commons": {
       "version": "1.7.1",
-      "dev": true,
       "requires": {
         "type-detect": "4.0.8"
       }
