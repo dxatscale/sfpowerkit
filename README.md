@@ -31,6 +31,49 @@ To review a pull request (for contributors/reviewers), the best option is to clo
 $ sfdx plugins:link
 ```
 
+<!-- commands -->
+
+## Commands
+
+- [`sfpowerkit:source:pmd`](#sfpowerkitsourcepmd)
+- [`sfpowerkit:source:profile:retrieve [BETA]`](#sfpowerkitsourceprofileretrieve-beta)
+- [`sfpowerkit:source:profile:reconcile`](#sfpowerkitsourceprofilereconcile)
+- [`sfpowerkit:source:profile:merge [BETA]`](#sfpowerkitsourceprofilemerge-beta)
+- [`sfpowerkit:source:customlabel:create`](#sfpowerkitsourcecustomlabelcreate)
+- [`sfpowerkit:source:customlabel:reconcile`](#sfpowerkitsourcecustomlabelreconcile)
+- [`sfpowerkit:source:customlabel:buildmainfest`](#sfpowerkitsourcecustomlabelbuildmainfest)
+- [`sfpowerkit:source:apextestsuite:convert`](#sfpowerkitsourceapextestsuiteconvert)
+- [`sfpowerkit:project:diff [BETA]`](#sfpowerkitprojectdiff-beta)
+- [`sfpowerkit:project:orgdiff [BETA]`](#sfpowerkitprojectorgdiff-beta)
+- [`sfpowerkit:project:mainfest:diff`](#sfpowerkitprojectmainfestdiff)
+- [`sfpowerkit:project:mainfest:merge`](#sfpowerkitprojectmainfestmerge)
+- [`sfpowerkit:package:dependencies:install`](#sfpowerkitpackagedependenciesinstall)
+- [`sfpowerkit:source:picklist:generatepatch [DEPRECATED]`](#sfpowerkitsourcepicklistgeneratepatch-deprecated)
+- [`sfpowerkit:source:permissionset:generatepatch [DEPRECATED]`](#sfpowerkitsourcepermissionsetgeneratepatch-deprecated)
+- [`sfpowerkit:package:applypatch`](#sfpowerkitpackageapplypatch)
+- [`sfpowerkit:package:version:codecoverage`](#sfpowerkitpackageversioncodecoverage)
+- [`sfpowerkit:package:version:info`](#sfpowerkitpackageversioninfo)
+- [`sfpowerkit:package:valid`](#sfpowerkitpackagevalid)
+- [`sfpowerkit:org:destruct`](#sfpowerkitorgdestruct)
+- [`sfpowerkit:org:connectedapp:create`](#sfpowerkitorgconnectedappcreate)
+- [`sfpowerkit:org:connectedapp:retrieve`](#sfpowerkitorgconnectedappretrieve)
+- [`sfpowerkit:org:duplicaterule:deactivate`](#sfpowerkitorgduplicateruledeactivate)
+- [`sfpowerkit:org:duplicaterule:activate`](#sfpowerkitorgduplicateruleactivate)
+- [`sfpowerkit:org:matchingrule:deactivate`](#sfpowerkitorgmatchingruledeactivate)
+- [`sfpowerkit:org:matchingrule:activate`](#sfpowerkitorgmatchingruleactivate)
+- [`sfpowerkit:org:trigger:deactivate`](#sfpowerkitorgtriggerdeactivate)
+- [`sfpowerkit:org:trigger:activate`](#sfpowerkitorgtriggeractivate)
+- [`sfpowerkit:org:healthcheck`](#sfpowerkitorghealthcheck)
+- [`sfpowerkit:org:manifest:build [BETA]`](#sfpowerkitorgmanifestbuild-beta)
+- [`sfpowerkit:org:orgcoverage`](#sfpowerkitorgorgcoverage)
+- [`sfpowerkit:org:sandbox:create`](#sfpowerkitorgsandboxcreate)
+- [`sfpowerkit:org:sandbox:info`](#sfpowerkitorgsandboxinfo)
+- [`sfpowerkit:org:sandbox:refresh`](#sfpowerkitorgsandboxrefresh)
+- [`sfpowerkit:org:scratchorg:usage`](#sfpowerkitorgscratchorgusage)
+- [`sfpowerkit:org:scratchorg:delete`](#sfpowerkitorgscratchorgdelete)
+- [`sfpowerkit:auth:login`](#sfpowerkitauthlogin)
+  <!-- commands -->
+
 ## Source Related Functionalities
 
 These commands manipulate the metadata configuration/code locally or during the packaging process.
@@ -609,7 +652,7 @@ _See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/Accentu
 
 These commands are helpful in managing functionalities are related to a Salesforce Org
 
-## `sfpowerkit org:destruct`
+## `sfpowerkit:org:destruct`
 
 This is a helper command to ease the deployment of destructiveChanges.xml. The command will create the empty package.xml and package the passed destructive manifest and deploy it to the org
 
@@ -635,7 +678,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\destruct.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/destruct.ts)_
 
-## `sfpowerkit org:connectedapp:create`
+## `sfpowerkit:org:connectedapp:create`
 
 Creates a connected app in the target org for JWT based authentication, Please note it only creates Connected App with All users may self authorize option, You would need to manually edit the policies to enable admin users are pre-approved and add your profile to this connected app. API, Web and RefreshToken Scope are added to every app that is being created.
 
@@ -668,7 +711,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/connectedapp/create.ts)_
 
-## `sfpowerkit org:connectedapp:retrieve`
+## `sfpowerkit:org:connectedapp:retrieve`
 
 Useful if you want to retreive a connected app key especially in CI/CD system after a sandbox refresh. Use the auth command to login to the sandbox and then use this command. Use JSON format if you want to retrieve the entire metadata of the connected app, Without the json flag, it only displays the key
 
@@ -1120,7 +1163,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/scratchorg/usage.ts)_
 
-## `sfpowerkit auth:login`
+## `sfpowerkit:auth:login`
 
 Allows to authenticate against an org using username/password and Security Token. Security Token requirement
 can be removed by ensuring the particular user profile is allowed to connect to Salesforce from different IP
