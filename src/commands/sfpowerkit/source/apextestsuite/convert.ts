@@ -91,22 +91,23 @@ export default class Convert extends SfdxCommand {
         fs.readFileSync(path.resolve(entries[0]))
       );
 
-      let apex_test_suite_as_string = JSON.stringify(
-        apex_test_suite.ApexTestSuite.testClassName
-      );
+      let testclasses;
+      const doublequote = '"';
+      if (apex_test_suite.ApexTestSuite.testClassName.constructor === Array) {
+        testclasses =
+          doublequote +
+          apex_test_suite.ApexTestSuite.testClassName.join() +
+          doublequote;
+      } else {
+        testclasses =
+          doublequote +
+          apex_test_suite.ApexTestSuite.testClassName +
+          doublequote;
+      }
 
-      apex_test_suite_as_string = apex_test_suite_as_string.replace(
-        /("|')/g,
-        ""
-      );
+      this.ux.log(testclasses);
 
-      apex_test_suite_as_string = apex_test_suite_as_string.slice(1, -1);
-
-      apex_test_suite_as_string = '"' + apex_test_suite_as_string.concat('"');
-
-      this.ux.log(apex_test_suite_as_string);
-
-      return apex_test_suite_as_string;
+      return testclasses;
     } else {
       throw new SfdxError("Apex Test Suite not found");
     }
