@@ -12,7 +12,7 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages(
   "sfpowerkit",
-  "project_mainfest_merge"
+  "project_manifest_merge"
 );
 
 export default class Merge extends SfdxCommand {
@@ -21,8 +21,8 @@ export default class Merge extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:project:mainfest:merge -p project1/path/to/package.xml -d result/package.xml\n` +
-      `$ sfdx sfpowerkit:project:mainfest:merge -p project1/path/to/package.xml,project2/path/to/package.xml -d result/package.xml`
+    `$ sfdx sfpowerkit:project:manifest:merge -p project1/path/to/package.xml -d result/package.xml\n` +
+      `$ sfdx sfpowerkit:project:manifest:merge -p project1/path/to/package.xml,project2/path/to/package.xml -d result/package.xml`
   ];
 
   protected static flagsConfig = {

@@ -12,14 +12,14 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages(
   "sfpowerkit",
-  "project_mainfest_diff"
+  "project_manifest_diff"
 );
 
 export default class Diff extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:project:mainfest:diff -f source/package.xml -t target/package.xml -d output`
+    `$ sfdx sfpowerkit:project:manifest:diff -f source/package.xml -t target/package.xml -d output`
   ];
 
   protected static flagsConfig = {

@@ -11,16 +11,16 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages(
   "sfpowerkit",
-  "source_customlabel_buildmainfest"
+  "source_customlabel_buildmanifest"
 );
 
-export default class Buildmainfest extends SfdxCommand {
+export default class Buildmanifest extends SfdxCommand {
   public output: string[];
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:source:customlabel:buildmainfest -p project1/path/to/customlabelfile.xml -x mdapiout/package.xml\n` +
-      `$ sfdx sfpowerkit:source:customlabel:buildmainfest -p project1/path/to/customlabelfile.xml,project2/path/to/customlabelfile.xml -x mdapiout/package.xml`
+    `$ sfdx sfpowerkit:source:customlabel:buildmanifest -p project1/path/to/customlabelfile.xml -x mdapiout/package.xml\n` +
+      `$ sfdx sfpowerkit:source:customlabel:buildmanifest -p project1/path/to/customlabelfile.xml,project2/path/to/customlabelfile.xml -x mdapiout/package.xml`
   ];
 
   protected static flagsConfig = {
