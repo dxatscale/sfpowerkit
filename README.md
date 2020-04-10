@@ -374,7 +374,7 @@ EXAMPLE
 
 ## `sfpowerkit:project:manifest:diff`
 
-run diff between two package.xml and get the difference
+Generate a  diff between two manifest files. This command is used to useful to generate a report on what is the difference between two org's. Use sfpowerkit org: manifest:build or similar to generate manifests
 
 ```
 USAGE
