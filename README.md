@@ -50,7 +50,6 @@ $ sfdx plugins:link
   - [`sfpowerkit:project:manifest:merge`](#sfpowerkitprojectmanifestmerge)
 - [Unlocked Package Related Functionalities](#unlocked-package-related-functionalities)
   - [`sfpowerkit:package:dependencies:install`](#sfpowerkitpackagedependenciesinstall)
-  - [`sfpowerkit:package:applypatch`](#sfpowerkitpackageapplypatch)
   - [`sfpowerkit:package:version:codecoverage`](#sfpowerkitpackageversioncodecoverage)
   - [`sfpowerkit:package:version:info`](#sfpowerkitpackageversioninfo)
   - [`sfpowerkit:package:valid`](#sfpowerkitpackagevalid)
@@ -357,24 +356,33 @@ This command is of sufficient quality, however proceed with caution while adopti
 ```
 
 USAGE
-  $ sfdx sfpowerkit:project:orgdiff -f <array> [-c] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+  $ sfdx sfpowerkit:project:orgdiff -f <array> [-c] [-o json|csv] [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -c, --noconflictmarkers                         If set to true, the command will not add diff conflict marker to each compared file.
-  -f, --filesorfolders=filesorfolders             (required) List of fils or folder to compare. Should be only Apex classes, trigger, Aura Components, Lightning Web Components or                                                    any unsplitted metadata.
-  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
-  --apiversion=apiversion                         override the api version used for api requests made by this command
-  --json                                          format output as json
+  -c, --noconflictmarkers                                                           If set to true, the command will not add diff conflict marker to each compared file.
+
+  -f, --filesorfolders=filesorfolders                                               (required) List of fils or folder to compare. Should be only Apex classes, trigger, Aura
+                                                                                    Components, Lightning Web Components or any unsplitted metadata.
+
+  -o, --outputformat=(json|csv)                                                     [default: json]The format for the diff output, Possible values are json/csv.
+
+  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
+
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+
+  --json                                                                            format output as json
+
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
 
-EXAMPLE
+EXAMPLES
   $ sfdx sfpowerkit:project:orgdiff --folder directory --noconflictmarkers --targetusername sandbox
   $ sfdx sfpowerkit:project:orgdiff  --filename fileName --targetusername sandbox
 ```
 
 ## `sfpowerkit:project:manifest:diff`
 
-Generate a  diff between two manifest files. This command is used to useful to generate a report on what is the difference between two org's. Use sfpowerkit org: manifest:build or similar to generate manifests
+Generate a diff between two manifest files. This command is used to useful to generate a report on what is the difference between two org's. Use sfpowerkit org: manifest:build or similar to generate manifests
 
 ```
 USAGE
@@ -459,33 +467,6 @@ EXAMPLE
 ```
 
 _See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/dependencies/install.ts)_
-
-## `sfpowerkit:package:applypatch`
-
-Retrieves and applies the patch, This command is exclusively used to apply the patched created by the generatepatch command, see source: picklist:generatepatch and source:permissionset:generatepatch. The command will download the static reource (collection of patched metadata) from the target org, unzips and apply to the target org using mdapi
-
-```
-USAGE
-  $ sfdx sfpowerkit:package:applypatch -n <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel
-  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
-
-OPTIONS
-  -n, --name=name                                                                   (required) Name of the static resource to be patched
-  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
-  --apiversion=apiversion                                                           override the api version used for api requests made by this command
-  --json                                                                            format output as json
-  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
-
-EXAMPLE
-  $ sfdx sfpowerkit:package:applypatch -n customer_picklist -u sandbox
-  Preparing Patch
-  Deploying Patch with ID  0Af4Y000003Q7GySAK
-  Polling for Deployment Status
-  Polling for Deployment Status
-  Patch customer_picklist Deployed successfully.
-```
-
-_See code: [src\commands\sfpowerkit\package\applypatch.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/applypatch.ts)_
 
 ## `sfpowerkit:package:version:codecoverage`
 
