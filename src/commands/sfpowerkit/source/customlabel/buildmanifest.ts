@@ -123,7 +123,9 @@ export default class Buildmanifest extends SfdxCommand {
         this.createpackagexml(manifest);
       }
     } else {
-      manifest = `${manifest}/package.xml`;
+      manifest = manifest.endsWith(`package.xml`)
+        ? `${manifest}`
+        : `${manifest}/package.xml`;
       this.createpackagexml(manifest);
     }
     return manifest;
