@@ -1,7 +1,0 @@
-{
-  "commandDescription": "Search permissionsets inside project and create a static resource file with permissionsets, used to solve the recordtype assignment upgrade issue in dx unlock package",
-  "packageFlagDescription": "Name of the package to generate the permissionset patch",
-  "permsetDirFlagDescription": "Path for permissionset folder located in project",
-  "apiversion": "The api version to be used for the static resource to be generated",
-  "loglevel": "[default: info] logging level for this command invocation"
-}
