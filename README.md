@@ -50,7 +50,6 @@ $ sfdx plugins:link
   - [`sfpowerkit:project:manifest:merge`](#sfpowerkitprojectmanifestmerge)
 - [Unlocked Package Related Functionalities](#unlocked-package-related-functionalities)
   - [`sfpowerkit:package:dependencies:install`](#sfpowerkitpackagedependenciesinstall)
-  - [`sfpowerkit:package:applypatch`](#sfpowerkitpackageapplypatch)
   - [`sfpowerkit:package:version:codecoverage`](#sfpowerkitpackageversioncodecoverage)
   - [`sfpowerkit:package:version:info`](#sfpowerkitpackageversioninfo)
   - [`sfpowerkit:package:valid`](#sfpowerkitpackagevalid)
