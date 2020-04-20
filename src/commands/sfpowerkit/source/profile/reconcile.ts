@@ -8,7 +8,7 @@ import {
 
 import { Org } from "@salesforce/core";
 import * as _ from "lodash";
-import { SFPowerkit } from "../../../../sfpowerkit";
+import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 import { METADATA_INFO } from "../../../../impl/metadata/metadataInfo";
 import * as path from "path";
 import ProfileReconcile from "../../../../impl/source/profiles/profileReconcile";
@@ -133,23 +133,54 @@ export default class Reconcile extends SfdxCommand {
       this.flags.loglevel == "debug"
     );
 
-    var reconcileProfiles = await profileUtils.reconcile(
-      argFolder,
-      argProfileList || [],
-      this.flags.destfolder
-    );
-
-    // Return an object to be displayed with --json
     let result = [];
-    reconcileProfiles.forEach(file => {
-      result.push({
-        state: "Cleaned",
-        fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
-        type: "Profile",
-        path: path.relative(process.cwd(), file)
-      });
-    });
+    let retryCount = 0;
+    let success = false;
+    while (!success && retryCount < 2) {
+      try {
+        var reconcileProfiles = await profileUtils.reconcile(
+          argFolder,
+          argProfileList || [],
+          this.flags.destfolder
+        );
 
+        // Return an object to be displayed with --json
+
+        reconcileProfiles.forEach(file => {
+          result.push({
+            state: "Cleaned",
+            fullName: path.basename(
+              file,
+              METADATA_INFO.Profile.sourceExtension
+            ),
+            type: "Profile",
+            path: path.relative(process.cwd(), file)
+          });
+        });
+
+        success = true;
+      } catch (err) {
+        retryCount++;
+        if (retryCount < 2) {
+          SFPowerkit.log(
+            "An error occured during profile retrieve. Retry in 10 seconds",
+            LoggerLevel.INFO
+          );
+          //Wait 5 seconds
+          await this.sleep(10000);
+        } else {
+          SFPowerkit.log(
+            "An error occured during profile retrieve. You can rerun the command after a moment.",
+            LoggerLevel.ERROR
+          );
+        }
+      }
+    }
     return result;
+  }
+  private async sleep(ms) {
+    return new Promise(resolve => {
+      setTimeout(resolve, ms);
+    });
   }
 }
