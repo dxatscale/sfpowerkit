@@ -65,7 +65,7 @@ export default class Retrieve extends SfdxCommand {
     this.flags.apiversion =
       this.flags.apiversion || (await conn.retrieveMaxApiVersion());
 
-    retrieveRequest.apiVersion = this.flags.apiVersion;
+    retrieveRequest.apiVersion = this.flags.apiversion;
 
     conn.metadata.pollTimeout = 60;
 
