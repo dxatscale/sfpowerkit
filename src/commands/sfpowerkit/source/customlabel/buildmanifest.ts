@@ -4,6 +4,8 @@ import fs = require("fs-extra");
 import path from "path";
 import { SFPowerkit } from "../../../../sfpowerkit";
 import xmlUtil from "../../../../utils/xmlUtil";
+import getDefaults from "../../../../utils/getDefaults";
+
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
 
@@ -59,8 +61,11 @@ export default class Buildmanifest extends SfdxCommand {
   };
 
   public async run(): Promise<AnyJson> {
+    getDefaults.init();
+
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
-    this.flags.apiversion = this.flags.apiversion || "48.0";
+    this.flags.apiversion =
+      this.flags.apiversion || getDefaults.getApiVersion();
 
     let paths = [];
     paths =
