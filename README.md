@@ -66,6 +66,7 @@ $ sfdx plugins:link
   - [`sfpowerkit:org:healthcheck`](#sfpowerkitorghealthcheck)
   - [`sfpowerkit:org:manifest:build`](#sfpowerkitorgmanifestbuild)
   - [`sfpowerkit:org:orgcoverage`](#sfpowerkitorgorgcoverage)
+  - [`sfpowerkit:org:profile:diff`](#sfpowerkitorgprofilediff)
   - [`sfpowerkit:org:sandbox:create`](#sfpowerkitorgsandboxcreate)
   - [`sfpowerkit:org:sandbox:info`](#sfpowerkitorgsandboxinfo)
   - [`sfpowerkit:org:sandbox:refresh`](#sfpowerkitorgsandboxrefresh)
@@ -951,6 +952,36 @@ EXAMPLE
 ```
 
 _See code: [src\commands\sfpowerkit\org\orgcoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/orgcoverage.ts)_
+
+## `sfpowerkit:org:profile:diff`
+
+Compare profiles from project again target org or between two orgs (source and target).
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:profile:diff [-p <array>] [-s <string>] [-d <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -d, --output=output                                                               Output folder. PRovide the output folder if comparing profiles from source
+                                                                                    org.
+  -p, --profilelist=profilelist                                                     List of profiles to compare. If not provided and no sourceusername is
+                                                                                    provided, all profiles from the source folder will be processed.
+  -s, --sourceusername=sourceusername                                               Source org. If no profile is provided in the profilelist parameter, all the
+                                                                                    profile from this org will be fetched
+  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:org:profile:diff --profilelist profilenames --targetusername username (Compare liste profiles path again target org)
+  $ sfdx sfpowerkit:org:profile:diff  --targetusername username (compare all profile in the project again the target org)
+  $ sfdx sfpowerkit:org:profile:diff  --sourceusername sourcealias --targetusername username (compare all profile in the source org again the target org)
+
+```
+
+_See code: [src\commands\sfpowerkit\org\profile\diff.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/profile/diff.ts)_
 
 ## `sfpowerkit:org:sandbox:create`
 
