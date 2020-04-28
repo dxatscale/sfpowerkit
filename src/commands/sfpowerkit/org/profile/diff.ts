@@ -17,9 +17,9 @@ export default class Diff extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:org:profile:diff --profilelist profilenames --targetusername username (Compare liste profiles path again target org)`,
-    `$ sfdx sfpowerkit:org:profile:diff  --targetusername username (compare all profile in the project again the target org)`,
-    `$ sfdx sfpowerkit:org:profile:diff  --sourceusername sourcealias --targetusername username (compare all profile in the source org again the target org)`
+    `$ sfdx sfpowerkit:org:profile:diff --profilelist profilenames --targetusername username (Compare liste profiles path against target org)`,
+    `$ sfdx sfpowerkit:org:profile:diff --targetusername username (compare all profile in the project against the target org)`,
+    `$ sfdx sfpowerkit:org:profile:diff --sourceusername sourcealias --targetusername username (compare all profile in the source org against the target org)`
   ];
 
   protected static flagsConfig: FlagsConfig = {

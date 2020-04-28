@@ -47,7 +47,7 @@ export default class ProfileDiffImpl {
     ) {
       this.sourceLabel = this.sourceOrg.getConnection().getUsername();
       SFPowerkit.log(
-        "Not profile provided, looding profile from source org. ",
+        "No profile provided, loading profile from source org. ",
         LoggerLevel.INFO
       );
       let conn = this.sourceOrg.getConnection();
