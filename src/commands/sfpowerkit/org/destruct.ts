@@ -196,8 +196,28 @@ export default class Destruct extends SfdxCommand {
           LoggerLevel.INFO
         );
     } else {
+      let componentFailures =
+        metadata_deploy_result.details["componentFailures"];
+      let errorResult = [];
+      if (componentFailures.constructor === Array) {
+        componentFailures.forEach(failure => {
+          errorResult.push({
+            componentType: failure.componentType,
+            fullName: failure.fullName,
+            problem: failure.problem
+          });
+        });
+      } else {
+        errorResult.push({
+          componentType: componentFailures.componentType,
+          fullName: componentFailures.fullName,
+          problem: componentFailures.problem
+        });
+      }
+
       throw new SfdxError(
-        `Unable to deploy the Destructive Changes: ${metadata_deploy_result.details["componentFailures"]["problem"]}`
+        "Unable to deploy the Destructive Changes: " +
+          JSON.stringify(errorResult)
       );
     }
   }

@@ -59,7 +59,7 @@ export default class Pmd extends SfdxCommand {
     }),
     version: flags.string({
       required: false,
-      default: "6.21.0",
+      default: "6.22.0",
       description: messages.getMessage("versionFlagDescription")
     })
   };

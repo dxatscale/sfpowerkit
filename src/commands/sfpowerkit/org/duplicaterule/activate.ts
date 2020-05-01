@@ -104,7 +104,8 @@ export default class Activate extends SfdxCommand {
 
     let metadata_retrieve_result = await checkRetrievalStatus(
       conn,
-      retrievedId
+      retrievedId,
+      !this.flags.json
     );
     if (!metadata_retrieve_result.zipFile)
       throw new SfdxError("Unable to find the requested Duplicate Rule");

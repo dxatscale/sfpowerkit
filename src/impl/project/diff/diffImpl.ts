@@ -95,7 +95,13 @@ export default class DiffImpl {
     if (commitFrom === commitTo) {
       throw new Error(messages.getMessage("sameCommitErrorMessage"));
     }
-    data = await git.diff(["--raw", this.revisionFrom, this.revisionTo]);
+    //Make it relative to make the command works from a project created as a subfolder in a repository
+    data = await git.diff([
+      "--raw",
+      this.revisionFrom,
+      this.revisionTo,
+      "--relative"
+    ]);
     SFPowerkit.log(
       `Input Param: From: ${this.revisionFrom}  To: ${this.revisionTo} `,
       LoggerLevel.INFO
@@ -166,8 +172,8 @@ export default class DiffImpl {
         } catch (ex) {
           this.resultOutput.push({
             action: "ERROR",
-            componentName: '',
-            metadataType: '',
+            componentName: "",
+            metadataType: "",
             message: ex.message,
             path: filePath
           });
@@ -231,7 +237,7 @@ export default class DiffImpl {
   }
 
   private static checkForIngore(pathToIgnore: any[], filePath: string) {
-    pathToIgnore = pathToIgnore || []
+    pathToIgnore = pathToIgnore || [];
     if (pathToIgnore.length === 0) {
       return true;
     }
@@ -285,7 +291,7 @@ export default class DiffImpl {
               action: "Deploy",
               metadataType: METADATA_INFO[key].xmlName,
               componentName: name,
-              message: '',
+              message: "",
               path: filePath
             });
           }
@@ -490,7 +496,7 @@ export default class DiffImpl {
                 name
               ),
               metadataType: "StandardField/CustomMetadata",
-              message: '',
+              message: "",
               path: "--"
             });
 
@@ -515,7 +521,7 @@ export default class DiffImpl {
                 action: "Delete",
                 componentName: member,
                 metadataType: name,
-                message: '',
+                message: "",
                 path: "Manual Intervention Required"
               });
             } else {
@@ -534,7 +540,7 @@ export default class DiffImpl {
               action: "Delete",
               componentName: member,
               metadataType: name,
-              message: '',
+              message: "",
               path: "destructiveChanges.xml"
             });
           } else {
@@ -548,7 +554,7 @@ export default class DiffImpl {
                 action: "Delete",
                 componentName: member,
                 metadataType: name,
-                message: '',
+                message: "",
                 path: "destructiveChanges.xml"
               });
             } else {
@@ -560,8 +566,8 @@ export default class DiffImpl {
       } catch (ex) {
         this.resultOutput.push({
           action: "ERROR",
-          componentName: '',
-          metadataType: '',
+          componentName: "",
+          metadataType: "",
           message: ex.message,
           path: filePath
         });

@@ -11,6 +11,7 @@ var jsforce = require("jsforce");
 var path = require("path");
 import { checkRetrievalStatus } from "../../../../utils/checkRetrievalStatus";
 import { extract } from "../../../../utils/extract";
+import getDefaults from "../../../../utils/getDefaults";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -45,9 +46,9 @@ export default class Retrieve extends SfdxCommand {
 
   public async run(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
-
+    getDefaults.init();
     let retrieveRequest = {
-      apiVersion: "45.0"
+      apiVersion: getDefaults.getApiVersion()
     };
 
     retrieveRequest["singlePackage"] = true;
@@ -65,7 +66,8 @@ export default class Retrieve extends SfdxCommand {
     this.flags.apiversion =
       this.flags.apiversion || (await conn.retrieveMaxApiVersion());
 
-    retrieveRequest.apiVersion = this.flags.apiVersion;
+
+    retrieveRequest.apiVersion = this.flags.apiversion;
 
     conn.metadata.pollTimeout = 60;
 
