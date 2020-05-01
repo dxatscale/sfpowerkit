@@ -524,6 +524,29 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\package\version\codecoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/version/codecoverage.ts)_
 
+## `sfpowerkit:package:version:info`
+
+This command is used to fetch the version number, namespace prefix, and version id of all the installed managed/unmanaged packages in an org.
+
+```
+USAGE
+  $ sfdx sfpowerkit:package:version:info  -u <string> [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
+
+  --apiversion=apiversion                                                           API version
+
+  --json                                                                            format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] [default: info] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:package:version:info -u myOrg@example.com
+```
+
+_See code: [src\commands\sfpowerkit\package\version\codecoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/version/codecoverage.ts)_
+
 ## `sfpowerkit:package:valid`
 
 Validates a package directory to check whether it only contains valid metadata as per metadata coverage
