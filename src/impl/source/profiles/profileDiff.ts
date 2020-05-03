@@ -1,7 +1,7 @@
 import { retrieveMetadata } from "../../../utils/retrieveMetadata";
 import { Org, LoggerLevel } from "@salesforce/core";
-import path from "path";
-import fs from "fs";
+import * as path from "path";
+import * as fs from "fs";
 import {
   METADATA_INFO,
   MetadataInfo
@@ -12,7 +12,13 @@ import Profile from "../../../impl/metadata/schema";
 import { SFPowerkit } from "../../../sfpowerkit";
 import cli from "cli-ux";
 import MetadataFiles from "../../../impl/metadata/metadataFiles";
-const jsdiff = require("diff");
+
+import { diff_match_patch } from "diff-match-patch";
+import "diff-match-patch-line-and-word"; // import globally to  enhanse the class
+import FileUtils from "../../../utils/fileutils";
+import rimraf = require("rimraf");
+
+const dmp = new diff_match_patch();
 
 const CRLF_REGEX = /\r\n/;
 const LF_REGEX = /\n/;
@@ -32,6 +38,9 @@ export default class ProfileDiffImpl {
   }
   public async diff() {
     SFPowerkit.log("Profile diff start. ", LoggerLevel.INFO);
+    if (this.outputFolder) {
+      rimraf.sync(this.outputFolder);
+    }
     let profileSource: Promise<any[]> = null;
     //let profileXmlMapPromise: Promise<string[]> = null;
     if (this.sourceOrgStr) {
@@ -61,23 +70,42 @@ export default class ProfileDiffImpl {
       });
     } else {
       SFPowerkit.log("Reading profiles from file system. ", LoggerLevel.INFO);
+
+      let srcFolders = await SFPowerkit.getProjectDirectories();
+
+      let metadataFiles = new MetadataFiles();
+
+      SFPowerkit.log("Source Folders are", LoggerLevel.DEBUG);
+      for (let i = 0; i < srcFolders.length; i++) {
+        let srcFolder = srcFolders[i];
+        let normalizedPath = path.join(process.cwd(), srcFolder);
+        metadataFiles.loadComponents(normalizedPath);
+      }
       if (!this.profileList || this.profileList.length === 0) {
-        let srcFolders = await SFPowerkit.getProjectDirectories();
-
-        let metadataFiles = new MetadataFiles();
-
-        SFPowerkit.log("Source Folders are", LoggerLevel.DEBUG);
-        SFPowerkit.log(srcFolders, LoggerLevel.DEBUG);
-
-        for (let i = 0; i < srcFolders.length; i++) {
-          let srcFolder = srcFolders[i];
-          let normalizedPath = path.join(process.cwd(), srcFolder);
-          metadataFiles.loadComponents(normalizedPath);
-        }
         this.profileList = METADATA_INFO.Profile.files;
-        if (!this.profileList || this.profileList.length === 0) {
-          return null;
-        }
+      } else {
+        this.profileList = this.profileList.map(profilename => {
+          const foundFile = METADATA_INFO.Profile.files.find(file => {
+            const apiName = MetadataFiles.getFullApiName(file);
+            return apiName === profilename;
+          });
+          if (!foundFile) {
+            SFPowerkit.log(
+              "No profile found with name  " + profilename,
+              LoggerLevel.INFO
+            );
+          }
+          return foundFile;
+        });
+
+        this.profileList = this.profileList.filter(file => {
+          return file !== undefined;
+        });
+      }
+
+      if (!this.profileList || this.profileList.length === 0) {
+        SFPowerkit.log("No profile to process ", LoggerLevel.INFO);
+        return null;
       }
 
       if (!this.outputFolder) {
@@ -113,6 +141,11 @@ export default class ProfileDiffImpl {
         resolve(profilesMap);
       });
       progressBar.stop();
+    }
+
+    if (!fs.existsSync(this.outputFolder)) {
+      console.log("Creattin output diff " + this.outputFolder);
+      FileUtils.mkDirByPathSync(this.outputFolder);
     }
 
     //REtrieve profiles from target
@@ -265,7 +298,6 @@ export default class ProfileDiffImpl {
     let lineEnd = "\n";
 
     let content = "";
-    let firstChunkProcessed = false;
     let changedLocaly = false;
     let changedRemote = false;
     let conflict = false;
@@ -290,79 +322,57 @@ export default class ProfileDiffImpl {
     }
 
     SFPowerkit.log("Running diff", LoggerLevel.DEBUG);
-    let diffResult = jsdiff.diffLines(contentSource, contentTarget);
+    //let diffResult = jsdiff.diffLines(contentSource, contentTarget);
+    const diffResult = dmp.diff_lineMode(contentSource, contentTarget);
     SFPowerkit.log("Diff run completed. Processing result", LoggerLevel.DEBUG);
     for (let i = 0; i < diffResult.length; i++) {
       let result = diffResult[i];
       let index = i;
       let originalArray = diffResult;
 
-      if (result.removed) {
-        if (firstChunkProcessed) {
-          content =
-            content +
-            `${result.value}>>>>>>> ${this.targetLabel}:${filePath}\n`;
-          firstChunkProcessed = false;
-          conflict = true;
-        } else if (
-          (originalArray.length > index + 1 &&
-            originalArray[index + 1].added == undefined) ||
-          index + 1 === originalArray.length
-        ) {
-          //Line added locally and remove remote
-          let value = result.value;
-          if (!value.endsWith(lineEnd)) {
-            value = value + lineEnd;
+      let nextIndex = index + 1;
+      let nextElem = undefined;
+      if (originalArray.length >= nextIndex) {
+        nextElem = originalArray[nextIndex];
+      }
+      let value = result[1];
+      let status = result[0];
+
+      if (status === -1) {
+        if (!value.endsWith(lineEnd)) {
+          value = value + lineEnd;
+        }
+        if (nextElem !== undefined) {
+          if (nextElem[0] === 0) {
+            content =
+              content +
+              `<<<<<<< ${this.sourceLabel}:${filePath}\n${value}=======\n>>>>>>> ${this.targetLabel}:${filePath}\n`;
+            changedLocaly = true;
+          } else if (nextElem[0] === 1) {
+            content =
+              content +
+              `<<<<<<< ${this.sourceLabel}:${filePath}\n${value}=======\n`;
+            conflict = true;
           }
+        } else {
           content =
             content +
             `<<<<<<< ${this.sourceLabel}:${filePath}\n${value}=======\n>>>>>>> ${this.targetLabel}:${filePath}\n`;
-          firstChunkProcessed = false;
           changedLocaly = true;
-        } else {
-          let value = result.value;
-          if (!value.endsWith(lineEnd)) {
-            value = value + lineEnd;
-          }
-          content =
-            content +
-            `<<<<<<< ${this.sourceLabel}:${filePath}\n${value}=======\n`;
-          firstChunkProcessed = true;
-          conflict = true;
         }
-      } else if (result.added) {
-        if (firstChunkProcessed) {
+      } else if (status === 1) {
+        if (conflict) {
           content =
-            content +
-            `${result.value}>>>>>>> ${this.targetLabel}:${filePath}\n`;
-          firstChunkProcessed = false;
+            content + `${value}>>>>>>> ${this.targetLabel}:${filePath}\n`;
           conflict = true;
-        } else if (
-          (originalArray.length > index + 1 &&
-            originalArray[index + 1].removed == undefined &&
-            originalArray[index + 1].added == undefined) ||
-          index + 1 === originalArray.length
-        ) {
-          //Line added locally and remove remote
-          content =
-            content +
-            `<<<<<<< ${this.sourceLabel}:${filePath}\n=======\n${result.value}>>>>>>> ${this.targetLabel}:${filePath}\n`;
-          firstChunkProcessed = false;
-          changedRemote = true;
         } else {
-          //This should never happen
-          let value = result.value;
-          if (!value.endsWith(lineEnd)) {
-            value = value + lineEnd;
-          }
           content =
             content +
-            `<<<<<<< ${this.sourceLabel}:${filePath}\n${value}=======\n`;
-          firstChunkProcessed = true;
-          conflict = true;
+            `<<<<<<< ${this.sourceLabel}:${filePath}\n=======\n${value}>>>>>>> ${this.targetLabel}:${filePath}\n`;
+          changedRemote = true;
         }
       } else {
-        content = content + result.value;
+        content = content + value;
       }
     }
     SFPowerkit.log("Result processed", LoggerLevel.DEBUG);

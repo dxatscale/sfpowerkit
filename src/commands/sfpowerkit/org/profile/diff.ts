@@ -86,6 +86,11 @@ export default class Diff extends SfdxCommand {
     const outputFolder: string = this.flags.output;
     const sourceusername: string = this.flags.sourceusername;
     let profileList: string[] = this.flags.profilelist;
+    if (!profileList || profileList.length === 0) {
+      if (sourceusername && !outputFolder) {
+        throw new Error("Output folder is required");
+      }
+    }
     let profileDiff = new ProfileDiffImpl(
       profileList,
       sourceusername,
