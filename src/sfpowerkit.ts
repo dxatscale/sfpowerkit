@@ -20,6 +20,7 @@ export class SFPowerkit {
   private static isJsonFormatEnabled: boolean;
   private static ux: UX;
   private static sourceApiVersion: any;
+  public static logLevel;
 
   public static setLogLevel(logLevel: string, isJsonFormatEnabled: boolean) {
     logLevel = logLevel.toLowerCase();
@@ -38,6 +39,27 @@ export class SFPowerkit {
       });
     } else {
       //do nothing for now, need to put pino to move to file
+    }
+
+    switch (logLevel) {
+      case "trace":
+        SFPowerkit.logLevel = LoggerLevel.TRACE;
+        break;
+      case "debug":
+        SFPowerkit.logLevel = LoggerLevel.DEBUG;
+        break;
+      case "info":
+        SFPowerkit.logLevel = LoggerLevel.INFO;
+        break;
+      case "warn":
+        SFPowerkit.logLevel = LoggerLevel.WARN;
+        break;
+      case "error":
+        SFPowerkit.logLevel = LoggerLevel.ERROR;
+        break;
+      case "fatal":
+        SFPowerkit.logLevel = LoggerLevel.FATAL;
+        break;
     }
   }
 

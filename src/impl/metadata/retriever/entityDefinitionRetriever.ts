@@ -5,10 +5,8 @@ import { EntityDefinition } from "../schema";
 import { METADATA_INFO } from "../metadataInfo";
 import MetadataFiles from "../metadataFiles";
 
-const COUNT_QUERY = "SELECT COUNT() FROM EntityDefinition";
 const QUERY =
   "SELECT DurableId, DeveloperName, QualifiedApiName, NamespacePrefix FROM EntityDefinition order by QualifiedApiName";
-const FETCH_SIZE = 2000;
 
 export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
   EntityDefinition
@@ -16,8 +14,7 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
   private static instance: EntityDefinitionRetriever;
   private objectForPermission: string[];
   private constructor(public org: Org) {
-    super(org, true);
-    super.setCountQuery(COUNT_QUERY, FETCH_SIZE);
+    super(org, false);
     super.setQuery(QUERY);
   }
 
