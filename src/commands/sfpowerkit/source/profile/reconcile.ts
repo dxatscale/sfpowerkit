@@ -160,17 +160,18 @@ export default class Reconcile extends SfdxCommand {
 
         success = true;
       } catch (err) {
+        SFPowerkit.log(err, LoggerLevel.ERROR);
         retryCount++;
         if (retryCount < 2) {
           SFPowerkit.log(
-            "An error occured during profile retrieve. Retry in 10 seconds",
+            "An error occured during profile reconcile. Retry in 10 seconds",
             LoggerLevel.INFO
           );
           //Wait 5 seconds
           await this.sleep(10000);
         } else {
           SFPowerkit.log(
-            "An error occured during profile retrieve. You can rerun the command after a moment.",
+            "An error occured during profile reconcile. You can rerun the command after a moment.",
             LoggerLevel.ERROR
           );
         }

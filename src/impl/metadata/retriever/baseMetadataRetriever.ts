@@ -185,6 +185,8 @@ export async function executeBulkQueryAsync(
         ) {
           progressBar.stop();
         }
+        SFPowerkit.log(`Error when using bulk api `, LoggerLevel.ERROR);
+        SFPowerkit.log(error, LoggerLevel.ERROR);
         reject(error);
       });
   });
