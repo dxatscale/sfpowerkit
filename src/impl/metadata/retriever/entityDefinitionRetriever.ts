@@ -4,6 +4,8 @@ import BaseMetadataRetriever from "./baseMetadataRetriever";
 import { EntityDefinition } from "../schema";
 import { METADATA_INFO } from "../metadataInfo";
 import MetadataFiles from "../metadataFiles";
+import { SFPowerkit } from "../../../sfpowerkit";
+import { LoggerLevel } from "../../../sfpowerkit";
 
 const QUERY =
   "SELECT DurableId, DeveloperName, QualifiedApiName, NamespacePrefix FROM EntityDefinition order by QualifiedApiName";
@@ -26,55 +28,33 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
   }
 
   public async getObjects(): Promise<EntityDefinition[]> {
-    if (
-      (this.data === undefined || this.data.length == 0) &&
-      !this.dataLoaded
-    ) {
-      let entities = await super.getObjects();
-
-      this.data = entities;
-      this.dataLoaded = true;
-    }
-
-    return this.data;
+    let resultPromise = new Promise<any[]>((resolve, reject) => {
+      this.org.getConnection().describeGlobal(function(err, res) {
+        if (err) {
+          SFPowerkit.log(
+            `Error when running gllobal describe `,
+            LoggerLevel.ERROR
+          );
+          SFPowerkit.log(err, LoggerLevel.ERROR);
+          reject(err);
+        } else {
+          SFPowerkit.log(
+            `Org describe completed successfully. ${res.sobjects.length} object found! `,
+            LoggerLevel.INFO
+          );
+          let entities = res.sobjects.map(sObject => {
+            return {
+              QualifiedApiName: sObject.name
+            };
+          });
+          resolve(entities);
+        }
+      });
+    });
+    return resultPromise;
   }
   public async getEntityDefinitions(): Promise<EntityDefinition[]> {
     return await this.getObjects();
-  }
-
-  public async getObjectNameByDurableId(durableId: string): Promise<string> {
-    let objectName = "";
-    let entities = await this.getEntityDefinitions();
-    for (var i = 0; i < entities.length; i++) {
-      let entity = entities[i];
-      if (entity.DurableId === durableId) {
-        objectName = entity.QualifiedApiName;
-        break;
-      }
-    }
-    return objectName;
-  }
-  public async getDurableIdByObjectName(objectName: string): Promise<string> {
-    let durableId = "";
-    let found = false;
-    let entities = await this.getEntityDefinitions();
-    for (var i = 0; i < entities.length; i++) {
-      let entity = entities[i];
-      if (entity.QualifiedApiName === objectName) {
-        durableId = entity.DurableId;
-        found = true;
-        break;
-      }
-    }
-    if (!found) {
-      //fetch the objectName from server and add it to the entity list
-      let entity = {
-        Id: "",
-        QualifiedApiName: objectName
-      };
-      this.data.push(entity);
-    }
-    return durableId;
   }
 
   public async getObjectForPermission(): Promise<string[]> {
