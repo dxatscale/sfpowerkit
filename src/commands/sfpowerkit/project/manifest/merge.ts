@@ -63,7 +63,6 @@ export default class Merge extends SfdxCommand {
 
   public async run(): Promise<AnyJson> {
     this.output = new Map<string, string[]>();
-    getDefaults.init();
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     this.flags.apiversion =

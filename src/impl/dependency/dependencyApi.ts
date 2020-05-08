@@ -1,37 +1,51 @@
 import { core } from "@salesforce/command";
-import { SfdxError } from "@salesforce/core";
+import { SFPowerkit, LoggerLevel } from "../../sfpowerkit";
+import queryApi from "./queryApi";
+import cli from "cli-ux";
 export default class dependencyApi {
-  public static async getdependencyMap(
+  public static dependencyDetailsMap: Map<string, Metadata>;
+  public static async getDependencyMap(
     conn: core.Connection,
     refMetadata: string[]
-  ): Promise<Map<string, string[]>> {
+  ) {
     let dependencies = [];
+    let progressBar = cli.progress({
+      format: `Fetching dependency details - PROGRESS  | {bar} | {value}/{total} metadata components`,
+      barCompleteChar: "\u2588",
+      barIncompleteChar: "\u2591",
+      linewrap: true
+    });
+    progressBar.start(refMetadata.length);
     if (refMetadata.length > 500) {
-      for (let chunkrefMetadata of this.listreducer(500, refMetadata)) {
-        console.log("chunkrefMetadata", chunkrefMetadata.length);
+      for (let chunkrefMetadata of this.listReducer(500, refMetadata)) {
         const results = await this.fetchDependencies(conn, chunkrefMetadata);
-        if (results.records) {
-          dependencies = dependencies.concat(results.records);
+        if (results) {
+          dependencies = dependencies.concat(results);
         }
+        progressBar.increment(chunkrefMetadata.length);
       }
     } else {
       const results = await this.fetchDependencies(conn, refMetadata);
-      if (results.records) {
-        dependencies = results.records;
+      if (results) {
+        dependencies = results;
       }
+      progressBar.increment(refMetadata.length);
     }
     let dependencyMap: Map<string, string[]> = new Map<string, string[]>();
     let memberList: string[] = [];
+
     if (dependencies.length > 0) {
       dependencies.forEach(dependency => {
         memberList = dependencyMap.get(dependency.RefMetadataComponentId) || [];
         memberList.push(dependency.MetadataComponentId);
         dependencyMap.set(dependency.RefMetadataComponentId, memberList);
       });
-    } else {
-      throw new SfdxError(`Unable to find any dependencies in org.`);
     }
-    return dependencyMap;
+    progressBar.stop();
+    return {
+      dependencyMap: dependencyMap,
+      dependencyDetailsMap: this.dependencyDetailsMap
+    };
   }
   private static async fetchDependencies(
     conn: core.Connection,
@@ -43,15 +57,23 @@ export default class dependencyApi {
       refMetadata.join(`','`) +
       `') `;
 
-    let result = (await conn.tooling.query(query)) as any;
-    if (!result.done) {
-      let tempRecords = result.records;
-      while (!result.done) {
-        result = await this.queryMore(conn, result.nextRecordsUrl, true);
-        tempRecords = tempRecords.concat(result.records);
-      }
-      result.records = tempRecords;
+    let queryUtil = new queryApi(conn);
+    let result = await queryUtil.getQuery(query, true);
+    if (!this.dependencyDetailsMap) {
+      this.dependencyDetailsMap = new Map<string, Metadata>();
     }
+    result.forEach(element => {
+      this.dependencyDetailsMap.set(element.MetadataComponentId, {
+        id: element.MetadataComponentId,
+        fullName: element.MetadataComponentName,
+        type: element.MetadataComponentType
+      });
+      this.dependencyDetailsMap.set(element.RefMetadataComponentId, {
+        id: element.RefMetadataComponentId,
+        fullName: element.RefMetadataComponentName,
+        type: element.RefMetadataComponentType
+      });
+    });
     return result;
   }
 
@@ -62,19 +84,11 @@ export default class dependencyApi {
       `SELECT CurrentPackageVersionId, MaxPackageVersionId, MinPackageVersionId, SubjectId, SubjectKeyPrefix, SubjectManageableState, SubscriberPackageId ` +
       `FROM Package2Member ORDER BY SubjectId `;
 
-    let results = (await conn.tooling.query(query)) as any;
-    if (!results.done) {
-      let tempRecords = results.records;
-      while (!results.done) {
-        results = await this.queryMore(conn, results.nextRecordsUrl, true);
-        tempRecords = tempRecords.concat(results.records);
-      }
-      results.records = tempRecords;
-    }
-
+    let queryUtil = new queryApi(conn);
+    let result = await queryUtil.getQuery(query, true);
     let packageMember: Map<string, string> = new Map<string, string>();
-    if (results.records) {
-      results.records.forEach(cmp => {
+    if (result) {
+      result.forEach(cmp => {
         packageMember.set(cmp.SubjectId, cmp.SubscriberPackageId);
       });
     }
@@ -88,24 +102,12 @@ export default class dependencyApi {
       `SELECT CurrentPackageVersionId, MaxPackageVersionId, MinPackageVersionId, SubjectId, SubjectKeyPrefix, SubjectManageableState, SubscriberPackageId ` +
       `FROM Package2Member ORDER BY SubjectId `;
 
-    let result = (await conn.tooling.query(query)) as any;
-    if (!result.done) {
-      let tempRecords = result.records;
-      while (!result.done) {
-        result = (await this.queryMore(
-          conn,
-          result.nextRecordsUrl,
-          true
-        )) as any;
-        tempRecords = tempRecords.concat(result.records);
-      }
-      result.records = tempRecords;
-    }
-
+    let queryUtil = new queryApi(conn);
+    let result = await queryUtil.getQuery(query, true);
     let packageMember: Map<string, string[]> = new Map<string, string[]>();
     let memberList: string[] = [];
-    if (result.records) {
-      result.records.forEach(cmp => {
+    if (result) {
+      result.forEach(cmp => {
         memberList = packageMember.get(cmp.SubscriberPackageId) || [];
         memberList.push(cmp.SubjectId);
         packageMember.set(cmp.SubscriberPackageId, memberList);
@@ -122,22 +124,12 @@ export default class dependencyApi {
       `SELECT CurrentPackageVersionId, MaxPackageVersionId, MinPackageVersionId, SubjectId, SubjectKeyPrefix, SubjectManageableState, SubscriberPackageId ` +
       `FROM Package2Member WHERE SubscriberPackageId = '${packageId}' ORDER BY SubjectId `;
 
-    let result = (await conn.tooling.query(query)) as any;
-    if (!result.done) {
-      let tempRecords = result.records;
-      while (!result.done) {
-        result = (await this.queryMore(
-          conn,
-          result.nextRecordsUrl,
-          true
-        )) as any;
-        tempRecords = tempRecords.concat(result.records);
-      }
-      result.records = tempRecords;
-    }
+    let queryUtil = new queryApi(conn);
+    let result = await queryUtil.getQuery(query, true);
+
     let packageMember: string[] = [];
-    if (result.records) {
-      result.records.forEach(cmp => {
+    if (result) {
+      result.forEach(cmp => {
         packageMember.push(cmp.SubjectId);
       });
     }
@@ -147,6 +139,10 @@ export default class dependencyApi {
   public static async getForcePackageInstalledList(
     conn: core.Connection
   ): Promise<Map<string, PackageDetail>> {
+    SFPowerkit.log(
+      `Fetching Installed package details from the org`,
+      LoggerLevel.INFO
+    );
     let query =
       "SELECT Id, SubscriberPackageId, SubscriberPackage.NamespacePrefix, SubscriberPackage.Name, SubscriberPackageVersion.Id, SubscriberPackageVersion.Name, " +
       "SubscriberPackageVersion.MajorVersion,SubscriberPackageVersion.MinorVersion, SubscriberPackageVersion.PatchVersion, SubscriberPackageVersion.BuildNumber " +
@@ -175,10 +171,15 @@ export default class dependencyApi {
             pkg.SubscriberPackageVersion.BuildNumber
         });
       });
+      SFPowerkit.log(
+        `Found ${results.records.length} Installed packages from the org`,
+        LoggerLevel.INFO
+      );
     }
     return installedPackage;
   }
-  private static listreducer(limit: number, list: any[]) {
+
+  public static listReducer(limit: number, list: any[]) {
     let result = [];
     let tempList = [];
     for (let i = 0; i < list.length; i++) {
@@ -194,19 +195,6 @@ export default class dependencyApi {
     }
     return result;
   }
-  private static async queryMore(
-    conn: core.Connection,
-    url: string,
-    tooling: boolean
-  ) {
-    let result;
-    if (tooling) {
-      result = await conn.tooling.queryMore(url);
-    } else {
-      result = await conn.queryMore(url);
-    }
-    return result;
-  }
 }
 export interface PackageDetail {
   Id: string;
@@ -217,9 +205,8 @@ export interface PackageDetail {
   VersionName: string;
   VersionNumber: string;
 }
-export interface MetadataMember {
-  Id: string;
-  Name: string;
-  Namespace: string;
-  Type: string;
+export interface Metadata {
+  id: string;
+  fullName: string;
+  type: string;
 }

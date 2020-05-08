@@ -46,7 +46,6 @@ export default class Retrieve extends SfdxCommand {
 
   public async run(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
-    getDefaults.init();
     let retrieveRequest = {
       apiVersion: getDefaults.getApiVersion()
     };
@@ -65,7 +64,6 @@ export default class Retrieve extends SfdxCommand {
 
     this.flags.apiversion =
       this.flags.apiversion || (await conn.retrieveMaxApiVersion());
-
 
     retrieveRequest.apiVersion = this.flags.apiversion;
 
