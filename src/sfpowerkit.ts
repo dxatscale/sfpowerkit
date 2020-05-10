@@ -2,6 +2,7 @@ import { SfdxProject } from "@salesforce/core";
 import { isNullOrUndefined } from "util";
 import Logger = require("pino");
 import { UX } from "@salesforce/command";
+import cli from "cli-ux";
 
 export enum LoggerLevel {
   TRACE = 10,
@@ -153,5 +154,13 @@ export class SFPowerkit {
   }
   public static setStatus(status: string) {
     this.ux.setSpinnerStatus(status);
+  }
+  public static createProgressBar(title, unit) {
+    return cli.progress({
+      format: `${title} - PROGRESS  | {bar} | {value}/{total} ${unit}`,
+      barCompleteChar: "\u2588",
+      barIncompleteChar: "\u2591",
+      linewrap: true
+    });
   }
 }

@@ -1,6 +1,5 @@
 import { Org, LoggerLevel } from "@salesforce/core";
 import { SFPowerkit } from "../../../sfpowerkit";
-import cli from "cli-ux";
 
 const BULK_THRESHOLD = 2000;
 
@@ -74,12 +73,10 @@ export async function executeToolingQueryAsync(
       SFPowerkit.logLevel === LoggerLevel.DEBUG ||
       SFPowerkit.logLevel === LoggerLevel.TRACE
     ) {
-      progressBar = cli.progress({
-        format: `Querying data from ${object} - PROGRESS  | {bar} | {value}/{total} Records fetched`,
-        barCompleteChar: "\u2588",
-        barIncompleteChar: "\u2591",
-        linewrap: true
-      });
+      progressBar = SFPowerkit.createProgressBar(
+        `Querying data from ${object}`,
+        "Records fetched"
+      );
     }
     let queryRun = conn.tooling
       .query(query)
@@ -142,12 +139,10 @@ export async function executeBulkQueryAsync(
       SFPowerkit.logLevel === LoggerLevel.DEBUG ||
       SFPowerkit.logLevel === LoggerLevel.TRACE
     ) {
-      progressBar = cli.progress({
-        format: `Querying data from ${object} - PROGRESS  | {bar} | {value}/{total} Records fetched`,
-        barCompleteChar: "\u2588",
-        barIncompleteChar: "\u2591",
-        linewrap: true
-      });
+      progressBar = SFPowerkit.createProgressBar(
+        `Querying data from ${object}`,
+        "Records fetched"
+      );
     }
     conn.bulk
       .query(query)
@@ -201,12 +196,10 @@ export async function executeQueryAsync(query, conn, object): Promise<any[]> {
       SFPowerkit.logLevel === LoggerLevel.DEBUG ||
       SFPowerkit.logLevel === LoggerLevel.TRACE
     ) {
-      progressBar = cli.progress({
-        format: `Querying data from ${object} - PROGRESS  | {bar} | {value}/{total} Records fetched`,
-        barCompleteChar: "\u2588",
-        barIncompleteChar: "\u2591",
-        linewrap: true
-      });
+      progressBar = SFPowerkit.createProgressBar(
+        `Querying data from ${object}`,
+        "Records fetched"
+      );
     }
     let queryRun = conn
       .query(query)
