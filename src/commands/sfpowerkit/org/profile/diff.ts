@@ -78,7 +78,6 @@ export default class Diff extends SfdxCommand {
   };
 
   protected static requiresUsername = true;
-  protected static requiresProject = true;
 
   public async run(): Promise<any> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);

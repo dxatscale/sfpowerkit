@@ -113,12 +113,10 @@ export default class ProfileDiffImpl {
       }
 
       let profilesMap = [];
-      let progressBar = cli.progress({
-        format: `Reading from File System PROGRESS  | {bar} | {value}/{total} Profiles`,
-        barCompleteChar: "\u2588",
-        barIncompleteChar: "\u2591",
-        linewrap: true
-      });
+      let progressBar = SFPowerkit.createProgressBar(
+        "Reading from File System ",
+        "Profiles"
+      );
 
       progressBar.start(this.profileList.length);
       for (let i = 0; i < this.profileList.length; i++) {
@@ -177,12 +175,10 @@ export default class ProfileDiffImpl {
       return profileTarget
         .then(profilesTargetMap => {
           SFPowerkit.log("Handling diff ", LoggerLevel.INFO);
-          let progressBar = cli.progress({
-            format: `Diff processing PROGRESS  | {bar} | {value}/{total} Profiles`,
-            barCompleteChar: "\u2588",
-            barIncompleteChar: "\u2591",
-            linewrap: true
-          });
+          let progressBar = SFPowerkit.createProgressBar(
+            "Diff processing ",
+            "Profiles"
+          );
 
           progressBar.start(profilesSourceMap.length);
 
@@ -238,12 +234,11 @@ export default class ProfileDiffImpl {
     let profileRetriever = new ProfileRetriever(retrieveOrg, false);
     let retrievePromises = [];
     let connection = retrieveOrg.getConnection();
-    let progressBar = cli.progress({
-      format: `Retrieving From ${connection.getUsername()} PROGRESS  | {bar} | {value}/{total} Profiles`,
-      barCompleteChar: "\u2588",
-      barIncompleteChar: "\u2591",
-      linewrap: true
-    });
+
+    let progressBar = SFPowerkit.createProgressBar(
+      `Retrieving From ${connection.getUsername()}`,
+      "Profiles"
+    );
 
     progressBar.start(profileNames.length);
 
