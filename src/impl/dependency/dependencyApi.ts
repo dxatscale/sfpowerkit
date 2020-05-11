@@ -1,80 +1,150 @@
 import { core } from "@salesforce/command";
 import { SFPowerkit, LoggerLevel } from "../../sfpowerkit";
 import queryApi from "./queryApi";
-import cli from "cli-ux";
+
 export default class dependencyApi {
-  public static dependencyDetailsMap: Map<string, Metadata>;
-  public static async getDependencyMap(
+  public static async getDependencyMapById(
     conn: core.Connection,
     refMetadata: string[]
   ) {
-    let dependencies = [];
-    let progressBar = cli.progress({
-      format: `Fetching dependency details - PROGRESS  | {bar} | {value}/{total} metadata components`,
-      barCompleteChar: "\u2588",
-      barIncompleteChar: "\u2591",
-      linewrap: true
-    });
+    let progressBar = SFPowerkit.createProgressBar(
+      `Fetching dependency details `,
+      ` metadata components`
+    );
     progressBar.start(refMetadata.length);
+    let dependencyMap: Map<string, string[]> = new Map<string, string[]>();
+    let dependencyDetailsMap: Map<string, Metadata> = new Map<
+      string,
+      Metadata
+    >();
+    let filterOn = " RefMetadataComponentId ";
+
     if (refMetadata.length > 500) {
       for (let chunkrefMetadata of this.listReducer(500, refMetadata)) {
-        const results = await this.fetchDependencies(conn, chunkrefMetadata);
+        const results = await this.fetchDependencies(
+          conn,
+          filterOn,
+          chunkrefMetadata,
+          dependencyMap,
+          dependencyDetailsMap
+        );
         if (results) {
-          dependencies = dependencies.concat(results);
+          dependencyMap = results.dependencyMap;
+          dependencyDetailsMap = results.dependencyDetailsMap;
         }
         progressBar.increment(chunkrefMetadata.length);
       }
     } else {
-      const results = await this.fetchDependencies(conn, refMetadata);
+      const results = await this.fetchDependencies(
+        conn,
+        filterOn,
+        refMetadata,
+        dependencyMap,
+        dependencyDetailsMap
+      );
       if (results) {
-        dependencies = results;
+        dependencyMap = results.dependencyMap;
+        dependencyDetailsMap = results.dependencyDetailsMap;
       }
       progressBar.increment(refMetadata.length);
     }
-    let dependencyMap: Map<string, string[]> = new Map<string, string[]>();
-    let memberList: string[] = [];
 
-    if (dependencies.length > 0) {
-      dependencies.forEach(dependency => {
-        memberList = dependencyMap.get(dependency.RefMetadataComponentId) || [];
-        memberList.push(dependency.MetadataComponentId);
-        dependencyMap.set(dependency.RefMetadataComponentId, memberList);
-      });
-    }
     progressBar.stop();
     return {
       dependencyMap: dependencyMap,
-      dependencyDetailsMap: this.dependencyDetailsMap
+      dependencyDetailsMap: dependencyDetailsMap
     };
   }
-  private static async fetchDependencies(
+
+  public static async getDependencyMapByType(
     conn: core.Connection,
     refMetadata: string[]
   ) {
+    let progressBar = SFPowerkit.createProgressBar(
+      `Fetching dependency details `,
+      ` metadata components`
+    );
+    progressBar.start(refMetadata.length);
+    let dependencyMap: Map<string, string[]> = new Map<string, string[]>();
+    let dependencyDetailsMap: Map<string, Metadata> = new Map<
+      string,
+      Metadata
+    >();
+    let filterOn = " RefMetadataComponentType ";
+
+    if (refMetadata.length > 500) {
+      for (let chunkrefMetadata of this.listReducer(500, refMetadata)) {
+        const results = await this.fetchDependencies(
+          conn,
+          filterOn,
+          chunkrefMetadata,
+          dependencyMap,
+          dependencyDetailsMap
+        );
+        if (results) {
+          dependencyMap = results.dependencyMap;
+          dependencyDetailsMap = results.dependencyDetailsMap;
+        }
+        progressBar.increment(chunkrefMetadata.length);
+      }
+    } else {
+      const results = await this.fetchDependencies(
+        conn,
+        filterOn,
+        refMetadata,
+        dependencyMap,
+        dependencyDetailsMap
+      );
+      if (results) {
+        dependencyMap = results.dependencyMap;
+        dependencyDetailsMap = results.dependencyDetailsMap;
+      }
+      progressBar.increment(refMetadata.length);
+    }
+
+    progressBar.stop();
+    return {
+      dependencyMap: dependencyMap,
+      dependencyDetailsMap: dependencyDetailsMap
+    };
+  }
+
+  private static async fetchDependencies(
+    conn: core.Connection,
+    filterOn: string,
+    refMetadata: string[],
+    dependencyMap: Map<string, string[]>,
+    dependencyDetailsMap: Map<string, Metadata>
+  ) {
     let query =
       `SELECT MetadataComponentId, MetadataComponentNamespace, MetadataComponentName, MetadataComponentType, RefMetadataComponentId, RefMetadataComponentNamespace, ` +
-      `RefMetadataComponentName, RefMetadataComponentType FROM MetadataComponentDependency where RefMetadataComponentId IN ('` +
+      `RefMetadataComponentName, RefMetadataComponentType FROM MetadataComponentDependency where ${filterOn} IN ('` +
       refMetadata.join(`','`) +
       `') `;
 
     let queryUtil = new queryApi(conn);
     let result = await queryUtil.getQuery(query, true);
-    if (!this.dependencyDetailsMap) {
-      this.dependencyDetailsMap = new Map<string, Metadata>();
-    }
+    let memberList: string[] = [];
     result.forEach(element => {
-      this.dependencyDetailsMap.set(element.MetadataComponentId, {
+      memberList = dependencyMap.get(element.RefMetadataComponentId) || [];
+      memberList.push(element.MetadataComponentId);
+      dependencyMap.set(element.RefMetadataComponentId, memberList);
+
+      dependencyDetailsMap.set(element.MetadataComponentId, {
         id: element.MetadataComponentId,
         fullName: element.MetadataComponentName,
         type: element.MetadataComponentType
       });
-      this.dependencyDetailsMap.set(element.RefMetadataComponentId, {
+      dependencyDetailsMap.set(element.RefMetadataComponentId, {
         id: element.RefMetadataComponentId,
         fullName: element.RefMetadataComponentName,
         type: element.RefMetadataComponentType
       });
     });
-    return result;
+    return {
+      dependencyMap: dependencyMap,
+      dependencyDetailsMap: dependencyDetailsMap
+    };
   }
 
   public static async getMemberVsPackageMap(

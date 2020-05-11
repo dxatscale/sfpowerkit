@@ -1,9 +1,8 @@
 import { SfdxError, Connection } from "@salesforce/core";
 import getDefaults from "../../utils/getDefaults";
 import dependencyApi from "./dependencyApi";
-import cli from "cli-ux";
+import { SFPowerkit, LoggerLevel } from "../../sfpowerkit";
 export default class metadataRetrieverApi {
-  private static metadataMap: Map<string, Metadata>;
   private static unsupportedDescribeList = [
     "AccountForecastSettings",
     "Icon",
@@ -22,7 +21,6 @@ export default class metadataRetrieverApi {
     "ModerationRule",
     "CMSConnectSource",
     "FlowCategory",
-    ,
     "Settings",
     "PlatformCachePartition",
     "LightningBolt",
@@ -86,7 +84,7 @@ export default class metadataRetrieverApi {
   public static async describeCall(
     conn: Connection
   ): Promise<Map<string, Metadata>> {
-    this.metadataMap = new Map<string, Metadata>();
+    let metadataMap: Map<string, Metadata> = new Map<string, Metadata>();
     let types = [];
 
     await conn.metadata
@@ -109,31 +107,38 @@ export default class metadataRetrieverApi {
         console.log(err);
       });
 
-    let progressBar = cli.progress({
-      format: `Fetching describe details - PROGRESS  | {bar} | {value}/{total} metdata types`,
-      barCompleteChar: "\u2588",
-      barIncompleteChar: "\u2591",
-      linewrap: true
-    });
+    let progressBar = SFPowerkit.createProgressBar(
+      `Fetching describe details `,
+      ` metdata types`
+    );
     progressBar.start(types.length);
     if (types.length > 3) {
       for (let typesInChunk of dependencyApi.listReducer(3, types)) {
-        await this.metadataListCall(conn, typesInChunk);
+        metadataMap = await this.metadataListCall(
+          conn,
+          typesInChunk,
+          metadataMap
+        );
         progressBar.increment(3);
       }
     } else {
-      await this.metadataListCall(conn, types);
+      metadataMap = await this.metadataListCall(conn, types, metadataMap);
+      progressBar.increment(types.length);
     }
     progressBar.stop();
-    return this.metadataMap;
+    return metadataMap;
   }
-  public static async metadataListCall(conn: Connection, types: any[]) {
+  public static async metadataListCall(
+    conn: Connection,
+    types: any[],
+    metadataMap: Map<string, Metadata>
+  ) {
     await conn.metadata
       .list(types, getDefaults.getApiVersion())
       .then(result => {
         if (result) {
           result.forEach(item => {
-            this.metadataMap.set(item.id, {
+            metadataMap.set(item.id, {
               id: item.id,
               fullName: item.fullName,
               type: item.type
@@ -150,6 +155,41 @@ export default class metadataRetrieverApi {
           "unSupported metadata for describe call" + JSON.stringify(types)
         );
       });
+    return metadataMap;
+  }
+  public static async describeCallList(
+    conn: Connection,
+    metadataTypes: string[]
+  ): Promise<Map<string, Metadata>> {
+    let metadataMap: Map<string, Metadata> = new Map<string, Metadata>();
+    let types = [];
+
+    metadataTypes.forEach(metadata => {
+      if (!this.unsupportedDescribeList.includes(metadata)) {
+        types.push({ type: metadata });
+      }
+    });
+
+    let progressBar = SFPowerkit.createProgressBar(
+      `Fetching describe details `,
+      ` metdata types`
+    );
+    progressBar.start(types.length);
+    if (types.length > 3) {
+      for (let typesInChunk of dependencyApi.listReducer(3, types)) {
+        metadataMap = await this.metadataListCall(
+          conn,
+          typesInChunk,
+          metadataMap
+        );
+        progressBar.increment(3);
+      }
+    } else {
+      metadataMap = await this.metadataListCall(conn, types, metadataMap);
+      progressBar.increment(types.length);
+    }
+    progressBar.stop();
+    return metadataMap;
   }
 }
 export interface Metadata {

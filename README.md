@@ -1145,7 +1145,7 @@ USAGE
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -d, --output=output                                                               (required) path to create the output
+  -o, --output=output                                                               (required) path to create the output
   -f, --format=(json|csv)                                                           [default: json] format of the output file to create
   -n, --package=package                                                             (required) package name, package version id, subscriber id that is installed in the org
   -p, --packagefilter                                                               output result will filter only dependent packages
@@ -1156,10 +1156,10 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] [default: info] logging level for this command invocation
 
 EXAMPLES
-  $ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx d outputdir -f json
-  $ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx d outputdir -f csv
-  $ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx d outputdir -f csv -p
-  $ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx d outputdir -f csv -s
+  $ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx -o outputdir -f json
+  $ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx -o outputdir -f csv
+  $ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx -o outputdir -f csv -p
+  $ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx -o outputdir -f csv -s
 ```
 
 _See code: [src\commands\sfpowerkit\dependency\tree\package.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/dependency/tree/package.ts)_

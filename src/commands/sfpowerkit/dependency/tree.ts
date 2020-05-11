@@ -3,13 +3,13 @@
 
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { SfdxError, Connection } from "@salesforce/core";
-import { PackageDetail } from "../../../../impl/dependency/dependencyApi";
-import dependencyApi from "../../../../impl/dependency/dependencyApi";
-import metadataRetrieverApi from "../../../../impl/dependency/metadataRetrieverApi";
+import { PackageDetail } from "../../../impl/dependency/dependencyApi";
+import dependencyApi from "../../../impl/dependency/dependencyApi";
+import metadataRetrieverApi from "../../../impl/dependency/metadataRetrieverApi";
 import * as path from "path";
-import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
+import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import fs = require("fs-extra");
-import FileUtils from "../../../../utils/fileutils";
+import FileUtils from "../../../utils/fileutils";
 import rimraf = require("rimraf");
 
 // Initialize Messages with the current plugin directory
@@ -26,17 +26,27 @@ export default class Tree extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    "$ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx -o outputdir -f json",
-    "$ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx -o outputdir -f csv",
-    "$ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx -o outputdir -f csv -p",
-    "$ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx -o outputdir -f csv -s"
+    "$ sfdx sfpowerkit:dependency:tree -u MyScratchOrg -o outputdir -f json",
+    "$ sfdx sfpowerkit:dependency:tree -u MyScratchOrg -o outputdir -f csv",
+    "$ sfdx sfpowerkit:dependency:tree -u MyScratchOrg -o outputdir -f csv -p",
+    "$ sfdx sfpowerkit:dependency:tree -u MyScratchOrg -o outputdir -f csv -s"
   ];
 
   protected static flagsConfig = {
-    package: flags.string({
-      char: "n",
-      required: true,
-      description: messages.getMessage("packageDescription")
+    metadata: flags.array({
+      char: "m",
+      required: false,
+      description: ""
+    }),
+    sourcepath: flags.array({
+      char: "d",
+      required: false,
+      description: ""
+    }),
+    manifest: flags.string({
+      char: "x",
+      required: false,
+      description: ""
     }),
     packagefilter: flags.boolean({
       description: messages.getMessage("packagefilterDescription"),
@@ -83,6 +93,7 @@ export default class Tree extends SfdxCommand {
 
   // Comment this out if your command does not require an org username
   protected static requiresUsername = true;
+  protected static requiresProject = true;
   protected conn: Connection;
   protected installedPackagesMap: Map<string, PackageDetail>;
   protected dependencyMap: Map<string, string[]>;
@@ -98,37 +109,28 @@ export default class Tree extends SfdxCommand {
       this.conn
     );
 
-    let requestPackage: PackageDetail;
-    for (let pkg of this.installedPackagesMap.values()) {
-      if (
-        pkg.Id === this.flags.package ||
-        pkg.Name === this.flags.package ||
-        pkg.VersionId === this.flags.package
-      ) {
-        requestPackage = pkg;
-        break;
-      }
-    }
-    if (!requestPackage) {
+    if (
+      !this.flags.metadata &&
+      !this.flags.sourcepath &&
+      !this.flags.manifest
+    ) {
       throw new SfdxError(
-        `Unable to find the package ${
-          this.flags.package
-        } in ${this.org.getUsername()} org.`
+        `Required flag is missing, one of this paramater is required -m|--metadata (or) -d|--sourcepath (or) -x|--manifest`
       );
     }
 
+    let packageMembers: string[] = [];
+
+    if (this.flags.metadata) {
+    } else if (this.flags.sourcepath) {
+    } else if (this.flags.manifest) {
+    }
+
     SFPowerkit.log(
-      `Fetching all components details of ${requestPackage.Name} package from the org`,
+      `Found ${packageMembers.length} components from org.`,
       LoggerLevel.INFO
     );
-    let packageMembers: string[] = await dependencyApi.getMemberFromPackage(
-      this.conn,
-      requestPackage.Id
-    );
-    SFPowerkit.log(
-      `Found ${packageMembers.length} components from ${requestPackage.Name} package`,
-      LoggerLevel.INFO
-    );
+
     let dependencyResult = await dependencyApi.getDependencyMapById(
       this.conn,
       packageMembers
