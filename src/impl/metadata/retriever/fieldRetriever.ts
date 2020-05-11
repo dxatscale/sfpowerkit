@@ -5,7 +5,6 @@ import { Field } from "../schema";
 import EntityDefinitionRetriever from "./entityDefinitionRetriever";
 import { METADATA_INFO } from "../metadataInfo";
 import MetadataFiles from "../metadataFiles";
-import { isNullOrUndefined } from "util";
 
 const QUERY =
   "SELECT Id, QualifiedApiName, EntityDefinitionId, DeveloperName, NamespacePrefix FROM FieldDefinition";
@@ -34,23 +33,20 @@ export default class FieldRetriever extends BaseMetadataRetriever<Field> {
 
       for (let i = 0; i < objects.length; i++) {
         let objectName = objects[i];
-
-        let durableId = await entityDefinitionUtils.getDurableIdByObjectName(
-          objectName
+        super.setQuery(
+          QUERY +
+            " WHERE EntityDefinition.QualifiedApiName ='" +
+            objectName +
+            "'"
         );
-        if (!isNullOrUndefined(durableId) && durableId.length > 0) {
-          super.setQuery(
-            QUERY + " WHERE EntityDefinitionId ='" + durableId + "'"
-          );
-          let fields = await super.getObjects();
-          fields = fields.map(field => {
-            field.SobjectType = objectName;
-            field.FullName = objectName + "." + field.QualifiedApiName;
-            return field;
-          });
-          this.data[objectName] = fields;
-          fieldsToReturn.push(...fields);
-        }
+        let fields = await super.getObjects();
+        fields = fields.map(field => {
+          field.SobjectType = objectName;
+          field.FullName = objectName + "." + field.QualifiedApiName;
+          return field;
+        });
+        this.data[objectName] = fields;
+        fieldsToReturn.push(...fields);
       }
       this.dataLoaded = true;
     } else {
@@ -70,25 +66,16 @@ export default class FieldRetriever extends BaseMetadataRetriever<Field> {
       await this.getObjects();
     }
     if (!this.data[objectName]) {
-      let entityDefinitionUtils = EntityDefinitionRetriever.getInstance(
-        this.org
-      );
       let fields = [];
-      let durableId = await entityDefinitionUtils.getDurableIdByObjectName(
-        objectName
+      super.setQuery(
+        QUERY + " WHERE EntityDefinition.QualifiedApiName ='" + objectName + "'"
       );
-
-      if (!isNullOrUndefined(durableId) && durableId.length > 0) {
-        super.setQuery(
-          QUERY + " WHERE EntityDefinitionId ='" + durableId + "'"
-        );
-        fields = await super.getObjects();
-        fields = fields.map(field => {
-          field.SobjectType = objectName;
-          field.FullName = objectName + "." + field.QualifiedApiName;
-          return field;
-        });
-      }
+      fields = await super.getObjects();
+      fields = fields.map(field => {
+        field.SobjectType = objectName;
+        field.FullName = objectName + "." + field.QualifiedApiName;
+        return field;
+      });
       this.data[objectName] = fields;
     }
     return this.data[objectName];
