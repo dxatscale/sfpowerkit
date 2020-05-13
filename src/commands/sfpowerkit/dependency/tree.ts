@@ -6,11 +6,8 @@ import { SfdxError, Connection } from "@salesforce/core";
 import { PackageDetail } from "../../../impl/dependency/dependencyApi";
 import dependencyApi from "../../../impl/dependency/dependencyApi";
 import metadataRetrieverApi from "../../../impl/dependency/metadataRetrieverApi";
-import * as path from "path";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
-import fs = require("fs-extra");
-import FileUtils from "../../../utils/fileutils";
-import rimraf = require("rimraf");
+import outputGenerator from "../../../utils/outputGenerator";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -157,10 +154,15 @@ export default class Tree extends SfdxCommand {
       this.flags.packagefilter,
       membersWithoutDependency
     );
+
+    let outputUtil = new outputGenerator();
     if (this.flags.format === "json") {
-      await this.generateJsonOutput(this.output, this.flags.output);
+      await outputUtil.generateJsonOutput(this.output, this.flags.output);
     } else {
-      await this.generateCSVOutput(this.output, this.flags.output);
+      await outputUtil.generateCSVOutput(
+        this.getCSVdata(this.output),
+        this.flags.output
+      );
     }
     return this.output;
   }
@@ -245,25 +247,8 @@ export default class Tree extends SfdxCommand {
     progressBar.stop();
     this.output = result;
   }
-  private async generateJsonOutput(result: any[], outputDir: string) {
-    let outputJsonPath = `${outputDir}/output.json`;
-    rimraf.sync(outputJsonPath);
-    let dir = path.parse(outputJsonPath).dir;
-    if (!fs.existsSync(dir)) {
-      FileUtils.mkDirByPathSync(dir);
-    }
-    fs.writeFileSync(outputJsonPath, JSON.stringify(result));
-    SFPowerkit.log(
-      `Output ${outputDir}/output.json is generated successfully`,
-      LoggerLevel.INFO
-    );
-  }
-  public async generateCSVOutput(result: any[], outputDir: string) {
-    let outputcsvPath = `${outputDir}/output.csv`;
-    let dir = path.parse(outputcsvPath).dir;
-    if (!fs.existsSync(dir)) {
-      FileUtils.mkDirByPathSync(dir);
-    }
+
+  private getCSVdata(result: any[]) {
     let newLine = "\r\n";
     let output =
       "ID,NAME,TYPE," +
@@ -287,11 +272,7 @@ export default class Tree extends SfdxCommand {
         output = `${output}${element.id},${element.fullName},${element.type}${newLine}`;
       }
     });
-    fs.writeFileSync(outputcsvPath, output);
-    SFPowerkit.log(
-      `Output ${outputDir}/output.csv is generated successfully`,
-      LoggerLevel.INFO
-    );
+    return output;
   }
 }
 export interface Metadata {
