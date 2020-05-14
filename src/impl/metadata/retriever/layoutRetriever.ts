@@ -3,11 +3,10 @@ import { Org } from "@salesforce/core";
 import { METADATA_INFO } from "../metadataInfo";
 import * as _ from "lodash";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
-import EntityDefinitionRetriever from "./entityDefinitionRetriever";
 import MetadataFiles from "../metadataFiles";
 
 const QUERY =
-  "SELECT Id, Name, EntityDefinitionId, NamespacePrefix From Layout ";
+  "SELECT Id, Name, EntityDefinition.QualifiedApiName, EntityDefinitionId, NamespacePrefix From Layout  ";
 
 export default class LayoutRetriever extends BaseMetadataRetriever<Layout> {
   private static instance: LayoutRetriever;
@@ -28,19 +27,9 @@ export default class LayoutRetriever extends BaseMetadataRetriever<Layout> {
       (this.data === undefined || this.data.length == 0) &&
       !this.dataLoaded
     ) {
-      let entityDefinitionRetriever = EntityDefinitionRetriever.getInstance(
-        this.org
-      );
-
       super.setQuery(QUERY);
       let layouts = await super.getObjects();
       for (let i = 0; i < layouts.length; i++) {
-        layouts[
-          i
-        ].ObjectName = await entityDefinitionRetriever.getObjectNameByDurableId(
-          layouts[i].EntityDefinitionId
-        );
-
         let namespace = "";
         if (
           layouts[i].NamespacePrefix !== undefined &&
@@ -50,9 +39,12 @@ export default class LayoutRetriever extends BaseMetadataRetriever<Layout> {
         ) {
           namespace = layouts[i].NamespacePrefix + "__";
         }
-        if (layouts[i].ObjectName !== null && layouts[i].ObjectName !== "") {
+        if (
+          layouts[i].EntityDefinition !== null &&
+          layouts[i].EntityDefinition !== undefined
+        ) {
           layouts[i].FullName =
-            layouts[i].ObjectName +
+            layouts[i].EntityDefinition.QualifiedApiName +
             "-" +
             namespace +
             layouts[i].Name.replace(/%/g, "%25")

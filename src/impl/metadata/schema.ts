@@ -27,6 +27,7 @@ export interface EntityDefinition extends BaseObject {
 export interface Layout extends BaseObject {
   ObjectName?: string;
   EntityDefinitionId?: string;
+  EntityDefinition?: EntityDefinition;
 }
 
 export interface ValidationRule extends BaseObject {
