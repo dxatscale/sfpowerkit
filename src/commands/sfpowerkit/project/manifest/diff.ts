@@ -20,7 +20,7 @@ export default class Diff extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:project:manifest:diff -f source/package.xml -t target/package.xml -d output`
+    `$ sfdx sfpowerkit:project:manifest:diff -s source/package.xml -t target/package.xml -d output`
   ];
 
   protected static flagsConfig = {
@@ -46,7 +46,8 @@ export default class Diff extends SfdxCommand {
       required: false,
       char: "f",
       description: messages.getMessage("formatFlagDescription"),
-      options: ["json", "csv", "xml"]
+      options: ["json", "csv", "xml"],
+      default: "json"
     }),
     loglevel: flags.enum({
       description: messages.getMessage("loglevel"),
@@ -76,35 +77,32 @@ export default class Diff extends SfdxCommand {
     this.flags.apiversion =
       this.flags.apiversion || getDefaults.getApiVersion();
 
-    if (!this.flags.format || this.flags.json) {
+    if (this.flags.json) {
       this.flags.format = "json";
     }
 
     let sourceXml = await this.processMainfest(this.flags.sourcepath);
     let targetXml = await this.processMainfest(this.flags.targetpath);
 
-    let metadataTypes = [];
-    if (sourceXml && targetXml) {
-      for (let key of targetXml.keys()) {
-        if (sourceXml.has(key)) {
-          const diffout = this.getdiffList(
-            sourceXml.get(key),
-            targetXml.get(key)
-          );
-          if (diffout) {
-            metadataTypes.push({ name: key, members: diffout });
-          }
-        } else {
-          metadataTypes.push({ name: key, members: targetXml.get(key) });
-        }
-      }
-    }
+    let itemsAddedInTarget = this.compareXML(sourceXml, targetXml);
+    let itemsRemovedInTarget = this.compareXML(targetXml, sourceXml);
+
     let output = [];
-    if (metadataTypes) {
-      metadataTypes.forEach(metadataType => {
+    if (itemsAddedInTarget || itemsRemovedInTarget) {
+      itemsAddedInTarget.forEach(metadataType => {
         for (let item of metadataType.members) {
           output.push({
-            status: "Added at Target",
+            status: "Added in Target",
+            type: metadataType.name,
+            member: item
+          });
+        }
+      });
+
+      itemsRemovedInTarget.forEach(metadataType => {
+        for (let item of metadataType.members) {
+          output.push({
+            status: "Removed in Target",
             type: metadataType.name,
             member: item
           });
@@ -112,7 +110,7 @@ export default class Diff extends SfdxCommand {
       });
 
       if (this.flags.format === "xml") {
-        this.createpackagexml(metadataTypes);
+        this.createpackagexml(itemsAddedInTarget);
       } else if (this.flags.format === "csv") {
         this.generateCSVOutput(output);
       } else {
@@ -157,6 +155,28 @@ export default class Diff extends SfdxCommand {
       throw new Error(`Error : ${pathToManifest} is not valid package.xml`);
     }
     return output;
+  }
+  compareXML(
+    sourceXml: Map<string, string[]>,
+    targetXml: Map<string, string[]>
+  ) {
+    let metadataTypes = [];
+    if (sourceXml && targetXml) {
+      for (let key of targetXml.keys()) {
+        if (sourceXml.has(key)) {
+          const diffout = this.getdiffList(
+            sourceXml.get(key),
+            targetXml.get(key)
+          );
+          if (diffout) {
+            metadataTypes.push({ name: key, members: diffout });
+          }
+        } else {
+          metadataTypes.push({ name: key, members: targetXml.get(key) });
+        }
+      }
+    }
+    return metadataTypes;
   }
   getdiffList(from: string[], to: string[]) {
     let output = [];
