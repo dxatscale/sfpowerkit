@@ -2,6 +2,7 @@ import { SfdxProject } from "@salesforce/core";
 import { isNullOrUndefined } from "util";
 import Logger = require("pino");
 import { UX } from "@salesforce/command";
+import cli from "cli-ux";
 
 export enum LoggerLevel {
   TRACE = 10,
@@ -20,6 +21,7 @@ export class SFPowerkit {
   private static isJsonFormatEnabled: boolean;
   private static ux: UX;
   private static sourceApiVersion: any;
+  public static logLevel;
 
   public static setLogLevel(logLevel: string, isJsonFormatEnabled: boolean) {
     logLevel = logLevel.toLowerCase();
@@ -38,6 +40,27 @@ export class SFPowerkit {
       });
     } else {
       //do nothing for now, need to put pino to move to file
+    }
+
+    switch (logLevel) {
+      case "trace":
+        SFPowerkit.logLevel = LoggerLevel.TRACE;
+        break;
+      case "debug":
+        SFPowerkit.logLevel = LoggerLevel.DEBUG;
+        break;
+      case "info":
+        SFPowerkit.logLevel = LoggerLevel.INFO;
+        break;
+      case "warn":
+        SFPowerkit.logLevel = LoggerLevel.WARN;
+        break;
+      case "error":
+        SFPowerkit.logLevel = LoggerLevel.ERROR;
+        break;
+      case "fatal":
+        SFPowerkit.logLevel = LoggerLevel.FATAL;
+        break;
     }
   }
 
@@ -131,5 +154,13 @@ export class SFPowerkit {
   }
   public static setStatus(status: string) {
     this.ux.setSpinnerStatus(status);
+  }
+  public static createProgressBar(title, unit) {
+    return cli.progress({
+      format: `${title} - PROGRESS  | {bar} | {value}/{total} ${unit}`,
+      barCompleteChar: "\u2588",
+      barIncompleteChar: "\u2591",
+      linewrap: true
+    });
   }
 }
