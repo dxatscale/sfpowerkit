@@ -70,6 +70,7 @@ export default class Diff extends SfdxCommand {
     })
   };
 
+  protected output: any[];
   public async run(): Promise<AnyJson> {
     getDefaults.init();
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
@@ -87,41 +88,35 @@ export default class Diff extends SfdxCommand {
     let itemsAddedInTarget = this.compareXML(sourceXml, targetXml);
     let itemsRemovedInTarget = this.compareXML(targetXml, sourceXml);
 
-    let output = [];
+    this.output = [];
     if (itemsAddedInTarget || itemsRemovedInTarget) {
-      itemsAddedInTarget.forEach(metadataType => {
-        for (let item of metadataType.members) {
-          output.push({
-            status: "Added in Target",
-            type: metadataType.name,
-            member: item
-          });
-        }
-      });
+      this.addItemsToOutput(itemsAddedInTarget, "Added in Target");
+      this.addItemsToOutput(itemsRemovedInTarget, "Removed in Target");
 
-      itemsRemovedInTarget.forEach(metadataType => {
-        for (let item of metadataType.members) {
-          output.push({
-            status: "Removed in Target",
-            type: metadataType.name,
-            member: item
-          });
+      this.output.sort(function(a, b) {
+        if (a.type < b.type) {
+          return -1;
+        } else if (a.type > b.type) {
+          return 1;
         }
+
+        // names must be equal
+        return 0;
       });
 
       if (this.flags.format === "xml") {
         this.createpackagexml(itemsAddedInTarget);
       } else if (this.flags.format === "csv") {
-        this.generateCSVOutput(output);
+        this.generateCSVOutput(this.output);
       } else {
         fs.writeFileSync(
           `${this.flags.output}/package.json`,
-          JSON.stringify(output)
+          JSON.stringify(this.output)
         );
       }
     }
 
-    return output;
+    return this.output;
   }
 
   public async processMainfest(pathToManifest: string) {
@@ -187,6 +182,17 @@ export default class Diff extends SfdxCommand {
     });
 
     return output;
+  }
+  addItemsToOutput(itemsToProcess: any[], status: string) {
+    itemsToProcess.forEach(metadataType => {
+      for (let item of metadataType.members) {
+        this.output.push({
+          status: status,
+          type: metadataType.name,
+          member: item
+        });
+      }
+    });
   }
   createpackagexml(manifest: any[]) {
     let package_xml = {
