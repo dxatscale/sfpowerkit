@@ -1,0 +1,11 @@
+{
+  "pool": {
+    "expiry": 1,
+    "config_file_path": "config/project-scratch-def.json",
+    "script_file_path": "scripts/so_script.bat",
+    "tag": "sfpowerkit",
+    "relax_iprange_begin": "122.0.0.0",
+    "relax_iprange_end": "122.255.255.255",
+    "max_allocation": 10
+  }
+}
