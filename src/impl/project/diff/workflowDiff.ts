@@ -1,6 +1,6 @@
-import * as fs from "fs";
+import * as fs from "fs-extra";
 import * as xml2js from "xml2js";
-import util = require("util");
+import * as util from "util";
 import DiffImpl from "./diffImpl";
 import DiffUtil from "./diffUtil";
 var _ = require("lodash");

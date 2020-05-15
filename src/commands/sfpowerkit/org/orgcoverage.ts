@@ -7,11 +7,11 @@ import {
 } from "@salesforce/command";
 import { SfdxError } from "@salesforce/core";
 import { AnyJson } from "@salesforce/ts-types";
-import fs = require("fs-extra");
+import * as fs from "fs-extra";
 import * as path from "path";
 import FileUtils from "../../../utils/fileutils";
-import request = require("request-promise-native");
-import rimraf = require("rimraf");
+import request from "request-promise-native";
+import * as rimraf from "rimraf";
 const querystring = require("querystring");
 
 // Initialize Messages with the current plugin directory

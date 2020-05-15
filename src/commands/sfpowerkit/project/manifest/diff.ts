@@ -1,7 +1,7 @@
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
-import fs = require("fs-extra");
-import path from "path";
+import * as fs from "fs-extra";
+import * as path from "path";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 import xmlUtil from "../../../../utils/xmlUtil";
 import getDefaults from "../../../../utils/getDefaults";

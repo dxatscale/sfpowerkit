@@ -1,6 +1,6 @@
 import { AnyJson, getString } from "@salesforce/ts-types";
 import { core, flags, SfdxCommand } from "@salesforce/command";
-import rimraf = require("rimraf");
+import * as rimraf from "rimraf";
 import { Connection } from "jsforce";
 
 import { SfdxError, AuthInfo, Aliases, ConfigGroup } from "@salesforce/core";

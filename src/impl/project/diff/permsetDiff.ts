@@ -1,8 +1,8 @@
-import * as fs from "fs";
+import * as fs from "fs-extra";
 import { Org } from "@salesforce/core";
 import { Connection } from "@salesforce/core";
-import xml2js = require("xml2js");
-import util = require("util");
+import * as xml2js from "xml2js";
+import * as util from "util";
 import * as _ from "lodash";
 import DiffUtil from "./diffUtil";
 

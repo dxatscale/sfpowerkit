@@ -1,0 +1,69 @@
+import { core, flags, SfdxCommand, FlagsConfig } from "@salesforce/command";
+import { AnyJson } from "@salesforce/ts-types";
+import * as rimraf from "rimraf";
+import { SFPowerkit } from "../../../sfpowerkit";
+import ScratchOrgImpl from "../../../impl/pool/scratchorg/poolCreateImpl";
+
+// Initialize Messages with the current plugin directory
+core.Messages.importMessagesDirectory(__dirname);
+
+// Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
+// or any library that is using the messages framework can also be loaded this way.
+const messages = core.Messages.loadMessages(
+  "sfpowerkit",
+  "scratchorg_pool_create"
+);
+
+export default class Create extends SfdxCommand {
+  public static description = messages.getMessage("commandDescription");
+  protected static requiresDevhubUsername = true;
+
+  protected static flagsConfig: FlagsConfig = {
+    configfilepath: flags.filepath({
+      char: "p",
+      description: messages.getMessage("configFilePathDescription"),
+      required: false
+    }),
+    loglevel: flags.enum({
+      description: "logging level for this command invocation",
+      default: "info",
+      required: false,
+      options: [
+        "trace",
+        "debug",
+        "info",
+        "warn",
+        "error",
+        "fatal",
+        "TRACE",
+        "DEBUG",
+        "INFO",
+        "WARN",
+        "ERROR",
+        "FATAL"
+      ]
+    })
+  };
+
+  public static examples = [];
+  public async run(): Promise<AnyJson> {
+    rimraf.sync("temp_sfpowerkit");
+    SFPowerkit.setLogLevel(this.flags.loglevel, false);
+
+    await this.hubOrg.refreshAuth();
+    const hubConn = this.hubOrg.getConnection();
+
+    this.flags.apiversion =
+      this.flags.apiversion || (await hubConn.retrieveMaxApiVersion());
+
+    let scratchOrgPoolImpl = new ScratchOrgImpl(
+      this.flags.configfilepath,
+      this.hubOrg,
+      this.flags.apiversion
+    );
+
+    await scratchOrgPoolImpl.poolScratchOrgs();
+
+    return 1;
+  }
+}

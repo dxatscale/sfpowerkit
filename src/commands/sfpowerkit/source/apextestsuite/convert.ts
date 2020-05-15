@@ -1,10 +1,10 @@
 import { AnyJson, JsonArray, asJsonArray } from "@salesforce/ts-types";
-import fs from "fs-extra";
+import * as fs from "fs-extra";
 import { core, flags, SfdxCommand } from "@salesforce/command";
-import rimraf = require("rimraf");
+import * as rimraf from "rimraf";
 import { SfdxError, SfdxProject, LoggerLevel } from "@salesforce/core";
-import xml2js = require("xml2js");
-import util = require("util");
+import * as xml2js from "xml2js";
+import * as util from "util";
 const fg = require("fast-glob");
 
 import {

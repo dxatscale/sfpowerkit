@@ -1,7 +1,7 @@
 import Profile from "../schema";
 import { SFPowerkit } from "../../../sfpowerkit";
-import * as fs from "fs";
-import xml2js = require("xml2js");
+import * as fs from "fs-extra";
+import * as xml2js from "xml2js";
 
 const nonArayProperties = [
   "custom",

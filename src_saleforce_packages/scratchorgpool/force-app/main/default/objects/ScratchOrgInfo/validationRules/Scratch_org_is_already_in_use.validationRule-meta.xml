@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Scratch_org_is_already_in_use</fullName>
+    <active>true</active>
+    <errorConditionFormula>ISPICKVAL(PRIORVALUE(Allocation_status__c),&#39;Assigned&#39;)  &amp;&amp; 
+ISCHANGED(Allocation_status__c)</errorConditionFormula>
+    <errorDisplayField>Allocation_status__c</errorDisplayField>
+    <errorMessage>Scratch org is already in use</errorMessage>
+</ValidationRule>

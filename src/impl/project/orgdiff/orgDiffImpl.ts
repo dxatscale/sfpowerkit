@@ -6,7 +6,7 @@ import {
   UNSPLITED_METADATA
 } from "../../../impl/metadata/metadataInfo";
 
-import * as fs from "fs";
+import * as fs from "fs-extra";
 import * as path from "path";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import FileUtils from "../../../utils/fileutils";
@@ -16,7 +16,7 @@ import { Org } from "@salesforce/core";
 import { checkRetrievalStatus } from "../../../utils/checkRetrievalStatus";
 import { AsyncResult } from "jsforce";
 import { extract } from "../../../utils/extract";
-import rimraf = require("rimraf");
+import * as rimraf from "rimraf";
 import CustomLabelsDiff from "../diff/customLabelsDiff";
 import SharingRuleDiff from "../diff/sharingRuleDiff";
 import WorkflowDiff from "../diff/workflowDiff";

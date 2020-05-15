@@ -71,6 +71,7 @@ $ sfdx plugins:link
   - [`sfpowerkit:org:sandbox:refresh`](#sfpowerkitorgsandboxrefresh)
   - [`sfpowerkit:org:scratchorg:usage`](#sfpowerkitorgscratchorgusage)
   - [`sfpowerkit:org:scratchorg:delete`](#sfpowerkitorgscratchorgdelete)
+  - [`sfpowerkit:org:relaxiprange`](#sfpowerkitorgrelaxiprange)
   - [`sfpowerkit:auth:login`](#sfpowerkitauthlogin)
     <!-- commands -->
 
@@ -497,6 +498,29 @@ EXAMPLE
   $ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -i 04tXXXXXXXXXXXXXXX,04tXXXXXXXXXXXXXXX,04tXXXXXXXXXXXXXXX
   $ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -p core -n 1.2.0.45
   $ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -p 0HoXXXXXXXXXXXXXXX -n 1.2.0.45
+```
+
+_See code: [src\commands\sfpowerkit\package\version\codecoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/version/codecoverage.ts)_
+
+## `sfpowerkit:package:version:info`
+
+This command is used to fetch the version number, namespace prefix, and version id of all the installed managed/unmanaged packages in an org.
+
+```
+USAGE
+  $ sfdx sfpowerkit:package:version:info  -u <string> [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
+
+  --apiversion=apiversion                                                           API version
+
+  --json                                                                            format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] [default: info] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:package:version:info -u myOrg@example.com
 ```
 
 _See code: [src\commands\sfpowerkit\package\version\codecoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/version/codecoverage.ts)_
@@ -1073,6 +1097,31 @@ EXAMPLE
 ```
 
 _See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/scratchorg/usage.ts)_
+
+## `sfpowerkit:org:relaxiprange`
+
+This command sets ip range in Network access to relax security setting for a particular salesforce environment
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:relaxiprange -r <array> [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -r, --range=range                                                                 (required) List of ip range with comma separated. eg,
+                                                                                    122.0.0.0-122.255.255.255,49.0.0.0-49.255.255.255
+
+  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
+
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+
+  --json                                                                            format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
+
+EXAMPLE
+  sfdx sfpowerkit:org:relaxiprange -u sandbox -r "122.0.0.0-122.255.255.255,49.0.0.0-49.255.255.255"
+```
 
 ## `sfpowerkit:auth:login`
 
