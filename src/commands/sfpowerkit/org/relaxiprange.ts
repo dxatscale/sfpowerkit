@@ -59,6 +59,10 @@ export default class Relaxiprange extends SfdxCommand {
       return { start: range[0], end: range[1] };
     });
 
-    return await RelaxIPRangeImpl.setIp(this.org.getConnection(), ipRangeToSet);
+    return await RelaxIPRangeImpl.setIp(
+      this.org.getConnection(),
+      this.org.getUsername(),
+      ipRangeToSet
+    );
   }
 }

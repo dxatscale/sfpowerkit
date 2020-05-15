@@ -3,6 +3,7 @@ import { AnyJson } from "@salesforce/ts-types";
 import * as rimraf from "rimraf";
 import { SFPowerkit } from "../../../sfpowerkit";
 import ScratchOrgImpl from "../../../impl/pool/scratchorg/poolCreateImpl";
+import { SfdxError } from "@salesforce/core";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -20,7 +21,7 @@ export default class Create extends SfdxCommand {
 
   protected static flagsConfig: FlagsConfig = {
     configfilepath: flags.filepath({
-      char: "p",
+      char: "f",
       description: messages.getMessage("configFilePathDescription"),
       required: false
     }),
@@ -62,8 +63,11 @@ export default class Create extends SfdxCommand {
       this.flags.apiversion
     );
 
-    await scratchOrgPoolImpl.poolScratchOrgs();
-
-    return 1;
+    try {
+      await scratchOrgPoolImpl.poolScratchOrgs();
+      return 1;
+    } catch (err) {
+      throw new SfdxError("Unable to execute command .. " + err);
+    }
   }
 }

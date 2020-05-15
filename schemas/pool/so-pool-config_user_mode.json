@@ -3,8 +3,7 @@
     "expiry": 1,
     "config_file_path": "config/project-scratch-def.json",
     "script_file_path": "scripts/so_script.sh",
-    "tag": "sfpowerkit",
-    "user_mode": true
+    "tag": "sfpowerkit"
   },
   "poolUsers": [
     {

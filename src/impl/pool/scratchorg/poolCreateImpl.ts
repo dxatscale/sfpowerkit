@@ -18,6 +18,11 @@ export default class PoolCreateImpl {
   private hubConn: Connection;
   private apiversion: string;
   private poolConfig: PoolConfig;
+  private totalToBeAllocated: number;
+  private ipRangeExecResults;
+  private ipRangeExecResultsAsObject;
+  private limits;
+
   private scriptExecutorWrappedForBottleneck = limiter.wrap(
     this.scriptExecutor
   );
@@ -35,37 +40,36 @@ export default class PoolCreateImpl {
     this.apiversion = apiversion;
   }
 
-  public async poolScratchOrgs() {
-    let scriptExecResults: Array<Promise<ScriptExecutionResult>> = new Array();
-    let ipRangeExecResults: Array<Promise<boolean>> = new Array();
+  public async poolScratchOrgs(): Promise<boolean> {
+    let scriptExecPromises: Array<Promise<ScriptExecutionResult>> = new Array();
+    let ipRangeExecPromises: Array<Promise<{
+      username: string;
+      success: boolean;
+    }>> = new Array();
 
-    this.hubConn = this.hubOrg.getConnection();
     await this.hubOrg.refreshAuth();
+    this.hubConn = this.hubOrg.getConnection();
 
     //Read pool config file
     this.poolConfig = JSON.parse(fs.readFileSync(this.poolconfigFilePath));
 
+    if (this.poolConfig.poolUsers && this.poolConfig.poolUsers.length > 0)
+      this.poolConfig.pool.user_mode = true;
+    else this.poolConfig.pool.user_mode = false;
+
     //Set Tag Only mode activated for the default use case
-    if (isNullOrUndefined(this.poolConfig.pool.user_mode)) {
-      //Remove any existing pool Config for pool users
-      if (this.poolConfig.poolUsers) delete this.poolConfig.poolUsers;
+    if (this.poolConfig.pool.user_mode == false)
+      this.setASingleUserForTagOnlyMode();
 
-      let poolUser: PoolUser = {
-        min_allocation: this.poolConfig.pool.max_allocation,
-        max_allocation: this.poolConfig.pool.max_allocation,
-        is_build_pooluser: false,
-        expiry: this.poolConfig.pool.expiry,
-        priority: 1
-      };
-      //Add a single user
-      this.poolConfig.poolUsers = [];
-      this.poolConfig.poolUsers.push(poolUser);
-      this.poolConfig.pool.user_mode = false;
-    }
+    SFPowerkit.log(
+      "Pool Config:" + JSON.stringify(this.poolConfig),
+      LoggerLevel.TRACE
+    );
 
-    SFPowerkit.log("Pool Config:" + this.poolConfig, LoggerLevel.TRACE);
-
-    if (isNullOrUndefined(this.poolConfig.pool.relax_ip_ranges)) {
+    if (
+      isNullOrUndefined(this.poolConfig.pool.relax_ip_ranges) &&
+      !this.poolConfig.pool.user_mode
+    ) {
       SFPowerkit.log(
         "IP Ranges are not relaxed, The created scratch org's will have the pool creators email as Admin Email and has to be verifed before use",
         LoggerLevel.WARN
@@ -73,9 +77,88 @@ export default class PoolCreateImpl {
     }
 
     //fetch current status limits
-    let limits: any;
+    await this.fetchCurrentLimits();
+
+    //Compute allocation
+    this.totalToBeAllocated = await this.computeAllocation();
+
+    if (this.totalToBeAllocated === 0) {
+      if (this.limits.ActiveScratchOrgs.Remaining > 0)
+        SFPowerkit.log(
+          `The tag provided ${this.poolConfig.pool.tag} is currently at the maximum capacity , No scratch orgs will be allocated`,
+          LoggerLevel.INFO
+        );
+      else
+        SFPowerkit.log(
+          `There is no capacity to create a pool at this time, Please try again later`,
+          LoggerLevel.INFO
+        );
+      return;
+    }
+
+    //Generate Scratch Orgs
+    await this.generateScratchOrgs();
+
+    // Assign workers to executed scripts
+    let ts = Math.floor(Date.now() / 1000);
+    for (let poolUser of this.poolConfig.poolUsers) {
+      poolUser.scratchOrgs.forEach(scratchOrg => {
+        SFPowerkit.log(JSON.stringify(scratchOrg), LoggerLevel.DEBUG);
+
+        if (this.poolConfig.pool.relax_ip_ranges) {
+          let resultForIPRelaxation = this.ipRangeRelaxerWrappedForBottleneck(
+            scratchOrg
+          );
+          ipRangeExecPromises.push(resultForIPRelaxation);
+        }
+
+        let result = this.scriptExecutorWrappedForBottleneck(
+          this.poolConfig.pool.script_file_path,
+          scratchOrg,
+          this.hubOrg.getUsername()
+        );
+        scriptExecPromises.push(result);
+      });
+    }
+
+    //Wait for scripts to finish execution
+    if (this.poolConfig.pool.relax_ip_ranges)
+      this.ipRangeExecResults = await Promise.all(ipRangeExecPromises);
+    let scriptExecResults = await Promise.all(scriptExecPromises);
+
+    SFPowerkit.log(JSON.stringify(scriptExecResults), LoggerLevel.TRACE);
+    ts = Math.floor(Date.now() / 1000) - ts;
+    SFPowerkit.log(
+      `Script Execution completed in ${ts} Seconds`,
+      LoggerLevel.INFO
+    );
+
+    //Commit Succesfull Scratch Orgs
+    await this.commitGeneratedScratchOrgs();
+
+    return true;
+  }
+
+  private setASingleUserForTagOnlyMode() {
+    //Remove any existing pool Config for pool users
+    if (this.poolConfig.poolUsers) delete this.poolConfig.poolUsers;
+
+    let poolUser: PoolUser = {
+      min_allocation: this.poolConfig.pool.max_allocation,
+      max_allocation: this.poolConfig.pool.max_allocation,
+      is_build_pooluser: false,
+      expiry: this.poolConfig.pool.expiry,
+      priority: 1
+    };
+    //Add a single user
+    this.poolConfig.poolUsers = [];
+    this.poolConfig.poolUsers.push(poolUser);
+    this.poolConfig.pool.user_mode = false;
+  }
+
+  private async fetchCurrentLimits() {
     try {
-      limits = await ScratchOrgUtils.getScratchOrgLimits(
+      this.limits = await ScratchOrgUtils.getScratchOrgLimits(
         this.hubOrg,
         this.apiversion
       );
@@ -85,18 +168,39 @@ export default class PoolCreateImpl {
     }
 
     SFPowerkit.log(
-      `Active Scratch Orgs Remaining: ${limits.ActiveScratchOrgs.Remaining} out of ${limits.ActiveScratchOrgs.Max}`,
-      LoggerLevel.INFO
+      `Active Scratch Orgs Remaining: ${this.limits.ActiveScratchOrgs.Remaining} out of ${this.limits.ActiveScratchOrgs.Max}`,
+      LoggerLevel.TRACE
     );
+  }
 
+  private async computeAllocation(): Promise<number> {
     //Compute current pool requirement
     if (this.poolConfig.pool.user_mode) {
       //Retrieve Number of active SOs in the org
-      let scratchOrgsRecordAsMapByUser = await ScratchOrgUtils.getScratchOrgRecordsAsMapByUser(
-        this.hubOrg
+      let scratchOrgsResult = await ScratchOrgUtils.getScratchOrgsByTag(
+        this.poolConfig.pool.tag,
+        this.hubOrg,
+        false,
+        false
       );
-      this.allocateScratchOrgsPerUser(
-        limits.ActiveScratchOrgs.Remaining,
+
+      scratchOrgsResult.records = scratchOrgsResult.records.sort();
+
+      let scratchOrgsRecordAsMapByUser = scratchOrgsResult.records.reduce(
+        function(obj, v) {
+          obj[v.SignupEmail] = (obj[v.SignupEmail] || 0) + 1;
+          return obj;
+        },
+        {}
+      );
+
+      SFPowerkit.log(
+        JSON.stringify(scratchOrgsRecordAsMapByUser),
+        LoggerLevel.TRACE
+      );
+
+      return this.allocateScratchOrgsPerUser(
+        this.limits.ActiveScratchOrgs.Remaining,
         scratchOrgsRecordAsMapByUser,
         this.poolConfig.poolUsers
       );
@@ -105,24 +209,16 @@ export default class PoolCreateImpl {
         this.poolConfig.pool.tag,
         this.hubOrg
       );
-      this.allocateScratchOrgsPerTag(
-        limits.ActiveScratchOrgs.Remaining,
+      return this.allocateScratchOrgsPerTag(
+        this.limits.ActiveScratchOrgs.Remaining,
         activeCount,
         this.poolConfig.pool.tag,
         this.poolConfig.poolUsers[0]
       );
-
-      SFPowerkit.log(JSON.stringify(this.poolConfig), LoggerLevel.TRACE);
-      //No need to allocate return;
-      if (this.poolConfig.poolUsers[0].to_allocate == 0) {
-        SFPowerkit.log(
-          `The tag provided ${this.poolConfig.pool.tag} is currently at the maximum capacity, No scratch orgs will be allocated`,
-          LoggerLevel.INFO
-        );
-        return;
-      }
     }
+  }
 
+  private async generateScratchOrgs() {
     //Generate Scratch Orgs
     for (let poolUser of this.poolConfig.poolUsers) {
       let count = 1;
@@ -153,44 +249,19 @@ export default class PoolCreateImpl {
         count++;
       }
     }
+  }
 
-    SFPowerkit.log(
-      "Pool:" + JSON.stringify(this.poolConfig.poolUsers),
-      LoggerLevel.TRACE
-    );
-
-    let ts = Math.floor(Date.now() / 1000);
-
-    for (let poolUser of this.poolConfig.poolUsers) {
-      poolUser.scratchOrgs.forEach(scratchOrg => {
-        SFPowerkit.log(JSON.stringify(scratchOrg), LoggerLevel.DEBUG);
-
-        let resultForIPRelaxation = this.ipRangeRelaxerWrappedForBottleneck(
-          scratchOrg
-        );
-        ipRangeExecResults.push(resultForIPRelaxation);
-
-        let result = this.scriptExecutorWrappedForBottleneck(
-          this.poolConfig.pool.script_file_path,
-          scratchOrg,
-          this.hubOrg.getUsername()
-        );
-        scriptExecResults.push(result);
-      });
-    }
-
-    await Promise.all(ipRangeExecResults);
-    let execResults = await Promise.all(scriptExecResults);
-
-    SFPowerkit.log(JSON.stringify(execResults), LoggerLevel.TRACE);
-    ts = Math.floor(Date.now() / 1000) - ts;
-    SFPowerkit.log(
-      `Script Execution completed in ${ts} Seconds`,
-      LoggerLevel.INFO
-    );
-    this.resultAnalyzer(execResults);
-
+  private async commitGeneratedScratchOrgs() {
     //Store Username Passwords
+    let failed = 0;
+    let success = 0;
+
+    if (!isNullOrUndefined(this.poolConfig.pool.relax_ip_ranges))
+      this.ipRangeExecResultsAsObject = this.arrayToObject(
+        this.ipRangeExecResults,
+        "username"
+      );
+
     for (let poolUser of this.poolConfig.poolUsers) {
       await ScratchOrgUtils.getScratchOrgRecordId(
         poolUser.scratchOrgs,
@@ -198,25 +269,45 @@ export default class PoolCreateImpl {
       );
 
       for (let scratchOrg of poolUser.scratchOrgs) {
+        if (
+          this.poolConfig.pool.relax_ip_ranges &&
+          !this.ipRangeExecResultsAsObject[scratchOrg.username]["success"]
+        )
+          scratchOrg.isScriptExecuted = false;
+
         if (scratchOrg.isScriptExecuted) {
-          await ScratchOrgUtils.setScratchOrgInfo(
-            {
-              Id: scratchOrg.recordId,
-              pooltag__c: this.poolConfig.pool.tag,
-              Password__c: scratchOrg.password
-            },
-            this.hubOrg
-          );
-        } else {
-          //Delete failed scratch org
-          await ScratchOrgUtils.deleteScratchOrg(
-            this.hubOrg,
-            this.apiversion,
-            scratchOrg.recordId
-          );
+          try {
+            await ScratchOrgUtils.setScratchOrgInfo(
+              {
+                Id: scratchOrg.recordId,
+                pooltag__c: this.poolConfig.pool.tag,
+                password__c: scratchOrg.password
+              },
+              this.hubOrg
+            );
+            success++;
+            continue;
+          } catch (error) {}
         }
+
+        SFPowerkit.log(
+          `Failed to execute scripts for ${scratchOrg.username}.. Returning to Pool`,
+          LoggerLevel.WARN
+        );
+        failed++;
+        //Delete failed scratch org
+        await ScratchOrgUtils.deleteScratchOrg(
+          this.hubOrg,
+          this.apiversion,
+          scratchOrg.recordId
+        );
       }
     }
+
+    SFPowerkit.log(
+      `Allocated a pool of ${this.totalToBeAllocated} scratchorgs, with ${success} sucess and ${failed} failures`,
+      LoggerLevel.INFO
+    );
   }
 
   private allocateScratchOrgsPerTag(
@@ -243,6 +334,8 @@ export default class PoolCreateImpl {
     ) {
       poolUser.to_allocate = remainingScratchOrgs;
     }
+
+    return poolUser.to_allocate;
   }
 
   private allocateScratchOrgsPerUser(
@@ -250,6 +343,8 @@ export default class PoolCreateImpl {
     scratchOrgsRecordAsMapByUser: any,
     poolUsers: PoolUser[]
   ) {
+    let totalToBeAllocated = 0;
+
     //sort pooleconfig.poolusers based on priority
     poolUsers = poolUsers.sort((a, b) => a.priority - b.priority);
     let totalMaxOrgRequired: number = 0,
@@ -261,7 +356,8 @@ export default class PoolCreateImpl {
 
       if (scratchOrgsRecordAsMapByUser[pooluser.username]) {
         pooluser.current_allocation =
-          scratchOrgsRecordAsMapByUser[pooluser.username].In_Use;
+          scratchOrgsRecordAsMapByUser[pooluser.username];
+
         pooluser.to_satisfy_max =
           pooluser.max_allocation - pooluser.current_allocation > 0
             ? pooluser.max_allocation - pooluser.current_allocation
@@ -285,6 +381,7 @@ export default class PoolCreateImpl {
       // Satisfy max. allocate max
       poolUsers.forEach(pooluser => {
         pooluser.to_allocate = pooluser.to_satisfy_max;
+        totalToBeAllocated += pooluser.to_satisfy_max;
       });
     } else if (totalMinOrgRequired <= remainingScratchOrgs) {
       // Satisfy min
@@ -292,6 +389,7 @@ export default class PoolCreateImpl {
 
       poolUsers.forEach(pooluser => {
         pooluser.to_allocate = pooluser.to_satisfy_min;
+        totalToBeAllocated += pooluser.to_satisfy_min;
       });
       //Check for left overs
       let leftOver = remainingScratchOrgs - totalMinOrgRequired;
@@ -306,6 +404,7 @@ export default class PoolCreateImpl {
               pooluser.to_satisfy_max
             ) {
               pooluser.to_allocate++;
+              totalToBeAllocated++;
               leftOver--;
             }
           });
@@ -322,15 +421,20 @@ export default class PoolCreateImpl {
             pooluser.to_satisfy_max
           ) {
             pooluser.to_allocate++;
+            totalToBeAllocated++;
 
             leftOver--;
           }
         });
       }
     }
+
+    return totalToBeAllocated;
   }
 
-  private async ipRangeRelaxer(scratchOrg: ScratchOrg): Promise<any> {
+  private async ipRangeRelaxer(
+    scratchOrg: ScratchOrg
+  ): Promise<{ username: string; success: boolean }> {
     //executue using bash
     SFPowerkit.log(
       `Relaxing ip ranges for scratchOrg with user ${scratchOrg.username}`,
@@ -341,6 +445,7 @@ export default class PoolCreateImpl {
     });
     return RelaxIPRangeImpl.setIp(
       connection,
+      scratchOrg.username,
       this.poolConfig.pool.relax_ip_ranges
     );
   }
@@ -400,27 +505,11 @@ export default class PoolCreateImpl {
     });
   }
 
-  private resultAnalyzer(execResults: ScriptExecutionResult[]) {
-    let failed = 0;
-    let success = 0;
-    let total = execResults.length;
-    for (const element of execResults) {
-      if (!element.isSuccess) {
-        failed++;
-        SFPowerkit.log(
-          `Failed to execute scripts for ${element.scratchOrgUsername}`,
-          LoggerLevel.WARN
-        );
-        continue;
-      }
-      success++;
-    }
-
-    SFPowerkit.log(
-      `Executed ${total} scripts.. of which ${success} passed with ${failed} failures`,
-      LoggerLevel.INFO
-    );
-  }
+  private arrayToObject = (array, keyfield) =>
+    array.reduce((obj, item) => {
+      obj[item[keyfield]] = item;
+      return obj;
+    }, {});
 }
 
 export interface PoolConfig {

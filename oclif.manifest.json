@@ -1,5 +1,5 @@
 {
-  "version": "1.44.2-12",
+  "version": "1.45.0",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -384,7 +384,7 @@
     "sfpowerkit:pool:create": {
       "id": "sfpowerkit:pool:create",
       "description": "Creates a pool of prebuilt scratchorgs, which can the be consumed by users or CI",
-      "usage": "<%= command.id %> [-p <filepath>] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "usage": "<%= command.id %> [-f <filepath>] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],
@@ -432,7 +432,7 @@
         "configfilepath": {
           "name": "configfilepath",
           "type": "option",
-          "char": "p",
+          "char": "f",
           "description": "Relative Path to the pool configuration json file. The schema of the file could be found in the Wiki",
           "required": false
         }
@@ -2228,7 +2228,7 @@
       "pluginType": "core",
       "aliases": [],
       "examples": [
-        "$ sfdx sfpowerkit:project:manifest:diff -f source/package.xml -t target/package.xml -d output"
+        "$ sfdx sfpowerkit:project:manifest:diff -s source/package.xml -t target/package.xml -d output"
       ],
       "flags": {
         "json": {
@@ -2292,7 +2292,8 @@
           "description": "[default: json] The format for the output, Possible values are json/csv/xml",
           "required": false,
           "helpValue": "(json|csv|xml)",
-          "options": ["json", "csv", "xml"]
+          "options": ["json", "csv", "xml"],
+          "default": "json"
         }
       },
       "args": []

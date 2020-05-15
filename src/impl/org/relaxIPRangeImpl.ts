@@ -16,8 +16,9 @@ import { SFPowerkit, LoggerLevel } from "../../sfpowerkit";
 export default class RelaxIPRangeImpl {
   public static async setIp(
     conn: Connection,
+    username: string,
     ipRangeToSet: any[]
-  ): Promise<boolean> {
+  ): Promise<{ username: string; success: boolean }> {
     const apiversion = await conn.retrieveMaxApiVersion();
 
     let retrieveRequest = {
@@ -135,21 +136,21 @@ export default class RelaxIPRangeImpl {
         deployId.id
       );
 
+      rimraf.sync(retriveLocation);
+
       if (!metadata_deploy_result.success) {
         SFPowerkit.log(
           `Unable to set ip range : ${metadata_deploy_result.details["componentFailures"]["problem"]}`,
           LoggerLevel.ERROR
         );
+        return { username: username, success: false };
       } else {
         SFPowerkit.log(
           `Ip range is successfully set in ${conn.getUsername()}`,
           LoggerLevel.INFO
         );
+        return { username: username, success: true };
       }
-
-      rimraf.sync(retriveLocation);
     }
-
-    return true;
   }
 }

@@ -99,7 +99,7 @@ export default class ScratchOrgUtils {
               targetdevhubusername: hubOrg.getUsername(),
               wait: 10
             },
-            adminEmail
+            `adminEmail=${adminEmail}`
           );
         } else {
           result = await sfdx.force.org.create({
@@ -251,7 +251,7 @@ export default class ScratchOrgUtils {
 
     return await retry(
       async bail => {
-        let query = `SELECT Id, CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE pooltag__c = '${tag}'  AND Status = 'Active' `;
+        let query = `SELECT Id,  CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE pooltag__c = '${tag}'  AND Status = 'Active' `;
         if (isMyPool) {
           query =
             query + ` AND createdby.username = '${hubOrg.getUsername()}' `;
@@ -286,6 +286,23 @@ export default class ScratchOrgUtils {
     );
   }
   public static async getCountOfActiveScratchOrgsByTag(
+    tag: string,
+    hubOrg: Org
+  ): Promise<number> {
+    let hubConn = hubOrg.getConnection();
+
+    return await retry(
+      async bail => {
+        let query = `SELECT Id, CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE pooltag__c = '${tag}' AND Status = 'Active' `;
+        SFPowerkit.log("QUERY:" + query, LoggerLevel.TRACE);
+        const results = (await hubConn.query(query)) as any;
+        return results.totalSize;
+      },
+      { retries: 3, minTimeout: 3000 }
+    );
+  }
+
+  public static async getCountOfActiveScratchOrgsByTagAndUsername(
     tag: string,
     hubOrg: Org
   ): Promise<number> {
