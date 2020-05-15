@@ -400,7 +400,7 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] [default: info] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx sfpowerkit:project:manifest:diff -f source/package.xml -t target/package.xml -d output
+  $ sfdx sfpowerkit:project:manifest:diff -s source/package.xml -t target/package.xml -d output
 ```
 
 ## `sfpowerkit:project:manifest:merge`

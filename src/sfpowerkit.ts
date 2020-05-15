@@ -28,7 +28,7 @@ export class SFPowerkit {
     this.isJsonFormatEnabled = isJsonFormatEnabled;
 
     if (!isJsonFormatEnabled) {
-      this.logger = Pino({
+      SFPowerkit.logger = Pino({
         name: "sfpowerkit",
         level: logLevel,
         prettyPrint: {
