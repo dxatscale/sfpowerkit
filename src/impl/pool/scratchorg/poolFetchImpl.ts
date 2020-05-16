@@ -49,7 +49,7 @@ export default class PoolFetchImpl {
           soDetail.orgId = element.ScratchOrg;
           soDetail.loginURL = element.LoginUrl;
           soDetail.username = element.SignupUsername;
-          soDetail.password = element.password__c;
+          soDetail.password = element.Password__c;
           soDetail.expityDate = element.ExpirationDate;
           soDetail.status = "Assigned";
 

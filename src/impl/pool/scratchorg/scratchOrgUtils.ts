@@ -251,7 +251,7 @@ export default class ScratchOrgUtils {
 
     return await retry(
       async bail => {
-        let query = `SELECT Id,  CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE pooltag__c = '${tag}'  AND Status = 'Active' `;
+        let query = `SELECT Id,  CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE Pooltag__c = '${tag}'  AND Status = 'Active' `;
         if (isMyPool) {
           query =
             query + ` AND createdby.username = '${hubOrg.getUsername()}' `;
@@ -293,7 +293,7 @@ export default class ScratchOrgUtils {
 
     return await retry(
       async bail => {
-        let query = `SELECT Id, CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE pooltag__c = '${tag}' AND Status = 'Active' `;
+        let query = `SELECT Id, CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE Pooltag__c = '${tag}' AND Status = 'Active' `;
         SFPowerkit.log("QUERY:" + query, LoggerLevel.TRACE);
         const results = (await hubConn.query(query)) as any;
         return results.totalSize;
@@ -310,7 +310,7 @@ export default class ScratchOrgUtils {
 
     return await retry(
       async bail => {
-        let query = `SELECT Id, CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE pooltag__c = '${tag}' AND Status = 'Active' `;
+        let query = `SELECT Id, CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE Pooltag__c = '${tag}' AND Status = 'Active' `;
         SFPowerkit.log("QUERY:" + query, LoggerLevel.TRACE);
         const results = (await hubConn.query(query)) as any;
         return results.totalSize;

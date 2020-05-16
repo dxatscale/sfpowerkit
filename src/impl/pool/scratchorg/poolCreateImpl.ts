@@ -280,8 +280,8 @@ export default class PoolCreateImpl {
             await ScratchOrgUtils.setScratchOrgInfo(
               {
                 Id: scratchOrg.recordId,
-                pooltag__c: this.poolConfig.pool.tag,
-                password__c: scratchOrg.password
+                Pooltag__c: this.poolConfig.pool.tag,
+                Password__c: scratchOrg.password
               },
               this.hubOrg
             );
