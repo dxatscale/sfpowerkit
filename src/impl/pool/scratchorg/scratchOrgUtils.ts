@@ -80,12 +80,6 @@ export default class ScratchOrgUtils {
       LoggerLevel.TRACE
     );
 
-    //Create Scratch Org's
-    SFPowerkit.log(
-      `Creating scratch org ..  ${adminEmail ? adminEmail : `SO${id}`}..`,
-      LoggerLevel.INFO
-    );
-
     let result;
     await retry(
       async bail => {

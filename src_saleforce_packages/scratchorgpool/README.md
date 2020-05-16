@@ -1,9 +1,11 @@
-# Salesforce App
+# Support Fields for ScratchOrg Pooling
 
-## Dev, Build and Test
+Deploy the following fields along with validation rule to a DevHub to get the associated scratch org commands working.
 
-## Resources
+How to deploy!
 
-## Description of Files and Directories
+### Install the supporting fields and validation rule to DevHub
 
-## Issues
+`cd src_salesforce_packages/scratchorgpool`
+
+`sfdx force:source:deploy -p force-app -u Devhub -w 30`

@@ -225,10 +225,8 @@ export default class PoolCreateImpl {
       poolUser.scratchOrgs = new Array<ScratchOrg>();
       for (let i = 0; i < poolUser.to_allocate; i++) {
         SFPowerkit.log(
-          `Creating Scratch  Org for ${
-            poolUser.username ? poolUser.username : this.poolConfig.pool.tag
-          }: ${count} of ${poolUser.to_allocate}`,
-          LoggerLevel.DEBUG
+          `Creating Scratch  Org for ${count} of ${this.totalToBeAllocated}..`,
+          LoggerLevel.INFO
         );
         try {
           let scratchOrg: ScratchOrg = await ScratchOrgUtils.createScratchOrg(
@@ -459,9 +457,9 @@ export default class PoolCreateImpl {
     let cmd;
     scriptFilePath = path.normalize(scriptFilePath);
     if (process.platform != "win32") {
-      cmd = `bash ${scriptFilePath} SCRATCH_ORG="${scratchOrg.username}" DEVHUB="${hubOrgUserName}"`;
+      cmd = `bash ${scriptFilePath}  ${scratchOrg.username}  ${hubOrgUserName} `;
     } else {
-      cmd = `cmd.exe /c ${scriptFilePath}  "SCRATCH_ORG=${scratchOrg.username}" "DEVHUB=${hubOrgUserName}"`;
+      cmd = `cmd.exe /c ${scriptFilePath}  ${scratchOrg.username}  ${hubOrgUserName}`;
     }
     SFPowerkit.log(`Executing command: ${cmd}`, LoggerLevel.INFO);
     return new Promise((resolve, reject) => {
