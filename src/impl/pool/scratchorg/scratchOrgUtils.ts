@@ -3,6 +3,7 @@ import request from "request-promise-native";
 import { SFPowerkit } from "../../../sfpowerkit";
 import { sfdx } from "@pony-ci/sfdx-node";
 import retry from "async-retry";
+import { isNullOrUndefined } from "util";
 
 const ORDER_BY_FILTER = " ORDER BY CreatedDate ASC";
 export default class ScratchOrgUtils {
@@ -245,7 +246,13 @@ export default class ScratchOrgUtils {
 
     return await retry(
       async bail => {
-        let query = `SELECT Id,  CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE Pooltag__c = '${tag}'  AND Status = 'Active' `;
+        let query;
+
+        if (!isNullOrUndefined(tag))
+          query = `SELECT Pooltag__c, Id,  CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE Pooltag__c = '${tag}'  AND Status = 'Active' `;
+        else
+          query = `SELECT Pooltag__c, Id,  CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE Pooltag__c != null  AND Status = 'Active' `;
+
         if (isMyPool) {
           query =
             query + ` AND createdby.username = '${hubOrg.getUsername()}' `;
@@ -344,6 +351,7 @@ export default class ScratchOrgUtils {
 }
 
 export interface ScratchOrg {
+  tag?: string;
   recordId?: string;
   orgId?: string;
   loginURL?: string;

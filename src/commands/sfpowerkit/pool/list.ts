@@ -2,6 +2,9 @@ import { core, flags, SfdxCommand } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import poolListImpl from "../../../impl/pool/scratchorg/poolListImpl";
+import { isNullOrUndefined } from "util";
+import P from "pino";
+import { ScratchOrg } from "../../../impl/pool/scratchorg/scratchOrgUtils";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -29,7 +32,7 @@ export default class List extends SfdxCommand {
     tag: flags.string({
       char: "t",
       description: messages.getMessage("tagDescription"),
-      required: true
+      required: false
     }),
     mypool: flags.boolean({
       char: "m",
@@ -77,18 +80,24 @@ export default class List extends SfdxCommand {
     if (!this.flags.json) {
       if (result.length > 0) {
         this.ux.log(`======== Scratch org Details ========`);
+
+        if (isNullOrUndefined(this.flags.tag)) {
+          this.ux.log(`List of all the pools in the org`);
+
+          this.logTagCount(result);
+          this.ux.log("===================================");
+        }
+
         this.ux.log(
-          `Total Scratch Orgs in use the pool: ${scratchOrgInuse.length +
-            scratchOrgNotInuse.length}`
-        );
-        this.ux.log(
-          `Available Scratch Orgs in use the pool: ${scratchOrgInuse.length}`
+          `Used Scratch Orgs in use the pool: ${scratchOrgInuse.length}`
         );
         this.ux.log(
           `Unused Scratch Orgs in the Pool : : ${scratchOrgNotInuse.length} \n`
         );
+
         if (this.flags.verbose) {
           this.ux.table(result, [
+            "tag",
             "orgId",
             "username",
             "password",
@@ -98,6 +107,7 @@ export default class List extends SfdxCommand {
           ]);
         } else {
           this.ux.table(result, [
+            "tag",
             "orgId",
             "username",
             "expityDate",
@@ -121,5 +131,23 @@ export default class List extends SfdxCommand {
     };
 
     return output;
+  }
+
+  private logTagCount(result: ScratchOrg[]) {
+    let tagCounts: any = result.reduce(function(obj, v) {
+      obj[v.tag] = (obj[v.tag] || 0) + 1;
+      return obj;
+    }, {});
+
+    let tagArray = new Array<any>();
+
+    Object.keys(tagCounts).forEach(function(key) {
+      tagArray.push({
+        tag: key,
+        count: tagCounts[key]
+      });
+    });
+
+    this.ux.table(tagArray, ["tag", "count"]);
   }
 }

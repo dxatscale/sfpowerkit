@@ -40,6 +40,7 @@ export default class PoolFetchImpl {
 
       for (let element of results.records) {
         let soDetail: ScratchOrg = {};
+        soDetail.tag = element.Pooltag__c;
         soDetail.orgId = element.ScratchOrg;
         soDetail.loginURL = element.LoginUrl;
         soDetail.username = element.SignupUsername;
