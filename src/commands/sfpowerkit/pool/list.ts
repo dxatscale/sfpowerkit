@@ -22,10 +22,10 @@ export default class List extends SfdxCommand {
   protected static requiresDevhubUsername = true;
 
   public static examples = [
-    `$ sfdx sfpowerkit:org:scratchorg:pool:list -t core `,
-    `$ sfdx sfpowerkit:org:scratchorg:pool:list -t core -v devhub`,
-    `$ sfdx sfpowerkit:org:scratchorg:pool:list -t core -v devhub -m`,
-    `$ sfdx sfpowerkit:org:scratchorg:pool:list -t core -v devhub -m -a`
+    `$ sfdx sfpowerkit:pool:list -t core `,
+    `$ sfdx sfpowerkit:pool:list -t core -v devhub`,
+    `$ sfdx sfpowerkit:pool:list -t core -v devhub -m`,
+    `$ sfdx sfpowerkit:pool:list -t core -v devhub -m -a`
   ];
 
   protected static flagsConfig = {

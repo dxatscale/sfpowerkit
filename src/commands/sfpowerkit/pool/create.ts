@@ -19,11 +19,16 @@ export default class Create extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
   protected static requiresDevhubUsername = true;
 
+  public static examples = [
+    `$ sfdx sfpowerkit:pool:create -f config\\core_poolconfig.json`,
+    `$ sfdx sfpowerkit:pool:create -f config\\core_poolconfig.json -v devhub`
+  ];
+
   protected static flagsConfig: FlagsConfig = {
     configfilepath: flags.filepath({
       char: "f",
       description: messages.getMessage("configFilePathDescription"),
-      required: false
+      required: true
     }),
     loglevel: flags.enum({
       description: "logging level for this command invocation",
@@ -46,7 +51,6 @@ export default class Create extends SfdxCommand {
     })
   };
 
-  public static examples = [];
   public async run(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
     SFPowerkit.setLogLevel(this.flags.loglevel, false);

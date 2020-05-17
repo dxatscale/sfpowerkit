@@ -19,9 +19,9 @@ export default class Fetch extends SfdxCommand {
   protected static requiresDevhubUsername = true;
 
   public static examples = [
-    `$ sfdx sfpowerkit:org:scratchorg:pool:fetch -t core `,
-    `$ sfdx sfpowerkit:org:scratchorg:pool:fetch -t core -v devhub`,
-    `$ sfdx sfpowerkit:org:scratchorg:pool:fetch -t core -v devhub -m`
+    `$ sfdx sfpowerkit:pool:fetch -t core `,
+    `$ sfdx sfpowerkit:pool:fetch -t core -v devhub`,
+    `$ sfdx sfpowerkit:pool:fetch -t core -v devhub -m`
   ];
 
   protected static flagsConfig = {

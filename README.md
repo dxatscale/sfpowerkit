@@ -73,6 +73,11 @@ $ sfdx plugins:link
   - [`sfpowerkit:org:scratchorg:delete`](#sfpowerkitorgscratchorgdelete)
   - [`sfpowerkit:org:relaxiprange`](#sfpowerkitorgrelaxiprange)
   - [`sfpowerkit:auth:login`](#sfpowerkitauthlogin)
+- [ScratchOrg Pooling Related Functionalities](#scratchorg-pooling-related-functionalities-beta)
+  - [`sfpowerkit:pool:create`](#sfpowerkitpoolcreate)
+  - [`sfpowerkit:pool:fetch`](#sfpowerkitpoolfetch)
+  - [`sfpowerkit:pool:list`](#sfpowerkitpoollist)
+  - [`sfpowerkit:pool:hydrate`](#sfpowerkitpoolhydrate)
     <!-- commands -->
 
 ## Source Related Functionalities
@@ -498,29 +503,6 @@ EXAMPLE
   $ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -i 04tXXXXXXXXXXXXXXX,04tXXXXXXXXXXXXXXX,04tXXXXXXXXXXXXXXX
   $ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -p core -n 1.2.0.45
   $ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -p 0HoXXXXXXXXXXXXXXX -n 1.2.0.45
-```
-
-_See code: [src\commands\sfpowerkit\package\version\codecoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/version/codecoverage.ts)_
-
-## `sfpowerkit:package:version:info`
-
-This command is used to fetch the version number, namespace prefix, and version id of all the installed managed/unmanaged packages in an org.
-
-```
-USAGE
-  $ sfdx sfpowerkit:package:version:info  -u <string> [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
-
-OPTIONS
-  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
-
-  --apiversion=apiversion                                                           API version
-
-  --json                                                                            format output as json
-
-  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] [default: info] logging level for this command invocation
-
-EXAMPLE
-  $ sfdx sfpowerkit:package:version:info -u myOrg@example.com
 ```
 
 _See code: [src\commands\sfpowerkit\package\version\codecoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/version/codecoverage.ts)_
@@ -1155,4 +1137,103 @@ EXAMPLE
   $  sfdx sfpowerkit:auth:login -u azlam@sfdc.com -p Xasdax2w2  -a prod
      Authorized to azlam@sfdc.com
 
+```
+
+## ScratchOrg Pooling Related Functionalities [BETA]
+
+Scaratch pooling is beta feature from sfpowerkit, supports below list of functionalities. more details available in wiki [here](https://github.com/Accenture/sfpowerkit/wiki/Getting-started-with-ScratchOrg-Pooling)
+
+## `sfpowerkit:pool:create`
+
+Creates a pool of prebuilt scratchorgs, which can the be consumed by users or CI
+
+```
+USAGE
+  $ sfdx sfpowerkit:pool:create -f <filepath> [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -f, --configfilepath=configfilepath                                               (required) Relative Path to the pool configuration json file. The schema of the file could be found in
+                                                                                    the Wiki
+
+  -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
+
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+
+  --json                                                                            format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
+
+EXAMPLES
+  $ sfdx sfpowerkit:pool:create -f config\core_poolconfig.json
+  $ sfdx sfpowerkit:pool:create -f config\core_poolconfig.json -v devhub
+```
+
+## `sfpowerkit:pool:fetch`
+
+Gets the available active scratch org for the users in a devhub pool
+
+```
+USAGE
+  $ sfdx sfpowerkit:pool:fetch -t <string> [-m] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -m, --mypool                                                                      Filter Scratch orgs created by current user from the pool
+  -t, --tag=tag                                                                     (required) tag name that is used to create scratch orgs pool
+  -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLES
+  $ sfdx sfpowerkit:pool:fetch -t core
+  $ sfdx sfpowerkit:pool:fetch -t core -v devhub
+  $ sfdx sfpowerkit:pool:fetch -t core -v devhub -m
+```
+
+## `sfpowerkit:pool:list`
+
+Gets list of active scratch org from devhub pool with scratch org details. when this command is run with -m|--mypool it will get password for the Scratch orgs
+
+```
+USAGE
+  $ sfdx sfpowerkit:pool:list [-t <string>] [-m] [-a] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -a, --allscratchorgs                                                              Gets all used and unused Scratch orgs from pool by the tag
+  -m, --mypool                                                                      Filter only Scratch orgs created by current user in the pool
+  -t, --tag=tag                                                                     tag name that is used to create scratch orgs pool
+  -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLES
+  $ sfdx sfpowerkit:pool:list -t core
+  $ sfdx sfpowerkit:pool:list -t core -v devhub
+  $ sfdx sfpowerkit:pool:list -t core -v devhub -m
+  $ sfdx sfpowerkit:pool:list -t core -v devhub -m -a
+```
+
+## `sfpowerkit:pool:hydrate`
+
+Gets active scratch org from devhub pool and deletes all the scratch orgs
+
+```
+USAGE
+  $ sfdx sfpowerkit:pool:hydrate -t <string> [-m] [-a] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -a, --allscratchorgs                                                              Deletes all used and unused Scratch orgs from pool by the tag
+  -m, --mypool                                                                      Filter only Scratch orgs created by current user in the pool
+  -t, --tag=tag                                                                     (required) tag name that is used to create scratch orgs pool
+  -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLES
+  $ sfdx sfpowerkit:pool:hydrate -t core
+  $ sfdx sfpowerkit:pool:hydrate -t core -v devhub
+  $ sfdx sfpowerkit:pool:hydrate -t core -v devhub -m
+  $ sfdx sfpowerkit:pool:hydrate -t core -v devhub -m -a
 ```
