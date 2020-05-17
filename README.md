@@ -1170,15 +1170,15 @@ EXAMPLES
 
 ## `sfpowerkit:pool:fetch`
 
-Gets the available active scratch org for the users in a devhub pool
+Gets an active/unused scratch org from the scratch org pool
 
 ```
 USAGE
   $ sfdx sfpowerkit:pool:fetch -t <string> [-m] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -m, --mypool                                                                      Filter Scratch orgs created by current user from the pool
-  -t, --tag=tag                                                                     (required) tag name that is used to create scratch orgs pool
+  -m, --mypool                                                                      Filter the tag for any additions created  by the executor of the command
+  -t, --tag=tag                                                                     (required) tag used to identify the scratch org pool
   -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
   --apiversion=apiversion                                                           override the api version used for api requests made by this command
   --json                                                                            format output as json
@@ -1192,16 +1192,16 @@ EXAMPLES
 
 ## `sfpowerkit:pool:list`
 
-Gets list of active scratch org from devhub pool with scratch org details. when this command is run with -m|--mypool it will get password for the Scratch orgs
+Retrieves a list of active scratch org and details from any pool. If this command is run with -m|--mypool, the command will retrieve the passwords for the pool created by the user who is executing the command.
 
 ```
 USAGE
   $ sfdx sfpowerkit:pool:list [-t <string>] [-m] [-a] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -a, --allscratchorgs                                                              Gets all used and unused Scratch orgs from pool by the tag
-  -m, --mypool                                                                      Filter only Scratch orgs created by current user in the pool
-  -t, --tag=tag                                                                     tag name that is used to create scratch orgs pool
+  -a, --allscratchorgs                                                              Gets all used and unused Scratch orgs from pool
+  -m, --mypool                                                                      Filter the tag for any additions created  by the executor of the command
+  -t, --tag=tag                                                                     tag used to identify the scratch org pool
   -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
   --apiversion=apiversion                                                           override the api version used for api requests made by this command
   --json                                                                            format output as json
@@ -1216,7 +1216,7 @@ EXAMPLES
 
 ## `sfpowerkit:pool:hydrate`
 
-Gets active scratch org from devhub pool and deletes all the scratch orgs
+Deletes the pooled scratch orgs from the Scratch Org Pool
 
 ```
 USAGE
@@ -1225,7 +1225,7 @@ USAGE
 OPTIONS
   -a, --allscratchorgs                                                              Deletes all used and unused Scratch orgs from pool by the tag
   -m, --mypool                                                                      Filter only Scratch orgs created by current user in the pool
-  -t, --tag=tag                                                                     (required) tag name that is used to create scratch orgs pool
+  -t, --tag=tag                                                                     (required) tag used to identify the scratch org pool
   -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
   --apiversion=apiversion                                                           override the api version used for api requests made by this command
   --json                                                                            format output as json
