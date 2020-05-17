@@ -43,8 +43,7 @@ export default class List extends SfdxCommand {
       char: "a",
       description: messages.getMessage("allscratchorgsDescription"),
       required: false
-    }),
-    verbose: flags.builtin()
+    })
   };
 
   public async run(): Promise<AnyJson> {
@@ -66,7 +65,7 @@ export default class List extends SfdxCommand {
 
     let result = await listImpl.execute();
 
-    if (!this.flags.verbose && result.length > 0) {
+    if (!this.flags.mypool && result.length > 0) {
       result.forEach(element => {
         delete element.password;
       });
@@ -95,7 +94,7 @@ export default class List extends SfdxCommand {
           `Unused Scratch Orgs in the Pool : : ${scratchOrgNotInuse.length} \n`
         );
 
-        if (this.flags.verbose) {
+        if (this.flags.mypool) {
           this.ux.table(result, [
             "tag",
             "orgId",
