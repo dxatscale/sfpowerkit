@@ -114,8 +114,6 @@ _See code: [src\commands\sfpowerkit\source\pmd.ts](https://github.com/Accenture/
 
 Retrieve profiles from the salesforce org with all its associated permissions. Common use case for this command is to migrate profile changes from a integration environment to other higher environments [overcomes SFDX CLI Profile retrieve issue where it doesnt fetch the full profile unless the entire metadata is present in source], or retrieving profiles from production to lower environments for testing.
 
-This command is of sufficient quality, however proceed with caution while adopting in your workflow
-
 ```
 
 USAGE
@@ -171,8 +169,6 @@ _See code: [src\commands\sfpowerkit\profile\reconcile.ts](https://github.com/Acc
 ## `sfpowerkit:source:profile:merge`
 
 This command is used in the lower environments such as ScratchOrgs , Development / System Testing Sandboxes, inorder to apply the changes made in the environment to retrieved profile, so that it can be deployed to the higher environments
-
-This command is of sufficient quality, however proceed with caution while adopting in your workflow
 
 ```
 
@@ -322,8 +318,6 @@ Generate a delta 'changeset' between two diff commits so that the incremental ch
 
 This command works with a source format based repository only. Utilize the command during a transition phase where an org is transformed to a modular architecture composing of multiple projects.
 
-This command is of sufficient quality, however proceed with caution while adopting in your workflow
-
 ```
 
 USAGE
@@ -356,8 +350,6 @@ EXAMPLE
 ## `sfpowerkit:project:orgdiff`
 
 Compare source files of a project against the salesforce org and display differences. The command also add diff conflict markers in changed files to let the developer accept or reject changes manually using a git merge tool. The idea behind this command is used to track changes done on an unlocked package or a modular repo against the changes done in a higher environment. This command is not yet ready to work on a single repo against the whole metadata in the org
-
-This command is of sufficient quality, however proceed with caution while adopting in your workflow
 
 ```
 
@@ -865,8 +857,6 @@ _See code: [src\commands\sfpowerkit\org\healthcheck.ts](https://github.com/Accen
 
 Generate a complete manifest of all the metadata from the specified org. Once the manifest is generated use source:retrieve or mdapi:retrieve to retrieve the metadata.
 
-This command is of sufficient quality, however proceed with caution while adopting in your workflow
-
 ```
 USAGE
   $ sfdx sfpowerkit:org:manifest:build [-q <string>] [-x] [-o <filepath>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
@@ -1141,7 +1131,9 @@ EXAMPLE
 
 ## ScratchOrg Pooling Related Functionalities [BETA]
 
-Scaratch pooling is beta feature from sfpowerkit, supports below list of functionalities. more details available in wiki [here](https://github.com/Accenture/sfpowerkit/wiki/Getting-started-with-ScratchOrg-Pooling)
+Commands to create and maintain a pool of scratchorgs. Details on getting started are available [here](https://github.com/Accenture/sfpowerkit/wiki/Getting-started-with-ScratchOrg-Pooling)
+
+This command is of sufficient quality, however proceed with caution while adopting in your workflow
 
 ## `sfpowerkit:pool:create`
 
