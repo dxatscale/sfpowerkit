@@ -348,6 +348,27 @@ export default class ScratchOrgUtils {
       obj[item[keyfield]] = item;
       return obj;
     }, {});
+
+  public static async checkForPreRequisite(hubOrg: Org) {
+    let hubConn = hubOrg.getConnection();
+
+    return await retry(
+      async bail => {
+        const results: any = await hubConn.metadata.read(
+          "CustomObject",
+          "ScratchOrgInfo"
+        );
+
+        const checker = element => element.fullName === "Allocation_status__c";
+        if (results["fields"].some(checker)) {
+          return true;
+        } else {
+          return false;
+        }
+      },
+      { retries: 3, minTimeout: 2000 }
+    );
+  }
 }
 
 export interface ScratchOrg {

@@ -50,6 +50,18 @@ export default class PoolCreateImpl {
     await this.hubOrg.refreshAuth();
     this.hubConn = this.hubOrg.getConnection();
 
+    let preRequisiteCheck = await ScratchOrgUtils.checkForPreRequisite(
+      this.hubOrg
+    );
+
+    if (!preRequisiteCheck) {
+      SFPowerkit.log(
+        "Required Prerequisite fields are missing in the DevHub, Please look into the wiki to getting the fields deployed in DevHub",
+        LoggerLevel.ERROR
+      );
+      return false;
+    }
+
     //Read pool config file
     this.poolConfig = JSON.parse(fs.readFileSync(this.poolconfigFilePath));
 

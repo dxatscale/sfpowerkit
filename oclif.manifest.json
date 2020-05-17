@@ -591,7 +591,7 @@
     "sfpowerkit:pool:list": {
       "id": "sfpowerkit:pool:list",
       "description": "Gets list of active scratch org from devhub pool with scratch org details. when this command is run with --verbose it will get password for the Scratch orgs",
-      "usage": "<%= command.id %> [-t <string>] [-m] [-a] [-v <string>] [--apiversion <string>] [--verbose] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "usage": "<%= command.id %> [-t <string>] [-m] [-a] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],
@@ -662,12 +662,6 @@
           "char": "a",
           "description": "Gets all used and unused Scratch orgs from pool by the tag",
           "required": false,
-          "allowNo": false
-        },
-        "verbose": {
-          "name": "verbose",
-          "type": "boolean",
-          "description": "emit additional command output to stdout",
           "allowNo": false
         }
       },
