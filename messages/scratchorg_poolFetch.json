@@ -1,5 +1,5 @@
 {
-  "commandDescription": "Gets the available active scratch org for the users in a devhub pool",
-  "tagDescription": "tag name that is used to create scratch orgs pool",
-  "mypoolDescription": "Filter Scratch orgs created by current user from the pool"
+  "commandDescription": "Gets an active/unused scratch org from the scratch org pool",
+  "tagDescription": "(required) tag used to identify the scratch org pool",
+  "mypoolDescription": "Filter the tag for any additions created  by the executor of the command"
 }

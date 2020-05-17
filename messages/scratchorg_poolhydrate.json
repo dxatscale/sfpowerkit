@@ -1,6 +1,6 @@
 {
-  "commandDescription": "Gets active scratch org from devhub pool and deletes all the scratch orgs",
-  "tagDescription": "tag name that is used to create scratch orgs pool",
+  "commandDescription": "Deletes the pooled scratch orgs from the Scratch Org Pool",
+  "tagDescription": "(required) tag used to identify the scratch org pool",
   "mypoolDescription": "Filter only Scratch orgs created by current user in the pool",
   "allscratchorgsDescription": "Deletes all used and unused Scratch orgs from pool by the tag"
 }
