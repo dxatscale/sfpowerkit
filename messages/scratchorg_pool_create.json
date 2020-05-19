@@ -1,0 +1,4 @@
+{
+  "commandDescription": "Creates a pool of prebuilt scratchorgs, which can the be consumed by users or CI",
+  "configFilePathDescription": "Relative Path to the pool configuration json file. The schema of the file could be found in the Wiki"
+}

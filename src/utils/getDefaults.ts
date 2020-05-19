@@ -1,5 +1,5 @@
-import fs = require("fs-extra");
-import path from "path";
+import * as fs from "fs-extra";
+import * as path from "path";
 
 export default class GetDefaults {
   public static defaultConfig: any;

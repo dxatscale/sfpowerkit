@@ -1,7 +1,7 @@
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
-import request = require("request-promise-native");
-
+import request from "request-promise-native";
+import ScratchOrgUtils from "../../../../impl/pool/scratchorg/scratchOrgUtils";
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
 
@@ -49,10 +49,14 @@ export default class Delete extends SfdxCommand {
 
       this.ux.log(`Deleting Scratch Orgs`);
 
-      info.records.forEach(element => {
-        this.deleteScratchOrg(conn, element.Id);
+      for (let element of info.records) {
+        await ScratchOrgUtils.deleteScratchOrg(
+          this.hubOrg,
+          this.flags.apiversion,
+          element.Id
+        );
         this.ux.log(`Deleted Scratch Org ${element.Id}`);
-      });
+      }
     } else {
       this.ux.log(`No Scratch Orgs to delete`);
     }
@@ -78,20 +82,5 @@ export default class Delete extends SfdxCommand {
     });
 
     return scratch_orgs;
-  }
-
-  private async deleteScratchOrg(conn: core.Connection, id: string) {
-    var query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/sobjects/ActiveScratchOrg/${id}`;
-
-    //this.ux.log(`Query URI ${query_uri}`);
-
-    const info = await request({
-      method: "delete",
-      url: query_uri,
-      headers: {
-        Authorization: `Bearer ${conn.accessToken}`
-      },
-      json: true
-    });
   }
 }

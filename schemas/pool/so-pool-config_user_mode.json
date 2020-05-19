@@ -1,0 +1,17 @@
+{
+  "pool": {
+    "expiry": 1,
+    "config_file_path": "config/project-scratch-def.json",
+    "script_file_path": "scripts/so_script.sh",
+    "tag": "sfpowerkit"
+  },
+  "poolUsers": [
+    {
+      "max_allocation": 5,
+      "min_allocation": 2,
+      "username": "manivasga.murugesan@accenture.com",
+      "expiry": 1,
+      "priority": 1
+    }
+  ]
+}

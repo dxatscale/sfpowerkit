@@ -1,5 +1,5 @@
 var archiver = require("archiver");
-import fs from "fs-extra";
+import * as fs from "fs-extra";
 
 export async function zipDirectory(source, out) {
   const archive = archiver("zip", { zlib: { level: 9 } });
