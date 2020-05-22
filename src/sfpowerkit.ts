@@ -17,7 +17,7 @@ export class SFPowerkit {
   private static defaultFolder: string;
   private static projectDirectories: string[];
   private static pluginConfig;
-  private static isJsonFormatEnabled: boolean;
+  public static isJsonFormatEnabled: boolean;
   private static ux: UX;
   private static sourceApiVersion: any;
   private static logger;

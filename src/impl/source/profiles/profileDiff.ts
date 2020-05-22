@@ -32,9 +32,7 @@ export default class ProfileDiffImpl {
     private profileList: string[],
     private sourceOrgStr: string,
     private targetOrg: Org,
-    private outputFolder: string,
-    private loglevel: any,
-    private isJSONFlagEnabled: boolean
+    private outputFolder: string
   ) {
     this.targetLabel = this.targetOrg.getConnection().getUsername();
   }
@@ -186,9 +184,9 @@ export default class ProfileDiffImpl {
           let progressBar = new ProgressBar().create(
             "Diff processing ",
             "Profiles",
-            this.loglevel,
+            SFPowerkit.logLevel,
             LoggerLevel.INFO,
-            this.isJSONFlagEnabled
+            SFPowerkit.isJsonFormatEnabled
           );
 
           progressBar.start(profilesSourceMap.length);
@@ -249,9 +247,9 @@ export default class ProfileDiffImpl {
     let progressBar = new ProgressBar().create(
       `Retrieving From ${connection.getUsername()}`,
       "Profiles",
-      this.loglevel,
+      SFPowerkit.logLevel,
       LoggerLevel.INFO,
-      this.isJSONFlagEnabled
+      SFPowerkit.isJsonFormatEnabled
     );
 
     progressBar.start(profileNames.length);
