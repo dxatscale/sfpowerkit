@@ -5,7 +5,7 @@ import FileUtils from "../../../utils/fileutils";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import { extract } from "../../../utils/extract";
 import { isNullOrUndefined } from "util";
-import xml2js = require("xml2js");
+import * as xml2js from "xml2js";
 
 const request = require("request");
 const fs = require("fs");

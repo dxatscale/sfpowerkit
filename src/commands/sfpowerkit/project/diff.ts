@@ -9,7 +9,7 @@ import DiffImpl from "../../../impl/project/diff/diffImpl";
 import * as path from "path";
 import { SFPowerkit } from "../../../sfpowerkit";
 import { fs } from "@salesforce/core";
-import rimraf = require("rimraf");
+import * as rimraf from "rimraf";
 import * as fsextra from "fs-extra";
 
 // Initialize Messages with the current plugin directory
@@ -96,9 +96,12 @@ export default class Diff extends SfdxCommand {
     },
     display() {
       if (Array.isArray(this.data) && this.data.length) {
-        this.ux.table(this.data.filter(element=>{
-          return element['action']!=='ERROR';
-        }), this.tableColumnData);
+        this.ux.table(
+          this.data.filter(element => {
+            return element["action"] !== "ERROR";
+          }),
+          this.tableColumnData
+        );
       }
     }
   };
@@ -125,11 +128,11 @@ export default class Diff extends SfdxCommand {
       this.flags.packagedirectories,
       this.flags.apiversion
     );
-    let errors = diffOutput.filter(element=>{
-      return element['action']==='ERROR';
+    let errors = diffOutput.filter(element => {
+      return element["action"] === "ERROR";
     });
-    if(errors && errors.length>0){
-      this.ux.log('ERRORS');
+    if (errors && errors.length > 0) {
+      this.ux.log("ERRORS");
       this.ux.table(errors, {
         columns: [
           { key: "path", label: "Path" },
@@ -137,16 +140,15 @@ export default class Diff extends SfdxCommand {
         ]
       });
       rimraf.sync(outputFolder);
-      if(this.flags.json){
+      if (this.flags.json) {
         //In case of error, the diff output is still printed in the output folder
         if (fsextra.existsSync(outputFolder) == false) {
           fsextra.mkdirSync(outputFolder);
           fs.writeJson(path.join(outputFolder, "diff.json"), diffOutput);
         }
       }
-      throw new Error('Error parsing diff.');
-    }
-    else{
+      throw new Error("Error parsing diff.");
+    } else {
       fs.writeJson(path.join(outputFolder, "diff.json"), diffOutput);
     }
     return diffOutput;

@@ -1,0 +1,5 @@
+{
+  "commandDescription": "Gets an active/unused scratch org from the scratch org pool",
+  "tagDescription": "(required) tag used to identify the scratch org pool",
+  "mypoolDescription": "Filter the tag for any additions created  by the executor of the command"
+}

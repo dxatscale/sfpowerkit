@@ -1,0 +1,6 @@
+{
+  "commandDescription": "Retrieves a list of active scratch org and details from any pool. If this command is run with -m|--mypool, the command will retrieve the passwords for the pool created by the user who is executing the command.",
+  "tagDescription": "tag used to identify the scratch org pool",
+  "mypoolDescription": "Filter the tag for any additions created  by the executor of the command",
+  "allscratchorgsDescription": "Gets all used and unused Scratch orgs from pool"
+}

@@ -1,7 +1,7 @@
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
-import fs = require("fs-extra");
-import rimraf = require("rimraf");
+import * as fs from "fs-extra";
+import * as rimraf from "rimraf";
 
 const spawn = require("child-process-promise").spawn;
 import { zipDirectory } from "../../../../utils/zipDirectory";

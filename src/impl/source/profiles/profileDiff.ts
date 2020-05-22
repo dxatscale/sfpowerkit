@@ -10,13 +10,13 @@ import ProfileRetriever from "../../../impl/metadata/retriever/profileRetriever"
 import ProfileWriter from "../../../impl/metadata/writer/profileWriter";
 import Profile from "../../../impl/metadata/schema";
 import { SFPowerkit } from "../../../sfpowerkit";
-import cli from "cli-ux";
 import MetadataFiles from "../../../impl/metadata/metadataFiles";
 
 import { diff_match_patch } from "diff-match-patch";
 import "diff-match-patch-line-and-word"; // import globally to  enhanse the class
 import FileUtils from "../../../utils/fileutils";
-import rimraf = require("rimraf");
+import * as rimraf from "rimraf";
+import { ProgressBar } from "../../../../src/ui/progressBar";
 
 const dmp = new diff_match_patch();
 
@@ -32,7 +32,9 @@ export default class ProfileDiffImpl {
     private profileList: string[],
     private sourceOrgStr: string,
     private targetOrg: Org,
-    private outputFolder: string
+    private outputFolder: string,
+    private loglevel: any,
+    private isJSONFlagEnabled: boolean
   ) {
     this.targetLabel = this.targetOrg.getConnection().getUsername();
   }
@@ -113,12 +115,18 @@ export default class ProfileDiffImpl {
       }
 
       let profilesMap = [];
-      let progressBar = SFPowerkit.createProgressBar(
+
+      let progressBar: ProgressBar = new ProgressBar();
+      progressBar.create(
         "Reading from File System ",
-        "Profiles"
+        "Profiles",
+        SFPowerkit.logLevel,
+        LoggerLevel.FATAL,
+        false
       );
 
       progressBar.start(this.profileList.length);
+
       for (let i = 0; i < this.profileList.length; i++) {
         let profilepath = this.profileList[i];
         SFPowerkit.log(
@@ -175,9 +183,12 @@ export default class ProfileDiffImpl {
       return profileTarget
         .then(profilesTargetMap => {
           SFPowerkit.log("Handling diff ", LoggerLevel.INFO);
-          let progressBar = SFPowerkit.createProgressBar(
+          let progressBar = new ProgressBar().create(
             "Diff processing ",
-            "Profiles"
+            "Profiles",
+            this.loglevel,
+            LoggerLevel.INFO,
+            this.isJSONFlagEnabled
           );
 
           progressBar.start(profilesSourceMap.length);
@@ -235,9 +246,12 @@ export default class ProfileDiffImpl {
     let retrievePromises = [];
     let connection = retrieveOrg.getConnection();
 
-    let progressBar = SFPowerkit.createProgressBar(
+    let progressBar = new ProgressBar().create(
       `Retrieving From ${connection.getUsername()}`,
-      "Profiles"
+      "Profiles",
+      this.loglevel,
+      LoggerLevel.INFO,
+      this.isJSONFlagEnabled
     );
 
     progressBar.start(profileNames.length);

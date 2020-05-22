@@ -1,8 +1,8 @@
 import { SFPowerkit } from "../../../sfpowerkit";
 import MetadataFiles from "../../metadata/metadataFiles";
-import * as fs from "fs";
+import * as fs from "fs-extra";
 import * as path from "path";
-import xml2js = require("xml2js");
+import * as xml2js from "xml2js";
 import { METADATA_INFO } from "../../metadata/metadataInfo";
 import CustomApplicationRetriever from "../../../impl/metadata/retriever/customApplicationRetriever";
 import ApexClassRetriever from "../../../impl/metadata/retriever/apexClassRetriever";
@@ -15,7 +15,7 @@ import TabDefinitionRetriever from "../../../impl/metadata/retriever/tabDefiniti
 import UserLicenseRetriever from "../../../impl/metadata/retriever/userLicenseRetriever";
 import UserPermissionBuilder from "../../../impl/metadata/builder/userPermissionBuilder";
 import Profile, { ProfileFieldLevelSecurity } from "../../metadata/schema";
-import util = require("util");
+import * as util from "util";
 import * as _ from "lodash";
 import ProfileActions from "./profileActions";
 import FileUtils from "../../../utils/fileutils";

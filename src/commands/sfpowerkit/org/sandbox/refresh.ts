@@ -1,8 +1,8 @@
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
-import fs = require("fs-extra");
-import request = require("request-promise-native");
-import rimraf = require("rimraf");
+import * as fs from "fs-extra";
+import request from "request-promise-native";
+import * as rimraf from "rimraf";
 import { SfdxError } from "@salesforce/core";
 
 // Initialize Messages with the current plugin directory

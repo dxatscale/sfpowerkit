@@ -8,7 +8,7 @@ import {
 import FileUtils from "../../utils/fileutils";
 import * as _ from "lodash";
 import ignore from "ignore";
-import * as fs from "fs";
+import * as fs from "fs-extra";
 import * as glob from "glob";
 import { SFPowerkit } from "../../sfpowerkit";
 import { LoggerLevel } from "@salesforce/core";

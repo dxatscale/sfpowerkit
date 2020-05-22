@@ -1,6 +1,6 @@
 import { SfdxProject } from "@salesforce/core";
 import { isNullOrUndefined } from "util";
-import Logger = require("pino");
+import Pino from "pino";
 import { UX } from "@salesforce/command";
 import cli from "cli-ux";
 
@@ -14,13 +14,13 @@ export enum LoggerLevel {
 }
 
 export class SFPowerkit {
-  private static logger: Logger;
   private static defaultFolder: string;
   private static projectDirectories: string[];
   private static pluginConfig;
   private static isJsonFormatEnabled: boolean;
   private static ux: UX;
   private static sourceApiVersion: any;
+  private static logger;
   public static logLevel;
 
   public static setLogLevel(logLevel: string, isJsonFormatEnabled: boolean) {
@@ -28,7 +28,7 @@ export class SFPowerkit {
     this.isJsonFormatEnabled = isJsonFormatEnabled;
 
     if (!isJsonFormatEnabled) {
-      this.logger = Logger({
+      SFPowerkit.logger = Pino({
         name: "sfpowerkit",
         level: logLevel,
         prettyPrint: {
@@ -154,13 +154,5 @@ export class SFPowerkit {
   }
   public static setStatus(status: string) {
     this.ux.setSpinnerStatus(status);
-  }
-  public static createProgressBar(title, unit) {
-    return cli.progress({
-      format: `${title} - PROGRESS  | {bar} | {value}/{total} ${unit}`,
-      barCompleteChar: "\u2588",
-      barIncompleteChar: "\u2591",
-      linewrap: true
-    });
   }
 }

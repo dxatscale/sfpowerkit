@@ -1,13 +1,17 @@
 {
   "name": "sfpowerkit",
   "description": "A Salesforce DX Plugin with multiple functionalities aimed at improving development and operational workflows",
-  "version": "1.44.2-12",
+  "version": "1.45.1-0",
   "author": {
-    "name": "Azlam Abdulsalam",
-    "email": "azlam.abdulsalam@accenture.com",
-    "url": "https://www.linkedin.com/in/azlam/"
+    "name": "DXatScale",
+    "email": "dxatscale@accenture.com"
   },
   "contributors": [
+    {
+      "name": "Azlam Abdulsalam",
+      "email": "azlam.abdulsalam@accenture.com",
+      "url": "https://www.linkedin.com/in/azlam/"
+    },
     {
       "name": "Genoud Douanla Djatio",
       "email": "magloiredjatio@gmail.com"
@@ -17,28 +21,22 @@
       "email": "manivasaga.murugesan@accenture.com"
     },
     {
-      "name": "Eric Shen",
-      "email": "eric.shen@accenture.com"
-    },
-    {
       "name": "Ahmed Abdo",
       "email": "abdo@abdokhaire.com"
     }
   ],
   "bugs": "https://github.com/accenture/sfpowerkit/issues",
   "dependencies": {
-    "@oclif/command": "^1.5.19",
-    "@oclif/config": "^1.13.3",
-    "@oclif/errors": "1",
+    "@pony-ci/sfdx-node": "^1.0.4",
     "@salesforce/command": "^2.1.4",
     "@salesforce/core": "^2.1.4",
     "@types/diff-match-patch": "^1.0.32",
     "archiver": "3.1.1",
+    "async-retry": "^1.3.1",
+    "bottleneck": "^2.19.5",
     "child-process": "^1.0.2",
     "child-process-promise": "^2.2.1",
-    "cli-ux": "^5.4.1",
-    "copy-dir": "^1.2.0",
-    "decompress": "^4.2.0",
+    "cli-ux": "^5.4.5",
     "diff": "^4.0.1",
     "diff-match-patch": "^1.0.4",
     "diff-match-patch-line-and-word": "^0.1.2",
@@ -51,6 +49,7 @@
     "request": "^2.88.0",
     "request-promise-native": "^1.0.8",
     "simple-git": "^1.129.0",
+    "ts-node": "^8.10.1",
     "tslib": "1",
     "unzip-stream": "0.3.0",
     "unzipper": "0.10.5",
@@ -61,11 +60,12 @@
     "@oclif/plugin-help": "^2.2.3",
     "@oclif/test": "^1.2.5",
     "@salesforce/dev-config": "^1.5.0",
-    "@types/bunyan": "^1.8.6",
     "@types/chai": "^4.2.7",
     "@types/mocha": "^5",
     "@types/node": "^13.1.5",
+    "@types/pino": "^6.0.0",
     "@types/request-promise": "^4.1.45",
+    "@types/rimraf": "^3.0.0",
     "chai": "^4",
     "globby": "^10.0.1",
     "husky": "^4.0.1",
@@ -75,7 +75,6 @@
     "pretty-quick": "^2.0.1",
     "rimraf": "^3.0.0",
     "sinon": "^8.0.4",
-    "ts-node": "^8.5.4",
     "typescript": "^3.6.4"
   },
   "engines": {
@@ -109,6 +108,9 @@
       "sfpowerkit:org": {
         "description": "Helper commands for org such as connectedapp, creation of sandbox etc"
       },
+      "sfpowerkit:pool": {
+        "description": "Commands to create a pool of scratch orgs"
+      },
       "sfpowerkit:auth": {
         "description": "Authorisation Related Commands"
       },
@@ -116,7 +118,7 @@
         "description": "Commands that work on the source"
       },
       "sfpowerkit:source:customlabel": {
-        "description": "Commands to work on custom label"
+        "description": "Commands to operate on custom label"
       },
       "sfpowerkit:source:profile": {
         "description": "Commands that operate on profiles"

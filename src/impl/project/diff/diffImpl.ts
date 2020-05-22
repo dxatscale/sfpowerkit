@@ -1,10 +1,9 @@
 import MetadataFiles from "../../metadata/metadataFiles";
-import simplegit = require("simple-git/promise");
 
 import * as xml2js from "xml2js";
 import * as path from "path";
 import * as fs from "fs-extra";
-import rimraf = require("rimraf");
+import * as rimraf from "rimraf";
 import {
   SOURCE_EXTENSION_REGEX,
   MetadataInfo,
@@ -24,6 +23,7 @@ import { core } from "@salesforce/command";
 
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import { DXProjectManifestUtils } from "../../../utils/dxProjectManifestUtils";
+import simplegit from "simple-git/promise";
 
 core.Messages.importMessagesDirectory(__dirname);
 const messages = core.Messages.loadMessages("sfpowerkit", "project_diff");

@@ -1,12 +1,13 @@
 import * as path from "path";
-import * as fs from "fs";
+import * as fs from "fs-extra";
 import * as _ from "lodash";
-import simplegit = require("simple-git/promise");
+
 import MetadataFiles from "../../../impl/metadata/metadataFiles";
 import { SOURCE_EXTENSION_REGEX } from "../../../impl/metadata/metadataInfo";
 import { METADATA_INFO } from "../../../impl/metadata/metadataInfo";
 import { SFPowerkit } from "../../../sfpowerkit";
 import { LoggerLevel } from "@salesforce/core";
+import simplegit from "simple-git/promise";
 
 export interface DiffFileStatus {
   revisionFrom: string;

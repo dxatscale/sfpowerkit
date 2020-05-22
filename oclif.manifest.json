@@ -1,5 +1,5 @@
 {
-  "version": "1.44.2-9",
+  "version": "1.45.1-0",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -260,6 +260,66 @@
       },
       "args": []
     },
+    "sfpowerkit:org:relaxiprange": {
+      "id": "sfpowerkit:org:relaxiprange",
+      "description": "This command sets ip range in Network access to relax security setting for a particular salesforce environment",
+      "usage": "<%= command.id %> -r <array> [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "pluginName": "sfpowerkit",
+      "pluginType": "core",
+      "aliases": [],
+      "examples": [
+        "sfdx sfpowerkit:org:relaxiprange -u sandbox -r \"122.0.0.0-122.255.255.255,49.0.0.0-49.255.255.255\""
+      ],
+      "flags": {
+        "json": {
+          "name": "json",
+          "type": "boolean",
+          "description": "format output as json",
+          "allowNo": false
+        },
+        "loglevel": {
+          "name": "loglevel",
+          "type": "option",
+          "description": "logging level for this command invocation",
+          "required": false,
+          "helpValue": "(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)",
+          "options": [
+            "trace",
+            "debug",
+            "info",
+            "warn",
+            "error",
+            "fatal",
+            "TRACE",
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "ERROR",
+            "FATAL"
+          ],
+          "default": "info"
+        },
+        "targetusername": {
+          "name": "targetusername",
+          "type": "option",
+          "char": "u",
+          "description": "username or alias for the target org; overrides default target org"
+        },
+        "apiversion": {
+          "name": "apiversion",
+          "type": "option",
+          "description": "override the api version used for api requests made by this command"
+        },
+        "range": {
+          "name": "range",
+          "type": "option",
+          "char": "r",
+          "description": "List of ip range with comma separated. eg, 122.0.0.0-122.255.255.255,49.0.0.0-49.255.255.255",
+          "required": true
+        }
+      },
+      "args": []
+    },
     "sfpowerkit:package:valid": {
       "id": "sfpowerkit:package:valid",
       "description": "Validates a package to check whether it only contains valid metadata as per metadata coverage",
@@ -317,6 +377,295 @@
           "name": "apiversion",
           "type": "option",
           "description": "metadata API version to use for validation"
+        }
+      },
+      "args": []
+    },
+    "sfpowerkit:pool:create": {
+      "id": "sfpowerkit:pool:create",
+      "description": "Creates a pool of prebuilt scratchorgs, which can the be consumed by users or CI",
+      "usage": "<%= command.id %> -f <filepath> [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "pluginName": "sfpowerkit",
+      "pluginType": "core",
+      "aliases": [],
+      "examples": [
+        "$ sfdx sfpowerkit:pool:create -f config\\core_poolconfig.json",
+        "$ sfdx sfpowerkit:pool:create -f config\\core_poolconfig.json -v devhub"
+      ],
+      "flags": {
+        "json": {
+          "name": "json",
+          "type": "boolean",
+          "description": "format output as json",
+          "allowNo": false
+        },
+        "loglevel": {
+          "name": "loglevel",
+          "type": "option",
+          "description": "logging level for this command invocation",
+          "required": false,
+          "helpValue": "(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)",
+          "options": [
+            "trace",
+            "debug",
+            "info",
+            "warn",
+            "error",
+            "fatal",
+            "TRACE",
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "ERROR",
+            "FATAL"
+          ],
+          "default": "info"
+        },
+        "targetdevhubusername": {
+          "name": "targetdevhubusername",
+          "type": "option",
+          "char": "v",
+          "description": "username or alias for the dev hub org; overrides default dev hub org"
+        },
+        "apiversion": {
+          "name": "apiversion",
+          "type": "option",
+          "description": "override the api version used for api requests made by this command"
+        },
+        "configfilepath": {
+          "name": "configfilepath",
+          "type": "option",
+          "char": "f",
+          "description": "Relative Path to the pool configuration json file. The schema of the file could be found in the Wiki",
+          "required": true
+        }
+      },
+      "args": []
+    },
+    "sfpowerkit:pool:fetch": {
+      "id": "sfpowerkit:pool:fetch",
+      "description": "Gets an active/unused scratch org from the scratch org pool",
+      "usage": "<%= command.id %> -t <string> [-m] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "pluginName": "sfpowerkit",
+      "pluginType": "core",
+      "aliases": [],
+      "examples": [
+        "$ sfdx sfpowerkit:pool:fetch -t core ",
+        "$ sfdx sfpowerkit:pool:fetch -t core -v devhub",
+        "$ sfdx sfpowerkit:pool:fetch -t core -v devhub -m"
+      ],
+      "flags": {
+        "json": {
+          "name": "json",
+          "type": "boolean",
+          "description": "format output as json",
+          "allowNo": false
+        },
+        "loglevel": {
+          "name": "loglevel",
+          "type": "option",
+          "description": "logging level for this command invocation",
+          "required": false,
+          "helpValue": "(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)",
+          "options": [
+            "trace",
+            "debug",
+            "info",
+            "warn",
+            "error",
+            "fatal",
+            "TRACE",
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "ERROR",
+            "FATAL"
+          ],
+          "default": "warn"
+        },
+        "targetdevhubusername": {
+          "name": "targetdevhubusername",
+          "type": "option",
+          "char": "v",
+          "description": "username or alias for the dev hub org; overrides default dev hub org"
+        },
+        "apiversion": {
+          "name": "apiversion",
+          "type": "option",
+          "description": "override the api version used for api requests made by this command"
+        },
+        "tag": {
+          "name": "tag",
+          "type": "option",
+          "char": "t",
+          "description": "(required) tag used to identify the scratch org pool",
+          "required": true
+        },
+        "mypool": {
+          "name": "mypool",
+          "type": "boolean",
+          "char": "m",
+          "description": "Filter the tag for any additions created  by the executor of the command",
+          "required": false,
+          "allowNo": false
+        }
+      },
+      "args": []
+    },
+    "sfpowerkit:pool:hydrate": {
+      "id": "sfpowerkit:pool:hydrate",
+      "description": "Deletes the pooled scratch orgs from the Scratch Org Pool",
+      "usage": "<%= command.id %> -t <string> [-m] [-a] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "pluginName": "sfpowerkit",
+      "pluginType": "core",
+      "aliases": [],
+      "examples": [
+        "$ sfdx sfpowerkit:pool:hydrate -t core ",
+        "$ sfdx sfpowerkit:pool:hydrate -t core -v devhub",
+        "$ sfdx sfpowerkit:pool:hydrate -t core -v devhub -m",
+        "$ sfdx sfpowerkit:pool:hydrate -t core -v devhub -m -a"
+      ],
+      "flags": {
+        "json": {
+          "name": "json",
+          "type": "boolean",
+          "description": "format output as json",
+          "allowNo": false
+        },
+        "loglevel": {
+          "name": "loglevel",
+          "type": "option",
+          "description": "logging level for this command invocation",
+          "required": false,
+          "helpValue": "(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)",
+          "options": [
+            "trace",
+            "debug",
+            "info",
+            "warn",
+            "error",
+            "fatal",
+            "TRACE",
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "ERROR",
+            "FATAL"
+          ],
+          "default": "warn"
+        },
+        "targetdevhubusername": {
+          "name": "targetdevhubusername",
+          "type": "option",
+          "char": "v",
+          "description": "username or alias for the dev hub org; overrides default dev hub org"
+        },
+        "apiversion": {
+          "name": "apiversion",
+          "type": "option",
+          "description": "override the api version used for api requests made by this command"
+        },
+        "tag": {
+          "name": "tag",
+          "type": "option",
+          "char": "t",
+          "description": "(required) tag used to identify the scratch org pool",
+          "required": true
+        },
+        "mypool": {
+          "name": "mypool",
+          "type": "boolean",
+          "char": "m",
+          "description": "Filter only Scratch orgs created by current user in the pool",
+          "required": false,
+          "allowNo": false
+        },
+        "allscratchorgs": {
+          "name": "allscratchorgs",
+          "type": "boolean",
+          "char": "a",
+          "description": "Deletes all used and unused Scratch orgs from pool by the tag",
+          "required": false,
+          "allowNo": false
+        }
+      },
+      "args": []
+    },
+    "sfpowerkit:pool:list": {
+      "id": "sfpowerkit:pool:list",
+      "description": "Retrieves a list of active scratch org and details from any pool. If this command is run with -m|--mypool, the command will retrieve the passwords for the pool created by the user who is executing the command.",
+      "usage": "<%= command.id %> [-t <string>] [-m] [-a] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "pluginName": "sfpowerkit",
+      "pluginType": "core",
+      "aliases": [],
+      "examples": [
+        "$ sfdx sfpowerkit:pool:list -t core ",
+        "$ sfdx sfpowerkit:pool:list -t core -v devhub",
+        "$ sfdx sfpowerkit:pool:list -t core -v devhub -m",
+        "$ sfdx sfpowerkit:pool:list -t core -v devhub -m -a"
+      ],
+      "flags": {
+        "json": {
+          "name": "json",
+          "type": "boolean",
+          "description": "format output as json",
+          "allowNo": false
+        },
+        "loglevel": {
+          "name": "loglevel",
+          "type": "option",
+          "description": "logging level for this command invocation",
+          "required": false,
+          "helpValue": "(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)",
+          "options": [
+            "trace",
+            "debug",
+            "info",
+            "warn",
+            "error",
+            "fatal",
+            "TRACE",
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "ERROR",
+            "FATAL"
+          ],
+          "default": "warn"
+        },
+        "targetdevhubusername": {
+          "name": "targetdevhubusername",
+          "type": "option",
+          "char": "v",
+          "description": "username or alias for the dev hub org; overrides default dev hub org"
+        },
+        "apiversion": {
+          "name": "apiversion",
+          "type": "option",
+          "description": "override the api version used for api requests made by this command"
+        },
+        "tag": {
+          "name": "tag",
+          "type": "option",
+          "char": "t",
+          "description": "tag used to identify the scratch org pool",
+          "required": false
+        },
+        "mypool": {
+          "name": "mypool",
+          "type": "boolean",
+          "char": "m",
+          "description": "Filter the tag for any additions created  by the executor of the command",
+          "required": false,
+          "allowNo": false
+        },
+        "allscratchorgs": {
+          "name": "allscratchorgs",
+          "type": "boolean",
+          "char": "a",
+          "description": "Gets all used and unused Scratch orgs from pool",
+          "required": false,
+          "allowNo": false
         }
       },
       "args": []
@@ -1952,7 +2301,7 @@
       "pluginType": "core",
       "aliases": [],
       "examples": [
-        "$ sfdx sfpowerkit:project:manifest:diff -f source/package.xml -t target/package.xml -d output"
+        "$ sfdx sfpowerkit:project:manifest:diff -s source/package.xml -t target/package.xml -d output"
       ],
       "flags": {
         "json": {
@@ -2016,7 +2365,8 @@
           "description": "[default: json] The format for the output, Possible values are json/csv/xml",
           "required": false,
           "helpValue": "(json|csv|xml)",
-          "options": ["json", "csv", "xml"]
+          "options": ["json", "csv", "xml"],
+          "default": "json"
         }
       },
       "args": []

@@ -94,7 +94,9 @@ export default class Diff extends SfdxCommand {
       profileList,
       sourceusername,
       this.org,
-      outputFolder
+      outputFolder,
+      this.flags.loglevel,
+      this.flags.json
     );
     let output = profileDiff.diff().then(() => {
       return profileDiff.output;
