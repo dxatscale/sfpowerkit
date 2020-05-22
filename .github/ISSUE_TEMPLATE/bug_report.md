@@ -22,8 +22,9 @@ If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
 
-- OS: [e.g. iOS]
-- Version of sfowerkit[e.g. 22]
+- OS: [e.g. Windows/Linux]
+- Node Version
+- Version of sfpowerkit[e.g  1.45.0]
 - Salesforce Org Version [ In case of pre release window ]
 
 **Additional context**
