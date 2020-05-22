@@ -2,7 +2,7 @@ import { core } from "@salesforce/command";
 import { SFPowerkit, LoggerLevel } from "../../sfpowerkit";
 import queryApi from "./queryApi";
 
-export default class dependencyApi {
+export default class DependencyImpl {
   public static async getDependencyMapById(
     conn: core.Connection,
     refMetadata: string[]

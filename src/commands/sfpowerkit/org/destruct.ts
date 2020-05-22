@@ -1,14 +1,14 @@
 import { core, SfdxCommand, FlagsConfig, flags } from "@salesforce/command";
 import FileUtils from "../../../utils/fileutils";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
-import xml2js = require("xml2js");
-import rimraf = require("rimraf");
-import util = require("util");
+import * as xml2js from "xml2js";
+import * as rimraf from "rimraf";
+import * as util from "util";
 import { zipDirectory } from "../../../utils/zipDirectory";
 import { AsyncResult, DeployResult } from "jsforce";
 import { checkDeploymentStatus } from "../../..//utils/checkDeploymentStatus";
 import { SfdxError } from "@salesforce/core";
-import fs = require("fs-extra");
+import * as fs from "fs-extra";
 import { isEmpty } from "@salesforce/kit";
 
 const path = require("path");

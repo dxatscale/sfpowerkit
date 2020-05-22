@@ -1,7 +1,7 @@
-import xml2js = require("xml2js");
-import util = require("util");
-import fs = require("fs-extra");
-import path from "path";
+import * as xml2js from "xml2js";
+import * as util from "util";
+import * as fs from "fs-extra";
+import * as path from "path";
 import { AnyJson } from "@salesforce/ts-types";
 
 export default class XmlUtil {

@@ -1,16 +1,13 @@
-//Code is basically same from https://github.com/texei/texei-sfdx-plugin
-// Just updated it for the revised cli core
-
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { SfdxError, Connection } from "@salesforce/core";
 import { PackageDetail } from "../../../../impl/dependency/dependencyApi";
-import dependencyApi from "../../../../impl/dependency/dependencyApi";
-import metadataRetrieverApi from "../../../../impl/dependency/metadataRetrieverApi";
+import DependencyImpl from "../../../../impl/dependency/dependencyApi";
+import MetadataRetriever from "../../../../impl/dependency/metadataRetrieverApi";
 import * as path from "path";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
-import fs = require("fs-extra");
+import * as fs from "fs-extra";
 import FileUtils from "../../../../utils/fileutils";
-import rimraf = require("rimraf");
+import * as rimraf from "rimraf";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -94,7 +91,7 @@ export default class Tree extends SfdxCommand {
     this.conn = this.org.getConnection();
 
     this.output = [];
-    this.installedPackagesMap = await dependencyApi.getForcePackageInstalledList(
+    this.installedPackagesMap = await DependencyImpl.getForcePackageInstalledList(
       this.conn
     );
 
@@ -121,7 +118,7 @@ export default class Tree extends SfdxCommand {
       `Fetching all components details of ${requestPackage.Name} package from the org`,
       LoggerLevel.INFO
     );
-    let packageMembers: string[] = await dependencyApi.getMemberFromPackage(
+    let packageMembers: string[] = await DependencyImpl.getMemberFromPackage(
       this.conn,
       requestPackage.Id
     );
@@ -129,7 +126,7 @@ export default class Tree extends SfdxCommand {
       `Found ${packageMembers.length} components from ${requestPackage.Name} package`,
       LoggerLevel.INFO
     );
-    let dependencyResult = await dependencyApi.getDependencyMapById(
+    let dependencyResult = await DependencyImpl.getDependencyMapById(
       this.conn,
       packageMembers
     );
@@ -142,7 +139,7 @@ export default class Tree extends SfdxCommand {
       LoggerLevel.INFO
     );
 
-    await metadataRetrieverApi.describeCall(this.conn).then(result => {
+    await MetadataRetriever.describeCall(this.conn).then(result => {
       for (let metaObj of result.keys()) {
         this.metadataMap.set(metaObj, result.get(metaObj));
       }
@@ -169,7 +166,7 @@ export default class Tree extends SfdxCommand {
     let pkgMemberMap: Map<
       string,
       string
-    > = await dependencyApi.getMemberVsPackageMap(this.conn);
+    > = await DependencyImpl.getMemberVsPackageMap(this.conn);
     let result = [];
     let progressBar = SFPowerkit.createProgressBar(
       `Computing the dependency tree`,

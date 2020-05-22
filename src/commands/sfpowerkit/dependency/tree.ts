@@ -4,8 +4,8 @@
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { SfdxError, Connection } from "@salesforce/core";
 import { PackageDetail } from "../../../impl/dependency/dependencyApi";
-import dependencyApi from "../../../impl/dependency/dependencyApi";
-import metadataRetrieverApi from "../../../impl/dependency/metadataRetrieverApi";
+import DependencyImpl from "../../../impl/dependency/dependencyApi";
+import MetadataRetriever from "../../../impl/dependency/metadataRetrieverApi";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import outputGenerator from "../../../utils/outputGenerator";
 
@@ -33,17 +33,17 @@ export default class Tree extends SfdxCommand {
     metadata: flags.array({
       char: "m",
       required: false,
-      description: ""
+      description: "Metadata that need to be analyzed"
     }),
     sourcepath: flags.array({
       char: "d",
       required: false,
-      description: ""
+      description: "Output Directory"
     }),
     manifest: flags.string({
       char: "x",
       required: false,
-      description: ""
+      description: "Path to the manifest file"
     }),
     packagefilter: flags.boolean({
       description: messages.getMessage("packagefilterDescription"),
@@ -102,7 +102,7 @@ export default class Tree extends SfdxCommand {
     this.conn = this.org.getConnection();
 
     this.output = [];
-    this.installedPackagesMap = await dependencyApi.getForcePackageInstalledList(
+    this.installedPackagesMap = await DependencyImpl.getForcePackageInstalledList(
       this.conn
     );
 
@@ -128,7 +128,7 @@ export default class Tree extends SfdxCommand {
       LoggerLevel.INFO
     );
 
-    let dependencyResult = await dependencyApi.getDependencyMapById(
+    let dependencyResult = await DependencyImpl.getDependencyMapById(
       this.conn,
       packageMembers
     );
@@ -141,7 +141,7 @@ export default class Tree extends SfdxCommand {
       LoggerLevel.INFO
     );
 
-    await metadataRetrieverApi.describeCall(this.conn).then(result => {
+    await MetadataRetriever.describeCall(this.conn).then(result => {
       for (let metaObj of result.keys()) {
         this.metadataMap.set(metaObj, result.get(metaObj));
       }
@@ -173,7 +173,7 @@ export default class Tree extends SfdxCommand {
     let pkgMemberMap: Map<
       string,
       string
-    > = await dependencyApi.getMemberVsPackageMap(this.conn);
+    > = await DependencyImpl.getMemberVsPackageMap(this.conn);
     let result = [];
     let progressBar = SFPowerkit.createProgressBar(
       `Computing the dependency tree`,

@@ -1,8 +1,8 @@
 import { SfdxError, Connection } from "@salesforce/core";
 import getDefaults from "../../utils/getDefaults";
-import dependencyApi from "./dependencyApi";
+import DependencyImpl from "./dependencyApi";
 import { SFPowerkit, LoggerLevel } from "../../sfpowerkit";
-export default class metadataRetrieverApi {
+export default class MetadataRetriever {
   private static unsupportedDescribeList = [
     "AccountForecastSettings",
     "Icon",
@@ -113,7 +113,7 @@ export default class metadataRetrieverApi {
     );
     progressBar.start(types.length);
     if (types.length > 3) {
-      for (let typesInChunk of dependencyApi.listReducer(3, types)) {
+      for (let typesInChunk of DependencyImpl.listReducer(3, types)) {
         metadataMap = await this.metadataListCall(
           conn,
           typesInChunk,
@@ -176,7 +176,7 @@ export default class metadataRetrieverApi {
     );
     progressBar.start(types.length);
     if (types.length > 3) {
-      for (let typesInChunk of dependencyApi.listReducer(3, types)) {
+      for (let typesInChunk of DependencyImpl.listReducer(3, types)) {
         metadataMap = await this.metadataListCall(
           conn,
           typesInChunk,

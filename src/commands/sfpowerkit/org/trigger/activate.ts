@@ -1,7 +1,7 @@
 import { AnyJson } from "@salesforce/ts-types";
-import fs from "fs-extra";
+import * as fs from "fs-extra";
 import { core, flags, SfdxCommand } from "@salesforce/command";
-import rimraf = require("rimraf");
+import * as rimraf from "rimraf";
 import {
   RetrieveResultLocator,
   AsyncResult,
@@ -14,8 +14,8 @@ import {
 } from "jsforce";
 import { AsyncResource } from "async_hooks";
 import { SfdxError } from "@salesforce/core";
-import xml2js = require("xml2js");
-import util = require("util");
+import * as xml2js from "xml2js";
+import * as util from "util";
 // tslint:disable-next-line:ordered-imports
 var jsforce = require("jsforce");
 var path = require("path");

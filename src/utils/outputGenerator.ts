@@ -1,6 +1,6 @@
 import * as path from "path";
 import { SFPowerkit, LoggerLevel } from "../sfpowerkit";
-import fs = require("fs-extra");
+import * as fs from "fs-extra";
 import FileUtils from "./fileutils";
 
 export default class OutputGenerator {

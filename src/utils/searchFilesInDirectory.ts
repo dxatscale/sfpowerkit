@@ -1,5 +1,5 @@
-import path = require("path");
-import fs = require("fs");
+import * as fs from "fs-extra";
+import * as path from "path";
 
 export function searchFilesInDirectory(
   dir: string,
