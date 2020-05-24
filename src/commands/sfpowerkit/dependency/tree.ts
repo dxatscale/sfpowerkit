@@ -12,6 +12,7 @@ import PackageInfo, {
   PackageDetail
 } from "../../../impl/package/version/packageInfo";
 import GetDefaults from "../../,,/../../utils/getDefaults";
+import { ProgressBar } from "../../../ui/progressBar";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -107,15 +108,21 @@ export default class Tree extends SfdxCommand {
 
     this.output = [];
 
-    let packageDetails: PackageDetail[] = await new PackageInfo(
-      this.conn,
-      GetDefaults.getApiVersion(),
-      false
-    ).getPackages();
-
-    this.installedPackagesMap = await DependencyImpl.getForcePackageInstalledList(
-      this.conn
-    );
+    //@mani to check whether this is correct
+    try {
+      let packageDetails: PackageDetail[] = await new PackageInfo(
+        this.conn,
+        GetDefaults.getApiVersion(),
+        false
+      ).getPackages();
+      this.installedPackagesMap = new Map(
+        packageDetails.map(obj => [obj.subcriberPackageId, obj])
+      );
+    } catch (error) {
+      throw new SfdxError(
+        "Unable to retrieve details about packages in the org"
+      );
+    }
 
     if (
       !this.flags.metadata &&
@@ -177,8 +184,10 @@ export default class Tree extends SfdxCommand {
         this.flags.output
       );
     }
+
     return this.output;
   }
+
   private async getDetailsFromId(
     packagefilter: boolean,
     membersWithoutDependency: string[]
@@ -188,9 +197,10 @@ export default class Tree extends SfdxCommand {
       string
     > = await DependencyImpl.getMemberVsPackageMap(this.conn);
     let result = [];
-    let progressBar = SFPowerkit.createProgressBar(
+    let progressBar = new ProgressBar().create(
       `Computing the dependency tree`,
-      ` items`
+      ` items`,
+      LoggerLevel.INFO
     );
     progressBar.start(
       this.flags.showall
@@ -222,7 +232,8 @@ export default class Tree extends SfdxCommand {
         );
 
         dependentItem.package = pkgMemberMap.has(dependent)
-          ? this.installedPackagesMap.get(pkgMemberMap.get(dependent)).Name
+          ? this.installedPackagesMap.get(pkgMemberMap.get(dependent))
+              .packageName
           : "Org";
         if (
           packagefilter &&

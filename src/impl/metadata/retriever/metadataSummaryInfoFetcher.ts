@@ -1,13 +1,29 @@
 import { SfdxError, Connection } from "@salesforce/core";
 import getDefaults from "../../../utils/getDefaults";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
-import { DescribeMetadataResult } from "jsforce";
+import { DescribeMetadataResult, FileProperties } from "jsforce";
 import { chunkArray } from "../../../utils/chunkArray";
+import { ProgressBar } from "../../../ui/progressBar";
+import GetDefaults from "../../../utils/getDefaults";
+import retry from "async-retry";
 
 export default class MetadataSummaryInfoFetcher {
   private static NotSupportedTypes = [
     "AccountForecastSettings",
     "Icon",
+    "GlobalValueSet",
+    "StandardValueSet",
+    "CustomPermission",
+    "EscalationRules",
+    "RecordActionDeployment",
+    "EscalationRule",
+    "ApprovalProcess",
+    "SiteDotCom",
+    "BrandingSet",
+    "NetworkBranding",
+    "AuthProvider",
+    "ContentAsset",
+    "CustomSite",
     "EmbeddedServiceConfig",
     "UIObjectRelationConfig",
     "CareProviderSearchConfig",
@@ -80,6 +96,7 @@ export default class MetadataSummaryInfoFetcher {
     "NotificationTypeConfig",
     "DelegateGroup",
     "ManagedContentType",
+    "EmailServicesFunction",
     "SamlSsoConfig"
   ];
 
@@ -114,20 +131,26 @@ export default class MetadataSummaryInfoFetcher {
       }
     });
 
-    let progressBar = SFPowerkit.createProgressBar(
-      `Fetching describe details `,
-      ` metdata types`
+    let progressBar = new ProgressBar().create(
+      `Fetching  Metadata  Types From the Org `,
+      ` metdata types`,
+      LoggerLevel.INFO
     );
+
     progressBar.start(types.length);
 
     //Fetch Summary Info in chunks of three
     for (let typesInChunk of chunkArray(3, types)) {
-      metadataMap = await this.fetchMetadataSummaryByTypesFromAnOrg(
-        conn,
-        typesInChunk,
-        metadataMap
-      );
-      progressBar.increment(3);
+      try {
+        metadataMap = await this.fetchMetadataSummaryByTypesFromAnOrg(
+          conn,
+          typesInChunk,
+          metadataMap
+        );
+        progressBar.increment(typesInChunk.length);
+      } catch (error) {
+        throw new SfdxError("Unable to retrieve metadata from the org");
+      }
     }
 
     progressBar.stop();
@@ -139,29 +162,29 @@ export default class MetadataSummaryInfoFetcher {
     types: any[],
     metadataMap: Map<string, MetadataSummary>
   ) {
-    await conn.metadata
-      .list(types, getDefaults.getApiVersion())
-      .then(result => {
-        if (result) {
-          result.forEach(item => {
-            metadataMap.set(item.id, {
-              id: item.id,
-              fullName: item.fullName,
-              type: item.type
-            });
-          });
-        } else {
-          throw new SfdxError(
-            "unSupported metadata for describe call" + JSON.stringify(types)
+    return await retry(
+      async bail => {
+        try {
+          let results: FileProperties[] = await conn.metadata.list(
+            types,
+            GetDefaults.getApiVersion()
           );
+
+          for (let result of results) {
+            metadataMap.set(result.id, {
+              id: result.id,
+              fullName: result.fullName,
+              type: result.type
+            });
+          }
+
+          return metadataMap;
+        } catch (error) {
+          throw error;
         }
-      })
-      .catch(err => {
-        throw new SfdxError(
-          "unSupported metadata for describe call" + JSON.stringify(types)
-        );
-      });
-    return metadataMap;
+      },
+      { retries: 3, minTimeout: 2000 }
+    );
   }
 }
 export interface MetadataSummary {

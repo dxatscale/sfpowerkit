@@ -66,6 +66,7 @@ $ sfdx plugins:link
   - [`sfpowerkit:org:healthcheck`](#sfpowerkitorghealthcheck)
   - [`sfpowerkit:org:manifest:build`](#sfpowerkitorgmanifestbuild)
   - [`sfpowerkit:org:orgcoverage`](#sfpowerkitorgorgcoverage)
+  - [`sfpowerkit:org:profile:diff`](#sfpowerkitorgprofilediff)
   - [`sfpowerkit:org:sandbox:create`](#sfpowerkitorgsandboxcreate)
   - [`sfpowerkit:org:sandbox:info`](#sfpowerkitorgsandboxinfo)
   - [`sfpowerkit:org:sandbox:refresh`](#sfpowerkitorgsandboxrefresh)
@@ -476,17 +477,19 @@ This command is used to get the apex test coverage details of an unlocked packag
 
 ```
 USAGE
-  $ sfdx sfpowerkit:package:version:codecoverage [-p <string>] [-n <string>] [-i <array>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+  $ sfdx sfpowerkit:package:version:codecoverage [-p <string>] [-n <string>] [-i <array>] [-v <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
   -i, --versionid=versionid                                                         Package version Id to check the code coverage
 
-  -n, --versionnumber=versionnumber                                                 The complete version number format is major.minor.patch (Beta build)—for example, 1.2.0 (Beta 5), packageName is required when
-                                                                                    packageVersionNumber is used
+  -n, --versionnumber=versionnumber                                                 The complete version number format is major.minor.patch (Beta build)—for example, 1.2.0 (Beta 5),
+                                                                                    packageName is required when packageVersionNumber is used
 
-  -p, --package=package                                                             Name of the unlocked package to check the code coverage, packageVersionNumber is required when packageName is used
+  -p, --package=package                                                             Name of the unlocked package to check the code coverage, packageVersionNumber is required when packageName
+                                                                                    is used
 
-  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
+  -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
 
   --apiversion=apiversion                                                           API version
 
@@ -494,11 +497,14 @@ OPTIONS
 
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] [default: info] logging level for this command invocation
 
-EXAMPLE
-  $ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -i 04tXXXXXXXXXXXXXXX
-  $ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -i 04tXXXXXXXXXXXXXXX,04tXXXXXXXXXXXXXXX,04tXXXXXXXXXXXXXXX
-  $ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -p core -n 1.2.0.45
-  $ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -p 0HoXXXXXXXXXXXXXXX -n 1.2.0.45
+EXAMPLES
+  $ sfdx sfpowerkit:package:version:codecoverage -v myOrg@example.com -i 04tXXXXXXXXXXXXXXX
+
+  $ sfdx sfpowerkit:package:version:codecoverage -v myOrg@example.com -i 04tXXXXXXXXXXXXXXX,04tXXXXXXXXXXXXXXX,04tXXXXXXXXXXXXXXX
+
+  $ sfdx sfpowerkit:package:version:codecoverage -v myOrg@example.com -p core -n 1.2.0.45
+
+  $ sfdx sfpowerkit:package:version:codecoverage -v myOrg@example.com -p 0HoXXXXXXXXXXXXXXX -n 1.2.0.45
 ```
 
 _See code: [src\commands\sfpowerkit\package\version\codecoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/version/codecoverage.ts)_
@@ -928,6 +934,34 @@ EXAMPLE
 ```
 
 _See code: [src\commands\sfpowerkit\org\orgcoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/orgcoverage.ts)_
+
+## `sfpowerkit:org:profile:diff`
+
+Compare profiles from project against target org or between two orgs (source and target).
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:profile:diff [-p <array>] [-s <string>] [-d <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -d, --output=output                                                               Output folder. Provide the output folder if comparing profiles from source org.
+  -p, --profilelist=profilelist                                                     List of profiles to compare, comma separated profile names. If not provided and no sourceusername
+                                                                                    is provided, all profiles from the source folder will be processed.
+  -s, --sourceusername=sourceusername                                               Source org. If no profile is provided in the profilelist parameter, all the profile from this org
+                                                                                    will be fetched
+  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
+
+EXAMPLES
+  $ sfdx sfpowerkit:org:profile:diff --profilelist profilenames --targetusername username (Compare liste profiles path against target org)
+  $ sfdx sfpowerkit:org:profile:diff --targetusername username (compare all profile in the project against the target org)
+  $ sfdx sfpowerkit:org:profile:diff --sourceusername sourcealias --targetusername username (compare all profile in the source org against the target org)
+```
+
+_See code: [src\commands\sfpowerkit\org\profile\diff.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/profile/diff.ts)_
 
 ## `sfpowerkit:org:sandbox:create`
 

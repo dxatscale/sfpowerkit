@@ -14,6 +14,7 @@ import PackageInfo, {
   PackageDetail
 } from "../../../../impl/package/version/packageInfo";
 import GetDefaults from "../../../../utils/getDefaults";
+import { ProgressBar } from "../../../../ui/progressBar";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -98,25 +99,42 @@ export default class Tree extends SfdxCommand {
 
     this.output = [];
 
-    let packageInfoRetriever = new PackageInfo(
-      this.conn,
-      GetDefaults.getApiVersion(),
-      false
-    );
+    //@mani to check whether this is correct
+    //Fetch Package Details from an Org
+    try {
+      let packageDetails: PackageDetail[] = await new PackageInfo(
+        this.conn,
+        GetDefaults.getApiVersion(),
+        false
+      ).getPackages();
 
-    this.installedPackagesMap = await packageInfoRetriever.getPackages();
+      this.installedPackagesMap = new Map(
+        packageDetails.map(obj => [obj.subcriberPackageId, obj])
+      );
+    } catch (error) {
+      throw new SfdxError(
+        "Unable to retrieve details about packages in the org"
+      );
+    }
 
+    //Find Requested Package
     let requestPackage: PackageDetail;
     for (let pkg of this.installedPackagesMap.values()) {
       if (
-        pkg.Id === this.flags.package ||
-        pkg.Name === this.flags.package ||
-        pkg.VersionId === this.flags.package
+        pkg.subcriberPackageId === this.flags.package ||
+        pkg.packageName === this.flags.package ||
+        pkg.packageVersionId === this.flags.package
       ) {
         requestPackage = pkg;
         break;
       }
     }
+
+    SFPowerkit.log(
+      "Requested Package Info:" + JSON.stringify(requestPackage),
+      LoggerLevel.TRACE
+    );
+
     if (!requestPackage) {
       throw new SfdxError(
         `Unable to find the package ${
@@ -126,17 +144,25 @@ export default class Tree extends SfdxCommand {
     }
 
     SFPowerkit.log(
-      `Fetching all components details of ${requestPackage.Name} package from the org`,
+      `Fetching all components details of ${requestPackage.packageName} package from the org`,
       LoggerLevel.INFO
     );
+
     let packageMembers: string[] = await DependencyImpl.getMemberFromPackage(
       this.conn,
-      requestPackage.Id
+      requestPackage.subcriberPackageId
     );
+
     SFPowerkit.log(
-      `Found ${packageMembers.length} components from ${requestPackage.Name} package`,
+      "Package Member Info:" + JSON.stringify(packageMembers),
+      LoggerLevel.TRACE
+    );
+
+    SFPowerkit.log(
+      `Found ${packageMembers.length} components from ${requestPackage.packageName} package`,
       LoggerLevel.INFO
     );
+
     let dependencyResult = await DependencyImpl.getDependencyMapById(
       this.conn,
       packageMembers
@@ -169,6 +195,7 @@ export default class Tree extends SfdxCommand {
     } else {
       await this.generateCSVOutput(this.output, this.flags.output);
     }
+
     return this.output;
   }
 
@@ -181,10 +208,13 @@ export default class Tree extends SfdxCommand {
       string
     > = await DependencyImpl.getMemberVsPackageMap(this.conn);
     let result = [];
-    let progressBar = SFPowerkit.createProgressBar(
+
+    let progressBar = new ProgressBar().create(
       `Computing the dependency tree`,
-      ` items`
+      ` items`,
+      LoggerLevel.INFO
     );
+
     progressBar.start(
       this.flags.showall
         ? this.dependencyMap.size + membersWithoutDependency.length
@@ -215,7 +245,8 @@ export default class Tree extends SfdxCommand {
         );
 
         dependentItem.package = pkgMemberMap.has(dependent)
-          ? this.installedPackagesMap.get(pkgMemberMap.get(dependent)).Name
+          ? this.installedPackagesMap.get(pkgMemberMap.get(dependent))
+              .packageName
           : "Org";
         if (
           packagefilter &&
@@ -253,6 +284,7 @@ export default class Tree extends SfdxCommand {
     progressBar.stop();
     this.output = result;
   }
+
   private async generateJsonOutput(result: any[], outputDir: string) {
     let outputJsonPath = `${outputDir}/output.json`;
     rimraf.sync(outputJsonPath);

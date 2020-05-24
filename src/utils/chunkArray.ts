@@ -1,15 +1,11 @@
 export function chunkArray(perChunk: number, inputArray: any[]): Array<any> {
-  let result = inputArray.reduce((resultArray, item, index) => {
-    const chunkIndex = Math.floor(index / perChunk);
+  let chunks = [],
+    i = 0,
+    n = inputArray.length;
 
-    if (!resultArray[chunkIndex]) {
-      resultArray[chunkIndex] = []; // start a new chunk
-    }
+  while (i < n) {
+    chunks.push(inputArray.slice(i, (i += perChunk)));
+  }
 
-    resultArray[chunkIndex].push(item);
-
-    return resultArray;
-  });
-
-  return result;
+  return chunks;
 }

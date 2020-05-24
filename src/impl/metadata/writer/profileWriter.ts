@@ -32,6 +32,24 @@ export default class ProfileWriter {
     fs.writeFileSync(filePath, xml);
   }
 
+  public toXml(profileObj: Profile) {
+    //Delete eampty arrays
+    for (let key in profileObj) {
+      if (Array.isArray(profileObj[key])) {
+        //All top element must be arays exept non arrayProperties
+        if (!nonArayProperties.includes(key) && profileObj[key].length === 0) {
+          delete profileObj[key];
+        }
+      }
+    }
+    let builder = new xml2js.Builder({ rootName: "Profile" });
+    profileObj["$"] = {
+      xmlns: PROFILE_NAMESPACE
+    };
+    let xml = builder.buildObject(profileObj);
+    return xml;
+  }
+
   public toProfile(profileObj: any): Profile {
     var convertedObject: any = {};
     for (var key in profileObj) {

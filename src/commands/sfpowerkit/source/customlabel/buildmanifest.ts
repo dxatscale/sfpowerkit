@@ -66,10 +66,12 @@ export default class Buildmanifest extends SfdxCommand {
       this.flags.apiversion || getDefaults.getApiVersion();
 
     let paths = [];
-    paths =
-      this.flags.path.constructor === Array
-        ? this.flags.path
-        : paths.push(this.flags.path);
+    if (this.flags.path.constructor === Array) {
+      paths = this.flags.path;
+    } else {
+      paths.push(this.flags.path);
+    }
+
     this.output = [];
     for (const element of paths) {
       if (

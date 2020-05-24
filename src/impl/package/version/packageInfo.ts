@@ -18,7 +18,10 @@ export default class PackageInfo {
   public async getPackages(): Promise<PackageDetail[]> {
     //await this.getInstalledPackageInfo();
     let packageDetails = await this.getInstalledPackages();
-    SFPowerkit.log(packageDetails, LoggerLevel.DEBUG);
+    SFPowerkit.log(
+      "PackageDetails:" + JSON.stringify(packageDetails),
+      LoggerLevel.TRACE
+    );
     return packageDetails;
   }
 
