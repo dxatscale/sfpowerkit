@@ -70,10 +70,12 @@ export default class Merge extends SfdxCommand {
       this.flags.apiversion || getDefaults.getApiVersion();
 
     let paths = [];
-    paths =
-      this.flags.path.constructor === Array
-        ? this.flags.path
-        : paths.push(this.flags.path);
+    if (this.flags.path.constructor === Array) {
+      paths = this.flags.path;
+    } else {
+      paths.push(this.flags.path);
+    }
+
     for (const dir of paths) {
       if (fs.existsSync(path.resolve(dir)) && path.extname(dir) == ".xml") {
         await this.processMainfest(dir);
