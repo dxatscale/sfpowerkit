@@ -1,13 +1,19 @@
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { SfdxError, Connection } from "@salesforce/core";
-import { PackageDetail } from "../../../../impl/dependency/dependencyApi";
-import DependencyImpl from "../../../../impl/dependency/dependencyApi";
-import MetadataRetriever from "../../../../impl/dependency/metadataRetrieverApi";
+
+import DependencyImpl from "../../../../impl/dependency/dependencyImpl";
+import MetadataSummaryInfoFetcher, {
+  MetadataSummary
+} from "../../../../impl/metadata/retriever/metadataSummaryInfoFetcher";
 import * as path from "path";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 import * as fs from "fs-extra";
 import FileUtils from "../../../../utils/fileutils";
 import * as rimraf from "rimraf";
+import PackageInfo, {
+  PackageDetail
+} from "../../../../impl/package/version/packageInfo";
+import GetDefaults from "../../../../utils/getDefaults";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -83,7 +89,7 @@ export default class Tree extends SfdxCommand {
   protected conn: Connection;
   protected installedPackagesMap: Map<string, PackageDetail>;
   protected dependencyMap: Map<string, string[]>;
-  protected metadataMap: Map<string, Metadata>;
+  protected metadataMap: Map<string, MetadataSummary>;
   protected output: any[];
 
   public async run(): Promise<any> {
@@ -91,9 +97,14 @@ export default class Tree extends SfdxCommand {
     this.conn = this.org.getConnection();
 
     this.output = [];
-    this.installedPackagesMap = await DependencyImpl.getForcePackageInstalledList(
-      this.conn
+
+    let packageInfoRetriever = new PackageInfo(
+      this.conn,
+      GetDefaults.getApiVersion(),
+      false
     );
+
+    this.installedPackagesMap = await packageInfoRetriever.getPackages();
 
     let requestPackage: PackageDetail;
     for (let pkg of this.installedPackagesMap.values()) {
@@ -139,11 +150,12 @@ export default class Tree extends SfdxCommand {
       LoggerLevel.INFO
     );
 
-    await MetadataRetriever.describeCall(this.conn).then(result => {
-      for (let metaObj of result.keys()) {
-        this.metadataMap.set(metaObj, result.get(metaObj));
-      }
-    });
+    let result = await MetadataSummaryInfoFetcher.fetchMetadataSummaryFromAnOrg(
+      this.conn
+    );
+
+    for (let metaObj of result.keys())
+      this.metadataMap.set(metaObj, result.get(metaObj));
 
     let membersWithoutDependency = packageMembers.filter(
       x => !Array.from(this.dependencyMap.keys()).includes(x)
@@ -159,6 +171,7 @@ export default class Tree extends SfdxCommand {
     }
     return this.output;
   }
+
   private async getDetailsFromId(
     packagefilter: boolean,
     membersWithoutDependency: string[]
@@ -288,9 +301,4 @@ export default class Tree extends SfdxCommand {
       LoggerLevel.INFO
     );
   }
-}
-export interface Metadata {
-  id: string;
-  fullName: string;
-  type: string;
 }

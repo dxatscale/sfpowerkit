@@ -1,6 +1,8 @@
 import { core } from "@salesforce/command";
 import { SFPowerkit, LoggerLevel } from "../../sfpowerkit";
 import queryApi from "./queryApi";
+import { chunkArray } from "../../utils/chunkArray";
+import { MetadataSummary } from "../metadata/retriever/metadataSummaryInfoFetcher";
 
 export default class DependencyImpl {
   public static async getDependencyMapById(
@@ -11,34 +13,21 @@ export default class DependencyImpl {
       `Fetching dependency details `,
       ` metadata components`
     );
+
     progressBar.start(refMetadata.length);
+
     let dependencyMap: Map<string, string[]> = new Map<string, string[]>();
-    let dependencyDetailsMap: Map<string, Metadata> = new Map<
+    let dependencyDetailsMap: Map<string, MetadataSummary> = new Map<
       string,
-      Metadata
+      MetadataSummary
     >();
     let filterOn = " RefMetadataComponentId ";
 
-    if (refMetadata.length > 500) {
-      for (let chunkrefMetadata of this.listReducer(500, refMetadata)) {
-        const results = await this.fetchDependencies(
-          conn,
-          filterOn,
-          chunkrefMetadata,
-          dependencyMap,
-          dependencyDetailsMap
-        );
-        if (results) {
-          dependencyMap = results.dependencyMap;
-          dependencyDetailsMap = results.dependencyDetailsMap;
-        }
-        progressBar.increment(chunkrefMetadata.length);
-      }
-    } else {
+    for (let chunkrefMetadata of chunkArray(500, refMetadata)) {
       const results = await this.fetchDependencies(
         conn,
         filterOn,
-        refMetadata,
+        chunkrefMetadata,
         dependencyMap,
         dependencyDetailsMap
       );
@@ -46,7 +35,7 @@ export default class DependencyImpl {
         dependencyMap = results.dependencyMap;
         dependencyDetailsMap = results.dependencyDetailsMap;
       }
-      progressBar.increment(refMetadata.length);
+      progressBar.increment(chunkrefMetadata.length);
     }
 
     progressBar.stop();
@@ -66,14 +55,14 @@ export default class DependencyImpl {
     );
     progressBar.start(refMetadata.length);
     let dependencyMap: Map<string, string[]> = new Map<string, string[]>();
-    let dependencyDetailsMap: Map<string, Metadata> = new Map<
+    let dependencyDetailsMap: Map<string, MetadataSummary> = new Map<
       string,
-      Metadata
+      MetadataSummary
     >();
     let filterOn = " RefMetadataComponentType ";
 
     if (refMetadata.length > 500) {
-      for (let chunkrefMetadata of this.listReducer(500, refMetadata)) {
+      for (let chunkrefMetadata of chunkArray(500, refMetadata)) {
         const results = await this.fetchDependencies(
           conn,
           filterOn,
@@ -114,7 +103,7 @@ export default class DependencyImpl {
     filterOn: string,
     refMetadata: string[],
     dependencyMap: Map<string, string[]>,
-    dependencyDetailsMap: Map<string, Metadata>
+    dependencyDetailsMap: Map<string, MetadataSummary>
   ) {
     let query =
       `SELECT MetadataComponentId, MetadataComponentNamespace, MetadataComponentName, MetadataComponentType, RefMetadataComponentId, RefMetadataComponentNamespace, ` +
@@ -206,77 +195,46 @@ export default class DependencyImpl {
     return packageMember;
   }
 
-  public static async getForcePackageInstalledList(
-    conn: core.Connection
-  ): Promise<Map<string, PackageDetail>> {
-    SFPowerkit.log(
-      `Fetching Installed package details from the org`,
-      LoggerLevel.INFO
-    );
-    let query =
-      "SELECT Id, SubscriberPackageId, SubscriberPackage.NamespacePrefix, SubscriberPackage.Name, SubscriberPackageVersion.Id, SubscriberPackageVersion.Name, " +
-      "SubscriberPackageVersion.MajorVersion,SubscriberPackageVersion.MinorVersion, SubscriberPackageVersion.PatchVersion, SubscriberPackageVersion.BuildNumber " +
-      "FROM InstalledSubscriberPackage ORDER BY SubscriberPackageId";
-    const results = (await conn.tooling.query(query)) as any;
-    let installedPackage: Map<string, PackageDetail> = new Map<
-      string,
-      PackageDetail
-    >();
-    if (results.records) {
-      results.records.forEach(pkg => {
-        installedPackage.set(pkg.SubscriberPackageId, {
-          Id: pkg.SubscriberPackageId,
-          Path: null,
-          Name: pkg.SubscriberPackage.Name,
-          Namespace: pkg.SubscriberPackage.NamespacePrefix,
-          VersionId: pkg.SubscriberPackageVersion.Id,
-          VersionName: pkg.SubscriberPackageVersion.Name,
-          VersionNumber:
-            pkg.SubscriberPackageVersion.MajorVersion +
-            "." +
-            pkg.SubscriberPackageVersion.MinorVersion +
-            "." +
-            pkg.SubscriberPackageVersion.PatchVersion +
-            "." +
-            pkg.SubscriberPackageVersion.BuildNumber
-        });
-      });
-      SFPowerkit.log(
-        `Found ${results.records.length} Installed packages from the org`,
-        LoggerLevel.INFO
-      );
-    }
-    return installedPackage;
-  }
-
-  public static listReducer(limit: number, list: any[]) {
-    let result = [];
-    let tempList = [];
-    for (let i = 0; i < list.length; i++) {
-      tempList.push(list[i]);
-      if (tempList.length === limit) {
-        //add chuncks as per limit
-        result.push(tempList);
-        tempList = [];
-      } else if (i === list.length - 1) {
-        //last chunck
-        result.push(tempList);
-      }
-    }
-    return result;
-  }
-}
-export interface PackageDetail {
-  Id: string;
-  Path: string;
-  Name: string;
-  Namespace: string;
-  VersionId: string;
-  VersionName: string;
-  VersionNumber: string;
-}
-export interface Metadata {
-  id: string;
-  fullName: string;
-  type: string;
+  // public static async getForcePackageInstalledList(
+  //   conn: core.Connection
+  // ): Promise<Map<string, PackageDetail>> {
+  //   SFPowerkit.log(
+  //     `Fetching Installed package details from the org`,
+  //     LoggerLevel.INFO
+  //   );
+  //   let query =
+  //     "SELECT Id, SubscriberPackageId, SubscriberPackage.NamespacePrefix, SubscriberPackage.Name, SubscriberPackageVersion.Id, SubscriberPackageVersion.Name, " +
+  //     "SubscriberPackageVersion.MajorVersion,SubscriberPackageVersion.MinorVersion, SubscriberPackageVersion.PatchVersion, SubscriberPackageVersion.BuildNumber " +
+  //     "FROM InstalledSubscriberPackage ORDER BY SubscriberPackageId";
+  //   const results = (await conn.tooling.query(query)) as any;
+  //   let installedPackage: Map<string, PackageDetail> = new Map<
+  //     string,
+  //     PackageDetail
+  //   >();
+  //   if (results.records) {
+  //     results.records.forEach(pkg => {
+  //       installedPackage.set(pkg.SubscriberPackageId, {
+  //         Id: pkg.SubscriberPackageId,
+  //         Path: null,
+  //         Name: pkg.SubscriberPackage.Name,
+  //         Namespace: pkg.SubscriberPackage.NamespacePrefix,
+  //         VersionId: pkg.SubscriberPackageVersion.Id,
+  //         VersionName: pkg.SubscriberPackageVersion.Name,
+  //         VersionNumber:
+  //           pkg.SubscriberPackageVersion.MajorVersion +
+  //           "." +
+  //           pkg.SubscriberPackageVersion.MinorVersion +
+  //           "." +
+  //           pkg.SubscriberPackageVersion.PatchVersion +
+  //           "." +
+  //           pkg.SubscriberPackageVersion.BuildNumber
+  //       });
+  //     });
+  //     SFPowerkit.log(
+  //       `Found ${results.records.length} Installed packages from the org`,
+  //       LoggerLevel.INFO
+  //     );
+  //   }
+  //   return installedPackage;
+  // }
 }

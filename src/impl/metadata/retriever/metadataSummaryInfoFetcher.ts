@@ -1,9 +1,11 @@
 import { SfdxError, Connection } from "@salesforce/core";
-import getDefaults from "../../utils/getDefaults";
-import DependencyImpl from "./dependencyApi";
-import { SFPowerkit, LoggerLevel } from "../../sfpowerkit";
-export default class MetadataRetriever {
-  private static unsupportedDescribeList = [
+import getDefaults from "../../../utils/getDefaults";
+import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
+import { DescribeMetadataResult } from "jsforce";
+import { chunkArray } from "../../../utils/chunkArray";
+
+export default class MetadataSummaryInfoFetcher {
+  private static NotSupportedTypes = [
     "AccountForecastSettings",
     "Icon",
     "EmbeddedServiceConfig",
@@ -81,57 +83,61 @@ export default class MetadataRetriever {
     "SamlSsoConfig"
   ];
 
-  public static async describeCall(
-    conn: Connection
-  ): Promise<Map<string, Metadata>> {
-    let metadataMap: Map<string, Metadata> = new Map<string, Metadata>();
+  public static async fetchMetadataSummaryFromAnOrg(
+    conn: Connection,
+    isDisplayProgressBar: boolean = false,
+    filterTypes: string[] = MetadataSummaryInfoFetcher.NotSupportedTypes
+  ): Promise<Map<string, MetadataSummary>> {
+    let metadataMap: Map<string, MetadataSummary> = new Map<
+      string,
+      MetadataSummary
+    >();
     let types = [];
 
-    await conn.metadata
-      .describe(getDefaults.getApiVersion())
-      .then(result => {
-        result.metadataObjects.forEach(metadata => {
-          if (!this.unsupportedDescribeList.includes(metadata.xmlName)) {
-            types.push({ type: metadata.xmlName });
+    let result: DescribeMetadataResult = await conn.metadata.describe(
+      getDefaults.getApiVersion()
+    );
+
+    result.metadataObjects.forEach(metadata => {
+      //Not supported .. ignore
+      if (!this.NotSupportedTypes.includes(metadata.xmlName)) {
+        types.push({ type: metadata.xmlName });
+      }
+
+      //Has childs.. check for each child and add to the list
+      if (metadata.childXmlNames) {
+        for (let childMetadata of metadata.childXmlNames) {
+          if (!this.NotSupportedTypes.includes(childMetadata)) {
+            types.push({ type: childMetadata });
           }
-          if (metadata.childXmlNames) {
-            for (let childMetadata of metadata.childXmlNames) {
-              if (!this.unsupportedDescribeList.includes(childMetadata)) {
-                types.push({ type: childMetadata });
-              }
-            }
-          }
-        });
-      })
-      .catch(err => {
-        console.log(err);
-      });
+        }
+      }
+    });
 
     let progressBar = SFPowerkit.createProgressBar(
       `Fetching describe details `,
       ` metdata types`
     );
     progressBar.start(types.length);
-    if (types.length > 3) {
-      for (let typesInChunk of DependencyImpl.listReducer(3, types)) {
-        metadataMap = await this.metadataListCall(
-          conn,
-          typesInChunk,
-          metadataMap
-        );
-        progressBar.increment(3);
-      }
-    } else {
-      metadataMap = await this.metadataListCall(conn, types, metadataMap);
-      progressBar.increment(types.length);
+
+    //Fetch Summary Info in chunks of three
+    for (let typesInChunk of chunkArray(3, types)) {
+      metadataMap = await this.fetchMetadataSummaryByTypesFromAnOrg(
+        conn,
+        typesInChunk,
+        metadataMap
+      );
+      progressBar.increment(3);
     }
+
     progressBar.stop();
     return metadataMap;
   }
-  public static async metadataListCall(
+
+  private static async fetchMetadataSummaryByTypesFromAnOrg(
     conn: Connection,
     types: any[],
-    metadataMap: Map<string, Metadata>
+    metadataMap: Map<string, MetadataSummary>
   ) {
     await conn.metadata
       .list(types, getDefaults.getApiVersion())
@@ -157,42 +163,8 @@ export default class MetadataRetriever {
       });
     return metadataMap;
   }
-  public static async describeCallList(
-    conn: Connection,
-    metadataTypes: string[]
-  ): Promise<Map<string, Metadata>> {
-    let metadataMap: Map<string, Metadata> = new Map<string, Metadata>();
-    let types = [];
-
-    metadataTypes.forEach(metadata => {
-      if (!this.unsupportedDescribeList.includes(metadata)) {
-        types.push({ type: metadata });
-      }
-    });
-
-    let progressBar = SFPowerkit.createProgressBar(
-      `Fetching describe details `,
-      ` metdata types`
-    );
-    progressBar.start(types.length);
-    if (types.length > 3) {
-      for (let typesInChunk of DependencyImpl.listReducer(3, types)) {
-        metadataMap = await this.metadataListCall(
-          conn,
-          typesInChunk,
-          metadataMap
-        );
-        progressBar.increment(3);
-      }
-    } else {
-      metadataMap = await this.metadataListCall(conn, types, metadataMap);
-      progressBar.increment(types.length);
-    }
-    progressBar.stop();
-    return metadataMap;
-  }
 }
-export interface Metadata {
+export interface MetadataSummary {
   id: string;
   fullName: string;
   type: string;

@@ -3,11 +3,15 @@
 
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { SfdxError, Connection } from "@salesforce/core";
-import { PackageDetail } from "../../../impl/dependency/dependencyApi";
-import DependencyImpl from "../../../impl/dependency/dependencyApi";
-import MetadataRetriever from "../../../impl/dependency/metadataRetrieverApi";
+
+import DependencyImpl from "../../../impl/dependency/dependencyImpl";
+import MetadataSummaryInfoFetcher from "../../../impl/metadata/retriever/metadataSummaryInfoFetcher";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import outputGenerator from "../../../utils/outputGenerator";
+import PackageInfo, {
+  PackageDetail
+} from "../../../impl/package/version/packageInfo";
+import GetDefaults from "../../,,/../../utils/getDefaults";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -102,6 +106,13 @@ export default class Tree extends SfdxCommand {
     this.conn = this.org.getConnection();
 
     this.output = [];
+
+    let packageDetails: PackageDetail[] = await new PackageInfo(
+      this.conn,
+      GetDefaults.getApiVersion(),
+      false
+    ).getPackages();
+
     this.installedPackagesMap = await DependencyImpl.getForcePackageInstalledList(
       this.conn
     );
@@ -141,7 +152,9 @@ export default class Tree extends SfdxCommand {
       LoggerLevel.INFO
     );
 
-    await MetadataRetriever.describeCall(this.conn).then(result => {
+    await MetadataSummaryInfoFetcher.fetchMetadataSummaryFromAnOrg(
+      this.conn
+    ).then(result => {
       for (let metaObj of result.keys()) {
         this.metadataMap.set(metaObj, result.get(metaObj));
       }

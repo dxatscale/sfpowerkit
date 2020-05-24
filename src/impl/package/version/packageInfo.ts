@@ -5,7 +5,7 @@ import { LoggerLevel } from "@salesforce/core";
 export default class PackageInfo {
   conn: Connection;
   apiversion: string;
-  jsonOutput: boolean;
+
   public constructor(
     conn: Connection,
     apiversion: string,
@@ -13,7 +13,6 @@ export default class PackageInfo {
   ) {
     this.conn = conn;
     this.apiversion = apiversion;
-    this.jsonOutput = jsonOutput;
   }
 
   public async getPackages(): Promise<PackageDetail[]> {
@@ -39,6 +38,7 @@ export default class PackageInfo {
         records.forEach(record => {
           const packageDetail = {} as PackageDetail;
           packageDetail.packageName = record["SubscriberPackage"]["Name"];
+          packageDetail.subcriberPackageId = record["SubscriberPackageId"];
           packageDetail.packageNamespacePrefix =
             record["SubscriberPackage"]["NamespacePrefix"];
           packageDetail.packageVersionId =
@@ -92,6 +92,7 @@ export default class PackageInfo {
 
 export interface PackageDetail {
   packageName: string;
+  subcriberPackageId: string;
   packageNamespacePrefix: string;
   packageVersionNumber: string;
   packageVersionId: string;
