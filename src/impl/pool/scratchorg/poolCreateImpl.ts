@@ -65,10 +65,21 @@ export default class PoolCreateImpl {
     }
 
     //Read pool config file
-    this.poolConfig = JSON.parse(fs.readFileSync(this.poolconfigFilePath));
+
+    if(!fs.existsSync(this.poolconfigFilePath))
+    {
+    SFPowerkit.log(
+      "Poll Config Path not provided, Unable to create pool without this file",
+      LoggerLevel.ERROR
+    );
+    return false;
+    }
+
+
+   
+    this.poolConfig = JSON.parse((fs.readFileSync(this.poolconfigFilePath)).toString());
 
     //Validate Inputs
-
     if (isNullOrUndefined(this.poolConfig.pool.config_file_path)) {
       SFPowerkit.log(
         "Scratch Org Config Path not provided, Unable to create pool without this file",
@@ -629,7 +640,7 @@ export interface PoolConfig {
 export interface Pool {
   expiry: number;
   config_file_path: string;
-  script_file_path?: string[];
+  script_file_path?: string;
   tag: string;
   user_mode: boolean;
   relax_ip_ranges: IpRanges[];
