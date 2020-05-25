@@ -82,35 +82,35 @@ export default class ScratchOrgUtils {
     );
 
     let result;
-    await retry(
-      async bail => {
-        if (adminEmail) {
-          result = await sfdx.force.org.create(
-            {
-              quiet: true,
-              definitionfile: config_file_path,
-              setalias: `SO${id}`,
-              durationdays: expiry,
-              targetdevhubusername: hubOrg.getUsername(),
-              wait: 10
-            },
-            `adminEmail=${adminEmail}`
-          );
-        } else {
-          result = await sfdx.force.org.create({
-            quiet: true,
+
+    try {
+      if (adminEmail) {
+        result = await sfdx.force.org.create(
+          {
+            quiet: false,
             definitionfile: config_file_path,
             setalias: `SO${id}`,
             durationdays: expiry,
             targetdevhubusername: hubOrg.getUsername(),
             wait: 10
-          });
-        }
-      },
-      { retries: 3, minTimeout: 30000 }
-    );
+          },
+          `adminEmail=${adminEmail}`
+        );
+      } else {
+        result = await sfdx.force.org.create({
+          quiet: false,
+          definitionfile: config_file_path,
+          setalias: `SO${id}`,
+          durationdays: expiry,
+          targetdevhubusername: hubOrg.getUsername(),
+          wait: 10
+        });
+      }
+    } catch (error) {
+      throw new error("Unable to create scratch org");
+    }
 
-    SFPowerkit.log(result, LoggerLevel.TRACE);
+    SFPowerkit.log(JSON.stringify(result), LoggerLevel.TRACE);
 
     let scratchOrg: ScratchOrg = {
       alias: `SO${id}`,
@@ -223,6 +223,10 @@ export default class ScratchOrgUtils {
       async bail => {
         try {
           let result = await hubConn.sobject("ScratchOrgInfo").update(soInfo);
+          SFPowerkit.log(
+            "Setting Scratch Org Info:" + JSON.stringify(result),
+            LoggerLevel.TRACE
+          );
           return result.success;
         } catch (err) {
           SFPowerkit.log(
@@ -297,6 +301,7 @@ export default class ScratchOrgUtils {
         let query = `SELECT Id, CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE Pooltag__c = '${tag}' AND Status = 'Active' `;
         SFPowerkit.log("QUERY:" + query, LoggerLevel.TRACE);
         const results = (await hubConn.query(query)) as any;
+        SFPowerkit.log("RESULT:" + JSON.stringify(results), LoggerLevel.TRACE);
         return results.totalSize;
       },
       { retries: 3, minTimeout: 3000 }
@@ -315,6 +320,36 @@ export default class ScratchOrgUtils {
         SFPowerkit.log("QUERY:" + query, LoggerLevel.TRACE);
         const results = (await hubConn.query(query)) as any;
         return results.totalSize;
+      },
+      { retries: 3, minTimeout: 3000 }
+    );
+  }
+
+  public static async getActiveScratchOrgRecordIdGivenScratchOrg(
+    hubOrg: Org,
+    apiversion: string,
+    scratchOrgId: string
+  ): Promise<any> {
+    let hubConn = hubOrg.getConnection();
+
+    return await retry(
+      async bail => {
+        var query_uri = `${hubConn.instanceUrl}/services/data/v${apiversion}/query?q=SELECT+Id+FROM+ActiveScratchOrg+WHERE+ScratchOrg+=+'${scratchOrgId}'`;
+
+        const result = await request({
+          method: "get",
+          url: query_uri,
+          headers: {
+            Authorization: `Bearer ${hubConn.accessToken}`
+          },
+          json: true
+        });
+
+        SFPowerkit.log(
+          "Retrieve Active ScratchOrg Id:" + JSON.stringify(result),
+          LoggerLevel.TRACE
+        );
+        return result.records[0].Id;
       },
       { retries: 3, minTimeout: 3000 }
     );
@@ -360,6 +395,7 @@ export default class ScratchOrgUtils {
         );
 
         const checker = element => element.fullName === "Allocation_status__c";
+        SFPowerkit.log(JSON.stringify(results), LoggerLevel.TRACE);
         if (results["fields"].some(checker)) {
           return true;
         } else {

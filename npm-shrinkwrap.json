@@ -585,6 +585,13 @@
       "version": "0.7.1",
       "dev": true
     },
+    "@types/async-retry": {
+      "version": "1.4.2",
+      "dev": true,
+      "requires": {
+        "@types/retry": "*"
+      }
+    },
     "@types/bluebird": {
       "version": "3.5.32",
       "dev": true
@@ -703,6 +710,10 @@
         "@types/bluebird": "*",
         "@types/request": "*"
       }
+    },
+    "@types/retry": {
+      "version": "0.12.0",
+      "dev": true
     },
     "@types/rimraf": {
       "version": "3.0.0",
