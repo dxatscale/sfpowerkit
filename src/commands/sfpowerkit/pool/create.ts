@@ -68,8 +68,7 @@ export default class Create extends SfdxCommand {
     );
 
     try {
-      await scratchOrgPoolImpl.poolScratchOrgs();
-      return 1;
+      return ! (await scratchOrgPoolImpl.poolScratchOrgs());
     } catch (err) {
       throw new SfdxError("Unable to execute command .. " + err);
     }
