@@ -1,5 +1,5 @@
 {
-  "version": "1.45.1-0",
+  "version": "1.45.1-3",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -1717,6 +1717,82 @@
       },
       "args": []
     },
+    "sfpowerkit:org:profile:diff": {
+      "id": "sfpowerkit:org:profile:diff",
+      "description": "Compare profiles from project against target org or between two orgs (source and target)",
+      "usage": "<%= command.id %> [-p <array>] [-s <string>] [-d <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "pluginName": "sfpowerkit",
+      "pluginType": "core",
+      "aliases": [],
+      "examples": [
+        "$ sfdx sfpowerkit:org:profile:diff --profilelist profilenames --targetusername username (Compare liste profiles path against target org)",
+        "$ sfdx sfpowerkit:org:profile:diff --targetusername username (compare all profile in the project against the target org)",
+        "$ sfdx sfpowerkit:org:profile:diff --sourceusername sourcealias --targetusername username (compare all profile in the source org against the target org)"
+      ],
+      "flags": {
+        "json": {
+          "name": "json",
+          "type": "boolean",
+          "description": "format output as json",
+          "allowNo": false
+        },
+        "loglevel": {
+          "name": "loglevel",
+          "type": "option",
+          "description": "logging level for this command invocation",
+          "required": false,
+          "helpValue": "(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)",
+          "options": [
+            "trace",
+            "debug",
+            "info",
+            "warn",
+            "error",
+            "fatal",
+            "TRACE",
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "ERROR",
+            "FATAL"
+          ],
+          "default": "info"
+        },
+        "targetusername": {
+          "name": "targetusername",
+          "type": "option",
+          "char": "u",
+          "description": "username or alias for the target org; overrides default target org"
+        },
+        "apiversion": {
+          "name": "apiversion",
+          "type": "option",
+          "description": "override the api version used for api requests made by this command"
+        },
+        "profilelist": {
+          "name": "profilelist",
+          "type": "option",
+          "char": "p",
+          "description": "List of profiles to compare, comma separated profile names. If not provided and no sourceusername is provided, all profiles from the source folder will be processed.",
+          "required": false
+        },
+        "sourceusername": {
+          "name": "sourceusername",
+          "type": "option",
+          "char": "s",
+          "description": "Source org. If no profile is provided in the profilelist parameter, all the profile from this org will be fetched",
+          "required": false
+        },
+        "output": {
+          "name": "output",
+          "type": "option",
+          "char": "d",
+          "description": "Output folder. Provide the output folder if comparing profiles from source org.",
+          "required": false
+        }
+      },
+      "args": []
+    },
     "sfpowerkit:org:sandbox:create": {
       "id": "sfpowerkit:org:sandbox:create",
       "description": "Creates a sandbox using the tooling api, ensure the user has the required permissions before using this command",
@@ -2299,12 +2375,15 @@
     "sfpowerkit:package:version:codecoverage": {
       "id": "sfpowerkit:package:version:codecoverage",
       "description": "This command is used to get the apex test coverage details of an unlocked package",
-      "usage": "<%= command.id %> [-p <string>] [-n <string>] [-i <array>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "usage": "<%= command.id %> [-p <string>] [-n <string>] [-i <array>] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],
       "examples": [
-        "$ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -i 04tXXXXXXXXXXXXXXX \n$ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -i 04tXXXXXXXXXXXXXXX,04tXXXXXXXXXXXXXXX,04tXXXXXXXXXXXXXXX \n$ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -p core -n 1.2.0.45 \n$ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -p 0HoXXXXXXXXXXXXXXX -n 1.2.0.45"
+        "$ sfdx sfpowerkit:package:version:codecoverage -v myOrg@example.com -i 04tXXXXXXXXXXXXXXX \n",
+        "$ sfdx sfpowerkit:package:version:codecoverage -v myOrg@example.com -i 04tXXXXXXXXXXXXXXX,04tXXXXXXXXXXXXXXX,04tXXXXXXXXXXXXXXX \n",
+        "$ sfdx sfpowerkit:package:version:codecoverage -v myOrg@example.com -p core -n 1.2.0.45 \n",
+        "$ sfdx sfpowerkit:package:version:codecoverage -v myOrg@example.com -p 0HoXXXXXXXXXXXXXXX -n 1.2.0.45"
       ],
       "flags": {
         "json": {
@@ -2335,11 +2414,11 @@
           ],
           "default": "info"
         },
-        "targetusername": {
-          "name": "targetusername",
+        "targetdevhubusername": {
+          "name": "targetdevhubusername",
           "type": "option",
-          "char": "u",
-          "description": "username or alias for the target org; overrides default target org"
+          "char": "v",
+          "description": "username or alias for the dev hub org; overrides default dev hub org"
         },
         "apiversion": {
           "name": "apiversion",

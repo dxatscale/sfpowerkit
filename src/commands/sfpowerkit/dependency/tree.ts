@@ -3,11 +3,16 @@
 
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { SfdxError, Connection } from "@salesforce/core";
-import { PackageDetail } from "../../../impl/dependency/dependencyApi";
-import DependencyImpl from "../../../impl/dependency/dependencyApi";
-import MetadataRetriever from "../../../impl/dependency/metadataRetrieverApi";
+
+import DependencyImpl from "../../../impl/dependency/dependencyImpl";
+import MetadataSummaryInfoFetcher from "../../../impl/metadata/retriever/metadataSummaryInfoFetcher";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import outputGenerator from "../../../utils/outputGenerator";
+import PackageInfo, {
+  PackageDetail
+} from "../../../impl/package/version/packageInfo";
+import GetDefaults from "../../,,/../../utils/getDefaults";
+import { ProgressBar } from "../../../ui/progressBar";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -102,9 +107,22 @@ export default class Tree extends SfdxCommand {
     this.conn = this.org.getConnection();
 
     this.output = [];
-    this.installedPackagesMap = await DependencyImpl.getForcePackageInstalledList(
-      this.conn
-    );
+
+    //@mani to check whether this is correct
+    try {
+      let packageDetails: PackageDetail[] = await new PackageInfo(
+        this.conn,
+        GetDefaults.getApiVersion(),
+        false
+      ).getPackages();
+      this.installedPackagesMap = new Map(
+        packageDetails.map(obj => [obj.subcriberPackageId, obj])
+      );
+    } catch (error) {
+      throw new SfdxError(
+        "Unable to retrieve details about packages in the org"
+      );
+    }
 
     if (
       !this.flags.metadata &&
@@ -141,7 +159,9 @@ export default class Tree extends SfdxCommand {
       LoggerLevel.INFO
     );
 
-    await MetadataRetriever.describeCall(this.conn).then(result => {
+    await MetadataSummaryInfoFetcher.fetchMetadataSummaryFromAnOrg(
+      this.conn
+    ).then(result => {
       for (let metaObj of result.keys()) {
         this.metadataMap.set(metaObj, result.get(metaObj));
       }
@@ -164,8 +184,10 @@ export default class Tree extends SfdxCommand {
         this.flags.output
       );
     }
+
     return this.output;
   }
+
   private async getDetailsFromId(
     packagefilter: boolean,
     membersWithoutDependency: string[]
@@ -175,9 +197,10 @@ export default class Tree extends SfdxCommand {
       string
     > = await DependencyImpl.getMemberVsPackageMap(this.conn);
     let result = [];
-    let progressBar = SFPowerkit.createProgressBar(
+    let progressBar = new ProgressBar().create(
       `Computing the dependency tree`,
-      ` items`
+      ` items`,
+      LoggerLevel.INFO
     );
     progressBar.start(
       this.flags.showall
@@ -209,7 +232,8 @@ export default class Tree extends SfdxCommand {
         );
 
         dependentItem.package = pkgMemberMap.has(dependent)
-          ? this.installedPackagesMap.get(pkgMemberMap.get(dependent)).Name
+          ? this.installedPackagesMap.get(pkgMemberMap.get(dependent))
+              .packageName
           : "Org";
         if (
           packagefilter &&

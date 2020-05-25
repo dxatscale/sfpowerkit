@@ -1,5 +1,6 @@
 import { Org, LoggerLevel } from "@salesforce/core";
 import { SFPowerkit } from "../../../sfpowerkit";
+import { ProgressBar } from "../../.../../../ui/progressBar";
 
 const BULK_THRESHOLD = 2000;
 
@@ -68,52 +69,33 @@ export async function executeToolingQueryAsync(
   let promiseQuery = new Promise<any[]>((resolve, reject) => {
     let records = [];
     let hasInitProgress = false;
-    let progressBar = undefined;
-    if (
-      SFPowerkit.logLevel === LoggerLevel.DEBUG ||
-      SFPowerkit.logLevel === LoggerLevel.TRACE
-    ) {
-      progressBar = SFPowerkit.createProgressBar(
-        `Querying data from ${object}`,
-        "Records fetched"
-      );
-    }
+
+    let progressBar: ProgressBar = new ProgressBar().create(
+      `Querying data from ${object}`,
+      `Records fetched`,
+      LoggerLevel.DEBUG
+    );
+
     let queryRun = conn.tooling
       .query(query)
       .on("record", function(record) {
         if (!hasInitProgress) {
           hasInitProgress = true;
-          if (
-            SFPowerkit.logLevel === LoggerLevel.DEBUG ||
-            SFPowerkit.logLevel === LoggerLevel.TRACE
-          ) {
-            progressBar.start(queryRun.totalSize);
-          }
+
+          progressBar.start(queryRun.totalSize);
         }
         records.push(record);
-        if (
-          SFPowerkit.logLevel === LoggerLevel.DEBUG ||
-          SFPowerkit.logLevel === LoggerLevel.TRACE
-        ) {
-          progressBar.increment();
-        }
+
+        progressBar.increment(1);
       })
       .on("end", function() {
-        if (
-          SFPowerkit.logLevel === LoggerLevel.DEBUG ||
-          SFPowerkit.logLevel === LoggerLevel.TRACE
-        ) {
-          progressBar.stop();
-        }
+        progressBar.stop();
+
         resolve(records);
       })
       .on("error", function(error) {
-        if (
-          SFPowerkit.logLevel === LoggerLevel.DEBUG ||
-          SFPowerkit.logLevel === LoggerLevel.TRACE
-        ) {
-          progressBar.stop();
-        }
+        progressBar.stop();
+
         reject(error);
       })
       .run({
@@ -133,53 +115,31 @@ export async function executeBulkQueryAsync(
   let promiseQuery = new Promise<any[]>((resolve, reject) => {
     let records = [];
     let hasInitProgress = false;
-    let progressBar = undefined;
+    let progressBar: ProgressBar = new ProgressBar().create(
+      `Querying data from ${object}`,
+      "Records fetched",
+      LoggerLevel.DEBUG
+    );
+
     SFPowerkit.log(`Using Bulk API`, LoggerLevel.DEBUG);
-    if (
-      SFPowerkit.logLevel === LoggerLevel.DEBUG ||
-      SFPowerkit.logLevel === LoggerLevel.TRACE
-    ) {
-      progressBar = SFPowerkit.createProgressBar(
-        `Querying data from ${object}`,
-        "Records fetched"
-      );
-    }
+
     conn.bulk
       .query(query)
       .on("record", function(record) {
         if (!hasInitProgress) {
           hasInitProgress = true;
-          if (
-            SFPowerkit.logLevel === LoggerLevel.DEBUG ||
-            SFPowerkit.logLevel === LoggerLevel.TRACE
-          ) {
-            progressBar.start(recordCount);
-          }
+          progressBar.start(recordCount);
         }
         records.push(record);
-        if (
-          SFPowerkit.logLevel === LoggerLevel.DEBUG ||
-          SFPowerkit.logLevel === LoggerLevel.TRACE
-        ) {
-          progressBar.increment();
-        }
+        progressBar.increment(1);
       })
       .on("end", function() {
-        if (
-          SFPowerkit.logLevel === LoggerLevel.DEBUG ||
-          SFPowerkit.logLevel === LoggerLevel.TRACE
-        ) {
-          progressBar.stop();
-        }
+        progressBar.stop();
+
         resolve(records);
       })
       .on("error", function(error) {
-        if (
-          SFPowerkit.logLevel === LoggerLevel.DEBUG ||
-          SFPowerkit.logLevel === LoggerLevel.TRACE
-        ) {
-          progressBar.stop();
-        }
+        progressBar.stop();
         SFPowerkit.log(`Error when using bulk api `, LoggerLevel.ERROR);
         SFPowerkit.log(error, LoggerLevel.ERROR);
         reject(error);
@@ -191,52 +151,32 @@ export async function executeQueryAsync(query, conn, object): Promise<any[]> {
   let promiseQuery = new Promise<any[]>((resolve, reject) => {
     let records = [];
     let hasInitProgress = false;
-    let progressBar = undefined;
-    if (
-      SFPowerkit.logLevel === LoggerLevel.DEBUG ||
-      SFPowerkit.logLevel === LoggerLevel.TRACE
-    ) {
-      progressBar = SFPowerkit.createProgressBar(
-        `Querying data from ${object}`,
-        "Records fetched"
-      );
-    }
+    let progressBar: ProgressBar = new ProgressBar().create(
+      `Querying data from ${object}`,
+      "Records fetched",
+      LoggerLevel.DEBUG
+    );
+
     let queryRun = conn
       .query(query)
       .on("record", function(record) {
         if (!hasInitProgress) {
           hasInitProgress = true;
-          if (
-            SFPowerkit.logLevel === LoggerLevel.DEBUG ||
-            SFPowerkit.logLevel === LoggerLevel.TRACE
-          ) {
-            progressBar.start(queryRun.totalSize);
-          }
+
+          progressBar.start(queryRun.totalSize);
         }
         records.push(record);
-        if (
-          SFPowerkit.logLevel === LoggerLevel.DEBUG ||
-          SFPowerkit.logLevel === LoggerLevel.TRACE
-        ) {
-          progressBar.increment();
-        }
+
+        progressBar.increment(1);
       })
       .on("end", function() {
-        if (
-          SFPowerkit.logLevel === LoggerLevel.DEBUG ||
-          SFPowerkit.logLevel === LoggerLevel.TRACE
-        ) {
-          progressBar.stop();
-        }
+        progressBar.stop();
+
         resolve(records);
       })
       .on("error", function(error) {
-        if (
-          SFPowerkit.logLevel === LoggerLevel.DEBUG ||
-          SFPowerkit.logLevel === LoggerLevel.TRACE
-        ) {
-          progressBar.stop();
-        }
+        progressBar.stop();
+
         reject(error);
       })
       .run({
