@@ -74,6 +74,8 @@ $ sfdx plugins:link
   - [`sfpowerkit:org:scratchorg:delete`](#sfpowerkitorgscratchorgdelete)
   - [`sfpowerkit:org:relaxiprange`](#sfpowerkitorgrelaxiprange)
   - [`sfpowerkit:auth:login`](#sfpowerkitauthlogin)
+- [Dependency Functionalities](#dependency-functionalities)
+  - [`sfpowerkit:dependency:tree:package [Beta]`](#sfpowerkitdependencytreepackage-Beta)
 - [ScratchOrg Pooling Related Functionalities](#scratchorg-pooling-related-functionalities-beta)
   - [`sfpowerkit:pool:create`](#sfpowerkitpoolcreate)
   - [`sfpowerkit:pool:fetch`](#sfpowerkitpoolfetch)
@@ -826,7 +828,7 @@ OPTIONS
                                                   command invocation
 
 EXAMPLE
-    $ sfdx sfpowerkit:org:trigger:deactivate -n AccountTrigger -u sandbox
+    $ sfdx sfpowerkit:org:trigger:activate -n AccountTrigger -u sandbox
     Polling for Retrieval Status
     Preparing Activation
     Deploying Activated ApexTrigger with ID  0Af4Y000003Q7GySAK
@@ -1163,6 +1165,37 @@ EXAMPLE
 
 ```
 
+## Dependency Functionalities
+
+## `sfpowerkit:dependency:tree:package [BETA]`
+
+This command is used to compute the dependency tree details of an unlocked package
+
+```
+USAGE
+  $ sfdx sfpowerkit:dependency:tree:package -n <string> -d <string> [-p] [-s] [-f json|csv] [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -o, --output=output                                                               (required) path to create the output
+  -f, --format=(json|csv)                                                           [default: json] format of the output file to create
+  -n, --package=package                                                             (required) package name, package version id, subscriber id that is installed in the org
+  -p, --packagefilter                                                               output result will filter only dependent packages
+  -s, --showall                                                                     Indclude all items with/without dependency in the result
+  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] [default: info] logging level for this command invocation
+
+EXAMPLES
+  $ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx -o outputdir -f json
+  $ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx -o outputdir -f csv
+  $ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx -o outputdir -f csv -p
+  $ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx -o outputdir -f csv -s
+```
+
+_See code: [src\commands\sfpowerkit\dependency\tree\package.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/dependency/tree/package.ts)_
+
 ## ScratchOrg Pooling Related Functionalities [BETA]
 
 Commands to create and maintain a pool of scratchorgs. Details on getting started are available [here](https://github.com/Accenture/sfpowerkit/wiki/Getting-started-with-ScratchOrg-Pooling)
@@ -1240,13 +1273,13 @@ EXAMPLES
   $ sfdx sfpowerkit:pool:list -t core -v devhub -m -a
 ```
 
-## `sfpowerkit:pool:hydrate`
+## `sfpowerkit:pool:delete`
 
 Deletes the pooled scratch orgs from the Scratch Org Pool
 
 ```
 USAGE
-  $ sfdx sfpowerkit:pool:hydrate -t <string> [-m] [-a] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+  $ sfdx sfpowerkit:pool:delete -t <string> [-m] [-a] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
   -a, --allscratchorgs                                                              Deletes all used and unused Scratch orgs from pool by the tag
@@ -1258,8 +1291,8 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
 EXAMPLES
-  $ sfdx sfpowerkit:pool:hydrate -t core
-  $ sfdx sfpowerkit:pool:hydrate -t core -v devhub
-  $ sfdx sfpowerkit:pool:hydrate -t core -v devhub -m
-  $ sfdx sfpowerkit:pool:hydrate -t core -v devhub -m -a
+  $ sfdx sfpowerkit:pool:delete -t core
+  $ sfdx sfpowerkit:pool:delete -t core -v devhub
+  $ sfdx sfpowerkit:pool:delete -t core -v devhub -m
+  $ sfdx sfpowerkit:pool:delete -t core -v devhub -m -a
 ```

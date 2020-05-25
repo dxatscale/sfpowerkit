@@ -118,9 +118,7 @@ export default class ProfileDiffImpl {
       progressBar.create(
         "Reading from File System ",
         "Profiles",
-        SFPowerkit.logLevel,
-        LoggerLevel.FATAL,
-        false
+        LoggerLevel.FATAL
       );
 
       progressBar.start(this.profileList.length);
@@ -139,7 +137,7 @@ export default class ProfileDiffImpl {
         profilesMap.push({
           [profileName]: profileXml.toString()
         });
-        progressBar.increment();
+        progressBar.increment(1);
       }
       profileSource = new Promise<any[]>((resolve, reject) => {
         resolve(profilesMap);
@@ -184,9 +182,7 @@ export default class ProfileDiffImpl {
           let progressBar = new ProgressBar().create(
             "Diff processing ",
             "Profiles",
-            SFPowerkit.logLevel,
-            LoggerLevel.INFO,
-            SFPowerkit.isJsonFormatEnabled
+            LoggerLevel.INFO
           );
 
           progressBar.start(profilesSourceMap.length);
@@ -219,7 +215,7 @@ export default class ProfileDiffImpl {
               LoggerLevel.DEBUG
             );
             this.processDiff(filePath, sourceContent, targetContent);
-            progressBar.increment();
+            progressBar.increment(1);
           }
           /*
           profilesSourceMap.forEach(sourceProfileXml => {
@@ -247,9 +243,7 @@ export default class ProfileDiffImpl {
     let progressBar = new ProgressBar().create(
       `Retrieving From ${connection.getUsername()}`,
       "Profiles",
-      SFPowerkit.logLevel,
-      LoggerLevel.INFO,
-      SFPowerkit.isJsonFormatEnabled
+      LoggerLevel.INFO
     );
 
     progressBar.start(profileNames.length);
@@ -274,7 +268,7 @@ export default class ProfileDiffImpl {
               profilesXmls.push({
                 [profileObj.fullName]: profileXml
               });
-              progressBar.increment();
+              progressBar.increment(1);
             }
             return profilesXmls;
           })

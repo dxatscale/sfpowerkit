@@ -3,7 +3,7 @@ import * as path from "path";
 
 export default class GetDefaults {
   public static defaultConfig: any;
-  public static init() {
+  private static init() {
     let resourcePath = path.join(
       __dirname,
       "..",
@@ -15,6 +15,9 @@ export default class GetDefaults {
     this.defaultConfig = JSON.parse(fileData);
   }
   public static getApiVersion() {
+    if (!this.defaultConfig) {
+      this.init();
+    }
     return this.defaultConfig.apiversion;
   }
 }

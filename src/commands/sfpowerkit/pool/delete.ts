@@ -1,7 +1,7 @@
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
-import poolHydrateImpl from "../../../impl/pool/scratchorg/poolHydrateImpl";
+import poolHydrateImpl from "../../../impl/pool/scratchorg/PoolDeleteImpl";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -13,7 +13,7 @@ const messages = core.Messages.loadMessages(
   "scratchorg_poolhydrate"
 );
 
-export default class Hydrate extends SfdxCommand {
+export default class Delete extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   protected static requiresDevhubUsername = true;

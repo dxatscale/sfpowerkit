@@ -4,7 +4,7 @@ import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import poolListImpl from "../../../impl/pool/scratchorg/poolListImpl";
 import { isNullOrUndefined } from "util";
 import P from "pino";
-import { ScratchOrg } from "../../../impl/pool/scratchorg/scratchOrgUtils";
+import { ScratchOrg } from "../../../utils/scratchOrgUtils";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -87,11 +87,13 @@ export default class List extends SfdxCommand {
           this.ux.log("===================================");
         }
 
+        if (this.flags.allscratchorgs) {
+          this.ux.log(
+            `Used Scratch Orgs in use the pool: ${scratchOrgInuse.length}`
+          );
+        }
         this.ux.log(
-          `Used Scratch Orgs in use the pool: ${scratchOrgInuse.length}`
-        );
-        this.ux.log(
-          `Unused Scratch Orgs in the Pool : : ${scratchOrgNotInuse.length} \n`
+          `Unused Scratch Orgs in the Pool : ${scratchOrgNotInuse.length} \n`
         );
 
         if (this.flags.mypool) {

@@ -68,9 +68,9 @@ export default class CodeCoverage extends SfdxCommand {
   public async run(): Promise<AnyJson> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
-    await this.org.refreshAuth();
+    await this.hubOrg.refreshAuth();
 
-    const conn = this.org.getConnection();
+    const conn = this.hubOrg.getConnection();
 
     this.flags.apiversion =
       this.flags.apiversion || (await conn.retrieveMaxApiVersion());
