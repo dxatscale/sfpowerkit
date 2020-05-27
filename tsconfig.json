@@ -1,21 +1,13 @@
 {
+  "extends": "./node_modules/@salesforce/dev-config/tsconfig",
   "compilerOptions": {
-    "module": "esnext",
-    "target": "esnext",
-    "lib": ["es2017"],
-    "sourceMap": true,
-    "declaration": true,
-    "moduleResolution": "node",
-    "alwaysStrict": true,
     "baseUrl": ".",
     "paths": { "*": ["types/*"] },
     "outDir": "./lib",
     "rootDir": "./src",
     "noUnusedLocals": false,
     "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "downlevelIteration": true
+    "esModuleInterop": true
   },
   "include": ["./src/**/*"]
 }
