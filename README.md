@@ -74,16 +74,14 @@ $ sfdx plugins:link
   - [`sfpowerkit:org:scratchorg:delete`](#sfpowerkitorgscratchorgdelete)
   - [`sfpowerkit:org:relaxiprange`](#sfpowerkitorgrelaxiprange)
   - [`sfpowerkit:auth:login`](#sfpowerkitauthlogin)
-    <<<<<<< HEAD
 - [Dependency Functionalities](#dependency-functionalities)
-  - # [`sfpowerkit:dependency:tree:package [Beta]`](#sfpowerkitdependencytreepackage-Beta)
+  - [`sfpowerkit:dependency:tree:package [Beta]`](#sfpowerkitdependencytreepackage-Beta)
 - [ScratchOrg Pooling Related Functionalities](#scratchorg-pooling-related-functionalities-beta)
   - [`sfpowerkit:pool:create`](#sfpowerkitpoolcreate)
   - [`sfpowerkit:pool:fetch`](#sfpowerkitpoolfetch)
   - [`sfpowerkit:pool:list`](#sfpowerkitpoollist)
   - [`sfpowerkit:pool:hydrate`](#sfpowerkitpoolhydrate)
-    > > > > > > > master
-        <!-- commands -->
+    <!-- commands -->
 
 ## Source Related Functionalities
 

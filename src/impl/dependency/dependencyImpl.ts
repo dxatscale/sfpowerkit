@@ -144,7 +144,7 @@ export default class DependencyImpl {
   ): Promise<Map<string, string>> {
     let query =
       `SELECT CurrentPackageVersionId, MaxPackageVersionId, MinPackageVersionId, SubjectId, SubjectKeyPrefix, SubjectManageableState, SubscriberPackageId ` +
-      `FROM Package2Member ORDER BY SubjectId `;
+      `FROM Package2Member  WHERE (SubjectManageableState = 'installed' OR SubjectManageableState = 'installedEditable') ORDER BY SubjectId `;
 
     let queryUtil = new queryApi(conn);
     let result = await queryUtil.executeQuery(query, true);
@@ -162,7 +162,7 @@ export default class DependencyImpl {
   ): Promise<Map<string, string[]>> {
     let query =
       `SELECT CurrentPackageVersionId, MaxPackageVersionId, MinPackageVersionId, SubjectId, SubjectKeyPrefix, SubjectManageableState, SubscriberPackageId ` +
-      `FROM Package2Member ORDER BY SubjectId `;
+      `FROM Package2Member  WHERE (SubjectManageableState = 'installed' OR SubjectManageableState = 'installedEditable') ORDER BY SubjectId `;
 
     let queryUtil = new queryApi(conn);
     let result = await queryUtil.executeQuery(query, true);
@@ -184,7 +184,7 @@ export default class DependencyImpl {
   ): Promise<string[]> {
     let query =
       `SELECT CurrentPackageVersionId, MaxPackageVersionId, MinPackageVersionId, SubjectId, SubjectKeyPrefix, SubjectManageableState, SubscriberPackageId ` +
-      `FROM Package2Member WHERE SubscriberPackageId = '${packageId}' ORDER BY SubjectId `;
+      `FROM Package2Member WHERE SubscriberPackageId = '${packageId}' AND (SubjectManageableState = 'installed' OR SubjectManageableState = 'installedEditable') ORDER BY SubjectId `;
 
     let queryUtil = new queryApi(conn);
     let result = await queryUtil.executeQuery(query, true);

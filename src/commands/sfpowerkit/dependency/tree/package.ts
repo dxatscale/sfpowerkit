@@ -99,7 +99,6 @@ export default class Tree extends SfdxCommand {
 
     this.output = [];
 
-    //@mani to check whether this is correct
     //Fetch Package Details from an Org
     try {
       let packageDetails: PackageDetail[] = await new PackageInfo(
