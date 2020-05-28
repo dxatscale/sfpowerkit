@@ -66,18 +66,17 @@ export default class PoolCreateImpl {
 
     //Read pool config file
 
-    if(!fs.existsSync(this.poolconfigFilePath))
-    {
-    SFPowerkit.log(
-      "Poll Config Path not provided, Unable to create pool without this file",
-      LoggerLevel.ERROR
-    );
-    return false;
+    if (!fs.existsSync(this.poolconfigFilePath)) {
+      SFPowerkit.log(
+        "Poll Config Path not provided, Unable to create pool without this file",
+        LoggerLevel.ERROR
+      );
+      return false;
     }
 
-
-   
-    this.poolConfig = JSON.parse((fs.readFileSync(this.poolconfigFilePath)).toString());
+    this.poolConfig = JSON.parse(
+      fs.readFileSync(this.poolconfigFilePath).toString()
+    );
 
     //Validate Inputs
     if (isNullOrUndefined(this.poolConfig.pool.config_file_path)) {

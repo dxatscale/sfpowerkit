@@ -72,7 +72,6 @@ export default class Diff extends SfdxCommand {
 
   protected output: any[];
   public async run(): Promise<AnyJson> {
-    getDefaults.init();
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     this.flags.apiversion =

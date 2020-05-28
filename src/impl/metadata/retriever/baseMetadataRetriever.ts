@@ -73,9 +73,7 @@ export async function executeToolingQueryAsync(
     let progressBar: ProgressBar = new ProgressBar().create(
       `Querying data from ${object}`,
       `Records fetched`,
-      SFPowerkit.logLevel,
-      LoggerLevel.DEBUG,
-      SFPowerkit.isJsonFormatEnabled
+      LoggerLevel.DEBUG
     );
 
     let queryRun = conn.tooling
@@ -88,7 +86,7 @@ export async function executeToolingQueryAsync(
         }
         records.push(record);
 
-        progressBar.increment();
+        progressBar.increment(1);
       })
       .on("end", function() {
         progressBar.stop();
@@ -120,9 +118,7 @@ export async function executeBulkQueryAsync(
     let progressBar: ProgressBar = new ProgressBar().create(
       `Querying data from ${object}`,
       "Records fetched",
-      SFPowerkit.logLevel,
-      LoggerLevel.DEBUG,
-      SFPowerkit.isJsonFormatEnabled
+      LoggerLevel.DEBUG
     );
 
     SFPowerkit.log(`Using Bulk API`, LoggerLevel.DEBUG);
@@ -135,7 +131,7 @@ export async function executeBulkQueryAsync(
           progressBar.start(recordCount);
         }
         records.push(record);
-        progressBar.increment();
+        progressBar.increment(1);
       })
       .on("end", function() {
         progressBar.stop();
@@ -158,9 +154,7 @@ export async function executeQueryAsync(query, conn, object): Promise<any[]> {
     let progressBar: ProgressBar = new ProgressBar().create(
       `Querying data from ${object}`,
       "Records fetched",
-      SFPowerkit.logLevel,
-      LoggerLevel.DEBUG,
-      SFPowerkit.isJsonFormatEnabled
+      LoggerLevel.DEBUG
     );
 
     let queryRun = conn
@@ -173,7 +167,7 @@ export async function executeQueryAsync(query, conn, object): Promise<any[]> {
         }
         records.push(record);
 
-        progressBar.increment();
+        progressBar.increment(1);
       })
       .on("end", function() {
         progressBar.stop();

@@ -87,11 +87,13 @@ export default class List extends SfdxCommand {
           this.ux.log("===================================");
         }
 
+        if (this.flags.allscratchorgs) {
+          this.ux.log(
+            `Used Scratch Orgs in use the pool: ${scratchOrgInuse.length}`
+          );
+        }
         this.ux.log(
-          `Used Scratch Orgs in use the pool: ${scratchOrgInuse.length}`
-        );
-        this.ux.log(
-          `Unused Scratch Orgs in the Pool : : ${scratchOrgNotInuse.length} \n`
+          `Unused Scratch Orgs in the Pool : ${scratchOrgNotInuse.length} \n`
         );
 
         if (this.flags.mypool) {
