@@ -374,15 +374,6 @@ export default class PoolCreateImpl {
               this.hubOrg
             );
 
-            let sss = await ScratchOrgUtils.getActiveScratchOrgRecordIdGivenScratchOrg(
-              this.hubOrg,
-              this.apiversion,
-              scratchOrg.orgId
-            );
-
-            throw Error("Foo");
-            SFPowerkit.log(JSON.stringify(sss), LoggerLevel.TRACE);
-
             success++;
             continue;
           } catch (error) {
