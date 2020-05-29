@@ -89,7 +89,7 @@ export default class List extends SfdxCommand {
 
         if (this.flags.allscratchorgs) {
           this.ux.log(
-            `Used Scratch Orgs in use the pool: ${scratchOrgInuse.length}`
+            `Used Scratch Orgs in the pool: ${scratchOrgInuse.length}`
           );
         }
         this.ux.log(
