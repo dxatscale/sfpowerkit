@@ -77,7 +77,7 @@ $ sfdx plugins:link
 - [Dependency Functionalities](#dependency-functionalities)
   - [`sfpowerkit:dependency:tree:package [Beta]`](#sfpowerkitdependencytreepackage-Beta)
 - [ScratchOrg Pooling Related Functionalities](#scratchorg-pooling-related-functionalities-beta)
-  - [`sfpowerkit:pool:create [Beta]`] [(#sfpowerkitpoolcreate)
+  - [`sfpowerkit:pool:create [Beta]`](#sfpowerkitpoolcreate)
   - [`sfpowerkit:pool:fetch [Beta]`](#sfpowerkitpoolfetch)
   - [`sfpowerkit:pool:list [Bata]`](#sfpowerkitpoollist)
   - [`sfpowerkit:pool:delete[Beta]`](#sfpowerkitpooldelete)
