@@ -80,7 +80,7 @@ $ sfdx plugins:link
   - [`sfpowerkit:pool:create`](#sfpowerkitpoolcreate)
   - [`sfpowerkit:pool:fetch`](#sfpowerkitpoolfetch)
   - [`sfpowerkit:pool:list`](#sfpowerkitpoollist)
-  - [`sfpowerkit:pool:hydrate`](#sfpowerkitpoolhydrate)
+  - [`sfpowerkit:pool:delete`](#sfpowerkitpooldelete)
     <!-- commands -->
 
 ## Source Related Functionalities
@@ -1273,13 +1273,13 @@ EXAMPLES
   $ sfdx sfpowerkit:pool:list -t core -v devhub -m -a
 ```
 
-## `sfpowerkit:pool:hydrate`
+## `sfpowerkit:pool:delete`
 
 Deletes the pooled scratch orgs from the Scratch Org Pool
 
 ```
 USAGE
-  $ sfdx sfpowerkit:pool:hydrate -t <string> [-m] [-a] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+  $ sfdx sfpowerkit:pool:delete -t <string> [-m] [-a] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
   -a, --allscratchorgs                                                              Deletes all used and unused Scratch orgs from pool by the tag
@@ -1291,8 +1291,8 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
 EXAMPLES
-  $ sfdx sfpowerkit:pool:hydrate -t core
-  $ sfdx sfpowerkit:pool:hydrate -t core -v devhub
-  $ sfdx sfpowerkit:pool:hydrate -t core -v devhub -m
-  $ sfdx sfpowerkit:pool:hydrate -t core -v devhub -m -a
+  $ sfdx sfpowerkit:pool:delete -t core
+  $ sfdx sfpowerkit:pool:delete -t core -v devhub
+  $ sfdx sfpowerkit:pool:delete -t core -v devhub -m
+  $ sfdx sfpowerkit:pool:delete -t core -v devhub -m -a
 ```

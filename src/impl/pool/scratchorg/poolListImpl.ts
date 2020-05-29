@@ -1,8 +1,8 @@
 import { Connection, LoggerLevel, Org, SfdxError } from "@salesforce/core";
 import { SFPowerkit } from "../../../sfpowerkit";
-import ScratchOrgUtils, { ScratchOrg } from "./scratchOrgUtils";
+import ScratchOrgUtils, { ScratchOrg } from "../../../utils/scratchOrgUtils";
 
-export default class PoolFetchImpl {
+export default class PoolListImpl {
   private hubOrg: Org;
   private apiversion: string;
   private tag: string;

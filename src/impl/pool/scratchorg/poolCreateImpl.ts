@@ -1,4 +1,4 @@
-import ScratchOrgUtils, { ScratchOrg } from "./scratchOrgUtils";
+import ScratchOrgUtils, { ScratchOrg } from "../../../utils/scratchOrgUtils";
 import { Connection, LoggerLevel, Org, AuthInfo } from "@salesforce/core";
 import { SFPowerkit } from "../../../sfpowerkit";
 import * as fs from "fs-extra";
@@ -576,6 +576,7 @@ export default class PoolCreateImpl {
   ): Promise<ScriptExecutionResult> {
     //executue using bash
     let cmd;
+    let logRestricter = 0;
     scriptFilePath = path.normalize(scriptFilePath);
     if (process.platform != "win32") {
       cmd = `bash ${scriptFilePath}  ${scratchOrg.username}  ${hubOrgUserName} `;
@@ -602,7 +603,7 @@ export default class PoolCreateImpl {
         if (stderr) SFPowerkit.log(stderr, LoggerLevel.DEBUG);
 
         SFPowerkit.log(
-          `Executing script for ${scratchOrg.username}`,
+          `Executing script for ${scratchOrg.alias} with username: ${scratchOrg.username}`,
           LoggerLevel.INFO
         );
         SFPowerkit.log(stdout, LoggerLevel.DEBUG);
@@ -616,10 +617,14 @@ export default class PoolCreateImpl {
       });
 
       ls.stdout.on("data", function(data) {
-        SFPowerkit.log(
-          `Processing for ${scratchOrg.username}: IN_PROGRESS....`,
-          LoggerLevel.INFO
-        );
+        //Print only processing if there is more than 5 logs, Restrict Verbose scripts like sfpowerkit package dependencies install
+        if (logRestricter % 10 == 0) {
+          SFPowerkit.log(
+            `Processing for ${scratchOrg.alias} with ${scratchOrg.username}: IN_PROGRESS....`,
+            LoggerLevel.INFO
+          );
+        }
+        logRestricter++;
       });
     });
   }
