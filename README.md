@@ -80,7 +80,7 @@ $ sfdx plugins:link
   - [`sfpowerkit:pool:create`](#sfpowerkitpoolcreate)
   - [`sfpowerkit:pool:fetch`](#sfpowerkitpoolfetch)
   - [`sfpowerkit:pool:list`](#sfpowerkitpoollist)
-  - [`sfpowerkit:pool:hydrate`](#sfpowerkitpoolhydrate)
+  - [`sfpowerkit:pool:delete`](#sfpowerkitpooldelete)
     <!-- commands -->
 
 ## Source Related Functionalities

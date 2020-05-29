@@ -19,10 +19,10 @@ export default class Delete extends SfdxCommand {
   protected static requiresDevhubUsername = true;
 
   public static examples = [
-    `$ sfdx sfpowerkit:pool:hydrate -t core `,
-    `$ sfdx sfpowerkit:pool:hydrate -t core -v devhub`,
-    `$ sfdx sfpowerkit:pool:hydrate -t core -v devhub -m`,
-    `$ sfdx sfpowerkit:pool:hydrate -t core -v devhub -m -a`
+    `$ sfdx sfpowerkit:pool:delete -t core `,
+    `$ sfdx sfpowerkit:pool:delete -t core -v devhub`,
+    `$ sfdx sfpowerkit:pool:delete -t core -v devhub -m`,
+    `$ sfdx sfpowerkit:pool:delete -t core -v devhub -m -a`
   ];
 
   protected static flagsConfig = {
