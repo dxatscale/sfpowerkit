@@ -1,6 +1,6 @@
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import MetadataFiles from "../../metadata/metadataFiles";
-import * as fs from "fs";
+import * as fs from "fs-extra";
 import * as path from "path";
 import { METADATA_INFO } from "../../metadata/metadataInfo";
 import Profile from "../../../impl/metadata/schema";

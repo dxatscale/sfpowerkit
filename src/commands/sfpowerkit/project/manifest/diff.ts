@@ -1,7 +1,7 @@
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
-import fs = require("fs-extra");
-import path from "path";
+import * as fs from "fs-extra";
+import * as path from "path";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 import xmlUtil from "../../../../utils/xmlUtil";
 import getDefaults from "../../../../utils/getDefaults";
@@ -20,7 +20,7 @@ export default class Diff extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:project:manifest:diff -f source/package.xml -t target/package.xml -d output`
+    `$ sfdx sfpowerkit:project:manifest:diff -s source/package.xml -t target/package.xml -d output`
   ];
 
   protected static flagsConfig = {
@@ -46,7 +46,8 @@ export default class Diff extends SfdxCommand {
       required: false,
       char: "f",
       description: messages.getMessage("formatFlagDescription"),
-      options: ["json", "csv", "xml"]
+      options: ["json", "csv", "xml"],
+      default: "json"
     }),
     loglevel: flags.enum({
       description: messages.getMessage("loglevel"),
@@ -69,61 +70,52 @@ export default class Diff extends SfdxCommand {
     })
   };
 
+  protected output: any[];
   public async run(): Promise<AnyJson> {
-    getDefaults.init();
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     this.flags.apiversion =
       this.flags.apiversion || getDefaults.getApiVersion();
 
-    if (!this.flags.format || this.flags.json) {
+    if (this.flags.json) {
       this.flags.format = "json";
     }
 
     let sourceXml = await this.processMainfest(this.flags.sourcepath);
     let targetXml = await this.processMainfest(this.flags.targetpath);
 
-    let metadataTypes = [];
-    if (sourceXml && targetXml) {
-      for (let key of targetXml.keys()) {
-        if (sourceXml.has(key)) {
-          const diffout = this.getdiffList(
-            sourceXml.get(key),
-            targetXml.get(key)
-          );
-          if (diffout) {
-            metadataTypes.push({ name: key, members: diffout });
-          }
-        } else {
-          metadataTypes.push({ name: key, members: targetXml.get(key) });
+    let itemsAddedInTarget = this.compareXML(sourceXml, targetXml);
+    let itemsRemovedInTarget = this.compareXML(targetXml, sourceXml);
+
+    this.output = [];
+    if (itemsAddedInTarget || itemsRemovedInTarget) {
+      this.addItemsToOutput(itemsAddedInTarget, "Added in Target");
+      this.addItemsToOutput(itemsRemovedInTarget, "Removed in Target");
+
+      this.output.sort(function(a, b) {
+        if (a.type < b.type) {
+          return -1;
+        } else if (a.type > b.type) {
+          return 1;
         }
-      }
-    }
-    let output = [];
-    if (metadataTypes) {
-      metadataTypes.forEach(metadataType => {
-        for (let item of metadataType.members) {
-          output.push({
-            status: "Added at Target",
-            type: metadataType.name,
-            member: item
-          });
-        }
+
+        // names must be equal
+        return 0;
       });
 
       if (this.flags.format === "xml") {
-        this.createpackagexml(metadataTypes);
+        this.createpackagexml(itemsAddedInTarget);
       } else if (this.flags.format === "csv") {
-        this.generateCSVOutput(output);
+        this.generateCSVOutput(this.output);
       } else {
         fs.writeFileSync(
           `${this.flags.output}/package.json`,
-          JSON.stringify(output)
+          JSON.stringify(this.output)
         );
       }
     }
 
-    return output;
+    return this.output;
   }
 
   public async processMainfest(pathToManifest: string) {
@@ -158,6 +150,28 @@ export default class Diff extends SfdxCommand {
     }
     return output;
   }
+  compareXML(
+    sourceXml: Map<string, string[]>,
+    targetXml: Map<string, string[]>
+  ) {
+    let metadataTypes = [];
+    if (sourceXml && targetXml) {
+      for (let key of targetXml.keys()) {
+        if (sourceXml.has(key)) {
+          const diffout = this.getdiffList(
+            sourceXml.get(key),
+            targetXml.get(key)
+          );
+          if (diffout) {
+            metadataTypes.push({ name: key, members: diffout });
+          }
+        } else {
+          metadataTypes.push({ name: key, members: targetXml.get(key) });
+        }
+      }
+    }
+    return metadataTypes;
+  }
   getdiffList(from: string[], to: string[]) {
     let output = [];
     to.forEach(item => {
@@ -167,6 +181,17 @@ export default class Diff extends SfdxCommand {
     });
 
     return output;
+  }
+  addItemsToOutput(itemsToProcess: any[], status: string) {
+    itemsToProcess.forEach(metadataType => {
+      for (let item of metadataType.members) {
+        this.output.push({
+          status: status,
+          type: metadataType.name,
+          member: item
+        });
+      }
+    });
   }
   createpackagexml(manifest: any[]) {
     let package_xml = {

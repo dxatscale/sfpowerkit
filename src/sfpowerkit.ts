@@ -1,7 +1,8 @@
 import { SfdxProject } from "@salesforce/core";
 import { isNullOrUndefined } from "util";
-import Logger = require("pino");
+import Pino from "pino";
 import { UX } from "@salesforce/command";
+import cli from "cli-ux";
 
 export enum LoggerLevel {
   TRACE = 10,
@@ -13,20 +14,21 @@ export enum LoggerLevel {
 }
 
 export class SFPowerkit {
-  private static logger: Logger;
   private static defaultFolder: string;
   private static projectDirectories: string[];
   private static pluginConfig;
-  private static isJsonFormatEnabled: boolean;
+  public static isJsonFormatEnabled: boolean;
   private static ux: UX;
   private static sourceApiVersion: any;
+  private static logger;
+  public static logLevel;
 
   public static setLogLevel(logLevel: string, isJsonFormatEnabled: boolean) {
     logLevel = logLevel.toLowerCase();
     this.isJsonFormatEnabled = isJsonFormatEnabled;
 
     if (!isJsonFormatEnabled) {
-      this.logger = Logger({
+      SFPowerkit.logger = Pino({
         name: "sfpowerkit",
         level: logLevel,
         prettyPrint: {
@@ -38,6 +40,27 @@ export class SFPowerkit {
       });
     } else {
       //do nothing for now, need to put pino to move to file
+    }
+
+    switch (logLevel) {
+      case "trace":
+        SFPowerkit.logLevel = LoggerLevel.TRACE;
+        break;
+      case "debug":
+        SFPowerkit.logLevel = LoggerLevel.DEBUG;
+        break;
+      case "info":
+        SFPowerkit.logLevel = LoggerLevel.INFO;
+        break;
+      case "warn":
+        SFPowerkit.logLevel = LoggerLevel.WARN;
+        break;
+      case "error":
+        SFPowerkit.logLevel = LoggerLevel.ERROR;
+        break;
+      case "fatal":
+        SFPowerkit.logLevel = LoggerLevel.FATAL;
+        break;
     }
   }
 

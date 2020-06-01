@@ -1,6 +1,6 @@
 import * as _ from "lodash";
 import * as path from "path";
-import * as fs from "fs";
+import * as fs from "fs-extra";
 
 export const SOURCE_EXTENSION_REGEX = /\.[a-zA-Z]+-meta\.xml/;
 const SPLITED_TYPES = {

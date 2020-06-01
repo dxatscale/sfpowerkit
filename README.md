@@ -66,12 +66,21 @@ $ sfdx plugins:link
   - [`sfpowerkit:org:healthcheck`](#sfpowerkitorghealthcheck)
   - [`sfpowerkit:org:manifest:build`](#sfpowerkitorgmanifestbuild)
   - [`sfpowerkit:org:orgcoverage`](#sfpowerkitorgorgcoverage)
+  - [`sfpowerkit:org:profile:diff`](#sfpowerkitorgprofilediff)
   - [`sfpowerkit:org:sandbox:create`](#sfpowerkitorgsandboxcreate)
   - [`sfpowerkit:org:sandbox:info`](#sfpowerkitorgsandboxinfo)
   - [`sfpowerkit:org:sandbox:refresh`](#sfpowerkitorgsandboxrefresh)
   - [`sfpowerkit:org:scratchorg:usage`](#sfpowerkitorgscratchorgusage)
   - [`sfpowerkit:org:scratchorg:delete`](#sfpowerkitorgscratchorgdelete)
+  - [`sfpowerkit:org:relaxiprange`](#sfpowerkitorgrelaxiprange)
   - [`sfpowerkit:auth:login`](#sfpowerkitauthlogin)
+- [Dependency Functionalities](#dependency-functionalities)
+  - [`sfpowerkit:dependency:tree:package [Beta]`](#sfpowerkitdependencytreepackage-Beta)
+- [ScratchOrg Pooling Related Functionalities](#scratchorg-pooling-related-functionalities-beta)
+  - [`sfpowerkit:pool:create`](#sfpowerkitpoolcreate)
+  - [`sfpowerkit:pool:fetch`](#sfpowerkitpoolfetch)
+  - [`sfpowerkit:pool:list`](#sfpowerkitpoollist)
+  - [`sfpowerkit:pool:delete`](#sfpowerkitpooldelete)
     <!-- commands -->
 
 ## Source Related Functionalities
@@ -107,8 +116,6 @@ _See code: [src\commands\sfpowerkit\source\pmd.ts](https://github.com/Accenture/
 ## `sfpowerkit:source:profile:retrieve`
 
 Retrieve profiles from the salesforce org with all its associated permissions. Common use case for this command is to migrate profile changes from a integration environment to other higher environments [overcomes SFDX CLI Profile retrieve issue where it doesnt fetch the full profile unless the entire metadata is present in source], or retrieving profiles from production to lower environments for testing.
-
-This command is of sufficient quality, however proceed with caution while adopting in your workflow
 
 ```
 
@@ -165,8 +172,6 @@ _See code: [src\commands\sfpowerkit\profile\reconcile.ts](https://github.com/Acc
 ## `sfpowerkit:source:profile:merge`
 
 This command is used in the lower environments such as ScratchOrgs , Development / System Testing Sandboxes, inorder to apply the changes made in the environment to retrieved profile, so that it can be deployed to the higher environments
-
-This command is of sufficient quality, however proceed with caution while adopting in your workflow
 
 ```
 
@@ -316,8 +321,6 @@ Generate a delta 'changeset' between two diff commits so that the incremental ch
 
 This command works with a source format based repository only. Utilize the command during a transition phase where an org is transformed to a modular architecture composing of multiple projects.
 
-This command is of sufficient quality, however proceed with caution while adopting in your workflow
-
 ```
 
 USAGE
@@ -350,8 +353,6 @@ EXAMPLE
 ## `sfpowerkit:project:orgdiff`
 
 Compare source files of a project against the salesforce org and display differences. The command also add diff conflict markers in changed files to let the developer accept or reject changes manually using a git merge tool. The idea behind this command is used to track changes done on an unlocked package or a modular repo against the changes done in a higher environment. This command is not yet ready to work on a single repo against the whole metadata in the org
-
-This command is of sufficient quality, however proceed with caution while adopting in your workflow
 
 ```
 
@@ -399,7 +400,7 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] [default: info] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx sfpowerkit:project:manifest:diff -f source/package.xml -t target/package.xml -d output
+  $ sfdx sfpowerkit:project:manifest:diff -s source/package.xml -t target/package.xml -d output
 ```
 
 ## `sfpowerkit:project:manifest:merge`
@@ -474,43 +475,19 @@ This command is used to get the apex test coverage details of an unlocked packag
 
 ```
 USAGE
-  $ sfdx sfpowerkit:package:version:codecoverage [-p <string>] [-n <string>] [-i <array>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+  $ sfdx sfpowerkit:package:version:codecoverage [-p <string>] [-n <string>] [-i <array>] [-v <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
   -i, --versionid=versionid                                                         Package version Id to check the code coverage
 
-  -n, --versionnumber=versionnumber                                                 The complete version number format is major.minor.patch (Beta build)—for example, 1.2.0 (Beta 5), packageName is required when
-                                                                                    packageVersionNumber is used
+  -n, --versionnumber=versionnumber                                                 The complete version number format is major.minor.patch (Beta build)—for example, 1.2.0 (Beta 5),
+                                                                                    packageName is required when packageVersionNumber is used
 
-  -p, --package=package                                                             Name of the unlocked package to check the code coverage, packageVersionNumber is required when packageName is used
+  -p, --package=package                                                             Name of the unlocked package to check the code coverage, packageVersionNumber is required when packageName
+                                                                                    is used
 
-  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
-
-  --apiversion=apiversion                                                           API version
-
-  --json                                                                            format output as json
-
-  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] [default: info] logging level for this command invocation
-
-EXAMPLE
-  $ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -i 04tXXXXXXXXXXXXXXX
-  $ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -i 04tXXXXXXXXXXXXXXX,04tXXXXXXXXXXXXXXX,04tXXXXXXXXXXXXXXX
-  $ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -p core -n 1.2.0.45
-  $ sfdx sfpowerkit:package:version:codecoverage -u myOrg@example.com -p 0HoXXXXXXXXXXXXXXX -n 1.2.0.45
-```
-
-_See code: [src\commands\sfpowerkit\package\version\codecoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/version/codecoverage.ts)_
-
-## `sfpowerkit:package:version:info`
-
-This command is used to fetch the version number, namespace prefix, and version id of all the installed managed/unmanaged packages in an org.
-
-```
-USAGE
-  $ sfdx sfpowerkit:package:version:info  -u <string> [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
-
-OPTIONS
-  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
+  -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
 
   --apiversion=apiversion                                                           API version
 
@@ -518,8 +495,14 @@ OPTIONS
 
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] [default: info] logging level for this command invocation
 
-EXAMPLE
-  $ sfdx sfpowerkit:package:version:info -u myOrg@example.com
+EXAMPLES
+  $ sfdx sfpowerkit:package:version:codecoverage -v myOrg@example.com -i 04tXXXXXXXXXXXXXXX
+
+  $ sfdx sfpowerkit:package:version:codecoverage -v myOrg@example.com -i 04tXXXXXXXXXXXXXXX,04tXXXXXXXXXXXXXXX,04tXXXXXXXXXXXXXXX
+
+  $ sfdx sfpowerkit:package:version:codecoverage -v myOrg@example.com -p core -n 1.2.0.45
+
+  $ sfdx sfpowerkit:package:version:codecoverage -v myOrg@example.com -p 0HoXXXXXXXXXXXXXXX -n 1.2.0.45
 ```
 
 _See code: [src\commands\sfpowerkit\package\version\codecoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/version/codecoverage.ts)_
@@ -845,7 +828,7 @@ OPTIONS
                                                   command invocation
 
 EXAMPLE
-    $ sfdx sfpowerkit:org:trigger:deactivate -n AccountTrigger -u sandbox
+    $ sfdx sfpowerkit:org:trigger:activate -n AccountTrigger -u sandbox
     Polling for Retrieval Status
     Preparing Activation
     Deploying Activated ApexTrigger with ID  0Af4Y000003Q7GySAK
@@ -881,8 +864,6 @@ _See code: [src\commands\sfpowerkit\org\healthcheck.ts](https://github.com/Accen
 ## `sfpowerkit:org:manifest:build`
 
 Generate a complete manifest of all the metadata from the specified org. Once the manifest is generated use source:retrieve or mdapi:retrieve to retrieve the metadata.
-
-This command is of sufficient quality, however proceed with caution while adopting in your workflow
 
 ```
 USAGE
@@ -951,6 +932,34 @@ EXAMPLE
 ```
 
 _See code: [src\commands\sfpowerkit\org\orgcoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/orgcoverage.ts)_
+
+## `sfpowerkit:org:profile:diff`
+
+Compare profiles from project against target org or between two orgs (source and target).
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:profile:diff [-p <array>] [-s <string>] [-d <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -d, --output=output                                                               Output folder. Provide the output folder if comparing profiles from source org.
+  -p, --profilelist=profilelist                                                     List of profiles to compare, comma separated profile names. If not provided and no sourceusername
+                                                                                    is provided, all profiles from the source folder will be processed.
+  -s, --sourceusername=sourceusername                                               Source org. If no profile is provided in the profilelist parameter, all the profile from this org
+                                                                                    will be fetched
+  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
+
+EXAMPLES
+  $ sfdx sfpowerkit:org:profile:diff --profilelist profilenames --targetusername username (Compare liste profiles path against target org)
+  $ sfdx sfpowerkit:org:profile:diff --targetusername username (compare all profile in the project against the target org)
+  $ sfdx sfpowerkit:org:profile:diff --sourceusername sourcealias --targetusername username (compare all profile in the source org against the target org)
+```
+
+_See code: [src\commands\sfpowerkit\org\profile\diff.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/profile/diff.ts)_
 
 ## `sfpowerkit:org:sandbox:create`
 
@@ -1097,6 +1106,31 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/scratchorg/usage.ts)_
 
+## `sfpowerkit:org:relaxiprange`
+
+This command sets ip range in Network access to relax security setting for a particular salesforce environment
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:relaxiprange -r <array> [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -r, --range=range                                                                 (required) List of ip range with comma separated. eg,
+                                                                                    122.0.0.0-122.255.255.255,49.0.0.0-49.255.255.255
+
+  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
+
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+
+  --json                                                                            format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
+
+EXAMPLE
+  sfdx sfpowerkit:org:relaxiprange -u sandbox -r "122.0.0.0-122.255.255.255,49.0.0.0-49.255.255.255"
+```
+
 ## `sfpowerkit:auth:login`
 
 Allows to authenticate against an org using username/password and Security Token. Security Token requirement
@@ -1129,4 +1163,136 @@ EXAMPLE
   $  sfdx sfpowerkit:auth:login -u azlam@sfdc.com -p Xasdax2w2  -a prod
      Authorized to azlam@sfdc.com
 
+```
+
+## Dependency Functionalities
+
+## `sfpowerkit:dependency:tree:package [BETA]`
+
+This command is used to compute the dependency tree details of an unlocked package
+
+```
+USAGE
+  $ sfdx sfpowerkit:dependency:tree:package -n <string> -d <string> [-p] [-s] [-f json|csv] [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -o, --output=output                                                               (required) path to create the output
+  -f, --format=(json|csv)                                                           [default: json] format of the output file to create
+  -n, --package=package                                                             (required) package name, package version id, subscriber id that is installed in the org
+  -p, --packagefilter                                                               output result will filter only dependent packages
+  -s, --showall                                                                     Indclude all items with/without dependency in the result
+  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] [default: info] logging level for this command invocation
+
+EXAMPLES
+  $ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx -o outputdir -f json
+  $ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx -o outputdir -f csv
+  $ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx -o outputdir -f csv -p
+  $ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx -o outputdir -f csv -s
+```
+
+_See code: [src\commands\sfpowerkit\dependency\tree\package.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/dependency/tree/package.ts)_
+
+## ScratchOrg Pooling Related Functionalities [BETA]
+
+Commands to create and maintain a pool of scratchorgs. Details on getting started are available [here](https://github.com/Accenture/sfpowerkit/wiki/Getting-started-with-ScratchOrg-Pooling)
+
+This command is of sufficient quality, however proceed with caution while adopting in your workflow
+
+## `sfpowerkit:pool:create`
+
+Creates a pool of prebuilt scratchorgs, which can the be consumed by users or CI
+
+```
+USAGE
+  $ sfdx sfpowerkit:pool:create -f <filepath> [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -f, --configfilepath=configfilepath                                               (required) Relative Path to the pool configuration json file. The schema of the file could be found in
+                                                                                    the Wiki
+
+  -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
+
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+
+  --json                                                                            format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
+
+EXAMPLES
+  $ sfdx sfpowerkit:pool:create -f config\core_poolconfig.json
+  $ sfdx sfpowerkit:pool:create -f config\core_poolconfig.json -v devhub
+```
+
+## `sfpowerkit:pool:fetch`
+
+Gets an active/unused scratch org from the scratch org pool
+
+```
+USAGE
+  $ sfdx sfpowerkit:pool:fetch -t <string> [-m] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -m, --mypool                                                                      Filter the tag for any additions created  by the executor of the command
+  -t, --tag=tag                                                                     (required) tag used to identify the scratch org pool
+  -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLES
+  $ sfdx sfpowerkit:pool:fetch -t core
+  $ sfdx sfpowerkit:pool:fetch -t core -v devhub
+  $ sfdx sfpowerkit:pool:fetch -t core -v devhub -m
+```
+
+## `sfpowerkit:pool:list`
+
+Retrieves a list of active scratch org and details from any pool. If this command is run with -m|--mypool, the command will retrieve the passwords for the pool created by the user who is executing the command.
+
+```
+USAGE
+  $ sfdx sfpowerkit:pool:list [-t <string>] [-m] [-a] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -a, --allscratchorgs                                                              Gets all used and unused Scratch orgs from pool
+  -m, --mypool                                                                      Filter the tag for any additions created  by the executor of the command
+  -t, --tag=tag                                                                     tag used to identify the scratch org pool
+  -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLES
+  $ sfdx sfpowerkit:pool:list -t core
+  $ sfdx sfpowerkit:pool:list -t core -v devhub
+  $ sfdx sfpowerkit:pool:list -t core -v devhub -m
+  $ sfdx sfpowerkit:pool:list -t core -v devhub -m -a
+```
+
+## `sfpowerkit:pool:delete`
+
+Deletes the pooled scratch orgs from the Scratch Org Pool
+
+```
+USAGE
+  $ sfdx sfpowerkit:pool:delete -t <string> [-m] [-a] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -a, --allscratchorgs                                                              Deletes all used and unused Scratch orgs from pool by the tag
+  -m, --mypool                                                                      Filter only Scratch orgs created by current user in the pool
+  -t, --tag=tag                                                                     (required) tag used to identify the scratch org pool
+  -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLES
+  $ sfdx sfpowerkit:pool:delete -t core
+  $ sfdx sfpowerkit:pool:delete -t core -v devhub
+  $ sfdx sfpowerkit:pool:delete -t core -v devhub -m
+  $ sfdx sfpowerkit:pool:delete -t core -v devhub -m -a
 ```

@@ -7,8 +7,8 @@ import { Connection, Org } from "@salesforce/core";
 import { MetadataInfo } from "jsforce";
 import UserPermissionBuilder from "../builder/userPermissionBuilder";
 
-import * as fs from "fs";
-import xml2js = require("xml2js");
+import * as fs from "fs-extra";
+import * as xml2js from "xml2js";
 import { ProfileTooling } from "../schema";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 import EntityDefinitionRetriever from "./entityDefinitionRetriever";

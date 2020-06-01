@@ -1,0 +1,21 @@
+{
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/node_modules": true,
+    "**/.sfdx": true,
+    "**/.nyc_output": true,
+    "**/lib": true,
+    "**/bin": true
+  },
+
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.sfdx": true,
+    "**/.bin": true,
+    "**/.lib": true
+  }
+}

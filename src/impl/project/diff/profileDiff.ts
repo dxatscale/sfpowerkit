@@ -1,5 +1,5 @@
-import xml2js = require("xml2js");
-import util = require("util");
+import * as xml2js from "xml2js";
+import * as util from "util";
 import Profile from "../../metadata/schema";
 import * as _ from "lodash";
 

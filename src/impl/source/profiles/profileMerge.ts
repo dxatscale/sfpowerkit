@@ -1,8 +1,8 @@
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import MetadataFiles from "../../metadata/metadataFiles";
-import * as fs from "fs";
+import * as fs from "fs-extra";
 import * as path from "path";
-import xml2js = require("xml2js");
+import * as xml2js from "xml2js";
 import { METADATA_INFO } from "../../metadata/metadataInfo";
 import * as _ from "lodash";
 import Profile, {
@@ -21,7 +21,7 @@ import Profile, {
   CustomSettingAccess,
   PermissionSetExternalDataSourceAccess
 } from "../../../impl/metadata/schema";
-import util = require("util");
+import * as util from "util";
 import ProfileActions from "./profileActions";
 import ProfileWriter from "../../../impl/metadata/writer/profileWriter";
 

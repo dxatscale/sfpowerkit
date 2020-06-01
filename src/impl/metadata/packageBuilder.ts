@@ -1,7 +1,7 @@
 import { Connection } from "jsforce";
 import * as _ from "lodash";
 import * as xml2js from "xml2js";
-import * as fs from "fs";
+import * as fs from "fs-extra";
 import * as path from "path";
 import FileUtils from "../../utils/fileutils";
 import { FileProperties } from "jsforce";

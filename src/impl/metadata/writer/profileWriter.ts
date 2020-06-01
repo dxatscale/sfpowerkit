@@ -1,7 +1,7 @@
 import Profile from "../schema";
 import { SFPowerkit } from "../../../sfpowerkit";
-import * as fs from "fs";
-import xml2js = require("xml2js");
+import * as fs from "fs-extra";
+import * as xml2js from "xml2js";
 
 const nonArayProperties = [
   "custom",
@@ -30,6 +30,24 @@ export default class ProfileWriter {
     };
     let xml = builder.buildObject(profileObj);
     fs.writeFileSync(filePath, xml);
+  }
+
+  public toXml(profileObj: Profile) {
+    //Delete eampty arrays
+    for (let key in profileObj) {
+      if (Array.isArray(profileObj[key])) {
+        //All top element must be arays exept non arrayProperties
+        if (!nonArayProperties.includes(key) && profileObj[key].length === 0) {
+          delete profileObj[key];
+        }
+      }
+    }
+    let builder = new xml2js.Builder({ rootName: "Profile" });
+    profileObj["$"] = {
+      xmlns: PROFILE_NAMESPACE
+    };
+    let xml = builder.buildObject(profileObj);
+    return xml;
   }
 
   public toProfile(profileObj: any): Profile {

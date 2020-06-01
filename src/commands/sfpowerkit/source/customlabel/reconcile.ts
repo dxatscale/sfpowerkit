@@ -1,10 +1,10 @@
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
-import xml2js = require("xml2js");
-import util = require("util");
-import fs = require("fs-extra");
-import rimraf = require("rimraf");
-import path from "path";
+import * as xml2js from "xml2js";
+import * as util from "util";
+import * as fs from "fs-extra";
+import * as rimraf from "rimraf";
+import * as path from "path";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);

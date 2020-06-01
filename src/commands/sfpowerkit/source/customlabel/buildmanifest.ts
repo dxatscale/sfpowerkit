@@ -1,7 +1,7 @@
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
-import fs = require("fs-extra");
-import path from "path";
+import * as fs from "fs-extra";
+import * as path from "path";
 import { SFPowerkit } from "../../../../sfpowerkit";
 import xmlUtil from "../../../../utils/xmlUtil";
 import getDefaults from "../../../../utils/getDefaults";
@@ -61,17 +61,17 @@ export default class Buildmanifest extends SfdxCommand {
   };
 
   public async run(): Promise<AnyJson> {
-    getDefaults.init();
-
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
     this.flags.apiversion =
       this.flags.apiversion || getDefaults.getApiVersion();
 
     let paths = [];
-    paths =
-      this.flags.path.constructor === Array
-        ? this.flags.path
-        : paths.push(this.flags.path);
+    if (this.flags.path.constructor === Array) {
+      paths = this.flags.path;
+    } else {
+      paths.push(this.flags.path);
+    }
+
     this.output = [];
     for (const element of paths) {
       if (
