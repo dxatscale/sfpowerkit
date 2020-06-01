@@ -77,10 +77,10 @@ $ sfdx plugins:link
 - [Dependency Functionalities](#dependency-functionalities)
   - [`sfpowerkit:dependency:tree:package [Beta]`](#sfpowerkitdependencytreepackage-Beta)
 - [ScratchOrg Pooling Related Functionalities](#scratchorg-pooling-related-functionalities-beta)
-  - [`sfpowerkit:pool:create [Beta]`](#sfpowerkitpoolcreate)
-  - [`sfpowerkit:pool:fetch [Beta]`](#sfpowerkitpoolfetch)
-  - [`sfpowerkit:pool:list [Bata]`](#sfpowerkitpoollist)
-  - [`sfpowerkit:pool:delete[Beta]`](#sfpowerkitpooldelete)
+  - [`sfpowerkit:pool:create`](#sfpowerkitpoolcreate)
+  - [`sfpowerkit:pool:fetch`](#sfpowerkitpoolfetch)
+  - [`sfpowerkit:pool:list`](#sfpowerkitpoollist)
+  - [`sfpowerkit:pool:delete`](#sfpowerkitpooldelete)
     <!-- commands -->
 
 ## Source Related Functionalities
@@ -1202,7 +1202,7 @@ Commands to create and maintain a pool of scratchorgs. Details on getting starte
 
 This command is of sufficient quality, however proceed with caution while adopting in your workflow
 
-## `sfpowerkit:pool:create [Beta]`
+## `sfpowerkit:pool:create`
 
 Creates a pool of prebuilt scratchorgs, which can the be consumed by users or CI
 
@@ -1227,7 +1227,7 @@ EXAMPLES
   $ sfdx sfpowerkit:pool:create -f config\core_poolconfig.json -v devhub
 ```
 
-## `sfpowerkit:pool:fetch [Beta]`
+## `sfpowerkit:pool:fetch`
 
 Gets an active/unused scratch org from the scratch org pool
 
@@ -1249,7 +1249,7 @@ EXAMPLES
   $ sfdx sfpowerkit:pool:fetch -t core -v devhub -m
 ```
 
-## `sfpowerkit:pool:list [Beta]`
+## `sfpowerkit:pool:list`
 
 Retrieves a list of active scratch org and details from any pool. If this command is run with -m|--mypool, the command will retrieve the passwords for the pool created by the user who is executing the command.
 
@@ -1273,7 +1273,7 @@ EXAMPLES
   $ sfdx sfpowerkit:pool:list -t core -v devhub -m -a
 ```
 
-## `sfpowerkit:pool:delete [Beta]`
+## `sfpowerkit:pool:delete`
 
 Deletes the pooled scratch orgs from the Scratch Org Pool
 
