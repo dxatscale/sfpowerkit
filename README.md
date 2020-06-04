@@ -44,6 +44,7 @@ $ sfdx plugins:link
   - [`sfpowerkit:source:customlabel:reconcile`](#sfpowerkitsourcecustomlabelreconcile)
   - [`sfpowerkit:source:customlabel:buildmanifest`](#sfpowerkitsourcecustomlabelbuildmanifest)
   - [`sfpowerkit:source:apextestsuite:convert`](#sfpowerkitsourceapextestsuiteconvert)
+  - [`sfpowerkit:source:datamodel:report`](#sfpowerkitsourcedatamodelreport)
   - [`sfpowerkit:project:diff`](#sfpowerkitprojectdiff)
   - [`sfpowerkit:project:orgdiff`](#sfpowerkitprojectorgdiff)
   - [`sfpowerkit:project:manifest:diff`](#sfpowerkitprojectmanifestdiff)
@@ -313,6 +314,32 @@ OPTIONS
 EXAMPLE
   $  sfdx sfpowerkit:source:apextestsuite:convert -n MyApexTestSuite
     "ABC2,ABC1Test"
+```
+
+## `sfpowerkit:source:datamodel:report`
+
+This command is used to generate datamodel report from project
+
+```
+USAGE
+  $ sfdx sfpowerkit:source:datamodel:report -d <string> -t <array> [-p <array>] [-f json|csv] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -d, --outputdir=outputdir                                                         (required) [default: datamodelreport] location to create the datamodel report
+  -f, --format=(json|csv)                                                           [default: json] format of the output file to create
+  -p, --objectspath=objectspath                                                     list of Paths to object location, if not provided all the project paths from sfdx-project.json
+
+  -t, --filtertype=filtertype                                                       (required) [default: CustomField,BusinessProcess,RecordType,ValidationRule,CustomObject] apply filter to reduce the result by types
+
+  --json                                                                            format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
+
+EXAMPLES
+  $ sfdx sfpowerkit:source:datamodel:report
+  $ sfdx sfpowerkit:source:datamodel:report -p force-app/main/default/objects -d result
+  $ sfdx sfpowerkit:source:datamodel:report -p force-app/main/default/objects -t CustomField,RecordType
+  $ sfdx sfpowerkit:source:datamodel:report -p force-app/main/default/objects -t CustomField,RecordType -f csv
 ```
 
 ## `sfpowerkit:project:diff`

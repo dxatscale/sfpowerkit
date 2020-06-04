@@ -1,0 +1,8 @@
+{
+  "commandDescription": "This command is used to generate datamodel report from project",
+  "objectspathDescription": "list of Paths to object location, if not provided all the project paths from sfdx-project.json",
+  "outputdirDescription": "location to create the datamodel report",
+  "filterDescription": "apply filter to reduce the result by types",
+  "formatDescription": "format of the output file to create",
+  "loglevelDescription": "logging level for this command invocation"
+}
