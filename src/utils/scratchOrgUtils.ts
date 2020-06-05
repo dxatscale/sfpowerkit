@@ -1,5 +1,5 @@
 import { Connection, LoggerLevel, Org } from "@salesforce/core";
-import request from "request-promise-native";
+let request = require("request-promise-native");
 import { SFPowerkit } from "../sfpowerkit";
 import { sfdx } from "@pony-ci/sfdx-node";
 let retry = require("async-retry");

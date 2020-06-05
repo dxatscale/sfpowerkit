@@ -1,7 +1,7 @@
 import { core, flags, SfdxCommand, Result } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import * as fs from "fs-extra";
-import request from "request-promise-native";
+let request = require("request-promise-native");
 import * as rimraf from "rimraf";
 const querystring = require("querystring");
 
