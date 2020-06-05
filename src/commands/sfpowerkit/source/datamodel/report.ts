@@ -7,6 +7,7 @@ import { LoggerLevel } from "@salesforce/core";
 import FileUtils from "../../../../utils/fileutils";
 import { METADATA_INFO } from "../../../../impl/metadata/metadataInfo";
 import * as _ from "lodash";
+import xmlUtil from "../../../../utils/xmlUtil";
 
 var path = require("path");
 
@@ -121,7 +122,7 @@ export default class Report extends SfdxCommand {
     }
 
     let result = [];
-    metadataFiles.forEach(metadataFile => {
+    for (let metadataFile of metadataFiles) {
       for (let type of this.flags.filtertype) {
         let metadataDescribe = METADATA_INFO[type];
         if (
@@ -139,17 +140,29 @@ export default class Report extends SfdxCommand {
             parentName = fileParts[fileParts.length - 3];
           }
 
+          let metadataJson = await xmlUtil.xmlToJSON(metadataFile);
+
           let component = {
             metadatype: type,
             name: name,
             objectName: parentName,
+            description: metadataJson[type].description
+              ? metadataJson[type].description
+              : "",
+            fieldType: metadataJson[type].type ? metadataJson[type].type : "",
+            status:
+              metadataJson[type].active != null
+                ? metadataJson[type].active
+                  ? "Active"
+                  : "Inactive"
+                : "",
             path: metadataFile.split("\\").join("/")
           };
 
           result.push(component);
         }
       }
-    });
+    }
 
     if (result.length > 0) {
       SFPowerkit.log(`Items Found ${result.length}`, LoggerLevel.INFO);
@@ -174,9 +187,11 @@ export default class Report extends SfdxCommand {
       FileUtils.mkDirByPathSync(dir);
     }
     let newLine = "\r\n";
-    let output = "Metadata type,Name,ObjectName,Path" + newLine;
+    let output =
+      "Metadata type,Name,ObjectName,fieldType,status(recordtypes/validation rules),source Path" +
+      newLine;
     result.forEach(element => {
-      output = `${output}${element.metadatype},${element.name},${element.objectName},${element.path}${newLine}`;
+      output = `${output}${element.metadatype},${element.name},${element.objectName},${element.fieldType},${element.status},${element.path}${newLine}`;
     });
     fs.writeFileSync(outputcsvPath, output);
     SFPowerkit.log(
