@@ -2,7 +2,7 @@ import { Connection, LoggerLevel, Org } from "@salesforce/core";
 import request from "request-promise-native";
 import { SFPowerkit } from "../sfpowerkit";
 import { sfdx } from "@pony-ci/sfdx-node";
-import retry from "async-retry";
+let retry = require("async-retry");
 import { isNullOrUndefined } from "util";
 
 const ORDER_BY_FILTER = " ORDER BY CreatedDate ASC";
