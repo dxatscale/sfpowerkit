@@ -10,7 +10,7 @@ import { AnyJson } from "@salesforce/ts-types";
 import * as fs from "fs-extra";
 import * as path from "path";
 import FileUtils from "../../../utils/fileutils";
-import request from "request-promise-native";
+let request = require("request-promise-native");
 import * as rimraf from "rimraf";
 const querystring = require("querystring");
 

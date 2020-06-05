@@ -1,6 +1,6 @@
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
-import request from "request-promise-native";
+let request = require("request-promise-native");
 import { spawn } from "child_process";
 
 // Initialize Messages with the current plugin directory

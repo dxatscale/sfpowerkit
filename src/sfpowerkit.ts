@@ -1,9 +1,8 @@
 import { SfdxProject } from "@salesforce/core";
 import { isNullOrUndefined } from "util";
-import Pino from "pino";
 import { UX } from "@salesforce/command";
 import cli from "cli-ux";
-
+const Logger = require("pino");
 export enum LoggerLevel {
   TRACE = 10,
   DEBUG = 20,
@@ -12,7 +11,6 @@ export enum LoggerLevel {
   ERROR = 50,
   FATAL = 60
 }
-
 export class SFPowerkit {
   private static defaultFolder: string;
   private static projectDirectories: string[];
@@ -22,13 +20,11 @@ export class SFPowerkit {
   private static sourceApiVersion: any;
   private static logger;
   public static logLevel;
-
   public static setLogLevel(logLevel: string, isJsonFormatEnabled: boolean) {
     logLevel = logLevel.toLowerCase();
     this.isJsonFormatEnabled = isJsonFormatEnabled;
-
     if (!isJsonFormatEnabled) {
-      SFPowerkit.logger = Pino({
+      SFPowerkit.logger = Logger({
         name: "sfpowerkit",
         level: logLevel,
         prettyPrint: {
@@ -41,7 +37,6 @@ export class SFPowerkit {
     } else {
       //do nothing for now, need to put pino to move to file
     }
-
     switch (logLevel) {
       case "trace":
         SFPowerkit.logLevel = LoggerLevel.TRACE;
@@ -63,7 +58,6 @@ export class SFPowerkit {
         break;
     }
   }
-
   public static setProjectDirectories(packagedirectories: string[]) {
     SFPowerkit.projectDirectories = packagedirectories;
   }
@@ -72,7 +66,6 @@ export class SFPowerkit {
       SFPowerkit.projectDirectories = [];
       const dxProject = await SfdxProject.resolve();
       const project = await dxProject.retrieveSfdxProjectJson();
-
       let packages = (project.get("packageDirectories") as any[]) || [];
       packages.forEach(element => {
         SFPowerkit.projectDirectories.push(element.path);
@@ -83,7 +76,6 @@ export class SFPowerkit {
     }
     return SFPowerkit.projectDirectories;
   }
-
   public static async getDefaultFolder() {
     if (!SFPowerkit.defaultFolder) {
       await SFPowerkit.getProjectDirectories();
@@ -93,7 +85,6 @@ export class SFPowerkit {
   public static setDefaultFolder(defaultFolder: string) {
     SFPowerkit.defaultFolder = defaultFolder;
   }
-
   public static async getConfig() {
     if (!SFPowerkit.pluginConfig) {
       const dxProject = await SfdxProject.resolve();
@@ -104,11 +95,9 @@ export class SFPowerkit {
     }
     return SFPowerkit.pluginConfig;
   }
-
   public static setapiversion(apiversion: any) {
     SFPowerkit.sourceApiVersion = apiversion;
   }
-
   public static async getApiVersion(): Promise<any> {
     if (!SFPowerkit.sourceApiVersion) {
       const dxProject = await SfdxProject.resolve();
@@ -117,7 +106,6 @@ export class SFPowerkit {
     }
     return SFPowerkit.sourceApiVersion;
   }
-
   /**
    * Print log only if the log level for this commamnd matches the log level for the message
    * @param message Message to print
@@ -126,7 +114,6 @@ export class SFPowerkit {
   public static log(message: any, logLevel: LoggerLevel) {
     if (isNullOrUndefined(this.logger)) return;
     if (this.isJsonFormatEnabled) return;
-
     switch (logLevel) {
       case LoggerLevel.TRACE:
         this.logger.trace(message);
@@ -148,7 +135,6 @@ export class SFPowerkit {
         break;
     }
   }
-
   public static setUx(ux: UX) {
     this.ux = ux;
   }
