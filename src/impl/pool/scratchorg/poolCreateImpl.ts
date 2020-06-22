@@ -2,11 +2,14 @@ import ScratchOrgUtils, { ScratchOrg } from "../../../utils/scratchOrgUtils";
 import { Connection, LoggerLevel, Org, AuthInfo } from "@salesforce/core";
 import { SFPowerkit } from "../../../sfpowerkit";
 import * as fs from "fs-extra";
-import path from "path";
+
 import { exec } from "child_process";
 import Bottleneck from "bottleneck";
 import { isNullOrUndefined } from "util";
 import RelaxIPRangeImpl from "../../org/relaxIPRangeImpl";
+import FileUtils from "../../../utils/fileutils";
+import * as path from "path";
+import * as rimraf from "rimraf";
 
 const limiter = new Bottleneck({
   maxConcurrent: 10
@@ -149,7 +152,7 @@ export default class PoolCreateImpl {
     // Assign workers to executed scripts
     let ts = Math.floor(Date.now() / 1000);
     for (let poolUser of this.poolConfig.poolUsers) {
-      poolUser.scratchOrgs.forEach(scratchOrg => {
+      for (let scratchOrg of poolUser.scratchOrgs) {
         SFPowerkit.log(JSON.stringify(scratchOrg), LoggerLevel.DEBUG);
 
         if (this.poolConfig.pool.relax_ip_ranges) {
@@ -166,13 +169,31 @@ export default class PoolCreateImpl {
             this.hubOrg.getUsername()
           );
           scriptExecPromises.push(result);
+        } else {
+          //Just commit it to the pool as there is no script, and ensuring it doesnt get deleted
+          scratchOrg.isScriptExecuted = true;
+          await ScratchOrgUtils.setScratchOrgInfo(
+            {
+              Id: scratchOrg.recordId,
+              Pooltag__c: this.poolConfig.pool.tag,
+              Password__c: scratchOrg.password
+            },
+            this.hubOrg
+          );
         }
-      });
+      }
     }
 
     //Wait for scripts to finish execution
     if (this.poolConfig.pool.relax_ip_ranges)
       this.ipRangeExecResults = await Promise.all(ipRangeExecPromises);
+
+    //Get IP Range results
+    if (!isNullOrUndefined(this.poolConfig.pool.relax_ip_ranges))
+      this.ipRangeExecResultsAsObject = this.arrayToObject(
+        this.ipRangeExecResults,
+        "username"
+      );
 
     let scriptExecResults = await Promise.all(scriptExecPromises);
 
@@ -189,7 +210,7 @@ export default class PoolCreateImpl {
     let commit_result: {
       success: number;
       failed: number;
-    } = await this.commitGeneratedScratchOrgs();
+    } = await this.finalizeGeneratedScratchOrgs();
 
     if (this.totalAllocated > 0) {
       SFPowerkit.log(
@@ -330,10 +351,15 @@ export default class PoolCreateImpl {
         }
         count++;
       }
+
+      await ScratchOrgUtils.getScratchOrgRecordId(
+        poolUser.scratchOrgs,
+        this.hubOrg
+      );
     }
   }
 
-  private async commitGeneratedScratchOrgs(): Promise<{
+  private async finalizeGeneratedScratchOrgs(): Promise<{
     success: number;
     failed: number;
   }> {
@@ -341,49 +367,11 @@ export default class PoolCreateImpl {
     let failed = 0;
     let success = 0;
 
-    if (!isNullOrUndefined(this.poolConfig.pool.relax_ip_ranges))
-      this.ipRangeExecResultsAsObject = this.arrayToObject(
-        this.ipRangeExecResults,
-        "username"
-      );
-
     for (let poolUser of this.poolConfig.poolUsers) {
-      await ScratchOrgUtils.getScratchOrgRecordId(
-        poolUser.scratchOrgs,
-        this.hubOrg
-      );
-
       for (let scratchOrg of poolUser.scratchOrgs) {
-        if (
-          this.poolConfig.pool.relax_ip_ranges &&
-          !this.ipRangeExecResultsAsObject[scratchOrg.username]["success"]
-        )
-          scratchOrg.isScriptExecuted = false;
-
-        //Just commit
-        if (!this.scriptFileExists) scratchOrg.isScriptExecuted = true;
-
         if (scratchOrg.isScriptExecuted) {
-          try {
-            await ScratchOrgUtils.setScratchOrgInfo(
-              {
-                Id: scratchOrg.recordId,
-                Pooltag__c: this.poolConfig.pool.tag,
-                Password__c: scratchOrg.password
-              },
-              this.hubOrg
-            );
-
-            success++;
-            continue;
-          } catch (error) {
-            //Failed to set passwords .. warn and continue
-            SFPowerkit.log(
-              `Unable to set record for ScracthOrg ${scratchOrg.username}`,
-              LoggerLevel.TRACE
-            );
-            continue;
-          }
+          success++;
+          continue;
         }
 
         SFPowerkit.log(
@@ -392,7 +380,7 @@ export default class PoolCreateImpl {
         );
 
         try {
-          //Delete failed scratch org
+          //Delete scratchorgs that failed to execute script
           await ScratchOrgUtils.deleteScratchOrg(
             this.hubOrg,
             this.apiversion,
@@ -568,13 +556,31 @@ export default class PoolCreateImpl {
     //executue using bash
     let cmd;
     let logRestricter = 0;
+
+    SFPowerkit.log(`Script File Path: ${scriptFilePath}`, LoggerLevel.TRACE);
+
     scriptFilePath = path.normalize(scriptFilePath);
+
+    rimraf.sync("script_exec_outputs");
+    FileUtils.mkDirByPathSync("script_exec_outputs");
+
     if (process.platform != "win32") {
       cmd = `bash ${scriptFilePath}  ${scratchOrg.username}  ${hubOrgUserName} `;
     } else {
       cmd = `cmd.exe /c ${scriptFilePath}  ${scratchOrg.username}  ${hubOrgUserName}`;
     }
     SFPowerkit.log(`Executing command: ${cmd}`, LoggerLevel.INFO);
+
+    SFPowerkit.log(
+      `Executing script for ${scratchOrg.alias} with username: ${scratchOrg.username}`,
+      LoggerLevel.INFO
+    );
+
+    SFPowerkit.log(
+      `Script Execution result written to script_exec_outputs/${scratchOrg.alias} `,
+      LoggerLevel.INFO
+    );
+
     return new Promise((resolve, reject) => {
       let ls = exec(cmd, { cwd: process.cwd() }, (error, stdout, stderr) => {
         if (error) {
@@ -583,31 +589,62 @@ export default class PoolCreateImpl {
             LoggerLevel.WARN
           );
           scratchOrg.isScriptExecuted = false;
+
           resolve({
             isSuccess: false,
             message: error.message,
             scratchOrgUsername: scratchOrg.username,
             status: "failure"
           });
+          return;
         }
 
-        if (stderr) SFPowerkit.log(stderr, LoggerLevel.DEBUG);
+        if (stderr) {
+          SFPowerkit.log(stderr, LoggerLevel.DEBUG);
+          fs.appendFileSync(`script_exec_outputs/${scratchOrg.alias}`, stderr);
+        }
 
-        SFPowerkit.log(
-          `Executing script for ${scratchOrg.alias} with username: ${scratchOrg.username}`,
-          LoggerLevel.INFO
-        );
-        SFPowerkit.log(stdout, LoggerLevel.DEBUG);
         scratchOrg.isScriptExecuted = true;
-        resolve({
-          isSuccess: true,
-          message: stdout,
-          scratchOrgUsername: scratchOrg.username,
-          status: "success"
-        });
+
+        if (
+          this.poolConfig.pool.relax_ip_ranges &&
+          !this.ipRangeExecResultsAsObject[scratchOrg.username]["success"]
+        )
+          scratchOrg.isScriptExecuted = false;
+
+        if (scratchOrg.isScriptExecuted) {
+          ScratchOrgUtils.setScratchOrgInfo(
+            {
+              Id: scratchOrg.recordId,
+              Pooltag__c: this.poolConfig.pool.tag,
+              Password__c: scratchOrg.password
+            },
+            this.hubOrg
+          ).then(
+            (result: boolean) => {
+              scratchOrg.isScriptExecuted = true;
+              resolve({
+                isSuccess: true,
+                message: "Successfuly set the scratch org record in Pool",
+                scratchOrgUsername: scratchOrg.username,
+                status: "success"
+              });
+            },
+            (reason: any) => {
+              scratchOrg.isScriptExecuted = false;
+              resolve({
+                isSuccess: false,
+                message: "Unable to set the scratch org record in Pool",
+                scratchOrgUsername: scratchOrg.username,
+                status: "failure"
+              });
+            }
+          );
+        }
       });
 
       ls.stdout.on("data", function(data) {
+        fs.appendFileSync(`script_exec_outputs/${scratchOrg.alias}`, data);
         //Print only processing if there is more than 5 logs, Restrict Verbose scripts like sfpowerkit package dependencies install
         if (logRestricter % 10 == 0) {
           SFPowerkit.log(

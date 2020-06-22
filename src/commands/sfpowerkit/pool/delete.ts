@@ -74,6 +74,6 @@ export default class Delete extends SfdxCommand {
       }
     }
 
-    return JSON.stringify(result);
+    return result as AnyJson;
   }
 }
