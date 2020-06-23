@@ -24,7 +24,7 @@ export default class Install extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    '$ sfdx sfpowerkit:package:dependencies:install -u MyScratchOrg -v MyDevHub -k "1:MyPackage1Key 2: 3:MyPackage3Key" -b "DEV"'
+    '$ sfdx sfpowerkit:package:dependencies:install -u MyScratchOrg -v MyDevHub -k "MyPackage1:Key MyPackage3:Key" -b "DEV"'
   ];
 
   protected static flagsConfig = {
@@ -37,7 +37,7 @@ export default class Install extends SfdxCommand {
       char: "k",
       required: false,
       description:
-        "installation key for key-protected packages (format is 1:MyPackage1Key 2: 3:MyPackage3Key... to allow some packages without installation key)"
+        "installation key for key-protected packages (format is packagename:key --> core:key nCino:key vlocity:key to allow some packages without installation key)"
     }),
     branch: flags.string({
       char: "b",
@@ -67,6 +67,11 @@ export default class Install extends SfdxCommand {
       required: false,
       description:
         "Compile the apex only in the package, by default only the compilation of the apex in the entire org is triggered"
+    }),
+    createdwithdependency: flags.boolean({
+      required: false,
+      description:
+        "when installing with .LATEST buildnumber, pick the lastest package created with dependencies."
     })
   };
 
@@ -110,47 +115,47 @@ export default class Install extends SfdxCommand {
 
     for (let packageDirectory of packageDirectories) {
       packageDirectory = packageDirectory as JsonMap;
-      //this.ux.logJson(packageDirectory);
-      // let { package: dependencies } = packageDirectory;
+
       const dependencies = packageDirectory.dependencies || [];
 
-      // TODO: Move all labels to message
-      // this.ux.log(dependencies);
       if (dependencies && dependencies[0] !== undefined) {
         this.ux.log(
           `\nPackage dependencies found for package directory ${packageDirectory.path}`
         );
         for (const dependency of dependencies as JsonArray) {
-          // let packageInfo = {dependentPackage:"", versionNumber:"", packageVersionId:""};
           const packageInfo = {} as JsonMap;
 
           const {
             package: dependentPackage,
             versionNumber
           } = dependency as JsonMap;
-          // this.ux.log( dependentPackage );
+
           packageInfo.dependentPackage = dependentPackage;
 
-          // this.ux.log( versionNumber );
           packageInfo.versionNumber = versionNumber;
 
           const packageVersionId = await this.getPackageVersionId(
             dependentPackage,
             versionNumber
           );
-          // this.ux.log(packageVersionId);
+
           packageInfo.packageVersionId = packageVersionId;
 
           if (individualpackage) {
-            if (packageInfo.dependentPackage.toString() === individualpackage) {
+            if (
+              packageInfo.dependentPackage.toString() === individualpackage ||
+              packageInfo.packageVersionId.toString() === individualpackage
+            ) {
               packagesToInstall.push(packageInfo);
               continue;
             }
           } else {
-            if (this.flags.updateall) packagesToInstall.push(packageInfo);
-            else {
-              if (!installedpackages.includes(packageVersionId))
+            if (this.flags.updateall) {
+              packagesToInstall.push(packageInfo);
+            } else {
+              if (!installedpackages.includes(packageVersionId)) {
                 packagesToInstall.push(packageInfo);
+              }
             }
           }
 
@@ -173,6 +178,7 @@ export default class Install extends SfdxCommand {
 
     if (packagesToInstall.length > 0) {
       // Installing Packages
+      let installationKeyMap: Map<string, string> = new Map<string, string>();
 
       // Getting Installation Key(s)
       let installationKeys = this.flags.installationkeys;
@@ -180,15 +186,14 @@ export default class Install extends SfdxCommand {
         installationKeys = installationKeys.trim();
         installationKeys = installationKeys.split(" ");
 
-        // Format is 1: 2: 3: ... need to remove these
-        for (let keyIndex = 0; keyIndex < installationKeys.length; keyIndex++) {
-          const key = installationKeys[keyIndex].trim();
-          if (key.startsWith(`${keyIndex + 1}:`)) {
-            installationKeys[keyIndex] = key.substring(2);
+        for (let installKey of installationKeys) {
+          let packageKeySplit = installKey.split(":");
+          if (packageKeySplit.length === 2) {
+            installationKeyMap.set(packageKeySplit[0], packageKeySplit[1]);
           } else {
             // Format is not correct, throw an error
             throw new core.SfdxError(
-              "Installation Key should have this format: 1:MyPackage1Key 2: 3:MyPackage3Key"
+              "Installation Key should have this format: core:key nCino:key vlocity:key"
             );
           }
         }
@@ -196,7 +201,6 @@ export default class Install extends SfdxCommand {
 
       this.ux.log("\n");
 
-      let i = 0;
       for (let packageInfo of packagesToInstall) {
         packageInfo = packageInfo as JsonMap;
         if (
@@ -221,9 +225,12 @@ export default class Install extends SfdxCommand {
         args.push(`${packageInfo.packageVersionId}`);
 
         // INSTALLATION KEY
-        if (installationKeys && installationKeys[i]) {
+        if (installationKeyMap.has(packageInfo.dependentPackage.toString())) {
+          let key = installationKeyMap.get(
+            packageInfo.dependentPackage.toString()
+          );
           args.push("-k");
-          args.push(`${installationKeys[i]}`);
+          args.push(`${key}`);
         }
 
         // WAIT
@@ -267,8 +274,6 @@ export default class Install extends SfdxCommand {
         this.ux.log("\n");
 
         result.installedPackages[packageInfo.packageVersionId] = packageInfo;
-
-        i++;
       }
     } else {
       this.ux.log(
@@ -295,6 +300,10 @@ export default class Install extends SfdxCommand {
       // Package2VersionId is set directly
       packageId = packageName;
     } else if (packageName.startsWith(packageIdPrefix)) {
+      if (!version) {
+        throw new core.SfdxError(`version number is mandatory for ${name}`);
+      }
+
       // Get Package version id from package + versionNumber
       const vers = version.split(".");
       let query =
@@ -305,6 +314,8 @@ export default class Install extends SfdxCommand {
       // If Build Number isn't set to LATEST, look for the exact Package Version
       if (vers[3] !== "LATEST") {
         query += `and BuildNumber=${vers[3]} `;
+      } else if (this.flags.createdwithdependency) {
+        query += `and ValidationSkipped = false `;
       }
 
       // If Branch is specified, use it to filter
@@ -312,7 +323,7 @@ export default class Install extends SfdxCommand {
         query += `and Branch='${this.flags.branch.trim()}' `;
       }
 
-      query += "ORDER BY BuildNumber DESC Limit 1";
+      query += "ORDER BY BuildNumber,Createddate DESC Limit 1";
 
       // Query DevHub to get the expected Package2Version
       const conn = this.hubOrg.getConnection();

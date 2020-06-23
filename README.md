@@ -440,7 +440,7 @@ OPTIONS
   -b, --branch=branch                              the package version’s branch
 
   -k, --installationkeys=installationkeys          installation key for key-protected packages (format is
-                                                   1:MyPackage1Key 2: 3:MyPackage3Key... to allow some packages without
+                                                   packagename:key --> core:key nCino:key vlocity:key to allow some packages without
                                                    installation key)
 
   -p, --individualpackage=individualpackage        Installs a specific package especially for upgrade scenario
@@ -459,12 +459,14 @@ OPTIONS
                                                     compilation of the apex in the entire org is triggered
   --apiversion=apiversion                          override the api version used for api requests made by this command
 
+  --createdwithdependency=createdwithdependency    when installing with .LATEST buildnumber, pick the lastest package created with dependencies.
+
   --json                                           format output as json
 
   --loglevel=(trace|debug|info|warn|error|fatal)   [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx sfpowerkit:package:dependencies:install -u MyScratchOrg -v MyDevHub -k "1:MyPackage1Key 2: 3:MyPackage3Key" -b "DEV"
+  $ sfdx sfpowerkit:package:dependencies:install -u MyScratchOrg -v MyDevHub -k "MyPackage1:Key MyPackage3:Key" -b "DEV"
 ```
 
 _See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/dependencies/install.ts)_
