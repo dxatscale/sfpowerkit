@@ -439,35 +439,37 @@ USAGE
 OPTIONS
   -a, --apexcompileonlypackage                                                      Compile the apex only in the package, by default only the compilation of the apex in the entire org is triggered
 
-  -b, --branch=branch                                                               the package version’s branch (format is packagename:branchname --> core:branchname consumer:branchname
+  -b, --branch=branch                                                               The package version’s branch (format is packagename:branchname --> core:branchname consumer:branchname
                                                                                     packageN:branchname)
 
-  -f, --filterpaths=filterpaths                                                     In mono repo project filter packageDirectories using path and install dependencies for the specified path
+  -f, --filterpaths=filterpaths                                                     In a mono repo project, filter packageDirectories using path and install dependent packages only for the specified path
 
-  -k, --installationkeys=installationkeys                                           installation key for key-protected packages (format is packagename:key --> core:key nCino:key vlocity:key to allow
+  -k, --installationkeys=installationkeys                                           Installation key for key-protected packages (format is packagename:key --> core:key nCino:key vlocity:key to allow
                                                                                     some packages without installation key)
 
   -o, --updateall                                                                   Update all packages even if they are installed in the target org
 
   -p, --individualpackage=individualpackage                                         Installs a specific package especially for upgrade scenario
 
-  -r, --noprompt                                                                    allow Remote Site Settings and Content Security Policy websites to send or receive data without confirmation
+  -r, --noprompt                                                                    Allow Remote Site Settings and Content Security Policy websites to send or receive data without confirmation
 
-  -t, --tag=tag                                                                     the package version’s tag (format is packagename:tag --> core:tag consumer:tag packageN:tag)
+  -t, --tag=tag                                                                     The package version’s tag (format is packagename:tag --> core:tag consumer:tag packageN:tag)
 
-  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
+  --usedependencyvalidatedpackages                                                  Use dependency validated packages that matches the version number schema provide
+  
+  -u, --targetusername=targetusername                                               Username or alias for the target org; overrides default target org
 
-  -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
+  -v, --targetdevhubusername=targetdevhubusername                                   Username or alias for the dev hub org; overrides default dev hub org
 
-  -w, --wait=wait                                                                   number of minutes to wait for installation status (also used for publishwait). Default is 10
+  -w, --wait=wait                                                                   Number of minutes to wait for installation status (also used for publishwait). Default is 10
 
-  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+  --apiversion=apiversion                                                           Override the api version used for api requests made by this command
 
   --json                                                                            format output as json
 
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
-  --usedependencyvalidatedpackages                                                  use dependency validated packages that matches the version number schema provide
+
 
 EXAMPLE
   $ sfdx sfpowerkit:package:dependencies:install -u MyScratchOrg -v MyDevHub -k "MyPackage1:Key MyPackage3:Key" -b "DEV"
