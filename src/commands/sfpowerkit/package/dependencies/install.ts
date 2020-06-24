@@ -75,7 +75,7 @@ export default class Install extends SfdxCommand {
       description:
         "Compile the apex only in the package, by default only the compilation of the apex in the entire org is triggered"
     }),
-    createdwithdependency: flags.boolean({
+    usedependencyvalidatedpackages: flags.boolean({
       required: false,
       description:
         "when installing with .LATEST buildnumber, pick the lastest package created with dependencies."
@@ -367,7 +367,7 @@ export default class Install extends SfdxCommand {
       // If Build Number isn't set to LATEST, look for the exact Package Version
       if (vers[3] !== "LATEST") {
         query += `and BuildNumber=${vers[3]} `;
-      } else if (this.flags.createdwithdependency) {
+      } else if (this.flags.usedependencyvalidatedpackages) {
         query += `and ValidationSkipped = false `;
       }
 

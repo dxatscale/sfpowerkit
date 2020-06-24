@@ -433,42 +433,41 @@ Install unlocked package dependencies of a package
 
 ```
 USAGE
-  $ sfdx sfpowerkit:package:dependencies:install [-p <string>] [-k <string>] [-b <string>] [-w <string>] [-r] [-v
-  <string>] [-a] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+  $ sfdx sfpowerkit:package:dependencies:install [-p <string>] [-k <string>] [-b <string>] [-t <string>] [-w <string>] [-r] [-o] [-a] [--usedependencyvalidatedpackages] [-f <array>] [-v <string>] [-u
+  <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -b, --branch=branch                              the package version’s branch
-                                                  (format is packagename:branchname --> core:branchname consumer:branchname packageN:branchname)
+  -a, --apexcompileonlypackage                                                      Compile the apex only in the package, by default only the compilation of the apex in the entire org is triggered
 
-  -t, --tag=tag                                   the package version’s tag
-                                                  (format is packagename:tag --> core:tag consumer:tag packageN:tag)
+  -b, --branch=branch                                                               the package version’s branch (format is packagename:branchname --> core:branchname consumer:branchname
+                                                                                    packageN:branchname)
 
-  -k, --installationkeys=installationkeys          installation key for key-protected packages (format is
-                                                   packagename:key --> core:key nCino:key vlocity:key to allow some packages without
-                                                   installation key)
+  -f, --filterpaths=filterpaths                                                     In mono repo project filter packageDirectories using path and install dependencies for the specified path
 
-  -p, --individualpackage=individualpackage        Installs a specific package especially for upgrade scenario
+  -k, --installationkeys=installationkeys                                           installation key for key-protected packages (format is packagename:key --> core:key nCino:key vlocity:key to allow
+                                                                                    some packages without installation key)
 
-  -f, --filterpaths= filterpaths                   In mono repo project filter packageDirectories using paths and install dependencies for the specified path
-  -r, --noprompt                                   allow Remote Site Settings and Content Security Policy websites to
-                                                   send or receive data without confirmation
+  -o, --updateall                                                                   Update all packages even if they are installed in the target org
 
-  -u, --targetusername=targetusername              username or alias for the target org; overrides default target org
+  -p, --individualpackage=individualpackage                                         Installs a specific package especially for upgrade scenario
 
-  -v, --targetdevhubusername=targetdevhubusername  username or alias for the dev hub org; overrides default dev hub org
+  -r, --noprompt                                                                    allow Remote Site Settings and Content Security Policy websites to send or receive data without confirmation
 
-  -w, --wait=wait                                  number of minutes to wait for installation status (also used for
-                                                   publishwait). Default is 10
+  -t, --tag=tag                                                                     the package version’s tag (format is packagename:tag --> core:tag consumer:tag packageN:tag)
 
-  -a, --apexcompileonlypackage=apexcompileonlypackage  Compile the apex only in the package, by default only the
-                                                    compilation of the apex in the entire org is triggered
-  --apiversion=apiversion                          override the api version used for api requests made by this command
+  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
 
-  --createdwithdependency=createdwithdependency    when installing with .LATEST buildnumber, pick the lastest package created with dependencies.
+  -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
 
-  --json                                           format output as json
+  -w, --wait=wait                                                                   number of minutes to wait for installation status (also used for publishwait). Default is 10
 
-  --loglevel=(trace|debug|info|warn|error|fatal)   [default: warn] logging level for this command invocation
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+
+  --json                                                                            format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+  --usedependencyvalidatedpackages                                                  when installing with .LATEST buildnumber, pick the lastest package created with dependencies.
 
 EXAMPLE
   $ sfdx sfpowerkit:package:dependencies:install -u MyScratchOrg -v MyDevHub -k "MyPackage1:Key MyPackage3:Key" -b "DEV"
