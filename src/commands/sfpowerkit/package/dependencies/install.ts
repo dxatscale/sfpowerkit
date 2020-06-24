@@ -67,24 +67,24 @@ export default class Install extends SfdxCommand {
       char: "o",
       required: false,
       description:
-        "Update all packages even if they are installed in the target org"
+        "update all packages even if they are installed in the target org"
     }),
     apexcompileonlypackage: flags.boolean({
       char: "a",
       required: false,
       description:
-        "Compile the apex only in the package, by default only the compilation of the apex in the entire org is triggered"
+        "compile the apex only in the package, by default only the compilation of the apex in the entire org is triggered"
     }),
     usedependencyvalidatedpackages: flags.boolean({
       required: false,
       description:
-        "when installing with .LATEST buildnumber, pick the lastest package created with dependencies."
+        "use dependency validated packages that matches the version number schema provide"
     }),
     filterpaths: flags.array({
       char: "f",
       required: false,
       description:
-        "In mono repo project filter packageDirectories using path and install dependencies for the specified path"
+        "in a mono repo project, filter packageDirectories using path and install dependent packages only for the specified path"
     })
   };
 
