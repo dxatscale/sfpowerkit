@@ -438,6 +438,10 @@ USAGE
 
 OPTIONS
   -b, --branch=branch                              the package version’s branch
+                                                  (format is packagename:branchname --> core:branchname consumer:branchname packageN:branchname)
+
+  -t, --tag=tag                                   the package version’s tag
+                                                  (format is packagename:tag --> core:tag consumer:tag packageN:tag)
 
   -k, --installationkeys=installationkeys          installation key for key-protected packages (format is
                                                    packagename:key --> core:key nCino:key vlocity:key to allow some packages without
@@ -445,6 +449,7 @@ OPTIONS
 
   -p, --individualpackage=individualpackage        Installs a specific package especially for upgrade scenario
 
+  -f, --filterpaths= filterpaths                   In mono repo project filter packageDirectories using paths and install dependencies for the specified path
   -r, --noprompt                                   allow Remote Site Settings and Content Security Policy websites to
                                                    send or receive data without confirmation
 

@@ -42,7 +42,14 @@ export default class Install extends SfdxCommand {
     branch: flags.string({
       char: "b",
       required: false,
-      description: "the package version’s branch"
+      description:
+        "the package version’s branch (format is packagename:branchname --> core:branchname consumer:branchname packageN:branchname)"
+    }),
+    tag: flags.string({
+      char: "t",
+      required: false,
+      description:
+        "the package version’s tag (format is packagename:tag --> core:tag consumer:tag packageN:tag)"
     }),
     wait: flags.string({
       char: "w",
@@ -72,6 +79,12 @@ export default class Install extends SfdxCommand {
       required: false,
       description:
         "when installing with .LATEST buildnumber, pick the lastest package created with dependencies."
+    }),
+    filterpaths: flags.array({
+      char: "f",
+      required: false,
+      description:
+        "In mono repo project filter packageDirectories using path and install dependencies for the specified path"
     })
   };
 
@@ -83,6 +96,9 @@ export default class Install extends SfdxCommand {
 
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   protected static requiresProject = true;
+
+  private tagMap: Map<string, string>;
+  private branchMap: Map<string, string>;
 
   public async run(): Promise<any> {
     const result = { installedPackages: {} };
@@ -113,10 +129,51 @@ export default class Install extends SfdxCommand {
     const packageDirectories =
       (project.get("packageDirectories") as JsonArray) || [];
 
+    // get branch filter
+    this.branchMap = new Map<string, string>();
+    if (this.flags.branch) {
+      this.branchMap = this.parseKeyValueMapfromString(
+        this.flags.branch,
+        "Branch",
+        "core:branchname consumer:branchname packageN:branchname"
+      );
+    }
+
+    //get tag filter
+    this.tagMap = new Map<string, string>();
+    if (this.flags.tag) {
+      this.tagMap = this.parseKeyValueMapfromString(
+        this.flags.tag,
+        "Tag",
+        "core:tag consumer:tag packageN:tag"
+      );
+    }
+
+    // get all packages in the mono repo project
+    let monoRepoPackages = [];
+    for (let packageDirectory of packageDirectories) {
+      packageDirectory = packageDirectory as JsonMap;
+      if (
+        packageDirectory.path &&
+        packageDirectory.package &&
+        !monoRepoPackages.includes(packageDirectory.package.toString())
+      ) {
+        monoRepoPackages.push(packageDirectory.package.toString());
+      }
+    }
+
     for (let packageDirectory of packageDirectories) {
       packageDirectory = packageDirectory as JsonMap;
 
       const dependencies = packageDirectory.dependencies || [];
+
+      if (
+        this.flags.filterpaths &&
+        this.flags.filterpaths.length > 0 &&
+        !this.flags.filterpaths.includes(packageDirectory.path.toString())
+      ) {
+        continue;
+      }
 
       if (dependencies && dependencies[0] !== undefined) {
         this.ux.log(
@@ -153,7 +210,10 @@ export default class Install extends SfdxCommand {
             if (this.flags.updateall) {
               packagesToInstall.push(packageInfo);
             } else {
-              if (!installedpackages.includes(packageVersionId)) {
+              if (
+                !installedpackages.includes(packageVersionId) &&
+                !monoRepoPackages.includes(packageInfo.dependentPackage)
+              ) {
                 packagesToInstall.push(packageInfo);
               }
             }
@@ -181,22 +241,12 @@ export default class Install extends SfdxCommand {
       let installationKeyMap: Map<string, string> = new Map<string, string>();
 
       // Getting Installation Key(s)
-      let installationKeys = this.flags.installationkeys;
-      if (installationKeys) {
-        installationKeys = installationKeys.trim();
-        installationKeys = installationKeys.split(" ");
-
-        for (let installKey of installationKeys) {
-          let packageKeySplit = installKey.split(":");
-          if (packageKeySplit.length === 2) {
-            installationKeyMap.set(packageKeySplit[0], packageKeySplit[1]);
-          } else {
-            // Format is not correct, throw an error
-            throw new core.SfdxError(
-              "Installation Key should have this format: core:key nCino:key vlocity:key"
-            );
-          }
-        }
+      if (this.flags.installationkeys) {
+        installationKeyMap = this.parseKeyValueMapfromString(
+          this.flags.installationkeys,
+          "Installation Key",
+          "core:key nCino:key vlocity:key"
+        );
       }
 
       this.ux.log("\n");
@@ -225,7 +275,10 @@ export default class Install extends SfdxCommand {
         args.push(`${packageInfo.packageVersionId}`);
 
         // INSTALLATION KEY
-        if (installationKeyMap.has(packageInfo.dependentPackage.toString())) {
+        if (
+          installationKeyMap &&
+          installationKeyMap.has(packageInfo.dependentPackage.toString())
+        ) {
           let key = installationKeyMap.get(
             packageInfo.dependentPackage.toString()
           );
@@ -319,8 +372,13 @@ export default class Install extends SfdxCommand {
       }
 
       // If Branch is specified, use it to filter
-      if (this.flags.branch) {
-        query += `and Branch='${this.flags.branch.trim()}' `;
+      if (this.flags.branch && this.branchMap.has(name)) {
+        query += `and Branch='${this.branchMap.get(name).trim()}' `;
+      }
+
+      // If tag is specified, use it to filter
+      if (this.flags.tag && this.tagMap.has(name)) {
+        query += `and Tag='${this.tagMap.get(name).trim()}' `;
       }
 
       query += "ORDER BY BuildNumber,Createddate DESC Limit 1";
@@ -372,5 +430,29 @@ export default class Install extends SfdxCommand {
       }
     });
     return packages;
+  }
+  private parseKeyValueMapfromString(
+    request: string,
+    item: string,
+    format: string
+  ) {
+    let response: Map<string, string> = new Map<string, string>();
+
+    request = request.trim();
+    let requestList = request.split(" ");
+
+    for (let element of requestList) {
+      let packageNameWithValue = element.split(":");
+      if (packageNameWithValue.length === 2) {
+        response.set(packageNameWithValue[0], packageNameWithValue[1]);
+      } else {
+        // Format is not correct, throw an error
+        throw new core.SfdxError(
+          `Error in parsing ${item}, format should be: ${format}`
+        );
+      }
+    }
+
+    return response;
   }
 }
