@@ -467,7 +467,7 @@ OPTIONS
 
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
-  --usedependencyvalidatedpackages                                                  when installing with .LATEST buildnumber, pick the lastest package created with dependencies.
+  --usedependencyvalidatedpackages                                                  use dependency validated packages that matches the version number schema provide
 
 EXAMPLE
   $ sfdx sfpowerkit:package:dependencies:install -u MyScratchOrg -v MyDevHub -k "MyPackage1:Key MyPackage3:Key" -b "DEV"
