@@ -381,10 +381,17 @@ export default class PoolCreateImpl {
 
         try {
           //Delete scratchorgs that failed to execute script
-          await ScratchOrgUtils.deleteScratchOrg(
+
+          let activeScratchOrgRecordId = await ScratchOrgUtils.getActiveScratchOrgRecordIdGivenScratchOrg(
             this.hubOrg,
             this.apiversion,
             scratchOrg.recordId
+          );
+
+          await ScratchOrgUtils.deleteScratchOrg(
+            this.hubOrg,
+            this.apiversion,
+            activeScratchOrgRecordId
           );
         } catch (error) {
           SFPowerkit.log(
