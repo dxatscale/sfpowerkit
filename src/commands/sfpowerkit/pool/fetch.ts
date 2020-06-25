@@ -66,6 +66,6 @@ export default class Fetch extends SfdxCommand {
       this.ux.table(list, ["key", "value"]);
     }
 
-    return JSON.stringify(result);
+    return result as AnyJson;
   }
 }
