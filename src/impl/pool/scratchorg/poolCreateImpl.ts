@@ -219,8 +219,8 @@ export default class PoolCreateImpl {
       );
     } else {
       SFPowerkit.log(
-        `Request for provisioning ${this.totalToBeAllocated} scratchOrgs of which ${this.totalAllocated} were allocated with ${commit_result.success} success and ${commit_result.failed} failures`,
-        LoggerLevel.INFO
+        `Request for provisioning ${this.totalToBeAllocated} scratchOrgs not successfull.`,
+        LoggerLevel.ERROR
       );
     }
     return true;
@@ -229,7 +229,7 @@ export default class PoolCreateImpl {
   private validateScriptFile() {
     if (isNullOrUndefined(this.poolConfig.pool.script_file_path)) {
       SFPowerkit.log(
-        "Script Path not provided, will crete a pool of scratch orgs without any post creation steps",
+        "Script Path not provided, will create a pool of scratch orgs without any post creation steps",
         LoggerLevel.WARN
       );
       this.scriptFileExists = false;
