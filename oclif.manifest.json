@@ -1,5 +1,5 @@
 {
-  "version": "1.45.2-13",
+  "version": "1.46.0",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -2155,6 +2155,7 @@
       "id": "sfpowerkit:package:dependencies:install",
       "description": "Install dependencies of a package",
       "usage": "<%= command.id %> [-p <string>] [-k <string>] [-b <string>] [-w <string>] [-r] [-o] [-a] [--createdwithdependency] [-v <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],
@@ -2265,6 +2266,7 @@
           "description": "when installing with .LATEST buildnumber, pick the lastest package created with dependencies.",
           "required": false,
           "allowNo": false
+
         }
       },
       "args": []

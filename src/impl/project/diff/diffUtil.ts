@@ -7,7 +7,7 @@ import { SOURCE_EXTENSION_REGEX } from "../../../impl/metadata/metadataInfo";
 import { METADATA_INFO } from "../../../impl/metadata/metadataInfo";
 import { SFPowerkit } from "../../../sfpowerkit";
 import { LoggerLevel } from "@salesforce/core";
-import simplegit from "simple-git/promise";
+import simplegit, { SimpleGit } from "simple-git/promise";
 
 export interface DiffFileStatus {
   revisionFrom: string;
@@ -21,7 +21,7 @@ export interface DiffFile {
   addedEdited: DiffFileStatus[];
 }
 
-const git = simplegit();
+const git: SimpleGit = simplegit();
 
 export default class DiffUtil {
   public static gitTreeRevisionTo: {
