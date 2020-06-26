@@ -37,12 +37,12 @@ export default class OrgCoverage extends SfdxCommand {
 
   Successfully Retrieved the Apex Test Coverage of the org XXXX
   coverage:85
-  ID     		NAME                  TYPE          PERCENTAGE    COMMENTS                              UNCOVERED LINES
-  ───────		──────────────────    ────────      ──────────	  ───────────────────────────────────   ──────────────────
-  01pxxxx		sampleController      ApexClass     100%
-  01pxxxx		sampletriggerHandler  ApexClass	    80%           Looks fine but target more than 85%   62;76;77;
-  01pxxxx		sampleHelper          ApexClass	    72%           Action required                       62;76;77;78;98;130;131
-  01qxxxx		sampleTrigger         ApexTrigger   100%
+  ID     		PACKAGE       NAME                  TYPE          PERCENTAGE    COMMENTS                              UNCOVERED LINES
+  ───────		────────      ──────────────────    ────────      ──────────	  ───────────────────────────────────   ──────────────────
+  01pxxxx		core          sampleController      ApexClass     100%
+  01pxxxx		core          sampletriggerHandler  ApexClass     80%           Looks fine but target more than 85%   62;76;77;
+  01pxxxx		consumer      sampleHelper          ApexClass     72%           Action required                       62;76;77;78;98;130;131
+  01qxxxx		consumer      sampleTrigger         ApexTrigger   100%
   Output testResult/output.csv is generated successfully
   `
   ];
@@ -141,12 +141,12 @@ export default class OrgCoverage extends SfdxCommand {
               );
         output.push({
           id: element.ApexClassOrTriggerId,
-          name: element.ApexClassOrTrigger.Name,
-          type: element.ApexClassOrTrigger.attributes.url.split("/")[6],
-          percentage: `${percentage}%`,
           package: metadataVsPackageMap.has(element.ApexClassOrTrigger.Name)
             ? metadataVsPackageMap.get(element.ApexClassOrTrigger.Name)
             : "",
+          name: element.ApexClassOrTrigger.Name,
+          type: element.ApexClassOrTrigger.attributes.url.split("/")[6],
+          percentage: `${percentage}%`,
           comments:
             percentage < 75
               ? "Action required"
@@ -159,10 +159,10 @@ export default class OrgCoverage extends SfdxCommand {
 
       this.ux.table(output, [
         "id",
+        "package",
         "name",
         "type",
         "percentage",
-        "package",
         "comments",
         "uncoveredLines"
       ]);
@@ -194,9 +194,9 @@ export default class OrgCoverage extends SfdxCommand {
     }
     let newLine = "\r\n";
     let output =
-      "ID,NAME,TYPE,PERCENTAGE,PACKAGE,COMMENTS,UNCOVERED LINES" + newLine;
+      "ID,PACKAGE,NAME,TYPE,PERCENTAGE,COMMENTS,UNCOVERED LINES" + newLine;
     testResult.forEach(element => {
-      output = `${output}${element.id},${element.name},${element.type},${element.percentage},${element.package},${element.comments},${element.uncoveredLines}${newLine}`;
+      output = `${output}${element.id},${element.package},${element.name},${element.type},${element.percentage},${element.comments},${element.uncoveredLines}${newLine}`;
     });
     fs.writeFileSync(outputcsvPath, output);
     this.ux.log(`Output ${outputDir}/output.csv is generated successfully`);

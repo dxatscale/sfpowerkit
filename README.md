@@ -922,12 +922,12 @@ EXAMPLE
 
     Successfully Retrieved the Apex Test Coverage of the org XXXX
     coverage:85
-    ID                 NAME                  TYPE          PERCENTAGE    COMMENTS                              UNCOVERED LINES
-    ───────            ──────────────────    ────────      ──────────    ───────────────────────────────────   ──────────────────
-    01pxxxx            sampleController      ApexClass     100%
-    01pxxxx            sampletriggerHandler  ApexClass     80%           Looks fine but target more than 85%   62;76;77;
-    01pxxxx            sampleHelper          ApexClass     72%           Action required                       62;76;77;78;98;130;131
-    01qxxxx            sampleTrigger         ApexTrigger   100%
+     ID                 TYPE          NAME                  TYPE          PERCENTAGE    COMMENTS                              UNCOVERED LINES
+     ───────            ────────      ──────────────────    ────────      ──────────      ───────────────────────────────────   ──────────────────
+     01pxxxx            core          sampleController      ApexClass     100%
+     01pxxxx            core          sampletriggerHandler  ApexClass     80%           Looks fine but target more than 85%   62;76;77;
+     01pxxxx            consumer      sampleHelper          ApexClass     72%           Action required                       62;76;77;78;98;130;131
+     01qxxxx            consumer      sampleTrigger         ApexTrigger   100%
     Output testResult/output.csv is generated successfully
 ```
 
