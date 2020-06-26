@@ -433,38 +433,46 @@ Install unlocked package dependencies of a package
 
 ```
 USAGE
-  $ sfdx sfpowerkit:package:dependencies:install [-p <string>] [-k <string>] [-b <string>] [-w <string>] [-r] [-v
-  <string>] [-a] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+  $ sfdx sfpowerkit:package:dependencies:install [-p <string>] [-k <string>] [-b <string>] [-t <string>] [-w <string>] [-r] [-o] [-a] [--usedependencyvalidatedpackages] [-f <array>] [-v <string>] [-u
+  <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -b, --branch=branch                              the package version’s branch
+  -a, --apexcompileonlypackage                                                      Compile the apex only in the package, by default only the compilation of the apex in the entire org is triggered
 
-  -k, --installationkeys=installationkeys          installation key for key-protected packages (format is
-                                                   1:MyPackage1Key 2: 3:MyPackage3Key... to allow some packages without
-                                                   installation key)
+  -b, --branch=branch                                                               The package version’s branch (format is packagename:branchname --> core:branchname consumer:branchname
+                                                                                    packageN:branchname)
 
-  -p, --individualpackage=individualpackage        Installs a specific package especially for upgrade scenario
+  -f, --filterpaths=filterpaths                                                     In a mono repo project, filter packageDirectories using path and install dependent packages only for the specified path
 
-  -r, --noprompt                                   allow Remote Site Settings and Content Security Policy websites to
-                                                   send or receive data without confirmation
+  -k, --installationkeys=installationkeys                                           Installation key for key-protected packages (format is packagename:key --> core:key nCino:key vlocity:key to allow
+                                                                                    some packages without installation key)
 
-  -u, --targetusername=targetusername              username or alias for the target org; overrides default target org
+  -o, --updateall                                                                   Update all packages even if they are installed in the target org
 
-  -v, --targetdevhubusername=targetdevhubusername  username or alias for the dev hub org; overrides default dev hub org
+  -p, --individualpackage=individualpackage                                         Installs a specific package especially for upgrade scenario
 
-  -w, --wait=wait                                  number of minutes to wait for installation status (also used for
-                                                   publishwait). Default is 10
+  -r, --noprompt                                                                    Allow Remote Site Settings and Content Security Policy websites to send or receive data without confirmation
 
-  -a, --apexcompileonlypackage=apexcompileonlypackage  Compile the apex only in the package, by default only the
-                                                    compilation of the apex in the entire org is triggered
-  --apiversion=apiversion                          override the api version used for api requests made by this command
+  -t, --tag=tag                                                                     The package version’s tag (format is packagename:tag --> core:tag consumer:tag packageN:tag)
 
-  --json                                           format output as json
+  --usedependencyvalidatedpackages                                                  Use dependency validated packages that matches the version number schema provide
+  
+  -u, --targetusername=targetusername                                               Username or alias for the target org; overrides default target org
 
-  --loglevel=(trace|debug|info|warn|error|fatal)   [default: warn] logging level for this command invocation
+  -v, --targetdevhubusername=targetdevhubusername                                   Username or alias for the dev hub org; overrides default dev hub org
+
+  -w, --wait=wait                                                                   Number of minutes to wait for installation status (also used for publishwait). Default is 10
+
+  --apiversion=apiversion                                                           Override the api version used for api requests made by this command
+
+  --json                                                                            format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+
 
 EXAMPLE
-  $ sfdx sfpowerkit:package:dependencies:install -u MyScratchOrg -v MyDevHub -k "1:MyPackage1Key 2: 3:MyPackage3Key" -b "DEV"
+  $ sfdx sfpowerkit:package:dependencies:install -u MyScratchOrg -v MyDevHub -k "MyPackage1:Key MyPackage3:Key" -b "DEV"
 ```
 
 _See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/dependencies/install.ts)_

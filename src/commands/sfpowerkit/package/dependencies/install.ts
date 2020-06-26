@@ -24,7 +24,7 @@ export default class Install extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    '$ sfdx sfpowerkit:package:dependencies:install -u MyScratchOrg -v MyDevHub -k "1:MyPackage1Key 2: 3:MyPackage3Key" -b "DEV"'
+    '$ sfdx sfpowerkit:package:dependencies:install -u MyScratchOrg -v MyDevHub -k "MyPackage1:Key MyPackage3:Key" -b "DEV"'
   ];
 
   protected static flagsConfig = {
@@ -37,12 +37,19 @@ export default class Install extends SfdxCommand {
       char: "k",
       required: false,
       description:
-        "installation key for key-protected packages (format is 1:MyPackage1Key 2: 3:MyPackage3Key... to allow some packages without installation key)"
+        "installation key for key-protected packages (format is packagename:key --> core:key nCino:key vlocity:key to allow some packages without installation key)"
     }),
     branch: flags.string({
       char: "b",
       required: false,
-      description: "the package version’s branch"
+      description:
+        "the package version’s branch (format is packagename:branchname --> core:branchname consumer:branchname packageN:branchname)"
+    }),
+    tag: flags.string({
+      char: "t",
+      required: false,
+      description:
+        "the package version’s tag (format is packagename:tag --> core:tag consumer:tag packageN:tag)"
     }),
     wait: flags.string({
       char: "w",
@@ -60,13 +67,24 @@ export default class Install extends SfdxCommand {
       char: "o",
       required: false,
       description:
-        "Update all packages even if they are installed in the target org"
+        "update all packages even if they are installed in the target org"
     }),
     apexcompileonlypackage: flags.boolean({
       char: "a",
       required: false,
       description:
-        "Compile the apex only in the package, by default only the compilation of the apex in the entire org is triggered"
+        "compile the apex only in the package, by default only the compilation of the apex in the entire org is triggered"
+    }),
+    usedependencyvalidatedpackages: flags.boolean({
+      required: false,
+      description:
+        "use dependency validated packages that matches the version number schema provide"
+    }),
+    filterpaths: flags.array({
+      char: "f",
+      required: false,
+      description:
+        "in a mono repo project, filter packageDirectories using path and install dependent packages only for the specified path"
     })
   };
 
@@ -78,6 +96,9 @@ export default class Install extends SfdxCommand {
 
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   protected static requiresProject = true;
+
+  private tagMap: Map<string, string>;
+  private branchMap: Map<string, string>;
 
   public async run(): Promise<any> {
     const result = { installedPackages: {} };
@@ -108,49 +129,93 @@ export default class Install extends SfdxCommand {
     const packageDirectories =
       (project.get("packageDirectories") as JsonArray) || [];
 
+    // get branch filter
+    this.branchMap = new Map<string, string>();
+    if (this.flags.branch) {
+      this.branchMap = this.parseKeyValueMapfromString(
+        this.flags.branch,
+        "Branch",
+        "core:branchname consumer:branchname packageN:branchname"
+      );
+    }
+
+    //get tag filter
+    this.tagMap = new Map<string, string>();
+    if (this.flags.tag) {
+      this.tagMap = this.parseKeyValueMapfromString(
+        this.flags.tag,
+        "Tag",
+        "core:tag consumer:tag packageN:tag"
+      );
+    }
+
+    // get all packages in the mono repo project
+    let monoRepoPackages = [];
     for (let packageDirectory of packageDirectories) {
       packageDirectory = packageDirectory as JsonMap;
-      //this.ux.logJson(packageDirectory);
-      // let { package: dependencies } = packageDirectory;
+      if (
+        packageDirectory.path &&
+        packageDirectory.package &&
+        !monoRepoPackages.includes(packageDirectory.package.toString())
+      ) {
+        monoRepoPackages.push(packageDirectory.package.toString());
+      }
+    }
+
+    for (let packageDirectory of packageDirectories) {
+      packageDirectory = packageDirectory as JsonMap;
+
       const dependencies = packageDirectory.dependencies || [];
 
-      // TODO: Move all labels to message
-      // this.ux.log(dependencies);
+      if (
+        this.flags.filterpaths &&
+        this.flags.filterpaths.length > 0 &&
+        !this.flags.filterpaths.includes(packageDirectory.path.toString())
+      ) {
+        continue;
+      }
+
       if (dependencies && dependencies[0] !== undefined) {
         this.ux.log(
           `\nPackage dependencies found for package directory ${packageDirectory.path}`
         );
         for (const dependency of dependencies as JsonArray) {
-          // let packageInfo = {dependentPackage:"", versionNumber:"", packageVersionId:""};
           const packageInfo = {} as JsonMap;
 
           const {
             package: dependentPackage,
             versionNumber
           } = dependency as JsonMap;
-          // this.ux.log( dependentPackage );
+
           packageInfo.dependentPackage = dependentPackage;
 
-          // this.ux.log( versionNumber );
           packageInfo.versionNumber = versionNumber;
 
           const packageVersionId = await this.getPackageVersionId(
             dependentPackage,
             versionNumber
           );
-          // this.ux.log(packageVersionId);
+
           packageInfo.packageVersionId = packageVersionId;
 
           if (individualpackage) {
-            if (packageInfo.dependentPackage.toString() === individualpackage) {
+            if (
+              packageInfo.dependentPackage.toString() === individualpackage ||
+              packageInfo.packageVersionId.toString() === individualpackage
+            ) {
               packagesToInstall.push(packageInfo);
               continue;
             }
           } else {
-            if (this.flags.updateall) packagesToInstall.push(packageInfo);
-            else {
-              if (!installedpackages.includes(packageVersionId))
+            if (this.flags.updateall) {
+              packagesToInstall.push(packageInfo);
+            } else {
+              if (
+                !installedpackages.includes(packageVersionId) &&
+                !monoRepoPackages.includes(packageInfo.dependentPackage)
+              ) {
                 packagesToInstall.push(packageInfo);
+              }
             }
           }
 
@@ -173,30 +238,19 @@ export default class Install extends SfdxCommand {
 
     if (packagesToInstall.length > 0) {
       // Installing Packages
+      let installationKeyMap: Map<string, string> = new Map<string, string>();
 
       // Getting Installation Key(s)
-      let installationKeys = this.flags.installationkeys;
-      if (installationKeys) {
-        installationKeys = installationKeys.trim();
-        installationKeys = installationKeys.split(" ");
-
-        // Format is 1: 2: 3: ... need to remove these
-        for (let keyIndex = 0; keyIndex < installationKeys.length; keyIndex++) {
-          const key = installationKeys[keyIndex].trim();
-          if (key.startsWith(`${keyIndex + 1}:`)) {
-            installationKeys[keyIndex] = key.substring(2);
-          } else {
-            // Format is not correct, throw an error
-            throw new core.SfdxError(
-              "Installation Key should have this format: 1:MyPackage1Key 2: 3:MyPackage3Key"
-            );
-          }
-        }
+      if (this.flags.installationkeys) {
+        installationKeyMap = this.parseKeyValueMapfromString(
+          this.flags.installationkeys,
+          "Installation Key",
+          "core:key nCino:key vlocity:key"
+        );
       }
 
       this.ux.log("\n");
 
-      let i = 0;
       for (let packageInfo of packagesToInstall) {
         packageInfo = packageInfo as JsonMap;
         if (
@@ -221,9 +275,15 @@ export default class Install extends SfdxCommand {
         args.push(`${packageInfo.packageVersionId}`);
 
         // INSTALLATION KEY
-        if (installationKeys && installationKeys[i]) {
+        if (
+          installationKeyMap &&
+          installationKeyMap.has(packageInfo.dependentPackage.toString())
+        ) {
+          let key = installationKeyMap.get(
+            packageInfo.dependentPackage.toString()
+          );
           args.push("-k");
-          args.push(`${installationKeys[i]}`);
+          args.push(`${key}`);
         }
 
         // WAIT
@@ -267,8 +327,6 @@ export default class Install extends SfdxCommand {
         this.ux.log("\n");
 
         result.installedPackages[packageInfo.packageVersionId] = packageInfo;
-
-        i++;
       }
     } else {
       this.ux.log(
@@ -295,6 +353,10 @@ export default class Install extends SfdxCommand {
       // Package2VersionId is set directly
       packageId = packageName;
     } else if (packageName.startsWith(packageIdPrefix)) {
+      if (!version) {
+        throw new core.SfdxError(`version number is mandatory for ${name}`);
+      }
+
       // Get Package version id from package + versionNumber
       const vers = version.split(".");
       let query =
@@ -305,14 +367,21 @@ export default class Install extends SfdxCommand {
       // If Build Number isn't set to LATEST, look for the exact Package Version
       if (vers[3] !== "LATEST") {
         query += `and BuildNumber=${vers[3]} `;
+      } else if (this.flags.usedependencyvalidatedpackages) {
+        query += `and ValidationSkipped = false `;
       }
 
       // If Branch is specified, use it to filter
-      if (this.flags.branch) {
-        query += `and Branch='${this.flags.branch.trim()}' `;
+      if (this.flags.branch && this.branchMap.has(name)) {
+        query += `and Branch='${this.branchMap.get(name).trim()}' `;
       }
 
-      query += "ORDER BY BuildNumber DESC Limit 1";
+      // If tag is specified, use it to filter
+      if (this.flags.tag && this.tagMap.has(name)) {
+        query += `and Tag='${this.tagMap.get(name).trim()}' `;
+      }
+
+      query += "ORDER BY BuildNumber,Createddate DESC Limit 1";
 
       // Query DevHub to get the expected Package2Version
       const conn = this.hubOrg.getConnection();
@@ -361,5 +430,29 @@ export default class Install extends SfdxCommand {
       }
     });
     return packages;
+  }
+  private parseKeyValueMapfromString(
+    request: string,
+    item: string,
+    format: string
+  ) {
+    let response: Map<string, string> = new Map<string, string>();
+
+    request = request.trim();
+    let requestList = request.split(" ");
+
+    for (let element of requestList) {
+      let packageNameWithValue = element.split(":");
+      if (packageNameWithValue.length === 2) {
+        response.set(packageNameWithValue[0], packageNameWithValue[1]);
+      } else {
+        // Format is not correct, throw an error
+        throw new core.SfdxError(
+          `Error in parsing ${item}, format should be: ${format}`
+        );
+      }
+    }
+
+    return response;
   }
 }
