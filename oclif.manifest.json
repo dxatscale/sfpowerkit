@@ -1,5 +1,5 @@
 {
-  "version": "1.46.0",
+  "version": "1.46.1-0",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -199,7 +199,7 @@
       "pluginType": "core",
       "aliases": [],
       "examples": [
-        "$  sfdx sfpowerkit:org:orgcoverage  -u myOrg@example.com\n  sfdx sfpowerkit:org:orgcoverage  -u myOrg@example.com -d testResult -f csv\n  sfdx sfpowerkit:org:orgcoverage  -u myOrg@example.com -d testResult -f json\n\n\n  Successfully Retrieved the Apex Test Coverage of the org XXXX\n  coverage:85\n  ID     \t\tNAME                  TYPE          PERCENTAGE    COMMENTS                              UNCOVERED LINES\n  ───────\t\t──────────────────    ────────      ──────────\t  ───────────────────────────────────   ──────────────────\n  01pxxxx\t\tsampleController      ApexClass     100%\n  01pxxxx\t\tsampletriggerHandler  ApexClass\t    80%           Looks fine but target more than 85%   62;76;77;\n  01pxxxx\t\tsampleHelper          ApexClass\t    72%           Action required                       62;76;77;78;98;130;131\n  01qxxxx\t\tsampleTrigger         ApexTrigger   100%\n  Output testResult/output.csv is generated successfully\n  "
+        "$  sfdx sfpowerkit:org:orgcoverage  -u myOrg@example.com\n  sfdx sfpowerkit:org:orgcoverage  -u myOrg@example.com -d testResult -f csv\n  sfdx sfpowerkit:org:orgcoverage  -u myOrg@example.com -d testResult -f json\n\n\n  Successfully Retrieved the Apex Test Coverage of the org XXXX\n  coverage:85\n  ID     \t\tTYPE          NAME                  TYPE          PERCENTAGE    COMMENTS                              UNCOVERED LINES\n  ───────\t\t────────      ──────────────────    ────────      ──────────\t  ───────────────────────────────────   ──────────────────\n  01pxxxx\t\tcore          sampleController      ApexClass     100%\n  01pxxxx\t\tcore          sampletriggerHandler  ApexClass     80%           Looks fine but target more than 85%   62;76;77;\n  01pxxxx\t\tconsumer      sampleHelper          ApexClass     72%           Action required                       62;76;77;78;98;130;131\n  01qxxxx\t\tconsumer      sampleTrigger         ApexTrigger   100%\n  Output testResult/output.csv is generated successfully\n  "
       ],
       "flags": {
         "json": {
