@@ -14,6 +14,11 @@ let request = require("request-promise-native");
 import * as rimraf from "rimraf";
 const querystring = require("querystring");
 
+import MetadataSummaryInfoFetcher, {
+  MetadataSummary
+} from "../../../impl/metadata/retriever/metadataSummaryInfoFetcher";
+import DependencyImpl from "../../../impl/dependency/dependencyImpl";
+
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
 
@@ -118,6 +123,7 @@ export default class OrgCoverage extends SfdxCommand {
     conn: core.Connection,
     outputDir: string
   ) {
+    let metadataVsPackageMap = await this.getmetadataVsPackageMap(conn);
     let query =
       "SELECT ApexClassOrTriggerId, ApexClassOrTrigger.Name, NumLinesCovered, NumLinesUncovered, coverage FROM ApexCodeCoverageAggregate ORDER BY ApexClassOrTrigger.Name";
 
@@ -138,6 +144,9 @@ export default class OrgCoverage extends SfdxCommand {
           name: element.ApexClassOrTrigger.Name,
           type: element.ApexClassOrTrigger.attributes.url.split("/")[6],
           percentage: `${percentage}%`,
+          package: metadataVsPackageMap.has(element.ApexClassOrTrigger.Name)
+            ? metadataVsPackageMap.get(element.ApexClassOrTrigger.Name)
+            : "",
           comments:
             percentage < 75
               ? "Action required"
@@ -153,6 +162,7 @@ export default class OrgCoverage extends SfdxCommand {
         "name",
         "type",
         "percentage",
+        "package",
         "comments",
         "uncoveredLines"
       ]);
@@ -183,12 +193,52 @@ export default class OrgCoverage extends SfdxCommand {
       FileUtils.mkDirByPathSync(dir);
     }
     let newLine = "\r\n";
-    let output = "ID,NAME,TYPE,PERCENTAGE,COMMENTS,UNCOVERED LINES" + newLine;
+    let output =
+      "ID,NAME,TYPE,PERCENTAGE,PACKAGE,COMMENTS,UNCOVERED LINES" + newLine;
     testResult.forEach(element => {
-      output = `${output}${element.id},${element.name},${element.type},${element.percentage},${element.comments},${element.uncoveredLines}${newLine}`;
+      output = `${output}${element.id},${element.name},${element.type},${element.percentage},${element.package},${element.comments},${element.uncoveredLines}${newLine}`;
     });
     fs.writeFileSync(outputcsvPath, output);
     this.ux.log(`Output ${outputDir}/output.csv is generated successfully`);
+  }
+
+  public async getmetadataVsPackageMap(conn: core.Connection) {
+    let metadataMap: Map<string, MetadataSummary> = new Map<
+      string,
+      MetadataSummary
+    >();
+    metadataMap = await MetadataSummaryInfoFetcher.fetchMetadataSummaryByTypesFromAnOrg(
+      conn,
+      [
+        { type: "ApexClass", folder: null },
+        { type: "ApexTrigger", folder: null }
+      ],
+      metadataMap
+    );
+
+    let subjectIdList: String[] = [];
+    for (let subjectId of metadataMap.keys()) {
+      subjectIdList.push(subjectId);
+    }
+
+    let packageMember: Map<
+      string,
+      string
+    > = await DependencyImpl.getMemberVsPackageNameMapByMemberId(
+      conn,
+      subjectIdList
+    );
+
+    let metadataVsPackageMap: Map<string, string> = new Map<string, string>();
+    for (let subjectId of metadataMap.keys()) {
+      if (packageMember.has(subjectId)) {
+        metadataVsPackageMap.set(
+          metadataMap.get(subjectId).fullName,
+          packageMember.get(subjectId)
+        );
+      }
+    }
+    return metadataVsPackageMap;
   }
 }
 

@@ -157,7 +157,7 @@ export default class MetadataSummaryInfoFetcher {
     return metadataMap;
   }
 
-  private static async fetchMetadataSummaryByTypesFromAnOrg(
+  public static async fetchMetadataSummaryByTypesFromAnOrg(
     conn: Connection,
     types: any[],
     metadataMap: Map<string, MetadataSummary>

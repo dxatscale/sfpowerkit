@@ -197,4 +197,24 @@ export default class DependencyImpl {
     }
     return packageMember;
   }
+  public static async getMemberVsPackageNameMapByMemberId(
+    conn: core.Connection,
+    subjectIds: String[]
+  ): Promise<Map<string, string>> {
+    let query =
+      `SELECT SubjectId, SubscriberPackage.Name ` +
+      `FROM Package2Member  WHERE (SubjectManageableState = 'installed' OR SubjectManageableState = 'installedEditable') AND SubjectId IN ('${subjectIds.join(
+        "','"
+      )}') ORDER BY SubjectId `;
+
+    let queryUtil = new queryApi(conn);
+    let result = await queryUtil.executeQuery(query, true);
+    let packageMember: Map<string, string> = new Map<string, string>();
+    if (result) {
+      result.forEach(cmp => {
+        packageMember.set(cmp.SubjectId, cmp.SubscriberPackage.Name);
+      });
+    }
+    return packageMember;
+  }
 }
