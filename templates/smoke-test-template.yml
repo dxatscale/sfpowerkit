@@ -6,19 +6,19 @@ parameters:
 steps:
   - task: sfpwowerscript-installsfdx-task@7
     condition: ne( '${{ parameters.version }}', 'review')
-    displayName: "Install SFPowerkit Version"
+    displayName: "Install SFDX"
     inputs:
       sfpowerkit_version: ${{ parameters.version }}
 
   - task: sfpwowerscript-installsfdx-task@7
     condition: eq( '${{ parameters.version }}', 'review')
-    displayName: "Install SFPowerkit Version"
+    displayName: "Install SFDX"
     inputs:
       sfpowerkit_version: latest
 
   - task: CmdLine@2
     condition: eq( '${{ parameters.version }}', 'review')
-    displayName: "Install SFPowerkit Version"
+    displayName: "Link Plugin"
     inputs:
       script: |
         sfdx plugins:link
@@ -55,14 +55,6 @@ steps:
         sfdx sfpowerkit:package:version:codecoverage -i 04t2s000000LOsVAAW -v HubOrg
         sfdx sfpowerkit:package:version:codecoverage -i 04t2s000000LOsVAAW -v HubOrg --json | jq -r .result[0].packageVersionId
       workingDirectory: "src_saleforce_packages/scratchorgpool"
-
-  - task: CmdLine@2
-    displayName: Smoke Test Pool Commands
-    inputs:
-      script: |
-        sfdx sfpowerkit:pool:list -a -v HubOrg
-        sfdx sfpowerkit:pool:list -a -v HubOrg --json | jq -r .result
-      workingDirectory: "test"
 
   - task: CmdLine@2
     displayName: Smoke Test Pool Commands

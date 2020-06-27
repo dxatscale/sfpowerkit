@@ -31,6 +31,8 @@ stages:
               image: "windows-latest"
             ubuntu:
               image: "ubuntu-latest"
+            macos:
+              image: "macOS-latest"
         pool:
           vmImage: $(image)
 
@@ -56,23 +58,6 @@ stages:
                 - template: templates/build-template.yml
                   parameters:
                     version: beta
-
-      - job: SmokeTest
-        displayName: Test Beta Build
-        dependsOn: PromoteExtension
-        strategy:
-          matrix:
-            windows:
-              image: "windows-latest"
-            ubuntu:
-              image: "ubuntu-latest"
-        pool:
-          vmImage: $(image)
-
-        steps:
-          - template: templates/smoke-test-template.yml
-            parameters:
-              version: beta
 
   - stage: Hotfix
     displayName: Hotfix
@@ -102,6 +87,8 @@ stages:
               image: "windows-latest"
             ubuntu:
               image: "ubuntu-latest"
+            macos:
+              image: "macOS-latest"
         pool:
           vmImage: $(image)
 
@@ -130,20 +117,3 @@ stages:
                 - template: templates/build-template.yml
                   parameters:
                     version: latest
-
-      - job: SmokeTest
-        displayName: Test Prod Build
-        dependsOn: PromoteExtension
-        strategy:
-          matrix:
-            windows:
-              image: "windows-latest"
-            ubuntu:
-              image: "ubuntu-latest"
-        pool:
-          vmImage: $(image)
-
-        steps:
-          - template: templates/smoke-test-template.yml
-            parameters:
-              version: latest

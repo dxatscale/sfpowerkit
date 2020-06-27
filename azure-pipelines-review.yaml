@@ -13,7 +13,7 @@ pr:
 
 stages:
   - stage: Review
-    displayName: Review 
+    displayName: Review
     dependsOn: []
 
     jobs:
@@ -25,6 +25,8 @@ stages:
               image: "windows-latest"
             ubuntu:
               image: "ubuntu-latest"
+            macos:
+              image: "macOS-latest"
         pool:
           vmImage: $(image)
 
