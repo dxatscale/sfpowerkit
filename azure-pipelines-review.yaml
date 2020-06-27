@@ -32,7 +32,6 @@ stages:
         steps:
           - task: CmdLine@2
             displayName: Run Yarn
-            condition: or(eq( '${{ parameters.version }}', 'alpha'), eq( '${{ parameters.version }}', 'hotfix') )
             inputs:
               script: "yarn"
 
