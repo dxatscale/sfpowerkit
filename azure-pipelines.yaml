@@ -95,7 +95,7 @@ stages:
 
       - job: SmokeTest
         displayName: Test Hotfix Build
-        dependsOn: PromoteExtension
+        dependsOn: BuildAndPublishExtension
         strategy:
           matrix:
             windows:
