@@ -10,6 +10,12 @@ steps:
     inputs:
       sfpowerkit_version: ${{ parameters.version }}
 
+  - task: sfpwowerscript-installsfdx-task@7
+    condition: eq( '${{ parameters.version }}', 'review')
+    displayName: "Install SFPowerkit Version"
+    inputs:
+      sfpowerkit_version: latest
+
   - task: CmdLine@2
     condition: eq( '${{ parameters.version }}', 'review')
     displayName: "Install SFPowerkit Version"
