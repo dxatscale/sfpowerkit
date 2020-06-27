@@ -1,0 +1,113 @@
+trigger:
+  - main
+
+stages:
+
+  - stage: Alpha
+    displayName: Alpha
+    dependsOn: []
+    
+    jobs:
+    
+      - deployment: BuildAndPublishExtension
+        environment: alpha
+        displayName: Build and Deploy Alpha
+        pool:
+          vmImage: "ubuntu-latest"
+        strategy:
+            runOnce:
+              deploy:
+                 steps:
+                   - template: templates/build-template.yml
+                     parameters:
+                         version: alpha
+         
+      - job: SmokeTest
+        displayName: Test Alpha Build
+        dependsOn: BuildAndPublishExtension
+        strategy:
+          matrix:
+            windows:
+              image: "windows-latest"
+            ubuntu::
+              image: "ubuntu-latest"
+        pool:
+          vmImage: $(image)
+
+        steps:
+          - template: templates/smoke-test-template.yml
+            parameters:
+              version: alpha
+
+  - stage: Beta
+    displayName: Beta
+    dependsOn: Alpha
+    
+    jobs:
+    
+      - deployment: PromoteExtension
+        environment: beta
+        displayName: Promote to Beta
+        pool:
+          vmImage: "ubuntu-latest"
+        strategy:
+            runOnce:
+              deploy:
+                 steps:
+                   - template: templates/build-template.yml
+                     parameters:
+                         version: beta
+
+      - job: SmokeTest
+        displayName: Test Beta Build
+        dependsOn: PromoteExtension
+        strategy:
+          matrix:
+            windows:
+              image: "windows-latest"
+            ubuntu::
+              image: "ubuntu-latest"
+        pool:
+          vmImage: $(image)
+
+        steps:
+          - template: templates/smoke-test-template.yml
+            parameters:
+              version: beta
+
+  - stage: Prod
+    displayName: Prod
+    dependsOn: Beta
+
+    jobs:
+
+      - deployment: PromoteExtension
+        environment: prod
+        displayName: Promote to Prod
+        pool:
+          vmImage: "ubuntu-latest"
+        strategy:
+            runOnce:
+              deploy:
+                 steps:
+                   - template: templates/build-template.yml
+                     parameters:
+                         version: latest              
+
+      - job: SmokeTest
+        displayName: Test Prod Build
+        dependsOn: PromoteExtension
+        strategy:
+          matrix:
+            windows:
+              image: "windows-latest"
+            ubuntu::
+              image: "ubuntu-latest"
+        pool:
+          vmImage: $(image)
+
+        steps:
+          - template: templates/smoke-test-template.yml
+            parameters:
+              version: latest             
+          

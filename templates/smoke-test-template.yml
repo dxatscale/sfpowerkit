@@ -1,0 +1,59 @@
+parameters:
+  - name: version
+    type: string
+    default: alpha
+
+steps:
+  - task: sfpwowerscript-installsfdx-task@7
+    displayName: "Install SFPowerkit Version"
+    inputs:
+      sfpowerkit_version: ${{ parameters.version }}
+
+  - task: sfpwowerscript-authenticateorg-task@9
+    displayName: "Authenticate  HubOrg using ServiceConnection"
+    inputs:
+      salesforce_connection: "devhub_ma"
+      alias: HubOrg
+
+  - task: CmdLine@2
+    displayName: Smoke Test Org Commands
+    inputs:
+      script: |
+        sfdx sfpowerkit:org:manifest:build -o manifest.xml -u HubOrg
+        sfdx sfpowerkit:org:manifest:build -o manifest.xml -u Devhub_ma --json | jq -r .result.result[0].fileName
+        sfdx sfpowerkit:org:orgcoverage -u HubOrg
+        sfdx sfpowerkit:org:orgcoverage -u HubOrg --json | jq -r .result.classCoverage[0].id
+        sfdx sfpowerkit:org:healthcheck -u HubOrg
+
+  - task: CmdLine@2
+    displayName: Smoke Test Profile Commands
+    inputs:
+      script: "sfdx sfpowerkit:source:profile:retrieve -u HubOrg"
+      workingDirectory: "src_saleforce_packages/scratchorgpool"
+
+  - task: CmdLine@2
+    displayName: Smoke Test Package Commands
+    inputs:
+      script: |
+        sfdx sfpowerkit:package:version:info  -u HubOrg
+        sfdx sfpowerkit:package:version:info  -u HubOrg --json | jq -r .result[0].packageVersionId
+
+        sfdx sfpowerkit:package:version:codecoverage -i 04t2s000000LOsVAAW -v HubOrg
+        sfdx sfpowerkit:package:version:codecoverage -i 04t2s000000LOsVAAW -v HubOrg --json | jq -r .result[0].packageVersionId
+      workingDirectory: "src_saleforce_packages/scratchorgpool"
+
+  - task: CmdLine@2
+    displayName: Smoke Test Pool Commands
+    inputs:
+      script: |
+        sfdx sfpowerkit:pool:list -a -v HubOrg
+        sfdx sfpowerkit:pool:list -a -v HubOrg --json | jq -r .result
+      workingDirectory: "test"
+
+  - task: CmdLine@2
+    displayName: Smoke Test Pool Commands
+    inputs:
+      script: |
+        sfdx sfpowerkit:pool:list -a -v HubOrg
+        sfdx sfpowerkit:pool:list -a -v HubOrg --json | jq -r .result
+      workingDirectory: "test"
