@@ -5,9 +5,17 @@ parameters:
 
 steps:
   - task: sfpwowerscript-installsfdx-task@7
+    condition: ne( '${{ parameters.version }}', 'review')
     displayName: "Install SFPowerkit Version"
     inputs:
       sfpowerkit_version: ${{ parameters.version }}
+
+  - task: CmdLine@2
+    condition: eq( '${{ parameters.version }}', 'review')
+    displayName: "Install SFPowerkit Version"
+    inputs:
+      script: |
+        sfdx plugins:link
 
   - task: sfpwowerscript-authenticateorg-task@9
     displayName: "Authenticate  HubOrg using ServiceConnection"
