@@ -8,7 +8,7 @@ steps:
 
   - task: CmdLine@2
     displayName: "Update Build Number"
-    condition: eq( '${{ parameters.version }}', 'alpha')
+    condition: or ( eq( '${{ parameters.version }}', 'alpha'), eq( '${{ parameters.version }}', 'hotfix'))
     inputs:
       script: |
         PKG_VERSION=$(jq -r ".version" package.json)
@@ -33,7 +33,7 @@ steps:
 
   - task: CmdLine@2
     displayName: Run Yarn
-    condition: or(eq( '${{ parameters.version }}', 'alpha'), eq( '${{ parameters.version }}', 'hotfix') )
+    condition: or(eq( '${{ parameters.version }}', 'alpha'), eq( '${{ parameters.version }}', 'hotfix'), eq( '${{ parameters.version }}', 'review') )
     inputs:
       script: "yarn"
 

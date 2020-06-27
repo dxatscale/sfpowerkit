@@ -29,7 +29,7 @@ stages:
           matrix:
             windows:
               image: "windows-latest"
-            ubuntu::
+            ubuntu:
               image: "ubuntu-latest"
         pool:
           vmImage: $(image)
@@ -64,7 +64,7 @@ stages:
           matrix:
             windows:
               image: "windows-latest"
-            ubuntu::
+            ubuntu:
               image: "ubuntu-latest"
         pool:
           vmImage: $(image)
@@ -100,7 +100,7 @@ stages:
           matrix:
             windows:
               image: "windows-latest"
-            ubuntu::
+            ubuntu:
               image: "ubuntu-latest"
         pool:
           vmImage: $(image)
@@ -138,7 +138,7 @@ stages:
           matrix:
             windows:
               image: "windows-latest"
-            ubuntu::
+            ubuntu:
               image: "ubuntu-latest"
         pool:
           vmImage: $(image)
