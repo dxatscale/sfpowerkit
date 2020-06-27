@@ -1,5 +1,4 @@
 parameters:
-
   - name: version
     type: string
     default: alpha
@@ -8,19 +7,19 @@ steps:
   - checkout: self
 
   - task: CmdLine@2
-    displayName: 'Update Build Number'
-    condition: eq( '${{ parameters.version }}', 'alpha') 
+    displayName: "Update Build Number"
+    condition: or ( eq( '${{ parameters.version }}', 'alpha'), eq( '${{ parameters.version }}', 'hotfix'))
     inputs:
-        script: |
-         PKG_VERSION=$(jq -r ".version" package.json)
-         echo "##vso[build.updatebuildnumber]${PKG_VERSION}"
+      script: |
+        PKG_VERSION=$(jq -r ".version" package.json)
+        echo "##vso[build.updatebuildnumber]${PKG_VERSION}"
 
   - task: DownloadSecureFile@1
-    displayName: 'Download secure file .npmrc'
+    displayName: "Download secure file .npmrc"
     name: npmrc
     inputs:
-        secureFile: '5655f342-34a7-4ab7-a2b4-9cef25988841' # Need to change this
-        
+      secureFile: "5655f342-34a7-4ab7-a2b4-9cef25988841" # Need to change this
+
   - task: CmdLine@2
     displayName: "Copy npmrc file to packages"
     inputs:
@@ -34,24 +33,24 @@ steps:
 
   - task: CmdLine@2
     displayName: Run Yarn
-    condition: eq( '${{ parameters.version }}', 'alpha') 
+    condition: or(eq( '${{ parameters.version }}', 'alpha'), eq( '${{ parameters.version }}', 'hotfix'), eq( '${{ parameters.version }}', 'review') )
     inputs:
       script: "yarn"
 
   - task: Npm@1
-    displayName: "Publish Alpha"
-    condition: eq( '${{ parameters.version }}', 'alpha') 
+    displayName: "Publish Extension with tag ${{ parameters.version }}"
+    condition: or(eq( '${{ parameters.version }}', 'alpha'), eq( '${{ parameters.version }}', 'hotfix') )
     inputs:
       command: custom
       verbose: false
-      customCommand: "publish --tag alpha"
+      customCommand: "publish --tag ${{ parameters.version }}"
       customEndpoint: "npm-sfpowerkit"
       publishEndpoint: "npm-sfpowerkit"
 
   - task: CmdLine@2
-    displayName: 'Promote package'
+    displayName: "Promote package"
     condition: or( eq( '${{ parameters.version }}', 'beta'), eq( '${{ parameters.version }}', 'latest') )
     inputs:
-        script: |
-         PKG_VERSION=$(jq -r ".version" package.json)
-         npm dist-tag add sfpowerkit@${PKG_VERSION} ${{ parameters.version }}
+      script: |
+        PKG_VERSION=$(jq -r ".version" package.json)
+        npm dist-tag add sfpowerkit@${PKG_VERSION} ${{ parameters.version }}

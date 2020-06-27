@@ -1,0 +1,41 @@
+name: Review
+
+pr:
+  branches:
+    include:
+      - main
+      - hotfix/*
+  paths:
+    include:
+      - "*"
+    exclude:
+      - "docs/*"
+
+stages:
+  - stage: Review
+    displayName: Review
+    dependsOn: []
+
+    jobs:
+      - job: SmokeTest
+        displayName: Smoke Test PR
+        strategy:
+          matrix:
+            windows:
+              image: "windows-latest"
+            ubuntu:
+              image: "ubuntu-latest"
+            macos:
+              image: "macOS-latest"
+        pool:
+          vmImage: $(image)
+
+        steps:
+          - task: CmdLine@2
+            displayName: Run Yarn
+            inputs:
+              script: "yarn"
+
+          - template: templates/smoke-test-template.yml
+            parameters:
+              version: review
