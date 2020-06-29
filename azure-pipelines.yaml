@@ -40,6 +40,7 @@ stages:
           - template: templates/smoke-test-template.yml
             parameters:
               version: alpha
+              platform: $(image)
 
   - stage: Beta
     displayName: Beta
@@ -96,6 +97,7 @@ stages:
           - template: templates/smoke-test-template.yml
             parameters:
               version: hotfix
+              platform: $(image)
 
   - stage: Prod
     displayName: Prod
@@ -117,3 +119,4 @@ stages:
                 - template: templates/build-template.yml
                   parameters:
                     version: latest
+
