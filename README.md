@@ -456,7 +456,7 @@ OPTIONS
   -t, --tag=tag                                                                     The package version’s tag (format is packagename:tag --> core:tag consumer:tag packageN:tag)
 
   --usedependencyvalidatedpackages                                                  Use dependency validated packages that matches the version number schema provide
-  
+
   -u, --targetusername=targetusername                                               Username or alias for the target org; overrides default target org
 
   -v, --targetdevhubusername=targetdevhubusername                                   Username or alias for the dev hub org; overrides default dev hub org
@@ -930,8 +930,8 @@ EXAMPLE
 
     Successfully Retrieved the Apex Test Coverage of the org XXXX
     coverage:85
-     ID                 TYPE          NAME                  TYPE          PERCENTAGE    COMMENTS                              UNCOVERED LINES
-     ───────            ────────      ──────────────────    ────────      ──────────      ───────────────────────────────────   ──────────────────
+     ID                 PACKAGE       NAME                  TYPE          PERCENTAGE    COMMENTS                              UNCOVERED LINES
+     ───────            ────────      ──────────────────    ────────      ──────────    ───────────────────────────────────   ──────────────────
      01pxxxx            core          sampleController      ApexClass     100%
      01pxxxx            core          sampletriggerHandler  ApexClass     80%           Looks fine but target more than 85%   62;76;77;
      01pxxxx            consumer      sampleHelper          ApexClass     72%           Action required                       62;76;77;78;98;130;131

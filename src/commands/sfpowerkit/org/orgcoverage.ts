@@ -37,12 +37,12 @@ export default class OrgCoverage extends SfdxCommand {
 
   Successfully Retrieved the Apex Test Coverage of the org XXXX
   coverage:85
-  ID     		PACKAGE       NAME                  TYPE          PERCENTAGE    COMMENTS                              UNCOVERED LINES
-  ───────		────────      ──────────────────    ────────      ──────────	  ───────────────────────────────────   ──────────────────
-  01pxxxx		core          sampleController      ApexClass     100%
-  01pxxxx		core          sampletriggerHandler  ApexClass     80%           Looks fine but target more than 85%   62;76;77;
-  01pxxxx		consumer      sampleHelper          ApexClass     72%           Action required                       62;76;77;78;98;130;131
-  01qxxxx		consumer      sampleTrigger         ApexTrigger   100%
+  ID                 PACKAGE       NAME                  TYPE          PERCENTAGE    COMMENTS                              UNCOVERED LINES
+  ───────            ────────      ──────────────────    ────────      ──────────    ───────────────────────────────────   ──────────────────
+  01pxxxx            core          sampleController      ApexClass     100%
+  01pxxxx            core          sampletriggerHandler  ApexClass     80%           Looks fine but target more than 85%   62;76;77;
+  01pxxxx            consumer      sampleHelper          ApexClass     72%           Action required                       62;76;77;78;98;130;131
+  01qxxxx            consumer      sampleTrigger         ApexTrigger   100%
   Output testResult/output.csv is generated successfully
   `
   ];
@@ -216,17 +216,14 @@ export default class OrgCoverage extends SfdxCommand {
       metadataMap
     );
 
-    let subjectIdList: String[] = [];
-    for (let subjectId of metadataMap.keys()) {
-      subjectIdList.push(subjectId);
-    }
+    let subjectKeyPrefixList: String[] = ["01p", "01q"];
 
     let packageMember: Map<
       string,
       string
-    > = await DependencyImpl.getMemberVsPackageNameMapByMemberId(
+    > = await DependencyImpl.getMemberVsPackageNameMapByKeyPrefix(
       conn,
-      subjectIdList
+      subjectKeyPrefixList
     );
 
     let metadataVsPackageMap: Map<string, string> = new Map<string, string>();
