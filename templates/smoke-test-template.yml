@@ -34,7 +34,7 @@ steps:
     inputs:
       script: |
         sfdx sfpowerkit:org:manifest:build -o manifest.xml -u HubOrg
-        sfdx sfpowerkit:org:manifest:build -o manifest.xml -u Devhub_ma --json | jq -r .result.result[0].fileName
+        sfdx sfpowerkit:org:manifest:build -o manifest.xml -u HubOrg --json | jq -r .result.result[0].fileName
         sfdx sfpowerkit:org:orgcoverage -u HubOrg
         sfdx sfpowerkit:org:orgcoverage -u HubOrg --json | jq -r .result.classCoverage[0].id
         sfdx sfpowerkit:org:healthcheck -u HubOrg
