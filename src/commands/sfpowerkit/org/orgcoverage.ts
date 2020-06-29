@@ -65,8 +65,6 @@ export default class OrgCoverage extends SfdxCommand {
   protected static requiresUsername = true;
 
   public async run(): Promise<AnyJson> {
-    rimraf.sync("temp_sfpowerkit");
-
     if (this.flags.output && !this.flags.format) {
       throw new SfdxError("format is required to generate the output");
     } else if (this.flags.format && !this.flags.output) {
@@ -83,10 +81,6 @@ export default class OrgCoverage extends SfdxCommand {
     var apexcoverage = new ApexCoverage();
     apexcoverage.coverage = await this.getApexCoverage(conn);
 
-    if (this.flags.outputfile) {
-      await fs.outputJSON(this.flags.outputfile, apexcoverage);
-    }
-
     this.ux.log(
       `Successfully Retrieved the Apex Test Coverage of the org ${this.org.getOrgId()} `
     );
@@ -100,7 +94,7 @@ export default class OrgCoverage extends SfdxCommand {
     return { coverage: apexcoverage.coverage, classCoverage: classCoverage };
   }
 
-  public async getApexCoverage(conn: core.Connection) {
+  private async getApexCoverage(conn: core.Connection) {
     var encoded_querystring = querystring.escape(
       `SELECT PercentCovered FROM ApexOrgWideCoverage`
     );
@@ -119,7 +113,7 @@ export default class OrgCoverage extends SfdxCommand {
     // this.ux.logJson(health_score_query_result);
     return coverage_score_query_result.records[0].PercentCovered;
   }
-  public async getApexCoverageByDetails(
+  private async getApexCoverageByDetails(
     conn: core.Connection,
     outputDir: string
   ) {
@@ -167,17 +161,17 @@ export default class OrgCoverage extends SfdxCommand {
         "uncoveredLines"
       ]);
 
-      if (this.flags.format && this.flags.format === "json") {
+      if (outputDir && this.flags.format === "json") {
         rimraf.sync(outputDir);
         await this.generateJsonOutput(output, outputDir);
-      } else if (this.flags.format && this.flags.format === "csv") {
+      } else if (outputDir && this.flags.format === "csv") {
         rimraf.sync(outputDir);
         await this.generateCSVOutput(output, outputDir);
       }
     }
     return output;
   }
-  public async generateJsonOutput(testResult: AnyJson, outputDir: string) {
+  private async generateJsonOutput(testResult: AnyJson, outputDir: string) {
     let outputJsonPath = `${outputDir}/output.json`;
     let dir = path.parse(outputJsonPath).dir;
     if (!fs.existsSync(dir)) {
@@ -186,7 +180,7 @@ export default class OrgCoverage extends SfdxCommand {
     fs.writeFileSync(outputJsonPath, JSON.stringify(testResult));
     this.ux.log(`Output ${outputDir}/output.json is generated successfully`);
   }
-  public async generateCSVOutput(testResult: any[], outputDir: string) {
+  private async generateCSVOutput(testResult: any[], outputDir: string) {
     let outputcsvPath = `${outputDir}/output.csv`;
     let dir = path.parse(outputcsvPath).dir;
     if (!fs.existsSync(dir)) {
@@ -202,7 +196,7 @@ export default class OrgCoverage extends SfdxCommand {
     this.ux.log(`Output ${outputDir}/output.csv is generated successfully`);
   }
 
-  public async getmetadataVsPackageMap(conn: core.Connection) {
+  private async getmetadataVsPackageMap(conn: core.Connection) {
     let metadataMap: Map<string, MetadataSummary> = new Map<
       string,
       MetadataSummary
