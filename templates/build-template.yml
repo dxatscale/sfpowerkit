@@ -33,6 +33,7 @@ steps:
 
   - task: CmdLine@2
     displayName: Run Yarn
+    continueOnError: true
     condition: or(eq( '${{ parameters.version }}', 'alpha'), eq( '${{ parameters.version }}', 'hotfix'), eq( '${{ parameters.version }}', 'review') )
     inputs:
       script: "yarn"
