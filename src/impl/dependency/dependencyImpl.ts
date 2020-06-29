@@ -197,13 +197,13 @@ export default class DependencyImpl {
     }
     return packageMember;
   }
-  public static async getMemberVsPackageNameMapByMemberId(
+  public static async getMemberVsPackageNameMapByKeyPrefix(
     conn: core.Connection,
-    subjectIds: String[]
+    subjectKeyPrefixList: String[]
   ): Promise<Map<string, string>> {
     let query =
       `SELECT SubjectId, SubscriberPackage.Name ` +
-      `FROM Package2Member  WHERE (SubjectManageableState = 'installed' OR SubjectManageableState = 'installedEditable') AND SubjectId IN ('${subjectIds.join(
+      `FROM Package2Member  WHERE (SubjectManageableState = 'installed' OR SubjectManageableState = 'installedEditable') AND SubjectKeyPrefix IN ('${subjectKeyPrefixList.join(
         "','"
       )}') ORDER BY SubjectId `;
 
