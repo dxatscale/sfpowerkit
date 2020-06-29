@@ -9,15 +9,22 @@ parameters:
 
 steps:
   - task: sfpwowerscript-installsfdx-task@7
+    condition: ne( '${{ parameters.version }}', 'review')
     displayName: "Install SFDX"
     inputs:
       sfpowerkit_version: ${{ parameters.version }}
+
+  - task: sfpwowerscript-installsfdx-task@7
+    condition: eq( '${{ parameters.version }}', 'review')
+    displayName: "Install SFDX"
+    inputs:
+      sfpowerkit_version: latest
 
   - task: CmdLine@2
     condition: eq( '${{ parameters.platform }}', 'macOS-latest')
     displayName: "Install sfpowerkit"
     inputs:
-       script: |
+      script: |
         echo y | sfdx plugins:install sfpowerkit
 
   - task: CmdLine@2
