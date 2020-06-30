@@ -21,7 +21,7 @@ steps:
       sfpowerkit_version: latest
 
   - task: CmdLine@2
-    condition: eq( '${{ parameters.platform }}', 'macOS-latest')
+    condition: eq( $(Agent.OS), 'Darwin')
     displayName: "Install sfpowerkit"
     inputs:
       script: |
