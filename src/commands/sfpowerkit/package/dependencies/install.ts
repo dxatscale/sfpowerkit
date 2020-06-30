@@ -1,5 +1,5 @@
-//Code is basically same from https://github.com/texei/texei-sfdx-plugin
-// Just updated it for the revised cli core
+//Code initially based from https://github.com/texei/texei-sfdx-plugin
+//Updated to reflect mono repo, individual package and skip install if already installed scenarios
 
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { JsonArray, JsonMap } from "@salesforce/ts-types";
