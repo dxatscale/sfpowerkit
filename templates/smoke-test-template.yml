@@ -21,11 +21,11 @@ steps:
       sfpowerkit_version: latest
 
   - task: CmdLine@2
-    condition: eq( $(Agent.OS), 'Darwin')
     displayName: "Install sfpowerkit"
+    condition: or ( eq( '${{ parameters.version }}', 'alpha'), eq( '${{ parameters.version }}', 'hotfix'))
     inputs:
       script: |
-        echo y | sfdx plugins:install sfpowerkit
+        echo y | sfdx plugins:install sfpowerkit@${{ parameters.version }}
 
   - task: CmdLine@2
     condition: eq( '${{ parameters.version }}', 'review')
