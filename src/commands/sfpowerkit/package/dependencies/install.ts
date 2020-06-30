@@ -123,9 +123,6 @@ export default class Install extends SfdxCommand {
 
     let individualpackage = this.flags.individualpackage;
 
-    // Getting Package
-    const packagesToInstall = [];
-
     const packageDirectories =
       (project.get("packageDirectories") as JsonArray) || [];
 
@@ -162,6 +159,9 @@ export default class Install extends SfdxCommand {
       }
     }
 
+    // Getting Package
+    let packagesToInstall: Map<String, JsonMap> = new Map<String, JsonMap>();
+
     for (let packageDirectory of packageDirectories) {
       packageDirectory = packageDirectory as JsonMap;
 
@@ -180,49 +180,54 @@ export default class Install extends SfdxCommand {
           `\nPackage dependencies found for package directory ${packageDirectory.path}`
         );
         for (const dependency of dependencies as JsonArray) {
-          const packageInfo = {} as JsonMap;
+          let packageInfo = {} as JsonMap;
 
-          const {
-            package: dependentPackage,
-            versionNumber
-          } = dependency as JsonMap;
+          const { package: packageName, versionNumber } = dependency as JsonMap;
 
-          packageInfo.dependentPackage = dependentPackage;
+          packageInfo.packageName = packageName;
 
           packageInfo.versionNumber = versionNumber;
 
-          const packageVersionId = await this.getPackageVersionId(
-            dependentPackage,
-            versionNumber
-          );
+          let packageVersionDetail: {
+            versionId;
+            versionNumber;
+          } = await this.getPackageVersionDetails(packageName, versionNumber);
 
-          packageInfo.packageVersionId = packageVersionId;
+          packageInfo.packageVersionId = packageVersionDetail.versionId;
+          packageInfo.versionNumber = packageVersionDetail.versionNumber;
 
           if (individualpackage) {
             if (
-              packageInfo.dependentPackage.toString() === individualpackage ||
+              packageInfo.packageName.toString() === individualpackage ||
               packageInfo.packageVersionId.toString() === individualpackage
             ) {
-              packagesToInstall.push(packageInfo);
+              packagesToInstall.set(
+                packageInfo.packageVersionId.toString(),
+                packageInfo
+              );
               continue;
             }
           } else {
             if (this.flags.updateall) {
-              packagesToInstall.push(packageInfo);
+              packagesToInstall.set(
+                packageInfo.packageVersionId.toString(),
+                packageInfo
+              );
             } else {
               if (
-                !installedpackages.includes(packageVersionId) &&
-                !monoRepoPackages.includes(packageInfo.dependentPackage)
+                !installedpackages.includes(packageInfo.packageVersionId) &&
+                !monoRepoPackages.includes(packageInfo.packageName)
               ) {
-                packagesToInstall.push(packageInfo);
+                packagesToInstall.set(
+                  packageInfo.packageVersionId.toString(),
+                  packageInfo
+                );
               }
             }
           }
 
           this.ux.log(
-            `    ${packageInfo.packageVersionId} : ${
-              packageInfo.dependentPackage
-            }${
+            `    ${packageInfo.packageVersionId} : ${packageInfo.packageName}${
               packageInfo.versionNumber === undefined
                 ? ""
                 : " " + packageInfo.versionNumber
@@ -236,7 +241,7 @@ export default class Install extends SfdxCommand {
       }
     }
 
-    if (packagesToInstall.length > 0) {
+    if (packagesToInstall.size > 0) {
       // Installing Packages
       let installationKeyMap: Map<string, string> = new Map<string, string>();
 
@@ -249,12 +254,24 @@ export default class Install extends SfdxCommand {
         );
       }
 
-      this.ux.log("\n");
+      let packagesToInstallArray = Array.from(packagesToInstall.values());
 
-      for (let packageInfo of packagesToInstall) {
+      this.ux.log(
+        `\nThe following dependencies will be installed in the org ${username} in below order`
+      );
+      this.ux.table(packagesToInstallArray, [
+        "packageName",
+        "versionNumber",
+        "packageVersionId"
+      ]);
+
+      this.ux.log(`\n`);
+      for (let packageInfo of packagesToInstallArray) {
         packageInfo = packageInfo as JsonMap;
         if (
-          result.installedPackages.hasOwnProperty(packageInfo.packageVersionId)
+          result.installedPackages.hasOwnProperty(
+            packageInfo.packageVersionId.toString()
+          )
         ) {
           this.ux.log(
             `PackageVersionId ${packageInfo.packageVersionId} already installed. Skipping...`
@@ -277,11 +294,9 @@ export default class Install extends SfdxCommand {
         // INSTALLATION KEY
         if (
           installationKeyMap &&
-          installationKeyMap.has(packageInfo.dependentPackage.toString())
+          installationKeyMap.has(packageInfo.packageName.toString())
         ) {
-          let key = installationKeyMap.get(
-            packageInfo.dependentPackage.toString()
-          );
+          let key = installationKeyMap.get(packageInfo.packageName.toString());
           args.push("-k");
           args.push(`${key}`);
         }
@@ -305,7 +320,7 @@ export default class Install extends SfdxCommand {
 
         this.ux.log(
           `Installing package ${packageInfo.packageVersionId} : ${
-            packageInfo.dependentPackage
+            packageInfo.packageName
           }${
             packageInfo.versionNumber === undefined
               ? ""
@@ -326,7 +341,9 @@ export default class Install extends SfdxCommand {
 
         this.ux.log("\n");
 
-        result.installedPackages[packageInfo.packageVersionId] = packageInfo;
+        result.installedPackages[
+          packageInfo.packageVersionId.toString()
+        ] = packageInfo;
       }
     } else {
       this.ux.log(
@@ -337,8 +354,11 @@ export default class Install extends SfdxCommand {
     return { message: result };
   }
 
-  private async getPackageVersionId(name, version) {
-    let packageId;
+  private async getPackageVersionDetails(
+    name,
+    version
+  ): Promise<{ versionId; versionNumber }> {
+    let packageDetail: { versionId; versionNumber };
 
     // Keeping original name so that it can be used in error message if needed
     let packageName = name;
@@ -351,7 +371,7 @@ export default class Install extends SfdxCommand {
 
     if (packageName.startsWith(packageVersionIdPrefix)) {
       // Package2VersionId is set directly
-      packageId = packageName;
+      packageDetail = { versionId: packageName, versionNumber: version };
     } else if (packageName.startsWith(packageIdPrefix)) {
       if (!version) {
         throw new core.SfdxError(`version number is mandatory for ${name}`);
@@ -360,7 +380,7 @@ export default class Install extends SfdxCommand {
       // Get Package version id from package + versionNumber
       const vers = version.split(".");
       let query =
-        "Select SubscriberPackageVersionId, IsPasswordProtected, IsReleased ";
+        "Select SubscriberPackageVersionId, IsPasswordProtected, IsReleased, MajorVersion, MinorVersion, PatchVersion,BuildNumber ";
       query += "from Package2Version ";
       query += `where Package2Id='${packageName}' and MajorVersion=${vers[0]} and MinorVersion=${vers[1]} and PatchVersion=${vers[2]} `;
 
@@ -381,7 +401,7 @@ export default class Install extends SfdxCommand {
         query += `and Tag='${this.tagMap.get(name).trim()}' `;
       }
 
-      query += "ORDER BY BuildNumber,Createddate DESC Limit 1";
+      query += "ORDER BY BuildNumber DESC, createddate DESC Limit 1";
 
       // Query DevHub to get the expected Package2Version
       const conn = this.hubOrg.getConnection();
@@ -392,11 +412,13 @@ export default class Install extends SfdxCommand {
         const errorMessage = `Unable to find SubscriberPackageVersionId for dependent package ${name}`;
         throw new core.SfdxError(errorMessage);
       } else {
-        packageId = resultPackageId.records[0].SubscriberPackageVersionId;
+        let versionId = resultPackageId.records[0].SubscriberPackageVersionId;
+        let versionNumber = `${resultPackageId.records[0].MajorVersion}.${resultPackageId.records[0].MinorVersion}.${resultPackageId.records[0].PatchVersion}.${resultPackageId.records[0].BuildNumber}`;
+        packageDetail = { versionId: versionId, versionNumber: versionNumber };
       }
     }
 
-    return packageId;
+    return packageDetail;
   }
 
   private async getInstalledPackages(targetOrg: string) {
