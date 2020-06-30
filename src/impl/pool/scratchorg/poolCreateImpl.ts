@@ -162,6 +162,13 @@ export default class PoolCreateImpl {
           ipRangeExecPromises.push(resultForIPRelaxation);
         }
 
+        
+
+    //Wait for scripts to finish execution
+    if (this.poolConfig.pool.relax_ip_ranges)
+      this.ipRangeExecResults = await Promise.all(ipRangeExecPromises);
+
+      
         if (this.scriptFileExists) {
           let result = this.scriptExecutorWrappedForBottleneck(
             this.poolConfig.pool.script_file_path,
@@ -184,9 +191,6 @@ export default class PoolCreateImpl {
       }
     }
 
-    //Wait for scripts to finish execution
-    if (this.poolConfig.pool.relax_ip_ranges)
-      this.ipRangeExecResults = await Promise.all(ipRangeExecPromises);
 
     //Get IP Range results
     if (!isNullOrUndefined(this.poolConfig.pool.relax_ip_ranges))
@@ -376,7 +380,7 @@ export default class PoolCreateImpl {
 
         SFPowerkit.log(
           `Failed to execute scripts for ${scratchOrg.username}.. Returning to Pool`,
-          LoggerLevel.WARN
+          LoggerLevel.ERROR
         );
 
         try {
