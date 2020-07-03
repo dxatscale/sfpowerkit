@@ -48,6 +48,7 @@
     "tslib": "1",
     "unzip-stream": "0.3.0",
     "unzipper": "0.10.5",
+    "xml-formatter": "^2.1.2",
     "xml2js": "^0.4.23"
   },
   "devDependencies": {
