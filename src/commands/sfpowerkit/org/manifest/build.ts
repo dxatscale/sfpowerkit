@@ -38,6 +38,10 @@ export default class Build extends SfdxCommand {
       char: "x",
       description: messages.getMessage("excludeManagedFlagDescription")
     }),
+    includechilds: flags.boolean({
+      char: "c",
+      description: messages.getMessage("includeChildsFlagDescription")
+    }),
     outputfile: flags.filepath({
       char: "o",
       description: messages.getMessage("outputFileFlagDescription")
