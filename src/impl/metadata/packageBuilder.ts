@@ -193,6 +193,21 @@ export class Packagexml {
           this.ipPromise = promise.then(); // clone promise
         }
         unfolderedObjects.push(promise);
+        if (
+          object.childXmlNames &&
+          object.childXmlNames.length > 0 &&
+          this.configs.includeChilds
+        ) {
+          for (let child of object.childXmlNames) {
+            const promise = this.conn.metadata.list(
+              {
+                type: child
+              },
+              this.configs.apiVersion
+            );
+            unfolderedObjects.push(promise);
+          }
+        }
       }
     }
   }
@@ -367,6 +382,7 @@ export class Packagexml {
 export class BuildConfig {
   public quickFilters: string[];
   public excludeManaged: boolean;
+  public includeChilds: boolean;
   public apiVersion: string;
   public targetDir: string;
   public outputFile: string;
@@ -374,6 +390,7 @@ export class BuildConfig {
   constructor(flags: object, apiVersion: string) {
     // flags always take precendence over configs from file
     this.excludeManaged = flags["excludemanaged"];
+    this.includeChilds = flags["includechilds"];
     this.apiVersion = flags["apiversion"] || apiVersion;
     this.quickFilters = flags["quickfilter"]
       ? flags["quickfilter"].split(",").map(elem => {

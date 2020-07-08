@@ -1,5 +1,5 @@
 {
-  "version": "1.46.4",
+  "version": "2.0.1",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -1282,7 +1282,7 @@
     "sfpowerkit:org:manifest:build": {
       "id": "sfpowerkit:org:manifest:build",
       "description": "Generate a complete manifest of all the metadata from the specified org. Once the manifest is generated use source:retrieve or mdapi:retrieve to retrieve the metadata.",
-      "usage": "<%= command.id %> [-q <string>] [-x] [-o <filepath>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "usage": "<%= command.id %> [-q <string>] [-x] [-c] [-o <filepath>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],
@@ -1341,6 +1341,13 @@
           "type": "boolean",
           "char": "x",
           "description": "exclude managed packages components from the manifest",
+          "allowNo": false
+        },
+        "includechilds": {
+          "name": "includechilds",
+          "type": "boolean",
+          "char": "c",
+          "description": "Set to true to include child Metadata in the generated package.xml.",
           "allowNo": false
         },
         "outputfile": {
