@@ -65,17 +65,21 @@ export class SFPowerkit {
   }
 
   public static async getProjectDirectories() {
-    if (!SFPowerkit.projectDirectories) {
+    try {
+      if (!SFPowerkit.projectDirectories) {
+        SFPowerkit.projectDirectories = [];
+        const dxProject = await SfdxProject.resolve();
+        const project = await dxProject.retrieveSfdxProjectJson();
+        let packages = (project.get("packageDirectories") as any[]) || [];
+        packages.forEach(element => {
+          SFPowerkit.projectDirectories.push(element.path);
+          if (element.default) {
+            SFPowerkit.defaultFolder = element.path;
+          }
+        });
+      }
+    } catch (e) {
       SFPowerkit.projectDirectories = [];
-      const dxProject = await SfdxProject.resolve();
-      const project = await dxProject.retrieveSfdxProjectJson();
-      let packages = (project.get("packageDirectories") as any[]) || [];
-      packages.forEach(element => {
-        SFPowerkit.projectDirectories.push(element.path);
-        if (element.default) {
-          SFPowerkit.defaultFolder = element.path;
-        }
-      });
     }
     return SFPowerkit.projectDirectories;
   }

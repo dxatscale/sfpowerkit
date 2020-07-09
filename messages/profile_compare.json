@@ -1,0 +1,4 @@
+{
+  "commandDescription": "Compare profiles configuration and generate an excel file that shows differences at glance.",
+  "profileListFlagDescription": "comma separated list of profiles to be compared. If not provided, all profiles from org will be compared."
+}
