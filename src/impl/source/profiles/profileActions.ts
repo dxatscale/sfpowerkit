@@ -6,11 +6,19 @@ import { retrieveMetadata } from "../../../utils/retrieveMetadata";
 
 import { Connection, Org } from "@salesforce/core";
 import ProfileRetriever from "../../metadata/retriever/profileRetriever";
+import MetadataFiles from "../../../impl/metadata/metadataFiles";
+import * as util from "util";
+import * as _ from "lodash";
+import * as fs from "fs-extra";
+import * as xml2js from "xml2js";
+import ProfileWriter from "../../../impl/metadata/writer/profileWriter";
+import Profile from "../../../impl/metadata/schema";
 
 export default abstract class ProfileActions {
   protected conn: Connection;
   protected debugFlag: boolean;
   protected profileRetriever: ProfileRetriever;
+  protected metadataFiles: MetadataFiles;
 
   public constructor(public org: Org, debugFlag?: boolean) {
     if (this.org !== undefined) {
@@ -32,16 +40,25 @@ export default abstract class ProfileActions {
       deleted: [],
       updated: []
     };
+    SFPowerkit.log(
+      "getProfileFullNamesWithLocalStatus: Loading metadata files",
+      LoggerLevel.DEBUG
+    );
     let metadataFiles = METADATA_INFO.Profile.files || [];
 
+    SFPowerkit.log("Generating path for new profiles", LoggerLevel.DEBUG);
     //generate path for new profiles
-    let profilePath = path.join(
-      process.cwd(),
-      await SFPowerkit.getDefaultFolder(),
-      "main",
-      "default",
-      "profiles"
-    );
+    let profilePath = path.join(process.cwd(), "main", "default", "profiles");
+    try {
+      profilePath = path.join(
+        process.cwd(),
+        await SFPowerkit.getDefaultFolder(),
+        "main",
+        "default",
+        "profiles"
+      );
+    } catch (e) {}
+
     if (metadataFiles && metadataFiles.length > 0) {
       profilePath = path.dirname(metadataFiles[0]);
     } else {
@@ -159,5 +176,106 @@ export default abstract class ProfileActions {
     }
     //metadataFiles = metadataFiles.sort();
     return Promise.resolve(profilesStatus);
+  }
+
+  protected async readProfileFromFS(
+    srcFolders: string[],
+    profileList: string[]
+  ) {
+    if (_.isNil(srcFolders) || srcFolders.length === 0) {
+      srcFolders = await SFPowerkit.getProjectDirectories();
+    }
+    this.metadataFiles = new MetadataFiles();
+    srcFolders.forEach(srcFolder => {
+      let normalizedPath = path.join(process.cwd(), srcFolder);
+      this.metadataFiles.loadComponents(normalizedPath);
+    });
+
+    profileList = profileList.map(element => {
+      return element + METADATA_INFO.Profile.sourceExtension;
+    });
+
+    if (!MetadataFiles.sourceOnly) {
+      await this.profileRetriever.loadSupportedPermissions();
+    }
+
+    let profiles: Profile[] = [];
+    for (let count = 0; count < METADATA_INFO.Profile.files.length; count++) {
+      let profileComponent = METADATA_INFO.Profile.files[count];
+      if (
+        profileList.length == 0 ||
+        profileList.includes(path.basename(profileComponent))
+      ) {
+        SFPowerkit.log(
+          "Reconciling profile " + path.basename(profileComponent),
+          LoggerLevel.INFO
+        );
+
+        let profileXmlString = fs.readFileSync(profileComponent);
+        const parser = new xml2js.Parser({ explicitArray: true });
+        const parseString = util.promisify(parser.parseString);
+        let parseResult = await parseString(profileXmlString);
+        let profileWriter = new ProfileWriter();
+
+        let profileObj: Profile = profileWriter.toProfile(parseResult.Profile); // as Profile
+        profiles.push(profileObj);
+      }
+    }
+    return profiles;
+  }
+  protected async readProfileFromOrg(conn: Connection, profileList: string[]) {
+    SFPowerkit.log("Retrieving profiles", LoggerLevel.DEBUG);
+    SFPowerkit.log("Requested  profiles are..", LoggerLevel.DEBUG);
+    SFPowerkit.log(profileList, LoggerLevel.DEBUG);
+
+    let profileStatus = await this.getProfileFullNamesWithLocalStatus(
+      profileList
+    );
+    SFPowerkit.log(profileStatus, LoggerLevel.DEBUG);
+
+    let metadataFiles = _.union(profileStatus.added, profileStatus.updated);
+
+    metadataFiles.sort();
+
+    SFPowerkit.log(metadataFiles, LoggerLevel.TRACE);
+    let profileNames: string[] = [];
+
+    for (let profileComponent of metadataFiles) {
+      var profileName = path.basename(
+        profileComponent,
+        METADATA_INFO.Profile.sourceExtension
+      );
+      profileNames.push(profileName);
+    }
+
+    let i: number,
+      j: number,
+      chunk: number = 10;
+    let temparray;
+    SFPowerkit.log(
+      "Number of profiles found in the target org " + profileNames.length,
+      LoggerLevel.INFO
+    );
+
+    let profiles: Profile[] = [];
+
+    for (i = 0, j = profileNames.length; i < j; i += chunk) {
+      temparray = profileNames.slice(i, i + chunk);
+      //SfPowerKit.ux.log(temparray.length);
+      let start = i + 1;
+      let end = i + chunk;
+      SFPowerkit.log(
+        "Loading profiles in batches " + start + " to " + end,
+        LoggerLevel.INFO
+      );
+
+      let metadataList = (await this.profileRetriever.loadProfiles(
+        temparray,
+        conn
+      )) as Profile[];
+
+      profiles.push(...metadataList);
+    }
+    return profiles;
   }
 }

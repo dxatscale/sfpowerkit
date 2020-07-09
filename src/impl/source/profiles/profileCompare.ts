@@ -19,22 +19,27 @@ export default class ProfileCompare extends ProfileActions {
     SFPowerkit.log("Retrieving profiles", LoggerLevel.DEBUG);
     SFPowerkit.log("Requested  profiles are..", LoggerLevel.DEBUG);
     SFPowerkit.log(profiles, LoggerLevel.DEBUG);
-
     let srcFolders = await SFPowerkit.getProjectDirectories();
 
-    //rows.push(["Profiles", "Objects"]);
-
-    var metadataList = await this.profileRetriever.loadProfiles(
+    /*
+    let profileObjs = await this.profileRetriever.loadProfiles(
       profiles,
       this.conn
     );
+    */
 
+    let profileObjs = await this.readProfileFromOrg(this.conn, profiles);
+    const workbook = new Workbook();
+    this.compareObjectPermissions(workbook, profileObjs as Profile[]);
+    await workbook.xlsx.writeFile("profileCompare.xlsx");
+  }
+
+  private compareObjectPermissions(workbook: Workbook, profileList: Profile[]) {
     let objRowHeaders = [""];
     let objPermRowHeaders = [""];
     let profileHeaderRow = ["Profiles", "Objects"];
     let permRows = [];
-    for (var count = 0; count < metadataList.length; count++) {
-      let profileObj = metadataList[count] as Profile;
+    for (let profileObj of profileList) {
       if (profileObj.objectPermissions !== undefined) {
         let objPermRow = this.writeObjectPermission(
           profileObj.fullName,
@@ -53,7 +58,7 @@ export default class ProfileCompare extends ProfileActions {
 
     console.log(rows);
 
-    const workbook = new Workbook();
+    //const workbook = new Workbook();
     const sheet = workbook.addWorksheet("Object Permissions", {
       properties: { tabColor: { argb: "FFC0000" } }
     });
@@ -64,7 +69,6 @@ export default class ProfileCompare extends ProfileActions {
     }
     sheet.mergeCells(1, 2, 1, objRowHeaders.length);
     sheet.mergeCells(1, 1, 3, 1);
-    await workbook.xlsx.writeFile("profileCompare.xlsx");
   }
 
   private writeObjectPermission(

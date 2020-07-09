@@ -34,8 +34,6 @@ const nonArayProperties = [
 ];
 
 export default class ProfileReconcile extends ProfileActions {
-  metadataFiles: MetadataFiles;
-
   public async reconcile(
     srcFolders: string[],
     profileList: string[],

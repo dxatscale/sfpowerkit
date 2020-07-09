@@ -11,8 +11,6 @@ import ProfileWriter from "../../../impl/metadata/writer/profileWriter";
 const unsupportedprofiles = [];
 
 export default class ProfileSync extends ProfileActions {
-  metadataFiles: MetadataFiles;
-
   public async sync(
     srcFolders: string[],
     profiles?: string[],
