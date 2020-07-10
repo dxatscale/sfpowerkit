@@ -1,7 +1,7 @@
 {
   "name": "sfpowerkit",
   "description": "A Salesforce DX Plugin with multiple functionalities aimed at improving development and operational workflows",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "author": {
     "name": "DXatScale",
     "email": "dxatscale@accenture.com"
@@ -48,6 +48,7 @@
     "tslib": "1",
     "unzip-stream": "0.3.0",
     "unzipper": "0.10.5",
+    "xml-formatter": "^2.1.2",
     "xml2js": "^0.4.23"
   },
   "devDependencies": {

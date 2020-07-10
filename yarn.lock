@@ -5906,6 +5906,18 @@ write@1.0.3:
   dependencies:
     mkdirp "^0.5.1"
 
+xml-formatter@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/xml-formatter/-/xml-formatter-2.1.2.tgz#2567afc255455a14f0483159d59dd0582575c104"
+  integrity sha512-zSCjkdH9DSWl1ycwWVv5XEPRMkr68S4Ev/LxNgeOljwJjJN4fXc61vFscYXUdkNC3g1tvy8hE2XTpJcAP1blBg==
+  dependencies:
+    xml-parser-xo "^3.0.0"
+
+xml-parser-xo@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/xml-parser-xo/-/xml-parser-xo-3.0.0.tgz#4d46f1962e5100f228b5f73f34c61bb798430195"
+  integrity sha512-MPPexqXBx48m3OFMQXxo7+RYhG6o6kCGflk4q4oL3uQ0b7d5NDKjHFDwUoozOTPT3WFztT13z3R9Sn0QCTIJcQ==
+
 xml2js@0.4.19:
   version "0.4.19"
   resolved "https://registry.yarnpkg.com/xml2js/-/xml2js-0.4.19.tgz#686c20f213209e94abf0d1bcf1efaa291c7827a7"

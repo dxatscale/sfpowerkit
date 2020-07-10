@@ -2,6 +2,7 @@ import Profile from "../schema";
 import { SFPowerkit } from "../../../sfpowerkit";
 import * as fs from "fs-extra";
 import * as xml2js from "xml2js";
+const format = require("xml-formatter");
 
 const nonArayProperties = [
   "custom",
@@ -24,12 +25,25 @@ export default class ProfileWriter {
       }
     }
 
-    let builder = new xml2js.Builder({ rootName: "Profile" });
+    let builder = new xml2js.Builder({
+      rootName: "Profile",
+      xmldec: { version: "1.0", encoding: "UTF-8" }
+    });
     profileObj["$"] = {
       xmlns: PROFILE_NAMESPACE
     };
     let xml = builder.buildObject(profileObj);
-    fs.writeFileSync(filePath, xml);
+
+    let formattedXml = format(xml, {
+      indentation: "    ",
+      filter: node => node.type !== "Comment",
+      collapseContent: true,
+      lineSeparator: "\n"
+    });
+
+    //console.log(formattedXml);
+
+    fs.writeFileSync(filePath, formattedXml);
   }
 
   public toXml(profileObj: Profile) {
@@ -42,12 +56,21 @@ export default class ProfileWriter {
         }
       }
     }
-    let builder = new xml2js.Builder({ rootName: "Profile" });
+    let builder = new xml2js.Builder({
+      rootName: "Profile",
+      xmldec: { version: "1.0", encoding: "UTF-8" }
+    });
     profileObj["$"] = {
       xmlns: PROFILE_NAMESPACE
     };
     let xml = builder.buildObject(profileObj);
-    return xml;
+    let formattedXml = format(xml, {
+      indentation: "    ",
+      filter: node => node.type !== "Comment",
+      collapseContent: true,
+      lineSeparator: "\n"
+    });
+    return formattedXml;
   }
 
   public toProfile(profileObj: any): Profile {
