@@ -35,6 +35,9 @@ $ sfdx plugins:link
 
 ## Commands
 
+- [sfpowerkit](#sfpowerkit)
+- [Installation](#installation)
+- [Commands](#commands)
 - [Source Related Functionalities](#source-related-functionalities)
   - [`sfpowerkit:source:pmd`](#sfpowerkitsourcepmd)
   - [`sfpowerkit:source:profile:retrieve`](#sfpowerkitsourceprofileretrieve)
@@ -75,8 +78,8 @@ $ sfdx plugins:link
   - [`sfpowerkit:org:relaxiprange`](#sfpowerkitorgrelaxiprange)
   - [`sfpowerkit:auth:login`](#sfpowerkitauthlogin)
 - [Dependency Functionalities](#dependency-functionalities)
-  - [`sfpowerkit:dependency:tree:package [Beta]`](#sfpowerkitdependencytreepackage-Beta)
-- [ScratchOrg Pooling Related Functionalities](#scratchorg-pooling-related-functionalities-beta)
+  - [`sfpowerkit:dependency:tree:package [BETA]`](#sfpowerkitdependencytreepackage-beta)
+- [ScratchOrg Pooling Related Functionalities [BETA]](#scratchorg-pooling-related-functionalities-beta)
   - [`sfpowerkit:pool:create`](#sfpowerkitpoolcreate)
   - [`sfpowerkit:pool:fetch`](#sfpowerkitpoolfetch)
   - [`sfpowerkit:pool:list`](#sfpowerkitpoollist)
@@ -1116,27 +1119,26 @@ _See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/
 
 ## `sfpowerkit:org:relaxiprange`
 
-This command sets ip range in Network access to relax security setting for a particular salesforce environment
+This command sets or removes ip range in Network access to relax security setting for a particular salesforce environment
 
 ```
 USAGE
-  $ sfdx sfpowerkit:org:relaxiprange -r <array> [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  $ sfdx sfpowerkit:org:relaxiprange [-r <array>] [--all] [--none] [-u <string>] [--apiversion <string>] [--json] [--loglevel
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -r, --range=range                                                                 (required) List of ip range with comma separated. eg,
-                                                                                    122.0.0.0-122.255.255.255,49.0.0.0-49.255.255.255
-
+  -r, --range=range                                                                 List of ip range with comma separated. eg, 122.0.0.0-122.255.255.255,49.0.0.0-49.255.255.255
   -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
-
+  --all                                                                             Relax full iprange 0.0.0.0-255.255.255.255 in the target org
   --apiversion=apiversion                                                           override the api version used for api requests made by this command
-
   --json                                                                            format output as json
-
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
+  --none                                                                            Remove all the existing iprange in the target org
 
-EXAMPLE
+EXAMPLES
   sfdx sfpowerkit:org:relaxiprange -u sandbox -r "122.0.0.0-122.255.255.255,49.0.0.0-49.255.255.255"
+  sfdx sfpowerkit:org:relaxiprange -u sandbox --all
+  sfdx sfpowerkit:org:relaxiprange -u sandbox --none
 ```
 
 ## `sfpowerkit:auth:login`
