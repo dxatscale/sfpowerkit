@@ -1,6 +1,6 @@
 # sfpowerkit
 
-[![NPM](https://img.shields.io/npm/v/sfpowerkit.svg)](https://www.npmjs.com/package/sfpowerkit) ![npm (tag)](https://img.shields.io/npm/v/sfpowerkit/beta) [![Build Status](https://dev.azure.com/dxatscale/sfpowerkit/_apis/build/status/Release?branchName=master)](https://dev.azure.com/dxatscale/sfpowerkit/_build/latest?definitionId=48&branchName=master) ![npm](https://img.shields.io/npm/dw/sfpowerkit)
+[![NPM](https://img.shields.io/npm/v/sfpowerkit.svg)](https://www.npmjs.com/package/sfpowerkit) ![npm (tag)](https://img.shields.io/npm/v/sfpowerkit/beta) [![Build Status](https://dev.azure.com/dxatscale/sfpowerkit/_apis/build/status/Release?branchName=main)](https://dev.azure.com/dxatscale/sfpowerkit/_build/latest?definitionId=48&branchName=main) ![npm](https://img.shields.io/npm/dw/sfpowerkit)
 
 A Salesforce DX Plugin with multiple functionalities aimed at improving development and operational workflows
 Read the blog here https://accenture.github.io/blog/2019/06/27/sfpowerkit.html
@@ -35,59 +35,62 @@ $ sfdx plugins:link
 
 ## Commands
 
-- [Source Related Functionalities](#source-related-functionalities)
-  - [`sfpowerkit:source:pmd`](#sfpowerkitsourcepmd)
-  - [`sfpowerkit:source:profile:retrieve`](#sfpowerkitsourceprofileretrieve)
-  - [`sfpowerkit:source:profile:reconcile`](#sfpowerkitsourceprofilereconcile)
-  - [`sfpowerkit:source:profile:merge`](#sfpowerkitsourceprofilemerge)
-  - [`sfpowerkit:source:customlabel:create`](#sfpowerkitsourcecustomlabelcreate)
-  - [`sfpowerkit:source:customlabel:reconcile`](#sfpowerkitsourcecustomlabelreconcile)
-  - [`sfpowerkit:source:customlabel:buildmanifest`](#sfpowerkitsourcecustomlabelbuildmanifest)
-  - [`sfpowerkit:source:apextestsuite:convert`](#sfpowerkitsourceapextestsuiteconvert)
-  - [`sfpowerkit:project:diff`](#sfpowerkitprojectdiff)
-  - [`sfpowerkit:project:orgdiff`](#sfpowerkitprojectorgdiff)
-  - [`sfpowerkit:project:manifest:diff`](#sfpowerkitprojectmanifestdiff)
-  - [`sfpowerkit:project:manifest:merge`](#sfpowerkitprojectmanifestmerge)
-- [Unlocked Package Related Functionalities](#unlocked-package-related-functionalities)
-  - [`sfpowerkit:package:dependencies:install`](#sfpowerkitpackagedependenciesinstall)
-  - [`sfpowerkit:package:version:codecoverage`](#sfpowerkitpackageversioncodecoverage)
-  - [`sfpowerkit:package:version:info`](#sfpowerkitpackageversioninfo)
-  - [`sfpowerkit:package:valid`](#sfpowerkitpackagevalid)
-- [Org Related Functionalities](#org-related-functionalities)
-  - [`sfpowerkit:org:destruct`](#sfpowerkitorgdestruct)
-  - [`sfpowerkit:org:connectedapp:create`](#sfpowerkitorgconnectedappcreate)
-  - [`sfpowerkit:org:connectedapp:retrieve`](#sfpowerkitorgconnectedappretrieve)
-  - [`sfpowerkit:org:duplicaterule:deactivate`](#sfpowerkitorgduplicateruledeactivate)
-  - [`sfpowerkit:org:duplicaterule:activate`](#sfpowerkitorgduplicateruleactivate)
-  - [`sfpowerkit:org:matchingrule:deactivate`](#sfpowerkitorgmatchingruledeactivate)
-  - [`sfpowerkit:org:matchingrule:activate`](#sfpowerkitorgmatchingruleactivate)
-  - [`sfpowerkit:org:trigger:deactivate`](#sfpowerkitorgtriggerdeactivate)
-  - [`sfpowerkit:org:trigger:activate`](#sfpowerkitorgtriggeractivate)
-  - [`sfpowerkit:org:healthcheck`](#sfpowerkitorghealthcheck)
-  - [`sfpowerkit:org:manifest:build`](#sfpowerkitorgmanifestbuild)
-  - [`sfpowerkit:org:orgcoverage`](#sfpowerkitorgorgcoverage)
-  - [`sfpowerkit:org:profile:diff`](#sfpowerkitorgprofilediff)
-  - [`sfpowerkit:org:sandbox:create`](#sfpowerkitorgsandboxcreate)
-  - [`sfpowerkit:org:sandbox:info`](#sfpowerkitorgsandboxinfo)
-  - [`sfpowerkit:org:sandbox:refresh`](#sfpowerkitorgsandboxrefresh)
-  - [`sfpowerkit:org:scratchorg:usage`](#sfpowerkitorgscratchorgusage)
-  - [`sfpowerkit:org:scratchorg:delete`](#sfpowerkitorgscratchorgdelete)
-  - [`sfpowerkit:org:relaxiprange`](#sfpowerkitorgrelaxiprange)
-  - [`sfpowerkit:auth:login`](#sfpowerkitauthlogin)
-- [Dependency Functionalities](#dependency-functionalities)
-  - [`sfpowerkit:dependency:tree:package [Beta]`](#sfpowerkitdependencytreepackage-Beta)
-- [ScratchOrg Pooling Related Functionalities](#scratchorg-pooling-related-functionalities-beta)
-  - [`sfpowerkit:pool:create`](#sfpowerkitpoolcreate)
-  - [`sfpowerkit:pool:fetch`](#sfpowerkitpoolfetch)
-  - [`sfpowerkit:pool:list`](#sfpowerkitpoollist)
-  - [`sfpowerkit:pool:delete`](#sfpowerkitpooldelete)
-    <!-- commands -->
+- [sfpowerkit](#sfpowerkit)
+  - [Installation](#installation)
+  - [Commands](#commands)
+  - [Source Related Functionalities](#source-related-functionalities)
+    - [`sfpowerkit:source:pmd`](#sfpowerkitsourcepmd)
+    - [`sfpowerkit:source:profile:retrieve`](#sfpowerkitsourceprofileretrieve)
+    - [`sfpowerkit:source:profile:reconcile`](#sfpowerkitsourceprofilereconcile)
+    - [`sfpowerkit:source:profile:merge`](#sfpowerkitsourceprofilemerge)
+    - [`sfpowerkit:source:customlabel:create`](#sfpowerkitsourcecustomlabelcreate)
+    - [`sfpowerkit:source:customlabel:reconcile`](#sfpowerkitsourcecustomlabelreconcile)
+    - [`sfpowerkit:source:customlabel:buildmanifest`](#sfpowerkitsourcecustomlabelbuildmanifest)
+    - [`sfpowerkit:source:apextestsuite:convert`](#sfpowerkitsourceapextestsuiteconvert)
+    - [`sfpowerkit:project:diff`](#sfpowerkitprojectdiff)
+    - [`sfpowerkit:project:orgdiff`](#sfpowerkitprojectorgdiff)
+    - [`sfpowerkit:project:manifest:diff`](#sfpowerkitprojectmanifestdiff)
+    - [`sfpowerkit:project:manifest:merge`](#sfpowerkitprojectmanifestmerge)
+  - [Unlocked Package Related Functionalities](#unlocked-package-related-functionalities)
+    - [`sfpowerkit:package:dependencies:install`](#sfpowerkitpackagedependenciesinstall)
+    - [`sfpowerkit:package:version:codecoverage`](#sfpowerkitpackageversioncodecoverage)
+    - [`sfpowerkit:package:version:info`](#sfpowerkitpackageversioninfo)
+    - [`sfpowerkit:package:valid`](#sfpowerkitpackagevalid)
+  - [Org Related Functionalities](#org-related-functionalities)
+    - [`sfpowerkit:org:destruct`](#sfpowerkitorgdestruct)
+    - [`sfpowerkit:org:connectedapp:create`](#sfpowerkitorgconnectedappcreate)
+    - [`sfpowerkit:org:connectedapp:retrieve`](#sfpowerkitorgconnectedappretrieve)
+    - [`sfpowerkit:org:duplicaterule:deactivate`](#sfpowerkitorgduplicateruledeactivate)
+    - [`sfpowerkit:org:duplicaterule:activate`](#sfpowerkitorgduplicateruleactivate)
+    - [`sfpowerkit:org:matchingrule:deactivate`](#sfpowerkitorgmatchingruledeactivate)
+    - [`sfpowerkit:org:matchingrule:activate`](#sfpowerkitorgmatchingruleactivate)
+    - [`sfpowerkit:org:trigger:deactivate`](#sfpowerkitorgtriggerdeactivate)
+    - [`sfpowerkit:org:trigger:activate`](#sfpowerkitorgtriggeractivate)
+    - [`sfpowerkit:org:healthcheck`](#sfpowerkitorghealthcheck)
+    - [`sfpowerkit:org:manifest:build`](#sfpowerkitorgmanifestbuild)
+    - [`sfpowerkit:org:orgcoverage`](#sfpowerkitorgorgcoverage)
+    - [`sfpowerkit:org:profile:diff`](#sfpowerkitorgprofilediff)
+    - [`sfpowerkit:org:sandbox:create`](#sfpowerkitorgsandboxcreate)
+    - [`sfpowerkit:org:sandbox:info`](#sfpowerkitorgsandboxinfo)
+    - [`sfpowerkit:org:sandbox:refresh`](#sfpowerkitorgsandboxrefresh)
+    - [`sfpowerkit:org:scratchorg:usage`](#sfpowerkitorgscratchorgusage)
+    - [`sfpowerkit:org:scratchorg:delete`](#sfpowerkitorgscratchorgdelete)
+    - [`sfpowerkit:org:relaxiprange`](#sfpowerkitorgrelaxiprange)
+    - [`sfpowerkit:auth:login`](#sfpowerkitauthlogin)
+  - [Dependency Functionalities](#dependency-functionalities)
+    - [`sfpowerkit:dependency:tree:package [BETA]`](#sfpowerkitdependencytreepackage-beta)
+  - [ScratchOrg Pooling Related Functionalities [BETA]](#scratchorg-pooling-related-functionalities-beta)
+    - [`sfpowerkit:pool:create`](#sfpowerkitpoolcreate)
+    - [`sfpowerkit:pool:fetch`](#sfpowerkitpoolfetch)
+    - [`sfpowerkit:pool:list`](#sfpowerkitpoollist)
+    - [`sfpowerkit:pool:delete`](#sfpowerkitpooldelete)
+      <!-- commands -->
 
 ## Source Related Functionalities
 
 These commands manipulate the metadata configuration/code locally or during the packaging process.
 
-## `sfpowerkit:source:pmd`
+### `sfpowerkit:source:pmd`
 
 This command is a wrapper around PMD ( downloads PMD for the first time) with some predefined defaults, such as ruleset, output format, output file. The command is to be run from the project directory
 
@@ -113,7 +116,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\source\pmd.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/pmd.ts)_
 
-## `sfpowerkit:source:profile:retrieve`
+### `sfpowerkit:source:profile:retrieve`
 
 Retrieve profiles from the salesforce org with all its associated permissions. Common use case for this command is to migrate profile changes from a integration environment to other higher environments [overcomes SFDX CLI Profile retrieve issue where it doesnt fetch the full profile unless the entire metadata is present in source], or retrieving profiles from production to lower environments for testing.
 
@@ -139,7 +142,7 @@ EXAMPLES
 
 _See code: [src\commands\sfpowerkit\profile\retrieve.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/retrieve.ts)_
 
-## `sfpowerkit:source:profile:reconcile`
+### `sfpowerkit:source:profile:reconcile`
 
 This command is used in the lower environments such as ScratchOrgs , Development / System Testing Sandboxes, where a retrieved profile from production has to be cleaned up only for the metadata that is contained in the environment or base it only as per the metadata that is contained in the packaging directory.
 
@@ -169,7 +172,7 @@ EXAMPLES
 
 _See code: [src\commands\sfpowerkit\profile\reconcile.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/reconcile.ts)_
 
-## `sfpowerkit:source:profile:merge`
+### `sfpowerkit:source:profile:merge`
 
 This command is used in the lower environments such as ScratchOrgs , Development / System Testing Sandboxes, inorder to apply the changes made in the environment to retrieved profile, so that it can be deployed to the higher environments
 
@@ -200,7 +203,7 @@ EXAMPLES
 
 _See code: [src\commands\sfpowerkit\profile\merge.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/merge.ts)_
 
-## `sfpowerkit:source:customlabel:create`
+### `sfpowerkit:source:customlabel:create`
 
 Custom Labels are org wide, hence when the metadata is pulled down from scratch org, the entire custom label metadata file is pulled down in a package repo. This results in often packaging failures, when developers forget to clean the customlabels only to contain what the package needs, as unlocked package does not support duplicate items.The custom labels has to be then cleaned up per package.
 
@@ -246,7 +249,7 @@ EXAMPLE
      Created CustomLabel FlashError in target org with core_  prefix, You may now pull and utilize the customlabel:reconcile command
 ```
 
-## `sfpowerkit:source:customlabel:reconcile`
+### `sfpowerkit:source:customlabel:reconcile`
 
 Custom Labels are org wide, hence when the metadata is pulled down from scratch org, the entire custom label metadata file is pulled down in a package repo. This results in often packaging failures, when developers forget to clean the customlabels only to contain what the package needs, as unlocked package does not support duplicate items.The custom labels has to be then cleaned up per package.
 
@@ -275,7 +278,7 @@ EXAMPLE
   Reconciled The Custom Labels, only to have core labels (labels with full name beginning with core_)
 ```
 
-## `sfpowerkit:source:customlabel:buildmanifest`
+### `sfpowerkit:source:customlabel:buildmanifest`
 
 This Command is used to build package.xml with all customlabels as members rather than wildcard \*. sfdx force:source:convert creates a package.xml with customlabels wildcard, this command helps to update the package.xml with list of label names.
 
@@ -296,7 +299,7 @@ EXAMPLE
   $ sfdx sfpowerkit:source:customlabel:buildmanifest -p project1/path/to/customlabelfile.xml,project2/path/to/customlabelfile.xml -x mdapiout/package.xml
 ```
 
-## `sfpowerkit:source:apextestsuite:convert`
+### `sfpowerkit:source:apextestsuite:convert`
 
 Converts an apex test suite to its consituent apex classes as a single line separated by commas, so that it can be used along with metadata validate only deployment
 
@@ -315,7 +318,7 @@ EXAMPLE
     "ABC2,ABC1Test"
 ```
 
-## `sfpowerkit:project:diff`
+### `sfpowerkit:project:diff`
 
 Generate a delta 'changeset' between two diff commits so that the incremental changes can be deployed to the target org.To be used for an org based deployment when the size of the metadata is large that the project cannot not be deployed in a single attempt.
 
@@ -350,7 +353,7 @@ EXAMPLE
   $  sfdx sfpowerkit:project:diff --revisionfrom revisionfrom --revisionto revisionto --output OutputFolder
 ```
 
-## `sfpowerkit:project:orgdiff`
+### `sfpowerkit:project:orgdiff`
 
 Compare source files of a project against the salesforce org and display differences. The command also add diff conflict markers in changed files to let the developer accept or reject changes manually using a git merge tool. The idea behind this command is used to track changes done on an unlocked package or a modular repo against the changes done in a higher environment. This command is not yet ready to work on a single repo against the whole metadata in the org
 
@@ -381,7 +384,7 @@ EXAMPLES
   $ sfdx sfpowerkit:project:orgdiff  --filename fileName --targetusername sandbox
 ```
 
-## `sfpowerkit:project:manifest:diff`
+### `sfpowerkit:project:manifest:diff`
 
 Generate a diff between two manifest files. This command is used to useful to generate a report on what is the difference between two org's. Use sfpowerkit org: manifest:build or similar to generate manifests
 
@@ -403,7 +406,7 @@ EXAMPLE
   $ sfdx sfpowerkit:project:manifest:diff -s source/package.xml -t target/package.xml -d output
 ```
 
-## `sfpowerkit:project:manifest:merge`
+### `sfpowerkit:project:manifest:merge`
 
 Merge multiple package.xml into single collective package.xml
 
@@ -427,7 +430,7 @@ EXAMPLE
 
 Various helper commands in aiding with Salesforce DX Unlocked Package Development
 
-## `sfpowerkit:package:dependencies:install`
+### `sfpowerkit:package:dependencies:install`
 
 Install unlocked package dependencies of a package
 
@@ -477,7 +480,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/dependencies/install.ts)_
 
-## `sfpowerkit:package:version:codecoverage`
+### `sfpowerkit:package:version:codecoverage`
 
 This command is used to get the apex test coverage details of an unlocked package
 
@@ -515,7 +518,7 @@ EXAMPLES
 
 _See code: [src\commands\sfpowerkit\package\version\codecoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/version/codecoverage.ts)_
 
-## `sfpowerkit:package:version:info`
+### `sfpowerkit:package:version:info`
 
 This command is used to fetch the version number, namespace prefix, and version id of all the installed managed/unmanaged packages in an org.
 
@@ -538,7 +541,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\package\version\codecoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/version/codecoverage.ts)_
 
-## `sfpowerkit:package:valid`
+### `sfpowerkit:package:valid`
 
 Validates a package directory to check whether it only contains valid metadata as per metadata coverage
 
@@ -577,7 +580,7 @@ _See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/Accentu
 
 These commands are helpful in managing functionalities are related to a Salesforce Org
 
-## `sfpowerkit:org:destruct`
+### `sfpowerkit:org:destruct`
 
 This is a helper command to ease the deployment of destructiveChanges.xml. The command will create the empty package.xml and package the passed destructive manifest and deploy it to the org
 
@@ -603,7 +606,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\destruct.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/destruct.ts)_
 
-## `sfpowerkit:org:connectedapp:create`
+### `sfpowerkit:org:connectedapp:create`
 
 Creates a connected app in the target org for JWT based authentication, Please note it only creates Connected App with All users may self authorize option, You would need to manually edit the policies to enable admin users are pre-approved and add your profile to this connected app. API, Web and RefreshToken Scope are added to every app that is being created.
 
@@ -636,7 +639,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/connectedapp/create.ts)_
 
-## `sfpowerkit:org:connectedapp:retrieve`
+### `sfpowerkit:org:connectedapp:retrieve`
 
 Useful if you want to retreive a connected app key especially in CI/CD system after a sandbox refresh. Use the auth command to login to the sandbox and then use this command. Use JSON format if you want to retrieve the entire metadata of the connected app, Without the json flag, it only displays the key
 
@@ -661,7 +664,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\connectedapp\retrieve.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/connectedapp/retrieve.ts)_
 
-## `sfpowerkit:org:duplicaterule:deactivate`
+### `sfpowerkit:org:duplicaterule:deactivate`
 
 Deactivates a duplicate rule in the target org. Deactivate active rules before pushing the changes to the target org
 
@@ -693,7 +696,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\duplicaterule\deactivate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/deactivate.ts)_
 
-## `sfpowerkit:org:duplicaterule:activate`
+### `sfpowerkit:org:duplicaterule:activate`
 
 Activates a matching rule in the target org
 
@@ -725,7 +728,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\duplicaterule\activate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/activate.ts)_
 
-## `sfpowerkit:org:matchingrule:deactivate`
+### `sfpowerkit:org:matchingrule:deactivate`
 
 Deactivates a matching rule in the target org, Please ensure all duplicate rules are deactivated before using this
 
@@ -756,7 +759,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\matchingrule\deactivate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/matchingrule/deactivate.ts)_
 
-## `sfpowerkit:org:matchingrule:activate`
+### `sfpowerkit:org:matchingrule:activate`
 
 Activates a matching rule in the target org, Please ensure all duplicate rules are activated before using this
 
@@ -787,7 +790,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\matchingrule\activate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/matchingrule/activate.ts)_
 
-## `sfpowerkit:org:trigger:deactivate`
+### `sfpowerkit:org:trigger:deactivate`
 
 Deactivates a trigger in the target org
 
@@ -817,7 +820,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\trigger\deactivate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/trigger/deactivate.ts)_
 
-## `sfpowerkit:org:trigger:activate`
+### `sfpowerkit:org:trigger:activate`
 
 Activates a trigger in the target org
 
@@ -847,7 +850,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\trigger\activate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/trigger/activate.ts)_
 
-## `sfpowerkit:org:healthcheck`
+### `sfpowerkit:org:healthcheck`
 
 Gets the health details of an org against the Salesforce baseline
 
@@ -869,7 +872,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\healthcheck.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/healthcheck.ts)_
 
-## `sfpowerkit:org:manifest:build`
+### `sfpowerkit:org:manifest:build`
 
 Generate a complete manifest of all the metadata from the specified org. Once the manifest is generated use source:retrieve or mdapi:retrieve to retrieve the metadata.
 
@@ -906,7 +909,7 @@ EXAMPLES
 
 _See code: [src\commands\sfpowerkit\org\manifest\build.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/manifest/build.ts)_
 
-## `sfpowerkit:org:orgcoverage`
+### `sfpowerkit:org:orgcoverage`
 
 Gets the apex tests coverage of an org
 
@@ -941,7 +944,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\orgcoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/orgcoverage.ts)_
 
-## `sfpowerkit:org:profile:diff`
+### `sfpowerkit:org:profile:diff`
 
 Compare profiles from project against target org or between two orgs (source and target).
 
@@ -969,7 +972,7 @@ EXAMPLES
 
 _See code: [src\commands\sfpowerkit\org\profile\diff.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/profile/diff.ts)_
 
-## `sfpowerkit:org:sandbox:create`
+### `sfpowerkit:org:sandbox:create`
 
 Creates a sandbox using the tooling api, ensure the user has the required permissions before using this command
 
@@ -1008,7 +1011,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\sandbox\create.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/sandbox/create.ts)_
 
-## `sfpowerkit:org:sandbox:info`
+### `sfpowerkit:org:sandbox:info`
 
 Gets the status of a sandbox
 
@@ -1032,7 +1035,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\sandbox\info.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/sandbox/info.ts)_
 
-## `sfpowerkit:org:sandbox:refresh`
+### `sfpowerkit:org:sandbox:refresh`
 
 Refresh a sandbox using the tooling api, ensure the user has the required permissions before using this command
 
@@ -1062,7 +1065,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\sandbox\refresh.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/sandbox/refresh.ts)_
 
-## `sfpowerkit:org:scratchorg:usage`
+### `sfpowerkit:org:scratchorg:usage`
 
 Gets the active count of scratch org by users in a devhub
 
@@ -1089,7 +1092,7 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/scratchorg/usage.ts)_
 
-## `sfpowerkit:org:scratchorg:delete`
+### `sfpowerkit:org:scratchorg:delete`
 
 Delete the scratch org for a paritcular user
 
@@ -1114,32 +1117,31 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/scratchorg/usage.ts)_
 
-## `sfpowerkit:org:relaxiprange`
+### `sfpowerkit:org:relaxiprange`
 
-This command sets ip range in Network access to relax security setting for a particular salesforce environment
+This command sets or removes ip range in Network access to relax security setting for a particular salesforce environment
 
 ```
 USAGE
-  $ sfdx sfpowerkit:org:relaxiprange -r <array> [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  $ sfdx sfpowerkit:org:relaxiprange [-r <array>] [--all] [--none] [-u <string>] [--apiversion <string>] [--json] [--loglevel
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -r, --range=range                                                                 (required) List of ip range with comma separated. eg,
-                                                                                    122.0.0.0-122.255.255.255,49.0.0.0-49.255.255.255
-
+  -r, --range=range                                                                 List of ip range with comma separated. eg, 122.0.0.0-122.255.255.255,49.0.0.0-49.255.255.255
   -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
-
+  --all                                                                             Relax full iprange 0.0.0.0-255.255.255.255 in the target org
   --apiversion=apiversion                                                           override the api version used for api requests made by this command
-
   --json                                                                            format output as json
-
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
+  --none                                                                            Remove any existing iprange relaxations in the target org
 
-EXAMPLE
+EXAMPLES
   sfdx sfpowerkit:org:relaxiprange -u sandbox -r "122.0.0.0-122.255.255.255,49.0.0.0-49.255.255.255"
+  sfdx sfpowerkit:org:relaxiprange -u sandbox --all
+  sfdx sfpowerkit:org:relaxiprange -u sandbox --none
 ```
 
-## `sfpowerkit:auth:login`
+### `sfpowerkit:auth:login`
 
 Allows to authenticate against an org using username/password and Security Token. Security Token requirement
 can be removed by ensuring the particular user profile is allowed to connect to Salesforce from different IP
@@ -1175,7 +1177,7 @@ EXAMPLE
 
 ## Dependency Functionalities
 
-## `sfpowerkit:dependency:tree:package [BETA]`
+### `sfpowerkit:dependency:tree:package [BETA]`
 
 This command is used to compute the dependency tree details of an unlocked package
 
@@ -1210,7 +1212,7 @@ Commands to create and maintain a pool of scratchorgs. Details on getting starte
 
 This command is of sufficient quality, however proceed with caution while adopting in your workflow
 
-## `sfpowerkit:pool:create`
+### `sfpowerkit:pool:create`
 
 Creates a pool of prebuilt scratchorgs, which can the be consumed by users or CI
 
@@ -1235,7 +1237,7 @@ EXAMPLES
   $ sfdx sfpowerkit:pool:create -f config\core_poolconfig.json -v devhub
 ```
 
-## `sfpowerkit:pool:fetch`
+### `sfpowerkit:pool:fetch`
 
 Gets an active/unused scratch org from the scratch org pool
 
@@ -1257,7 +1259,7 @@ EXAMPLES
   $ sfdx sfpowerkit:pool:fetch -t core -v devhub -m
 ```
 
-## `sfpowerkit:pool:list`
+### `sfpowerkit:pool:list`
 
 Retrieves a list of active scratch org and details from any pool. If this command is run with -m|--mypool, the command will retrieve the passwords for the pool created by the user who is executing the command.
 
@@ -1281,7 +1283,7 @@ EXAMPLES
   $ sfdx sfpowerkit:pool:list -t core -v devhub -m -a
 ```
 
-## `sfpowerkit:pool:delete`
+### `sfpowerkit:pool:delete`
 
 Deletes the pooled scratch orgs from the Scratch Org Pool
 

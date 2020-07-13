@@ -17,7 +17,9 @@ export default class RelaxIPRangeImpl {
   public static async setIp(
     conn: Connection,
     username: string,
-    ipRangeToSet: any[]
+    ipRangeToSet: any[],
+    addall: Boolean = false,
+    removeall: Boolean = false
   ): Promise<{ username: string; success: boolean }> {
     const apiversion = await conn.retrieveMaxApiVersion();
 
@@ -73,19 +75,36 @@ export default class RelaxIPRangeImpl {
         fs.readFileSync(path.resolve(resultFile))
       );
 
-      SFPowerkit.log(
-        `Ip range to set :` + JSON.stringify(ipRangeToSet),
-        LoggerLevel.INFO
-      );
+      if (addall) {
+        ipRangeToSet = this.getFullRange();
+        SFPowerkit.log(
+          `Ip range to set : 0.0.0.0-255.255.255.255`,
+          LoggerLevel.INFO
+        );
+      } else if (ipRangeToSet.length > 0) {
+        SFPowerkit.log(
+          `Ip range to set :` + JSON.stringify(ipRangeToSet),
+          LoggerLevel.INFO
+        );
+      }
 
       if (!retrieve_securitySetting.SecuritySettings.networkAccess) {
-        retrieve_securitySetting.SecuritySettings.networkAccess = {
-          ipRanges: ipRangeToSet
-        };
-        SFPowerkit.log(
-          `Currently No Ip range set in ${conn.getUsername()}`,
-          LoggerLevel.DEBUG
-        );
+        if (removeall) {
+          SFPowerkit.log(
+            `Currently No Ip range set in ${conn.getUsername()} to remove.`,
+            LoggerLevel.INFO
+          );
+          rimraf.sync(retriveLocation);
+          return { username: username, success: true };
+        } else {
+          retrieve_securitySetting.SecuritySettings.networkAccess = {
+            ipRanges: ipRangeToSet
+          };
+          SFPowerkit.log(
+            `Currently No Ip range set in ${conn.getUsername()}.`,
+            LoggerLevel.DEBUG
+          );
+        }
       } else {
         let currentRange =
           retrieve_securitySetting.SecuritySettings.networkAccess.ipRanges;
@@ -96,10 +115,12 @@ export default class RelaxIPRangeImpl {
           LoggerLevel.DEBUG
         );
 
-        if (currentRange.constructor === Array) {
-          ipRangeToSet.concat(currentRange);
-        } else {
-          ipRangeToSet.push(currentRange);
+        if (!addall && !removeall) {
+          if (currentRange.constructor === Array) {
+            ipRangeToSet.concat(currentRange);
+          } else {
+            ipRangeToSet.push(currentRange);
+          }
         }
         retrieve_securitySetting.SecuritySettings.networkAccess.ipRanges = ipRangeToSet;
       }
@@ -128,7 +149,9 @@ export default class RelaxIPRangeImpl {
       );
 
       SFPowerkit.log(
-        `Setting Ip range with ID  ${deployId.id} to ${conn.getUsername()}`,
+        `${removeall ? "Removing all" : "Setting"} Ip range with ID  ${
+          deployId.id
+        } to ${conn.getUsername()}`,
         LoggerLevel.DEBUG
       );
       let metadata_deploy_result: DeployResult = await checkDeploymentStatus(
@@ -140,17 +163,28 @@ export default class RelaxIPRangeImpl {
 
       if (!metadata_deploy_result.success) {
         SFPowerkit.log(
-          `Unable to set ip range : ${metadata_deploy_result.details["componentFailures"]["problem"]}`,
+          `Unable to ${removeall ? "remove" : "set"} ip range : ${
+            metadata_deploy_result.details["componentFailures"]["problem"]
+          }`,
           LoggerLevel.ERROR
         );
         return { username: username, success: false };
       } else {
         SFPowerkit.log(
-          `Ip range is successfully set in ${conn.getUsername()}`,
+          `Ip range is successfully ${
+            removeall ? "removed" : "set"
+          } in ${conn.getUsername()}`,
           LoggerLevel.INFO
         );
         return { username: username, success: true };
       }
     }
+  }
+  public static getFullRange() {
+    let ipRangeToSet = [];
+    for (let i = 0; i < 255; i += 2) {
+      ipRangeToSet.push({ start: `${i}.0.0.0`, end: `${i + 1}.255.255.255` });
+    }
+    return ipRangeToSet;
   }
 }
