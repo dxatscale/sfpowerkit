@@ -1,0 +1,6 @@
+{
+  "commandDescription": "Provides an audit history of the metadata change between two commit ID's",
+  "revisionFromDescription": "Base revision from which to generate the diff",
+  "revisionToDescription": "Target revision from which to generate the diff",
+  "packageDirectories": "package directories to run diff on"
+}
