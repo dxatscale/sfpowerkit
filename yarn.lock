@@ -3890,6 +3890,11 @@ ncp@~2.0.0:
   resolved "https://registry.yarnpkg.com/ncp/-/ncp-2.0.0.tgz#195a21d6c46e361d2fb1281ba38b91e9df7bdbb3"
   integrity sha1-GVoh1sRuNh0vsSgbo4uR6d9727M=
 
+nested-object-diff@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/nested-object-diff/-/nested-object-diff-1.1.0.tgz#ba410b3d10ead7059fbe89f5817f14af9e924b45"
+  integrity sha512-hxMg8mZJQ0HVMzfQcWaUn5RVgfvMZJgkcpdeJhGBWpbaHL5M341BWakZq2iEfEPZomqpQ0Ojq4bVjTNVTVyZtA==
+
 netrc-parser@^3.1.4:
   version "3.1.6"
   resolved "https://registry.yarnpkg.com/netrc-parser/-/netrc-parser-3.1.6.tgz#7243c9ec850b8e805b9bdc7eae7b1450d4a96e72"

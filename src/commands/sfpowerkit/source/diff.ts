@@ -7,10 +7,12 @@ import {
 } from "@salesforce/command";
 import * as path from "path";
 import { SFPowerkit } from "../../../sfpowerkit";
-import { fs } from "@salesforce/core";
-import * as fsextra from "fs-extra";
-import simpleGit, { SimpleGit } from "simple-git/promise";
-const parseString = require("xml2js").parseString;
+// import { fs } from "@salesforce/core";
+import * as fs from "fs-extra";
+import simpleGit, { SimpleGit } from "simple-git";
+const xml2js = require("xml2js");
+import { diff } from "nested-object-diff";
+const util = require("util");
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -97,88 +99,96 @@ export default class Diff extends SfdxCommand {
 
     let git: SimpleGit = simpleGit();
 
-    let gitDiffResult = await git.diff([
+    let gitDiffResult: string = await git.diff([
       revisionFrom,
       revisionTo,
+      "--name-only",
       "--",
       "*field-meta.xml"
     ]);
 
-    let gitDiff: string[] = gitDiffResult.split("\n");
-    let diffObj = {};
+    let filesChanged: string[] = gitDiffResult.split("\n");
+    filesChanged.pop();
+    console.log(filesChanged);
 
-    let fileStartingIndices: number[] = [];
-    gitDiff.forEach((elem, index) => {
-      // console.log(elem.match(/\+.*/));
-      if (elem.startsWith("diff")) {
-        fileStartingIndices.push(index);
+    filesChanged.forEach(async file => {
+      let fileRevFrom: string | void = await git
+        .show([`${revisionFrom}:${file}`])
+        .catch(err => {});
+
+      let fileRevTo: string | void = await git
+        .show([`${revisionTo}:${file}`])
+        .catch(err => {});
+
+      let fileObjRevFrom;
+      let fileObjRevTo;
+      let parser = new xml2js.Parser({ explicitArray: false });
+      let parseString = util.promisify(parser.parseString);
+      if (fileRevFrom) fileObjRevFrom = await parseString(fileRevFrom);
+      if (fileRevTo) fileObjRevTo = await parseString(fileRevTo);
+
+      let data_matrix = [
+        [
+          "Full Name",
+          "Metadata Type",
+          "Coordinates",
+          "Commit ID (from)",
+          "Commit ID (to)",
+          "Filepath"
+        ]
+      ];
+
+      let metadataType = Object.keys(fileObjRevTo)[0];
+      let fullName = fileObjRevTo[metadataType]["fullName"];
+      if (!fileObjRevFrom && fileObjRevTo) {
+        // Create
+        let row: string[] = [
+          fullName,
+          metadataType,
+          "N/A",
+          "N/A",
+          "Created new metadata",
+          file
+        ];
+        data_matrix.push(row);
+      } else if (fileObjRevFrom && !fileObjRevTo) {
+        // Delete
+        let row: string[] = [
+          fullName,
+          metadataType,
+          "N/A",
+          "N/A",
+          "Deleted metadata",
+          file
+        ];
+        data_matrix.push(row);
+      } else {
+        // Update
+        let changes = diff(fileObjRevFrom, fileObjRevTo);
+        changes.forEach(change => {
+          let row: string[] = [
+            fullName,
+            metadataType,
+            change.path,
+            change.lhs,
+            change.rhs,
+            file
+          ];
+          data_matrix.push(row);
+        });
       }
-    });
 
-    fileStartingIndices.forEach((elem, index, array) => {
-      let fileDiff;
-      if (index + 1 < array.length)
-        fileDiff = gitDiff.slice(elem, array[index + 1]);
-      else fileDiff = gitDiff.slice(elem);
-
-      let filename;
-      let hunks: number[] = [];
-      let newHunkFlag = true;
-      fileDiff.forEach((elem, index) => {
-        if (
-          (elem.startsWith("---") || elem.startsWith("+++")) &&
-          !elem.includes("/dev/null")
-        ) {
-          filename = elem.substring(4);
-        }
-
-        if (filename) {
-          let matchPosChange = elem.match(/^\+\s*<.*/);
-          let matchNegChange = elem.match(/^\-\s*<.*/);
-          if ((matchPosChange || matchNegChange) && newHunkFlag) {
-            hunks.push(index);
-            newHunkFlag = false;
-          } else if (!(matchPosChange || matchNegChange) && !newHunkFlag) {
-            hunks.push(index - 1);
-            newHunkFlag = true;
-          }
-        }
+      data_matrix.forEach(row => {
+        fs.writeFileSync(
+          `${process.cwd()}/changelog.csv`,
+          `${row.toString()}\n`,
+          { flag: "a" }
+        );
       });
 
-      for (let i = 0; i < hunks.length; i += 2) {
-        let startHunk = hunks[i];
-        let endHunk;
-        let hunk;
-
-        if (i + 1 < hunks.length) {
-          endHunk = hunks[i + 1];
-          hunk = fileDiff.slice(startHunk, endHunk + 1);
-        } else {
-          hunk = fileDiff.slice(startHunk); // Is this ever reached? [1, 1, 2, 2]
-        }
-
-        let posHunk = [];
-        let negHunk = [];
-        hunk.forEach(elem => {
-          if (elem.match(/^\+\s*<.*/)) posHunk.push(elem);
-          else if (elem.match(/^\-\s*<.*/)) negHunk.push(elem);
-        });
-        console.log(posHunk);
-        console.log(negHunk);
-
-        if (posHunk.length > 0 && negHunk.length == 0) {
-          let newData = posHunk;
-          let oldData = null;
-        } else if (posHunk.length == 0 && negHunk.length > 0) {
-          let newData = null;
-          let oldData = negHunk;
-        } else {
-          // Mapping
-        }
-      }
-
-      // console.log(hunks);
+      // console.log(changes);
+      // console.log(fileObjRevFrom);
+      // console.log(fileObjRevTo);
     });
-    // console.log(gitDiff);
   }
 }
