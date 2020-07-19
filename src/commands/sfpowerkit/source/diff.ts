@@ -94,8 +94,16 @@ export default class Diff extends SfdxCommand {
   public async run(): Promise<any> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
-    const revisionFrom: string = this.flags.revisionfrom;
-    const revisionTo: string = this.flags.revisionto;
+    let git: SimpleGit = simpleGit();
+
+    const revisionFrom: string = await git.revparse([
+      "--short",
+      this.flags.revisionfrom
+    ]);
+    const revisionTo: string = await git.revparse([
+      "--short",
+      this.flags.revisionto
+    ]);
 
     let packageDirectories: string[];
 
@@ -119,8 +127,6 @@ export default class Diff extends SfdxCommand {
       });
     }
 
-    let git: SimpleGit = simpleGit();
-
     let gitDiffResult: string = await git.diff([
       revisionFrom,
       revisionTo,
@@ -143,6 +149,8 @@ export default class Diff extends SfdxCommand {
     }
 
     console.log(filesChanged);
+
+    let result = {};
 
     filesChanged.forEach(async file => {
       let fileRevFrom: string | void = await git
@@ -175,40 +183,74 @@ export default class Diff extends SfdxCommand {
       let fullName = fileObjRevTo[metadataType]["fullName"];
       if (!fileObjRevFrom && fileObjRevTo) {
         // Create
-        let row: string[] = [
-          fullName,
-          metadataType,
-          "N/A",
-          "N/A",
-          "Created new metadata",
-          file
-        ];
-        data_matrix.push(row);
+        result[fullName] = {
+          type: metadataType,
+          from: revisionFrom,
+          to: revisionTo,
+          filepath: file,
+          diff: [
+            {
+              type: "A",
+              path: "N/A",
+              rhs: "NEW METADATA"
+            }
+          ]
+        };
+        // let row: string[] = [
+        //   fullName,
+        //   metadataType,
+        //   "N/A",
+        //   "N/A",
+        //   "Created new metadata",
+        //   file
+        // ];
+        // data_matrix.push(row);
       } else if (fileObjRevFrom && !fileObjRevTo) {
         // Delete
-        let row: string[] = [
-          fullName,
-          metadataType,
-          "N/A",
-          "N/A",
-          "Deleted metadata",
-          file
-        ];
-        data_matrix.push(row);
+        result[fullName] = {
+          type: metadataType,
+          from: revisionFrom,
+          to: revisionTo,
+          filepath: file,
+          diff: [
+            {
+              type: "A",
+              path: "N/A",
+              LHS: "DELETE METADATA"
+            }
+          ]
+        };
+        // let row: string[] = [
+        //   fullName,
+        //   metadataType,
+        //   "N/A",
+        //   "N/A",
+        //   "Deleted metadata",
+        //   file
+        // ];
+        // data_matrix.push(row);
       } else {
         // Update
         let changes = diff(fileObjRevFrom, fileObjRevTo);
-        changes.forEach(change => {
-          let row: string[] = [
-            fullName,
-            metadataType,
-            change.path,
-            change.lhs,
-            change.rhs,
-            file
-          ];
-          data_matrix.push(row);
-        });
+
+        result[fullName] = {
+          type: metadataType,
+          from: revisionFrom,
+          to: revisionTo,
+          filepath: file,
+          diff: changes
+        };
+        // changes.forEach(change => {
+        //   let row: string[] = [
+        //     fullName,
+        //     metadataType,
+        //     change.path,
+        //     change.lhs,
+        //     change.rhs,
+        //     file
+        //   ];
+        //   data_matrix.push(row);
+        // });
       }
 
       data_matrix.forEach(row => {
@@ -222,6 +264,8 @@ export default class Diff extends SfdxCommand {
       // console.log(changes);
       // console.log(fileObjRevFrom);
       // console.log(fileObjRevTo);
+      this.ux.logJson(result);
+      return result;
     });
   }
 }
