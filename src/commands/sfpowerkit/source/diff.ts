@@ -12,6 +12,7 @@ import * as fs from "fs-extra";
 import simpleGit, { SimpleGit } from "simple-git";
 const xml2js = require("xml2js");
 import { diff } from "nested-object-diff";
+import { isNullOrUndefined } from "util";
 const util = require("util");
 
 // Initialize Messages with the current plugin directory
@@ -95,7 +96,28 @@ export default class Diff extends SfdxCommand {
 
     const revisionFrom: string = this.flags.revisionfrom;
     const revisionTo: string = this.flags.revisionto;
-    let packageDirectories: string = this.flags.packagedirectories;
+
+    let packageDirectories: string[];
+
+    if (!isNullOrUndefined(this.flags.packagedirectories)) {
+      packageDirectories = this.flags.packagedirectories.split(",");
+      packageDirectories = packageDirectories.map(dir => {
+        return dir.trim().toLocaleLowerCase();
+      });
+
+      let projectConfig = JSON.parse(
+        fs.readFileSync("sfdx-project.json", "utf8")
+      );
+      packageDirectories.forEach(dir => {
+        let isValidPackageDir;
+        projectConfig["packageDirectories"].forEach(configPackageDir => {
+          if (dir == configPackageDir["path"].toLocaleLowerCase())
+            isValidPackageDir = true;
+        });
+        if (!isValidPackageDir)
+          throw new Error("Invalid package directory supplied");
+      });
+    }
 
     let git: SimpleGit = simpleGit();
 
@@ -104,11 +126,22 @@ export default class Diff extends SfdxCommand {
       revisionTo,
       "--name-only",
       "--",
-      "*field-meta.xml"
+      "**/objects/**/*-meta.xml"
     ]);
 
     let filesChanged: string[] = gitDiffResult.split("\n");
     filesChanged.pop();
+
+    if (!isNullOrUndefined(packageDirectories)) {
+      filesChanged = filesChanged.filter(file => {
+        let isFileInPackageDir;
+        packageDirectories.forEach(dir => {
+          if (file.includes(dir)) isFileInPackageDir = true;
+        });
+        return isFileInPackageDir;
+      });
+    }
+
     console.log(filesChanged);
 
     filesChanged.forEach(async file => {
