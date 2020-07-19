@@ -58,7 +58,7 @@ export default class PackageInfo {
     });
 
     let licenseMap = new Map();
-    if (packageNamespacePrefixList) {
+    if (packageNamespacePrefixList.length>0) {
       let packageLicensingQuery = `SELECT AllowedLicenses, UsedLicenses,ExpirationDate, NamespacePrefix, IsProvisioned, Status FROM PackageLicense  WHERE NamespacePrefix IN (${packageNamespacePrefixList})`;
       await this.conn.query(packageLicensingQuery).then(queryResult => {
         if (queryResult.records && queryResult.records.length > 0) {
