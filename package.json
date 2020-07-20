@@ -37,7 +37,7 @@
     "diff-match-patch-line-and-word": "^0.1.2",
     "fast-glob": "^3.2.2",
     "find-java-home": "^1.0.1",
-    "fs-extra": "^9.0.0",
+    "fs-extra": "^9.0.1",
     "ignore": "^5.1.4",
     "pino": "^5.15.0",
     "pino-pretty": "^3.5.0",
