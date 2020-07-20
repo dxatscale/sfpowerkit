@@ -121,6 +121,9 @@
       "sfpowerkit:source:customlabel": {
         "description": "Commands to operate on custom label"
       },
+      "sfpowerkit:source:datamodel": {
+        "description": "Commands that operate on the data model"
+      },
       "sfpowerkit:source:profile": {
         "description": "Commands that operate on profiles"
       },
