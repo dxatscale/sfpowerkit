@@ -75,4 +75,5 @@ steps:
         sfdx sfpowerkit:pool:create -f scratchorg-poolconfig.json -v HubOrg
         sfdx sfpowerkit:pool:list -a -v HubOrg
         sfdx sfpowerkit:pool:list -a -v HubOrg --json | jq -r .result
+        sfdx sfpowerkit:pool:delete -t TEST_POOL -v HubOrg
       workingDirectory: "src_saleforce_packages/scratchorgpool"
