@@ -23,7 +23,6 @@
   ],
   "bugs": "https://github.com/accenture/sfpowerkit/issues",
   "dependencies": {
-    "@pony-ci/sfdx-node": "^1.0.4",
     "@salesforce/command": "^3.0.1",
     "@salesforce/core": "^2.7.0",
     "archiver": "3.1.1",
@@ -49,7 +48,8 @@
     "unzip-stream": "0.3.0",
     "unzipper": "0.10.11",
     "xml-formatter": "^2.1.2",
-    "xml2js": "^0.4.23"
+    "xml2js": "^0.4.23",
+    "hook-std": "^2.0.0"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.22.2",

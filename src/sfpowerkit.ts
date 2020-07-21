@@ -20,6 +20,7 @@ export class SFPowerkit {
   private static sourceApiVersion: any;
   private static logger;
   public static logLevel;
+
   public static setLogLevel(logLevel: string, isJsonFormatEnabled: boolean) {
     logLevel = logLevel.toLowerCase();
     this.isJsonFormatEnabled = isJsonFormatEnabled;
@@ -58,9 +59,11 @@ export class SFPowerkit {
         break;
     }
   }
+
   public static setProjectDirectories(packagedirectories: string[]) {
     SFPowerkit.projectDirectories = packagedirectories;
   }
+
   public static async getProjectDirectories() {
     if (!SFPowerkit.projectDirectories) {
       SFPowerkit.projectDirectories = [];
@@ -76,6 +79,7 @@ export class SFPowerkit {
     }
     return SFPowerkit.projectDirectories;
   }
+
   public static async getDefaultFolder() {
     if (!SFPowerkit.defaultFolder) {
       await SFPowerkit.getProjectDirectories();
@@ -85,6 +89,7 @@ export class SFPowerkit {
   public static setDefaultFolder(defaultFolder: string) {
     SFPowerkit.defaultFolder = defaultFolder;
   }
+
   public static async getConfig() {
     if (!SFPowerkit.pluginConfig) {
       const dxProject = await SfdxProject.resolve();
@@ -98,6 +103,7 @@ export class SFPowerkit {
   public static setapiversion(apiversion: any) {
     SFPowerkit.sourceApiVersion = apiversion;
   }
+
   public static async getApiVersion(): Promise<any> {
     if (!SFPowerkit.sourceApiVersion) {
       const dxProject = await SfdxProject.resolve();
@@ -138,6 +144,7 @@ export class SFPowerkit {
   public static setUx(ux: UX) {
     this.ux = ux;
   }
+
   public static setStatus(status: string) {
     this.ux.setSpinnerStatus(status);
   }

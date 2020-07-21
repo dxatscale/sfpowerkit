@@ -1,7 +1,7 @@
 import { Connection, LoggerLevel, Org } from "@salesforce/core";
 let request = require("request-promise-native");
 import { SFPowerkit } from "../sfpowerkit";
-import { sfdx } from "@pony-ci/sfdx-node";
+import { SfdxApi } from "../sfdxnode/types";
 let retry = require("async-retry");
 import { isNullOrUndefined } from "util";
 
@@ -62,6 +62,7 @@ export default class ScratchOrgUtils {
   }
 
   public static async createScratchOrg(
+    sfdx: SfdxApi,
     id: number,
     adminEmail: string,
     config_file_path: string,
