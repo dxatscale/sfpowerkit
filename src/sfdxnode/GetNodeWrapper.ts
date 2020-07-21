@@ -1,6 +1,5 @@
 import * as path from "path";
 import { registerNamespace } from "./parallel";
-import child_process = require("child_process");
 
 export function loadSFDX(sfdxmoduleDirectory: string) {
   let salesforce_alm_path = "";

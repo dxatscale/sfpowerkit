@@ -9,7 +9,6 @@ import {
   SfdxNamespace,
   SfdxNodeMessage
 } from "./types";
-import { dirname } from "path";
 
 const createParallelCommand: CreateCommandFunc = (
   commandId: string,
