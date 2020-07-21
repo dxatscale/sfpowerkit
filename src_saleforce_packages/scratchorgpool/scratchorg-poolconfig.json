@@ -1,0 +1,8 @@
+{
+  "pool": {
+    "expiry": 1,
+    "config_file_path": "config/project-scratch-def.json",
+    "tag": "TEST_POOL",
+    "max_allocation": 1
+  }
+}
