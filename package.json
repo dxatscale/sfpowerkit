@@ -47,7 +47,7 @@
     "ts-node": "^8.10.1",
     "tslib": "1",
     "unzip-stream": "0.3.0",
-    "unzipper": "0.10.5",
+    "unzipper": "0.10.11",
     "xml-formatter": "^2.1.2",
     "xml2js": "^0.4.23"
   },
