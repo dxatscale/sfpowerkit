@@ -35,7 +35,7 @@
     "diff": "^4.0.1",
     "diff-match-patch": "^1.0.4",
     "diff-match-patch-line-and-word": "^0.1.2",
-    "fast-glob": "^3.2.2",
+    "fast-glob": "^3.2.4",
     "find-java-home": "^1.0.1",
     "fs-extra": "^9.0.0",
     "ignore": "^5.1.8",
