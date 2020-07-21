@@ -149,6 +149,12 @@ export default class PoolCreateImpl {
     //Generate Scratch Orgs
     await this.generateScratchOrgs();
 
+
+   // Setup Logging Directory
+   rimraf.sync("script_exec_outputs");
+   FileUtils.mkDirByPathSync("script_exec_outputs");
+ 
+
     // Assign workers to executed scripts
     let ts = Math.floor(Date.now() / 1000);
     for (let poolUser of this.poolConfig.poolUsers) {
@@ -572,9 +578,7 @@ export default class PoolCreateImpl {
 
     scriptFilePath = path.normalize(scriptFilePath);
 
-    rimraf.sync("script_exec_outputs");
-    FileUtils.mkDirByPathSync("script_exec_outputs");
-
+   
     if (process.platform != "win32") {
       cmd = `bash ${scriptFilePath}  ${scratchOrg.username}  ${hubOrgUserName} `;
     } else {
