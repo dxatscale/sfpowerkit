@@ -63,7 +63,7 @@ export default class Create extends SfdxCommand {
     this.flags.apiversion =
       this.flags.apiversion || (await hubConn.retrieveMaxApiVersion());
 
-    loadSFDX(this.config.dataDir);
+    loadSFDX();
 
     let scratchOrgPoolImpl = new ScratchOrgImpl(
       this.flags.configfilepath,
