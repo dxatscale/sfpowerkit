@@ -138,7 +138,7 @@ export default class Diff extends SfdxCommand {
       let data_matrix = [
         [
           "Object",
-          "Metadata",
+          "API_Name",
           "Type",
           "Operation",
           "Coordinates",
@@ -148,17 +148,17 @@ export default class Diff extends SfdxCommand {
         ]
       ];
 
-      for (let file in sourceDiffResult) {
-        for (let change of sourceDiffResult[file]["diff"]) {
+      for (let file of sourceDiffResult) {
+        for (let change of file["diff"]) {
           let row: string[] = [
-            sourceDiffResult[file]["object"],
-            sourceDiffResult[file]["fullname"],
-            sourceDiffResult[file]["type"],
+            file["object"],
+            file["api_name"],
+            file["type"],
             change["operation"],
             change["coordinates"],
             change["before"],
             change["after"],
-            file
+            file["filepath"]
           ];
           data_matrix.push(row);
         }

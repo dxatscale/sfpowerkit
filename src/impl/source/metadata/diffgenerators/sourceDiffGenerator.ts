@@ -39,12 +39,13 @@ export class SourceDiffGenerator {
 
     if (!fileObjRevFrom && fileObjRevTo) {
       // Created new file
-      diffSummary[filepath] = {
-        fullname: fullName,
+      diffSummary = {
+        api_name: fullName,
         object: objectName,
         type: metadataType,
         from: this.baseline,
         to: this.target,
+        filepath: filepath,
         diff: [
           {
             operation: "CREATE",
@@ -56,12 +57,13 @@ export class SourceDiffGenerator {
       };
     } else if (fileObjRevFrom && !fileObjRevTo) {
       // Deleted file
-      diffSummary[filepath] = {
-        fullname: fullName,
+      diffSummary = {
+        api_name: fullName,
         object: objectName,
         type: metadataType,
         from: this.baseline,
         to: this.target,
+        filepath: filepath,
         diff: [
           {
             operation: "DELETE",
@@ -134,12 +136,13 @@ export class SourceDiffGenerator {
         });
       }
 
-      diffSummary[filepath] = {
-        fullname: fullName,
+      diffSummary = {
+        api_name: fullName,
         object: objectName,
         type: metadataType,
         from: this.baseline,
         to: this.target,
+        filepath: filepath,
         diff: changesBetweenRevisions
       };
     }

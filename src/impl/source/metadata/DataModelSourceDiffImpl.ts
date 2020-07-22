@@ -25,7 +25,7 @@ export default class DataModelSourceDiffImpl {
   };
 
   public async exec(): Promise<any> {
-    const sourceDiffResult = {};
+    const sourceDiffResult = [];
     for (let metadataType in this.diffGenerators) {
       let changedFiles: string[] = await this.getNameOfChangedFiles(
         this.git,
@@ -61,8 +61,7 @@ export default class DataModelSourceDiffImpl {
         );
 
         // Aggregate individual file diffs in the source diff result
-        let keys = Object.keys(diff);
-        sourceDiffResult[keys[0]] = diff[keys[0]];
+        sourceDiffResult.push(diff);
       }
     }
     return sourceDiffResult;
