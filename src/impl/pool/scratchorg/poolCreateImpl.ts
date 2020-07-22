@@ -149,6 +149,10 @@ export default class PoolCreateImpl {
     //Generate Scratch Orgs
     await this.generateScratchOrgs();
 
+    // Setup Logging Directory
+    rimraf.sync("script_exec_outputs");
+    FileUtils.mkDirByPathSync("script_exec_outputs");
+
     // Assign workers to executed scripts
     let ts = Math.floor(Date.now() / 1000);
     for (let poolUser of this.poolConfig.poolUsers) {
@@ -162,13 +166,10 @@ export default class PoolCreateImpl {
           ipRangeExecPromises.push(resultForIPRelaxation);
         }
 
-        
+        //Wait for scripts to finish execution
+        if (this.poolConfig.pool.relax_ip_ranges)
+          this.ipRangeExecResults = await Promise.all(ipRangeExecPromises);
 
-    //Wait for scripts to finish execution
-    if (this.poolConfig.pool.relax_ip_ranges)
-      this.ipRangeExecResults = await Promise.all(ipRangeExecPromises);
-
-      
         if (this.scriptFileExists) {
           let result = this.scriptExecutorWrappedForBottleneck(
             this.poolConfig.pool.script_file_path,
@@ -190,7 +191,6 @@ export default class PoolCreateImpl {
         }
       }
     }
-
 
     //Get IP Range results
     if (!isNullOrUndefined(this.poolConfig.pool.relax_ip_ranges))
@@ -571,9 +571,6 @@ export default class PoolCreateImpl {
     SFPowerkit.log(`Script File Path: ${scriptFilePath}`, LoggerLevel.TRACE);
 
     scriptFilePath = path.normalize(scriptFilePath);
-
-    rimraf.sync("script_exec_outputs");
-    FileUtils.mkDirByPathSync("script_exec_outputs");
 
     if (process.platform != "win32") {
       cmd = `bash ${scriptFilePath}  ${scratchOrg.username}  ${hubOrgUserName} `;
