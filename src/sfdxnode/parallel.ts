@@ -25,8 +25,9 @@ const createParallelCommand: CreateCommandFunc = (
         "sfdxnode"
       );
     }
-
-    const child = fork(path.join(child_path, "./child.js"), ["--colors"]);
+    const child = fork(path.join(child_path, "./child.js"), ["--colors"], {
+      cwd: flags.cwd.toString()
+    });
     child.on("message", (message: any) => {
       if (message.type === "resolved") {
         resolve(message.value);
