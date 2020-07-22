@@ -134,49 +134,58 @@ export default class Diff extends SfdxCommand {
       JSON.stringify(sourceDiffResult, null, 4)
     );
 
-    if (isOutputCSV) {
-      let data_matrix = [
-        [
-          "Object",
-          "API_Name",
-          "Type",
-          "Operation",
-          "Coordinates",
-          `Commit ID (${revisionFrom})`,
-          `Commit ID (${revisionTo})`,
-          "Filepath"
-        ]
-      ];
-
-      for (let file of sourceDiffResult) {
-        for (let change of file["diff"]) {
-          let row: string[] = [
-            file["object"],
-            file["api_name"],
-            file["type"],
-            change["operation"],
-            change["coordinates"],
-            change["before"],
-            change["after"],
-            file["filepath"]
-          ];
-          data_matrix.push(row);
-        }
+    let rowsToDisplay = [];
+    for (let file of sourceDiffResult) {
+      for (let change of file["diff"]) {
+        rowsToDisplay.push({
+          object: file["object"],
+          api_name: file["api_name"],
+          type: file["type"],
+          operation: change["operation"],
+          coordinates: change["coordinates"],
+          from: change["before"],
+          to: change["after"],
+          filepath: file["filepath"]
+        });
       }
-
-      if (fs.existsSync(`${outputDirectory}/datamodel-diff-output.csv`))
-        fs.unlinkSync(`${outputDirectory}/datamodel-diff-output.csv`);
-
-      data_matrix.forEach(row => {
-        fs.writeFileSync(
-          `${outputDirectory}/datamodel-diff-output.csv`,
-          `${row.toString()}\n`,
-          { flag: "a" }
-        );
-      });
     }
 
-    // console.log(data_matrix);
-    // console.log(diffResult);
+    if (isOutputCSV) {
+      let csvOutput: string = `Object,API_Name,Type,Operation,Coordinates,Commit ID (${revisionFrom}),Commit ID (${revisionTo}),Filepath\n`;
+
+      for (let row of rowsToDisplay) {
+        let rowCells: string[] = Object.values(row);
+        csvOutput = csvOutput + `${rowCells.toString()}\n`;
+      }
+
+      fs.writeFileSync(
+        `${outputDirectory}/datamodel-diff-output.csv`,
+        csvOutput
+      );
+    }
+
+    this.ux.table(rowsToDisplay.slice(0, 50), [
+      "object",
+      "api_name",
+      "type",
+      "operation",
+      "coordinates",
+      "from",
+      "to"
+    ]);
+
+    if (rowsToDisplay.length > 50) {
+      console.log("");
+      this.ux.warn("Displaying output limited to 50 rows");
+    }
+
+    console.log(
+      `\nJSON output written to ${outputDirectory}/datamodel-diff-output.json`
+    );
+
+    if (isOutputCSV)
+      console.log(
+        `CSV output written to ${outputDirectory}/datamodel-diff-output.csv`
+      );
   }
 }

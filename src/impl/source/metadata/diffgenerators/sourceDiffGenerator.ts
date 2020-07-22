@@ -40,8 +40,8 @@ export class SourceDiffGenerator {
     if (!fileObjRevFrom && fileObjRevTo) {
       // Created new file
       diffSummary = {
-        api_name: fullName,
         object: objectName,
+        api_name: fullName,
         type: metadataType,
         from: this.baseline,
         to: this.target,
@@ -58,8 +58,8 @@ export class SourceDiffGenerator {
     } else if (fileObjRevFrom && !fileObjRevTo) {
       // Deleted file
       diffSummary = {
-        api_name: fullName,
         object: objectName,
+        api_name: fullName,
         type: metadataType,
         from: this.baseline,
         to: this.target,
@@ -137,8 +137,8 @@ export class SourceDiffGenerator {
       }
 
       diffSummary = {
-        api_name: fullName,
         object: objectName,
+        api_name: fullName,
         type: metadataType,
         from: this.baseline,
         to: this.target,
