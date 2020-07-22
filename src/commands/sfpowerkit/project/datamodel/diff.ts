@@ -15,7 +15,7 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages(
   "sfpowerkit",
-  "source_datamodel_diff"
+  "project_datamodel_diff"
 );
 
 export default class Diff extends SfdxCommand {
