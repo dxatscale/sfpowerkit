@@ -1,9 +1,12 @@
 import { core, SfdxCommand, FlagsConfig, flags } from "@salesforce/command";
-import { SFPowerkit } from "../../../../sfpowerkit";
+import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 import * as fs from "fs-extra";
 import simpleGit, { SimpleGit } from "simple-git";
 import { isNullOrUndefined } from "util";
 import DataModelSourceDiffImpl from "../../../../impl/project/metadata/DataModelSourceDiffImpl";
+import * as path from "path";
+import FileUtils from "../../../../utils/fileutils";
+import { AnyJson } from "@salesforce/ts-types";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -19,7 +22,7 @@ export default class Diff extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:source:diff --revisionfrom revisionfrom --revisionto revisionto --csv`
+    `$ sfdx sfpowerkit:project:datamodel:diff --revisionfrom revisionfrom --revisionto revisionto --csv`
   ];
 
   protected static flagsConfig: FlagsConfig = {
@@ -73,7 +76,7 @@ export default class Diff extends SfdxCommand {
   protected static requiresUsername = false;
   protected static requiresProject = true;
 
-  public async run(): Promise<any> {
+  public async run(): Promise<AnyJson> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
     let isOutputCSV = this.flags.csv;
     let outputDirectory = this.flags.outputdir
@@ -122,10 +125,25 @@ export default class Diff extends SfdxCommand {
 
     let sourceDiffResult = await dataModelSourceDiffImpl.exec();
 
-    fs.writeFileSync(
-      `${outputDirectory}/datamodel-diff-output.json`,
-      JSON.stringify(sourceDiffResult, null, 4)
+    if (sourceDiffResult.length < 1) {
+      SFPowerkit.log(
+        `No Datamodel change found between ${revisionFrom} and ${revisionTo}`,
+        LoggerLevel.WARN
+      );
+      return sourceDiffResult;
+    }
+
+    SFPowerkit.log(
+      `Found ${sourceDiffResult.length} Datamodel change between ${revisionFrom} and ${revisionTo} \n`,
+      LoggerLevel.INFO
     );
+
+    let csvPath = `${outputDirectory}/datamodel-diff-output.json`;
+    let dir = path.parse(csvPath).dir;
+    if (!fs.existsSync(dir)) {
+      FileUtils.mkDirByPathSync(dir);
+    }
+    fs.writeFileSync(csvPath, JSON.stringify(sourceDiffResult, null, 4));
 
     let rowsToDisplay = [];
     for (let file of sourceDiffResult) {
@@ -166,19 +184,22 @@ export default class Diff extends SfdxCommand {
       "from",
       "to"
     ]);
-
+    this.ux.log("\n");
     if (rowsToDisplay.length > 50) {
-      console.log("");
-      this.ux.warn("Displaying output limited to 50 rows");
+      SFPowerkit.log("Displaying output limited to 50 rows", LoggerLevel.WARN);
     }
 
-    console.log(
-      `\nJSON output written to ${outputDirectory}/datamodel-diff-output.json`
+    SFPowerkit.log(
+      `JSON output written to ${outputDirectory}/datamodel-diff-output.json`,
+      LoggerLevel.INFO
     );
 
-    if (isOutputCSV)
-      console.log(
-        `CSV output written to ${outputDirectory}/datamodel-diff-output.csv`
+    if (isOutputCSV) {
+      SFPowerkit.log(
+        `CSV output written to ${outputDirectory}/datamodel-diff-output.csv`,
+        LoggerLevel.INFO
       );
+    }
+    return sourceDiffResult;
   }
 }

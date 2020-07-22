@@ -60,7 +60,9 @@ export default class DataModelSourceDiffImpl {
         );
 
         // Aggregate individual file diffs in the source diff result
-        sourceDiffResult.push(diff);
+        if (diff) {
+          sourceDiffResult.push(diff);
+        }
       }
     }
     return sourceDiffResult;
