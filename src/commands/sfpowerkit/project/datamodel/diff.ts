@@ -3,7 +3,7 @@ import { SFPowerkit } from "../../../../sfpowerkit";
 import * as fs from "fs-extra";
 import simpleGit, { SimpleGit } from "simple-git";
 import { isNullOrUndefined } from "util";
-import DataModelSourceDiffImpl from "../../../../impl/source/metadata/DataModelSourceDiffImpl";
+import DataModelSourceDiffImpl from "../../../../impl/project/metadata/DataModelSourceDiffImpl";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
