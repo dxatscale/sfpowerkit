@@ -1,6 +1,5 @@
 import * as DiffGenerators from "./diffgenerators/export";
 import { isNullOrUndefined } from "util";
-import { fs } from "@salesforce/core";
 
 // Gets the xml files and passes them into diff generators
 // Output : csv or json format

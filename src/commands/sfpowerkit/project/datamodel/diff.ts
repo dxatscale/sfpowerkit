@@ -1,16 +1,9 @@
-import {
-  core,
-  SfdxCommand,
-  FlagsConfig,
-  flags,
-  SfdxResult
-} from "@salesforce/command";
+import { core, SfdxCommand, FlagsConfig, flags } from "@salesforce/command";
 import { SFPowerkit } from "../../../../sfpowerkit";
 import * as fs from "fs-extra";
 import simpleGit, { SimpleGit } from "simple-git";
 import { isNullOrUndefined } from "util";
 import DataModelSourceDiffImpl from "../../../../impl/source/metadata/DataModelSourceDiffImpl";
-// const { Parser } = require("json2csv");
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
