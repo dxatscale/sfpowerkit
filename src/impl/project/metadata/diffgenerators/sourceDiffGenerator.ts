@@ -109,7 +109,7 @@ export class SourceDiffGenerator {
             }
           }
 
-          let root = new RegExp(`^${metadataType}\.`);
+          let root = new RegExp(`^${metadataType}\\.`);
           return {
             operation: operation,
             coordinates: change["path"].replace(root, ""),
