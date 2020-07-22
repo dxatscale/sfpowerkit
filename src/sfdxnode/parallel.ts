@@ -26,7 +26,7 @@ const createParallelCommand: CreateCommandFunc = (
       );
     }
     const child = fork(path.join(child_path, "./child.js"), ["--colors"], {
-      cwd: flags.cwd.toString()
+      cwd: flags.cwd?flags.cwd.toString():null
     });
     child.on("message", (message: any) => {
       if (message.type === "resolved") {
