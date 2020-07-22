@@ -11,7 +11,7 @@ import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import { loadSFDX } from "../../../sfdxnode/GetNodeWrapper";
 import { sfdx } from "../../../sfdxnode/parallel";
 
-const spawn = require("child-process-promise").spawn;
+
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
