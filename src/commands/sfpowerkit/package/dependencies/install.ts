@@ -1,12 +1,11 @@
 //Code initially based from https://github.com/texei/texei-sfdx-plugin
-//Updated to reflect mono repo, individual package and skip install if already installed scenarios
+//Updated to reflect mono repo (mpd), handle tags, individual package and skip install if already installed scenarios
 
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { JsonArray, JsonMap } from "@salesforce/ts-types";
 import { SfdxProject } from "@salesforce/core";
-
-const spawn = require("child-process-promise").spawn;
-const exec = require("child-process-promise").exec;
+import { loadSFDX } from "../../../../sfdxnode/GetNodeWrapper";
+import { sfdx } from "../../../..//sfdxnode/parallel";
 
 const packageIdPrefix = "0Ho";
 const packageVersionIdPrefix = "04t";
@@ -242,6 +241,9 @@ export default class Install extends SfdxCommand {
     }
 
     if (packagesToInstall.size > 0) {
+      //Load SFDX
+      loadSFDX();
+
       // Installing Packages
       let installationKeyMap: Map<string, string> = new Map<string, string>();
 
@@ -266,6 +268,7 @@ export default class Install extends SfdxCommand {
       ]);
 
       this.ux.log(`\n`);
+
       for (let packageInfo of packagesToInstallArray) {
         packageInfo = packageInfo as JsonMap;
         if (
@@ -279,17 +282,12 @@ export default class Install extends SfdxCommand {
           continue;
         }
 
-        // Split arguments to use spawn
-        const args = [];
-        args.push("force:package:install");
-
+        //Build up options
+        let flags = {};
         // USERNAME
-        args.push("--targetusername");
-        args.push(`${username}`);
-
+        flags["targetusername"] = username;
         // PACKAGE ID
-        args.push("--package");
-        args.push(`${packageInfo.packageVersionId}`);
+        flags["package"] = packageInfo.packageVersionId;
 
         // INSTALLATION KEY
         if (
@@ -297,26 +295,25 @@ export default class Install extends SfdxCommand {
           installationKeyMap.has(packageInfo.packageName.toString())
         ) {
           let key = installationKeyMap.get(packageInfo.packageName.toString());
-          args.push("-k");
-          args.push(`${key}`);
+          flags["installationkey"] = key;
         }
 
         // WAIT
         const wait = this.flags.wait ? this.flags.wait.trim() : defaultWait;
-        args.push("-w");
-        args.push(`${wait}`);
-        args.push("-b");
-        args.push(`${wait}`);
-
-        // NOPROMPT
-        if (this.flags.noprompt) {
-          args.push("--noprompt");
-        }
+        flags["wait"] = wait;
+        flags["publishwait"] = wait;
 
         if (this.flags.apexcompileonlypackage) {
-          args.push("-a");
-          args.push(`package`);
+          flags["apexcompile"] = "package";
         }
+
+        let opts = [];
+        // NOPROMPT
+        if (this.flags.noprompt) {
+          opts.push("--noprompt");
+        }
+
+        let startTime = new Date().valueOf();
 
         this.ux.log(
           `Installing package ${packageInfo.packageVersionId} : ${
@@ -328,8 +325,7 @@ export default class Install extends SfdxCommand {
           }`
         );
 
-        var startTime = new Date().valueOf();
-        await spawn("sfdx", args, { stdio: "inherit" });
+        await sfdx.force.package.install(flags, opts);
 
         var endTime = new Date().valueOf();
 
