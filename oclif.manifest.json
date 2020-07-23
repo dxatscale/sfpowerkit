@@ -1,5 +1,5 @@
 {
-  "version": "2.1.0",
+  "version": "2.0.9",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -2432,6 +2432,84 @@
           "name": "apiversion",
           "type": "option",
           "description": "API version"
+        }
+      },
+      "args": []
+    },
+    "sfpowerkit:project:datamodel:diff": {
+      "id": "sfpowerkit:project:datamodel:diff",
+      "description": "Provides an audit history of the metadata change between two commit ID's",
+      "usage": "<%= command.id %> -r <string> [-t <string>] [-p <string>] [-d <directory>] [--csv] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "pluginName": "sfpowerkit",
+      "pluginType": "core",
+      "aliases": [],
+      "examples": [
+        "$ sfdx sfpowerkit:project:datamodel:diff --revisionfrom revisionfrom --revisionto revisionto --csv"
+      ],
+      "flags": {
+        "json": {
+          "name": "json",
+          "type": "boolean",
+          "description": "format output as json",
+          "allowNo": false
+        },
+        "loglevel": {
+          "name": "loglevel",
+          "type": "option",
+          "description": "logging level for this command invocation",
+          "required": false,
+          "helpValue": "(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)",
+          "options": [
+            "trace",
+            "debug",
+            "info",
+            "warn",
+            "error",
+            "fatal",
+            "TRACE",
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "ERROR",
+            "FATAL"
+          ],
+          "default": "info"
+        },
+        "revisionfrom": {
+          "name": "revisionfrom",
+          "type": "option",
+          "char": "r",
+          "description": "Base revision from which to generate the diff",
+          "required": true
+        },
+        "revisionto": {
+          "name": "revisionto",
+          "type": "option",
+          "char": "t",
+          "description": "Target revision from which to generate the diff",
+          "required": false,
+          "default": "HEAD"
+        },
+        "packagedirectories": {
+          "name": "packagedirectories",
+          "type": "option",
+          "char": "p",
+          "description": "package directories to run diff on",
+          "required": false
+        },
+        "outputdir": {
+          "name": "outputdir",
+          "type": "option",
+          "char": "d",
+          "description": "Directory to output the results",
+          "required": false
+        },
+        "csv": {
+          "name": "csv",
+          "type": "boolean",
+          "description": "Output to csv file",
+          "required": false,
+          "allowNo": false
         }
       },
       "args": []
