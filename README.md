@@ -51,6 +51,7 @@ $ sfdx plugins:link
     - [`sfpowerkit:project:orgdiff`](#sfpowerkitprojectorgdiff)
     - [`sfpowerkit:project:manifest:diff`](#sfpowerkitprojectmanifestdiff)
     - [`sfpowerkit:project:manifest:merge`](#sfpowerkitprojectmanifestmerge)
+    - [`sfpowerkit:project:datamodel:diff [BETA]`](#sfpowerkitprojectdatamodeldiff)
   - [Unlocked Package Related Functionalities](#unlocked-package-related-functionalities)
     - [`sfpowerkit:package:dependencies:install`](#sfpowerkitpackagedependenciesinstall)
     - [`sfpowerkit:package:version:codecoverage`](#sfpowerkitpackageversioncodecoverage)
@@ -424,6 +425,28 @@ OPTIONS
 EXAMPLE
   $ sfdx sfpowerkit:project:manifest:merge -p project1/path/to/package.xml -d result/package.xml
   $ sfdx sfpowerkit:project:manifest:merge -p project1/path/to/package.xml,project2/path/to/package.xml -d result/package.xml
+```
+
+### `sfpowerkit:project:datamodel:diff [BETA]`
+
+Provides an audit history of the metadata change between two commit ID's for data model ( CustomFields, RecordTypes, BusinessProcess)
+
+```
+USAGE
+  $ sfdx sfpowerkit:project:datamodel:diff -r <string> [-t <string>] [-p <string>] [-d <directory>] [--csv] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -d, --outputdir=outputdir                                                         Directory to output the results
+  -p, --packagedirectories=packagedirectories                                       Run diff only for specified package directories
+  -r, --revisionfrom=revisionfrom                                                   (required) Base revision from which to generate the diff
+  -t, --revisionto=revisionto                                                       [default: HEAD] Target revision from which to generate the diff
+  --csv                                                                             Output to csv file
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:project:datamodel:diff --revisionfrom revisionfrom --revisionto revisionto --csv
 ```
 
 ## Unlocked Package Related Functionalities
