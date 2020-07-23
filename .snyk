@@ -1,0 +1,44 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.16.0
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-567746:
+    - salesforce-alm > lodash:
+        patched: '2020-07-23T07:01:50.278Z'
+    - salesforce-alm > jsforce > lodash:
+        patched: '2020-07-23T07:01:50.278Z'
+    - salesforce-alm > cli-ux > lodash:
+        patched: '2020-07-23T07:01:50.278Z'
+    - salesforce-alm > selenium-standalone > lodash:
+        patched: '2020-07-23T07:01:50.278Z'
+    - salesforce-alm > @salesforce/core > jsforce > lodash:
+        patched: '2020-07-23T07:01:50.278Z'
+    - salesforce-alm > @salesforce/command > cli-ux > lodash:
+        patched: '2020-07-23T07:01:50.278Z'
+    - salesforce-alm > archiver > async > lodash:
+        patched: '2020-07-23T07:01:50.278Z'
+    - salesforce-alm > selenium-standalone > async > lodash:
+        patched: '2020-07-23T07:01:50.278Z'
+    - salesforce-alm > salesforce-lightning-cli > eslint > lodash:
+        patched: '2020-07-23T07:01:50.278Z'
+    - salesforce-alm > @salesforce/command > @oclif/test > fancy-test > lodash:
+        patched: '2020-07-23T07:01:50.278Z'
+    - salesforce-alm > @salesforce/plugin-analytics > @salesforce/core > jsforce > lodash:
+        patched: '2020-07-23T07:01:50.278Z'
+    - salesforce-alm > @salesforce/plugin-analytics > @salesforce/command > cli-ux > lodash:
+        patched: '2020-07-23T07:01:50.278Z'
+    - salesforce-alm > salesforce-lightning-cli > @salesforce/command > cli-ux > lodash:
+        patched: '2020-07-23T07:01:50.278Z'
+    - salesforce-alm > webdriverio > archiver > async > lodash:
+        patched: '2020-07-23T07:01:50.278Z'
+    - salesforce-alm > salesforce-lightning-cli > eslint > table > lodash:
+        patched: '2020-07-23T07:01:50.278Z'
+    - salesforce-alm > @salesforce/plugin-analytics > @salesforce/command > @oclif/test > fancy-test > lodash:
+        patched: '2020-07-23T07:01:50.278Z'
+    - salesforce-alm > salesforce-lightning-cli > @salesforce/command > @oclif/test > fancy-test > lodash:
+        patched: '2020-07-23T07:01:50.278Z'
+    - salesforce-alm > @salesforce/plugin-analytics > @salesforce/telemetry > @salesforce/core > jsforce > lodash:
+        patched: '2020-07-23T07:01:50.278Z'
+    - salesforce-alm > salesforce-lightning-cli > @salesforce/command > @salesforce/core > jsforce > lodash:
+        patched: '2020-07-23T07:01:50.278Z'

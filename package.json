@@ -55,7 +55,8 @@
     "unzip-stream": "0.3.0",
     "unzipper": "0.10.11",
     "xml-formatter": "^2.1.2",
-    "xml2js": "^0.4.23"
+    "xml2js": "^0.4.23",
+    "snyk": "^1.364.2"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.22.2",
@@ -150,13 +151,15 @@
   "scripts": {
     "postpack": "rimraf oclif.manifest.json npm-shrinkwrap.json",
     "posttest": "tslint -p test -t stylish",
-    "prepare": "rimraf lib && tsc -b && oclif-dev manifest && npm shrinkwrap",
+    "prepare": "yarn run snyk-protect && rimraf lib && tsc -b && oclif-dev manifest && npm shrinkwrap",
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
-    "version": "git add README.md"
+    "version": "git add README.md",
+    "snyk-protect": "snyk protect"
   },
   "husky": {
     "hooks": {
       "pre-commit": "npx pretty-quick --staged"
     }
-  }
+  },
+  "snyk": true
 }
