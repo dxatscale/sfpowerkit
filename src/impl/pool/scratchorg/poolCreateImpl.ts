@@ -2,7 +2,6 @@ import ScratchOrgUtils, { ScratchOrg } from "../../../utils/scratchOrgUtils";
 import { Connection, LoggerLevel, Org, AuthInfo } from "@salesforce/core";
 import { SFPowerkit } from "../../../sfpowerkit";
 import * as fs from "fs-extra";
-
 import { exec } from "child_process";
 import Bottleneck from "bottleneck";
 import { isNullOrUndefined } from "util";
@@ -10,16 +9,15 @@ import RelaxIPRangeImpl from "../../org/relaxIPRangeImpl";
 import FileUtils from "../../../utils/fileutils";
 import * as path from "path";
 import * as rimraf from "rimraf";
+import { SfdxApi } from "../../../sfdxnode/types";
 
 const limiter = new Bottleneck({
   maxConcurrent: 10
 });
 
 export default class PoolCreateImpl {
-  private poolconfigFilePath: string;
-  private hubOrg: Org;
   private hubConn: Connection;
-  private apiversion: string;
+
   private poolConfig: PoolConfig;
   private totalToBeAllocated: number;
   private ipRangeExecResults;
@@ -36,14 +34,11 @@ export default class PoolCreateImpl {
   );
 
   public constructor(
-    poolconfigFilePath: string,
-    hubOrg: Org,
-    apiversion: string
-  ) {
-    this.poolconfigFilePath = poolconfigFilePath;
-    this.hubOrg = hubOrg;
-    this.apiversion = apiversion;
-  }
+    private poolconfigFilePath: string,
+    private hubOrg: Org,
+    private apiversion: string,
+    private sfdx: SfdxApi
+  ) {}
 
   public async poolScratchOrgs(): Promise<boolean> {
     let scriptExecPromises: Array<Promise<ScriptExecutionResult>> = new Array();
@@ -339,6 +334,7 @@ export default class PoolCreateImpl {
         );
         try {
           let scratchOrg: ScratchOrg = await ScratchOrgUtils.createScratchOrg(
+            this.sfdx,
             count,
             poolUser.username,
             this.poolConfig.pool.config_file_path,

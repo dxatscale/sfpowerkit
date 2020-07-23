@@ -1,7 +1,7 @@
 {
   "name": "sfpowerkit",
   "description": "A Salesforce DX Plugin with multiple functionalities aimed at improving development and operational workflows",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "author": {
     "name": "DXatScale",
     "email": "dxatscale@accenture.com"
@@ -27,7 +27,6 @@
   ],
   "bugs": "https://github.com/accenture/sfpowerkit/issues",
   "dependencies": {
-    "@pony-ci/sfdx-node": "^1.0.4",
     "@salesforce/command": "^3.0.1",
     "@salesforce/core": "^2.7.0",
     "archiver": "3.1.1",
@@ -42,12 +41,14 @@
     "fast-glob": "^3.2.4",
     "find-java-home": "^1.0.1",
     "fs-extra": "^9.0.1",
+    "hook-std": "^2.0.0",
     "ignore": "^5.1.8",
     "nested-object-diff": "^1.1.0",
     "pino": "^5.15.0",
     "pino-pretty": "^3.5.0",
     "request": "^2.88.0",
     "request-promise-native": "^1.0.8",
+    "salesforce-alm": "^49.3.0",
     "simple-git": "2.11.0",
     "ts-node": "^8.10.1",
     "tslib": "1",
