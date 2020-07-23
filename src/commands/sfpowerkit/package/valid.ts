@@ -8,8 +8,10 @@ import * as fs from "fs-extra";
 import * as rimraf from "rimraf";
 import * as path from "path";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
+import { loadSFDX } from "../../../sfdxnode/GetNodeWrapper";
+import { sfdx } from "../../../sfdxnode/parallel";
 
-const spawn = require("child-process-promise").spawn;
+
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -86,6 +88,9 @@ Elements supported included in your package testPackage
     rimraf.sync("temp_sfpowerkit");
 
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
+
+    loadSFDX();
+
     // Getting Project config
     const project = await SfdxProject.resolve();
 
@@ -157,7 +162,7 @@ Elements supported included in your package testPackage
           } catch (e) {
             SFPowerkit.log(
               `Unable to analyze ${sf_package["package"]}, Skipping ${sf_package["package"]}. try running sfdx force:source:convert -r ${sf_package["path"]}`,
-              LoggerLevel.WARN
+              LoggerLevel.ERROR
             );
           }
         }
@@ -174,28 +179,6 @@ Elements supported included in your package testPackage
   }
 
   public async validate(packageToBeScanned: AnyJson) {
-    var sfdx_package = new SFDXPackage();
-
-    sfdx_package.packageName = packageToBeScanned["package"];
-
-    // Split arguments to use spawn
-    const args = [];
-    args.push("force:source:convert");
-
-    // outputdir
-    args.push("-d");
-    args.push("temp_sfpowerkit/mdapi");
-
-    // package name
-    args.push("-n");
-    args.push(`${packageToBeScanned["package"]}`);
-
-    args.push("-r");
-    args.push(`${packageToBeScanned["path"]}`);
-
-    args.push("--json");
-    // INSTALL PACKAGE
-
     SFPowerkit.log(
       `Utilizing Version of the metadata coverage ${this.coverageJSON.versions.selected}`,
       LoggerLevel.DEBUG
@@ -205,13 +188,20 @@ Elements supported included in your package testPackage
       LoggerLevel.INFO
     );
 
+    var sfdx_package = new SFDXPackage();
+    sfdx_package.packageName = packageToBeScanned["package"];
+
+    await sfdx.force.source.convert({
+      quiet: true,
+      outputdir: "temp_sfpowerkit/mdapi",
+      packagename: packageToBeScanned["package"],
+      rootdir: packageToBeScanned["path"]
+    });
+
     //Bypass package validation
     if (this.flags.bypass) {
       sfdx_package.typesToBypass = this.flags.bypass;
     }
-
-    var startTime = new Date().valueOf();
-    await spawn("sfdx", args, { silent: true });
 
     let targetFilename = "temp_sfpowerkit/mdapi/package.xml";
 
