@@ -25,8 +25,6 @@ import { sfdx } from "../../../sfdxnode/parallel";
 
 const jsdiff = require("diff");
 
-const { execSync } = require("child_process");
-
 const CRLF_REGEX = /\r\n/;
 const LF_REGEX = /\n/;
 
