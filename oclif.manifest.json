@@ -2438,7 +2438,7 @@
     },
     "sfpowerkit:project:datamodel:diff": {
       "id": "sfpowerkit:project:datamodel:diff",
-      "description": "Provides an audit history of the metadata change between two commit ID's",
+      "description": "Provides an audit history of the metadata change between two commit ID's for data model ( CustomFields, RecordTypes, BusinessProcess)",
       "usage": "<%= command.id %> -r <string> [-t <string>] [-p <string>] [-d <directory>] [--csv] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
@@ -2494,7 +2494,7 @@
           "name": "packagedirectories",
           "type": "option",
           "char": "p",
-          "description": "package directories to run diff on",
+          "description": "Run diff only for specified package directories",
           "required": false
         },
         "outputdir": {
