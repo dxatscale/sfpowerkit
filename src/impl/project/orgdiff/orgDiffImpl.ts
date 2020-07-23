@@ -20,9 +20,10 @@ import * as rimraf from "rimraf";
 import CustomLabelsDiff from "../diff/customLabelsDiff";
 import SharingRuleDiff from "../diff/sharingRuleDiff";
 import WorkflowDiff from "../diff/workflowDiff";
-const jsdiff = require("diff");
+import { loadSFDX } from "../../../sfdxnode/GetNodeWrapper";
+import { sfdx } from "../../../sfdxnode/parallel";
 
-const { execSync } = require("child_process");
+const jsdiff = require("diff");
 
 const CRLF_REGEX = /\r\n/;
 const LF_REGEX = /\n/;
@@ -142,7 +143,7 @@ export default class OrgDiffImpl {
   private compare() {
     // let fetchedFiles = FileUtils.getAllFilesSync(`./temp_sfpowerkit/mdapi`, "");
     let fetchedFiles = FileUtils.getAllFilesSync(
-      `./temp_sfpowerkit/force-app`,
+      `./temp_sfpowerkit/source`,
       ""
     );
 
@@ -415,7 +416,7 @@ export default class OrgDiffImpl {
 
     let maxApiVersion = await this.org.retrieveMaxApiVersion();
 
-    fs.mkdirSync("temp_sfpowerkit/force-app");
+    fs.mkdirSync("temp_sfpowerkit/source");
     SFPowerkit.log(
       "Converting retrieved metadata to dx format",
       LoggerLevel.INFO
@@ -424,7 +425,7 @@ export default class OrgDiffImpl {
     let sfdxProjectJson = `{
         "packageDirectories": [
           {
-            "path": "force-app",
+            "path": "source",
             "default": true
           }
         ],
@@ -434,8 +435,14 @@ export default class OrgDiffImpl {
       }`;
 
     fs.writeFileSync("temp_sfpowerkit/sfdx-project.json", sfdxProjectJson);
-    execSync("sfdx force:mdapi:convert -r mdapi -d force-app", {
-      cwd: "temp_sfpowerkit"
+
+    loadSFDX();
+
+    await sfdx.force.mdapi.convert({
+      quiet: false,
+      cwd: path.join(process.cwd(), "temp_sfpowerkit"),
+      rootdir: "mdapi",
+      outputdir: "source"
     });
 
     //Should remove the mdapi folder
