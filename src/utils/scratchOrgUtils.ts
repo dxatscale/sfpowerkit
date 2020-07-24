@@ -144,7 +144,7 @@ export default class ScratchOrgUtils {
     hubOrg: Org
   ) {
     let hubOrgUserName = hubOrg.getUsername();
-    let body = `${hubOrgUserName} has generated a new scratch org for you in SO Pool!\n
+    let body = `${hubOrgUserName} has fetched a new scratch org from the Scratch Org Pool!\n
    All the post scratch org scripts have been succesfully completed in this org!\n
    The Login url for this org is : ${scratchOrg.loginURL}\n
    Username: ${scratchOrg.username}\n
