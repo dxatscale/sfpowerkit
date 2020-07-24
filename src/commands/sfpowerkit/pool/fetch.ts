@@ -34,11 +34,35 @@ export default class Fetch extends SfdxCommand {
       char: "m",
       description: messages.getMessage("mypoolDescription"),
       required: false
+    }),
+    sendtouser: flags.string({
+      char: "s",
+      description: messages.getMessage("sendToUserDescription"),
+      required: false
+    }),
+    loglevel: flags.enum({
+      description: "logging level for this command invocation",
+      default: "info",
+      required: false,
+      options: [
+        "trace",
+        "debug",
+        "info",
+        "warn",
+        "error",
+        "fatal",
+        "TRACE",
+        "DEBUG",
+        "INFO",
+        "WARN",
+        "ERROR",
+        "FATAL"
+      ]
     })
   };
 
   public async run(): Promise<AnyJson> {
-    SFPowerkit.setLogLevel("DEBUG", false);
+    SFPowerkit.setLogLevel(this.flags.loglevel, false);
 
     await this.hubOrg.refreshAuth();
     const hubConn = this.hubOrg.getConnection();
@@ -48,14 +72,14 @@ export default class Fetch extends SfdxCommand {
 
     let fetchImpl = new PoolFetchImpl(
       this.hubOrg,
-      this.flags.apiversion,
       this.flags.tag,
-      this.flags.mypool
+      this.flags.mypool,
+      this.flags.sendtouser
     );
 
     let result = await fetchImpl.execute();
 
-    if (!this.flags.json) {
+    if (!this.flags.json && !this.flags.sendtouser) {
       this.ux.log(`======== Scratch org details ========`);
       let list = [];
       for (let [key, value] of Object.entries(result)) {
@@ -66,6 +90,7 @@ export default class Fetch extends SfdxCommand {
       this.ux.table(list, ["key", "value"]);
     }
 
-    return result as AnyJson;
+    if (!this.flags.sendtouser) return result as AnyJson;
+    else return true;
   }
 }

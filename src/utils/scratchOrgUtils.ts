@@ -139,17 +139,18 @@ export default class ScratchOrgUtils {
   }
 
   public static async shareScratchOrgThroughEmail(
+    emailId: string,
     scratchOrg: ScratchOrg,
     hubOrg: Org
   ) {
     let hubOrgUserName = hubOrg.getUsername();
     let body = `${hubOrgUserName} has generated a new scratch org for you in SO Pool!\n
    All the post scratch org scripts have been succesfully completed in this org!\n
-   <p>The Login url for this org is : ${scratchOrg.loginURL}\n
-   <p>Username: ${scratchOrg.username}\n
-   <p>Password: ${scratchOrg.password}\n
-   <p>Please use sfdx force:auth:web:login -r ${scratchOrg.loginURL} -a <alias>  command to authenticate against this Scratch org</p>
-   <p>Thank you for using sfpowerkit!</p>`;
+   The Login url for this org is : ${scratchOrg.loginURL}\n
+   Username: ${scratchOrg.username}\n
+   Password: ${scratchOrg.password}\n
+   Please use sfdx force:auth:web:login -r ${scratchOrg.loginURL} -a <alias>  command to authenticate against this Scratch org</p>
+   Thank you for using sfpowerkit!`;
 
     const options = {
       method: "post",
@@ -157,7 +158,7 @@ export default class ScratchOrgUtils {
         inputs: [
           {
             emailBody: body,
-            emailAddresses: scratchOrg.signupEmail,
+            emailAddresses: emailId,
             emailSubject: `${hubOrgUserName} created you a new Salesforce org`,
             senderType: "CurrentUser"
           }
@@ -174,8 +175,8 @@ export default class ScratchOrgUtils {
     );
 
     SFPowerkit.log(
-      `Succesfully send email to ${scratchOrg.signupEmail} for ${scratchOrg.username}`,
-      LoggerLevel.DEBUG
+      `Succesfully send email to ${emailId} for ${scratchOrg.username}`,
+      LoggerLevel.INFO
     );
   }
 
