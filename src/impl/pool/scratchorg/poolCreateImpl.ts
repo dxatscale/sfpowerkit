@@ -707,7 +707,7 @@ export interface Pool {
   script_file_path?: string;
   tag: string;
   user_mode: boolean;
-  relax_all_ip_ranges: true;
+  relax_all_ip_ranges: boolean;
   relax_ip_ranges: IpRanges[];
   max_allocation: number;
 }
