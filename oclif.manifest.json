@@ -1,5 +1,5 @@
 {
-  "version": "2.0.12",
+  "version": "2.0.11",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -540,7 +540,7 @@
     "sfpowerkit:pool:fetch": {
       "id": "sfpowerkit:pool:fetch",
       "description": "Gets an active/unused scratch org from the scratch org pool",
-      "usage": "<%= command.id %> -t <string> [-m] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "usage": "<%= command.id %> -t <string> [-m] [-s <string>] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],
@@ -576,7 +576,7 @@
             "ERROR",
             "FATAL"
           ],
-          "default": "warn"
+          "default": "info"
         },
         "targetdevhubusername": {
           "name": "targetdevhubusername",
@@ -603,6 +603,13 @@
           "description": "Filter the tag for any additions created  by the executor of the command",
           "required": false,
           "allowNo": false
+        },
+        "sendtouser": {
+          "name": "sendtouser",
+          "type": "option",
+          "char": "s",
+          "description": "Send the credentials of the fetched scratchorg to another DevHub user, Useful for situations when pool is only limited to certain users",
+          "required": false
         }
       },
       "args": []
@@ -2211,7 +2218,7 @@
             "ERROR",
             "FATAL"
           ],
-          "default": "info"
+          "default": "warn"
         },
         "targetdevhubusername": {
           "name": "targetdevhubusername",

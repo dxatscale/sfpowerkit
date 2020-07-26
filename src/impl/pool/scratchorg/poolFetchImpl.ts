@@ -1,22 +1,23 @@
 import { Connection, LoggerLevel, Org, SfdxError } from "@salesforce/core";
 import { SFPowerkit } from "../../../sfpowerkit";
 import ScratchOrgUtils, { ScratchOrg } from "../../../utils/scratchOrgUtils";
+import { getUserEmail } from "../../../utils/getUserDetails";
 export default class PoolFetchImpl {
   private hubOrg: Org;
-  private apiversion: string;
   private tag: string;
   private mypool: boolean;
+  private sendToUser: string;
 
   public constructor(
     hubOrg: Org,
-    apiversion: string,
     tag: string,
-    mypool: boolean
+    mypool: boolean,
+    sendToUser: string
   ) {
     this.hubOrg = hubOrg;
-    this.apiversion = apiversion;
     this.tag = tag;
     this.mypool = mypool;
+    this.sendToUser = sendToUser;
   }
 
   public async execute(): Promise<ScratchOrg> {
@@ -26,6 +27,20 @@ export default class PoolFetchImpl {
       this.mypool,
       true
     )) as any;
+
+    let emaiId;
+
+    if (this.sendToUser) {
+      try {
+        emaiId = await getUserEmail(this.sendToUser, this.hubOrg);
+      } catch (error) {
+        SFPowerkit.log(
+          "Unable to fetch details of the specified user, Check whether the user exists in the org ",
+          LoggerLevel.ERROR
+        );
+        throw new SfdxError("Failed to fetch user details");
+      }
+    }
 
     let soDetail: ScratchOrg;
 
@@ -46,6 +61,7 @@ export default class PoolFetchImpl {
             LoggerLevel.TRACE
           );
           soDetail = {};
+          soDetail["Id"] = element.Id;
           soDetail.orgId = element.ScratchOrg;
           soDetail.loginURL = element.LoginUrl;
           soDetail.username = element.SignupUsername;
@@ -67,6 +83,23 @@ export default class PoolFetchImpl {
       throw new SfdxError(
         `No scratch org available at the moment for ${this.tag}, try again in sometime.`
       );
+    }
+
+    if (this.sendToUser) {
+      //Fetch the email for user id
+      try {
+        //Send an email for username
+        await ScratchOrgUtils.shareScratchOrgThroughEmail(
+          emaiId,
+          soDetail,
+          this.hubOrg
+        );
+      } catch (error) {
+        SFPowerkit.log(
+          "Unable to send the scratchorg details to specified user. Check whether the user exists in the org",
+          LoggerLevel.ERROR
+        );
+      }
     }
 
     return soDetail;
