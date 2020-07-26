@@ -58,7 +58,7 @@ export async function getInstalledPackages(
           });
         }
 
-        if (packageDetails && licenseMap) {
+        if (packageDetails.length > 0 && licenseMap.size > 0) {
           packageDetails.forEach(detail => {
             if (
               detail.packageNamespacePrefix &&
