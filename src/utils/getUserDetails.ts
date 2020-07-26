@@ -8,13 +8,19 @@ export async function getUserEmail(username: string, hubOrg: Org) {
 
   return await retry(
     async bail => {
-      let query;
-
-      if (!isNullOrUndefined(username))
-        query = `SELECT email FROM user WHERE username='${username}'`;
+      if (isNullOrUndefined(username)) {
+        bail(new Error("username cannot be null. provide a valid username"));
+        return;
+      }
+      let query = `SELECT email FROM user WHERE username='${username}'`;
 
       SFPowerkit.log("QUERY:" + query, LoggerLevel.TRACE);
       const results = (await hubConn.query(query)) as any;
+
+      if (results.records.size < 1) {
+        bail(new Error(`No user found with username ${username} in devhub.`));
+        return;
+      }
       return results.records[0].Email;
     },
     { retries: 3, minTimeout: 3000 }
