@@ -51,7 +51,7 @@ $ sfdx plugins:link
     - [`sfpowerkit:project:orgdiff`](#sfpowerkitprojectorgdiff)
     - [`sfpowerkit:project:manifest:diff`](#sfpowerkitprojectmanifestdiff)
     - [`sfpowerkit:project:manifest:merge`](#sfpowerkitprojectmanifestmerge)
-    - [`sfpowerkit:project:datamodel:diff [BETA]`](#sfpowerkitprojectdatamodeldiff)
+    - [`sfpowerkit:project:datamodel:diff [BETA]`](#sfpowerkitprojectdatamodeldiff-beta)
   - [Unlocked Package Related Functionalities](#unlocked-package-related-functionalities)
     - [`sfpowerkit:package:dependencies:install`](#sfpowerkitpackagedependenciesinstall)
     - [`sfpowerkit:package:version:codecoverage`](#sfpowerkitpackageversioncodecoverage)
@@ -1266,20 +1266,26 @@ Gets an active/unused scratch org from the scratch org pool
 
 ```
 USAGE
-  $ sfdx sfpowerkit:pool:fetch -t <string> [-m] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+  $ sfdx sfpowerkit:pool:fetch -t <string> [-m] [-s <string>] [-v <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
   -m, --mypool                                                                      Filter the tag for any additions created  by the executor of the command
-  -t, --tag=tag                                                                     (required) tag used to identify the scratch org pool
+  -s, --sendtouser=sendtouser                                                       Send the credentials of the fetched scratchorg to another DevHub user, Useful
+                                                                                    for situations when pool is only limited to certain users
+  -t, --tag=tag                                                                     (required) (required) tag used to identify the scratch org pool
+
   -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
   --apiversion=apiversion                                                           override the api version used for api requests made by this command
   --json                                                                            format output as json
-  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
 
 EXAMPLES
   $ sfdx sfpowerkit:pool:fetch -t core
   $ sfdx sfpowerkit:pool:fetch -t core -v devhub
   $ sfdx sfpowerkit:pool:fetch -t core -v devhub -m
+  $ sfdx sfpowerkit:pool:fetch -t core -v devhub -s testuser@test.com
 ```
 
 ### `sfpowerkit:pool:list`

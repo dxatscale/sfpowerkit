@@ -6,6 +6,8 @@ import { JsonArray, JsonMap } from "@salesforce/ts-types";
 import { SfdxProject } from "@salesforce/core";
 import { loadSFDX } from "../../../../sfdxnode/GetNodeWrapper";
 import { sfdx } from "../../../..//sfdxnode/parallel";
+import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
+let retry = require("async-retry");
 
 const packageIdPrefix = "0Ho";
 const packageVersionIdPrefix = "04t";
@@ -84,6 +86,25 @@ export default class Install extends SfdxCommand {
       required: false,
       description:
         "in a mono repo project, filter packageDirectories using path and install dependent packages only for the specified path"
+    }),
+    loglevel: flags.enum({
+      description: "logging level for this command invocation",
+      default: "info",
+      required: false,
+      options: [
+        "trace",
+        "debug",
+        "info",
+        "warn",
+        "error",
+        "fatal",
+        "TRACE",
+        "DEBUG",
+        "INFO",
+        "WARN",
+        "ERROR",
+        "FATAL"
+      ]
     })
   };
 
@@ -102,6 +123,8 @@ export default class Install extends SfdxCommand {
   public async run(): Promise<any> {
     const result = { installedPackages: {} };
 
+    SFPowerkit.setLogLevel(this.flags.loglevel, false);
+
     // this.org is guaranteed because requiresUsername=true, as opposed to supportsUsername
     const username = this.org.getUsername();
 
@@ -118,7 +141,16 @@ export default class Install extends SfdxCommand {
     }
 
     //Validate Packages  installed in the target org
-    let installedpackages = await this.getInstalledPackages(username);
+
+    let installedpackages = [];
+    try {
+      installedpackages = await this.getInstalledPackages(username);
+    } catch (error) {
+      console.log(
+        "Unable to retrieve the packages installed in the org, Proceeding",
+        LoggerLevel.WARN
+      );
+    }
 
     let individualpackage = this.flags.individualpackage;
 
@@ -425,29 +457,40 @@ export default class Install extends SfdxCommand {
       "SubscriberPackageVersion.PatchVersion, SubscriberPackageVersion.BuildNumber FROM InstalledSubscriberPackage " +
       "ORDER BY SubscriberPackageId";
     const conn = this.org.getConnection();
-    await conn.tooling.query(installedPackagesQuery).then(queryResult => {
-      const records = queryResult.records;
-      if (records && records.length > 0) {
-        this.ux.log(`Installed Packages in the org ${targetOrg}`);
-        const output = [];
-        records.forEach(record => {
-          packages.push(record["SubscriberPackageVersion"]["Id"]);
-          output.push({
-            name: record["SubscriberPackage"]["Name"],
-            package_version_name: record["SubscriberPackageVersion"]["Name"],
-            package_version_id: record["SubscriberPackageVersion"]["Id"],
-            versionNumber: `${record["SubscriberPackageVersion"]["MajorVersion"]}.${record["SubscriberPackageVersion"]["MinorVersion"]}.${record["SubscriberPackageVersion"]["PatchVersion"]}.${record["SubscriberPackageVersion"]["BuildNumber"]}`
+
+    return await retry(
+      async bail => {
+        SFPowerkit.log("QUERY:" + installedPackagesQuery, LoggerLevel.TRACE);
+
+        const results = (await conn.tooling.query(
+          installedPackagesQuery
+        )) as any;
+
+        const records = results.records;
+        if (records && records.length > 0) {
+          this.ux.log(`Installed Packages in the org ${targetOrg}`);
+          const output = [];
+          records.forEach(record => {
+            packages.push(record["SubscriberPackageVersion"]["Id"]);
+            output.push({
+              name: record["SubscriberPackage"]["Name"],
+              package_version_name: record["SubscriberPackageVersion"]["Name"],
+              package_version_id: record["SubscriberPackageVersion"]["Id"],
+              versionNumber: `${record["SubscriberPackageVersion"]["MajorVersion"]}.${record["SubscriberPackageVersion"]["MinorVersion"]}.${record["SubscriberPackageVersion"]["PatchVersion"]}.${record["SubscriberPackageVersion"]["BuildNumber"]}`
+            });
           });
-        });
-        this.ux.table(output, [
-          "name",
-          "package_version_name",
-          "package_version_id",
-          "versionNumber"
-        ]);
-      }
-    });
-    return packages;
+          this.ux.table(output, [
+            "name",
+            "package_version_name",
+            "package_version_id",
+            "versionNumber"
+          ]);
+
+          return packages;
+        }
+      },
+      { retries: 3, minTimeout: 3000 }
+    );
   }
   private parseKeyValueMapfromString(
     request: string,
