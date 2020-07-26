@@ -1,6 +1,6 @@
 {
   "name": "sfpowerkit",
-  "version": "2.0.11",
+  "version": "2.0.12",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -705,6 +705,19 @@
         "axios": "^0.19.2"
       },
       "dependencies": {
+        "@salesforce/core": {
+          "version": "2.4.1",
+          "requires": {
+            "@salesforce/bunyan": "^2.0.0",
+            "@salesforce/kit": "^1.0.0",
+            "@salesforce/ts-types": "^1.0.0",
+            "@types/jsforce": "1.9.2",
+            "jsen": "0.6.6",
+            "jsforce": "1.9.3",
+            "jsonwebtoken": "8.5.0",
+            "sfdx-faye": "^1.0.9"
+          }
+        },
         "@salesforce/ts-types": {
           "version": "1.4.0",
           "requires": {
@@ -5659,6 +5672,19 @@
                 "ansi-regex": "^4.1.0"
               }
             }
+          }
+        },
+        "@salesforce/core": {
+          "version": "2.4.1",
+          "requires": {
+            "@salesforce/bunyan": "^2.0.0",
+            "@salesforce/kit": "^1.0.0",
+            "@salesforce/ts-types": "^1.0.0",
+            "@types/jsforce": "1.9.2",
+            "jsen": "0.6.6",
+            "jsforce": "1.9.3",
+            "jsonwebtoken": "8.5.0",
+            "sfdx-faye": "^1.0.9"
           }
         },
         "@salesforce/kit": {
