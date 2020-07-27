@@ -32,6 +32,12 @@ export default class Create extends SfdxCommand {
       description: messages.getMessage("configFilePathDescription"),
       required: true
     }),
+    batchsize: flags.number({
+      char: "b",
+      default: 10,
+      description: messages.getMessage("batchSizeDescription"),
+      required: false
+    }),
     loglevel: flags.enum({
       description: "logging level for this command invocation",
       default: "info",
@@ -69,7 +75,8 @@ export default class Create extends SfdxCommand {
       this.flags.configfilepath,
       this.hubOrg,
       this.flags.apiversion,
-      sfdx
+      sfdx,
+      this.flags.batchsize
     );
 
     try {

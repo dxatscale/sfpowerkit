@@ -2,7 +2,6 @@
   "pool": {
     "expiry": 1,
     "config_file_path": "config/project-scratch-def.json",
-
     "tag": "sfpowerkit",
     "relax_ip_ranges": [
       {

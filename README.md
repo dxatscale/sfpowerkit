@@ -1241,11 +1241,14 @@ Creates a pool of prebuilt scratchorgs, which can the be consumed by users or CI
 
 ```
 USAGE
-  $ sfdx sfpowerkit:pool:create -f <filepath> [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+  $ sfdx sfpowerkit:pool:create -f <filepath> [-b <number>] [-v <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -f, --configfilepath=configfilepath                                               (required) Relative Path to the pool configuration json file. The schema of the file could be found in
-                                                                                    the Wiki
+  -b, --batchsize=batchsize                                                         [default: 10] Number of scratch org to be created in a single batch
+
+  -f, --configfilepath=configfilepath                                               (required) Relative Path to the pool configuration json file. The schema of the file could
+                                                                                    be found in the Wiki
 
   -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
 
