@@ -10,11 +10,10 @@ import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 import * as fs from "fs-extra";
 import FileUtils from "../../../../utils/fileutils";
 import * as rimraf from "rimraf";
-import PackageInfo, {
-  PackageDetail
-} from "../../../../impl/package/version/packageInfo";
+import PackageInfo from "../../../../impl/package/version/packageInfo";
 import GetDefaults from "../../../../utils/getDefaults";
 import { ProgressBar } from "../../../../ui/progressBar";
+import { PackageDetail } from "../../../../utils/packageUtils";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
