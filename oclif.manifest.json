@@ -1,5 +1,5 @@
 {
-  "version": "2.0.12",
+  "version": "2.0.13",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -460,7 +460,8 @@
           "type": "option",
           "char": "b",
           "description": "Number of scratch org to be created in a single batch",
-          "required": false
+          "required": false,
+          "default": 10
         }
       },
       "args": []

@@ -7,6 +7,7 @@ import { SfdxProject } from "@salesforce/core";
 import { loadSFDX } from "../../../../sfdxnode/GetNodeWrapper";
 import { sfdx } from "../../../..//sfdxnode/parallel";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
+import { isNullOrUndefined } from "util";
 let retry = require("async-retry");
 
 const packageIdPrefix = "0Ho";
@@ -150,6 +151,11 @@ export default class Install extends SfdxCommand {
         "Unable to retrieve the packages installed in the org, Proceeding",
         LoggerLevel.WARN
       );
+    }
+
+    if (isNullOrUndefined(installedpackages) || installedpackages.length == 0) {
+      this.flags.updateall = true;
+      installedpackages = [];
     }
 
     let individualpackage = this.flags.individualpackage;
