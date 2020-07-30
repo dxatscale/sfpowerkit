@@ -1,11 +1,8 @@
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import MetadataFiles from "../../metadata/metadataFiles";
-import * as fs from "fs-extra";
-import * as path from "path";
 import * as _ from "lodash";
 import ProfileActions from "./profileActions";
-import Excel, { Workbook, Worksheet } from "exceljs";
-import ProfileWriter from "../../../impl/metadata/writer/profileWriter";
+import { Workbook } from "exceljs";
 import Profile, {
   ProfileObjectPermissions,
   ProfileFieldLevelSecurity,
@@ -86,7 +83,6 @@ export default class ProfileCompare extends ProfileActions {
     sheet.mergeCells(1, 2, 1, fieldRowHeaders.length);
     sheet.mergeCells(1, 1, 3, 1);
 
-    console.log("formating the cells");
     sheet.getColumn(1).style = {
       ...sheet.getColumn(1).style,
       font: {
@@ -142,7 +138,6 @@ export default class ProfileCompare extends ProfileActions {
           let fullName = fieldPermission.field;
           let parts = fullName.split(".");
           let objectName = parts[0];
-          let fieldName = parts[1];
           if (!mapObjectProfileFieldPermissions.has(objectName)) {
             let fields: ProfileFieldLevelSecurity[] = [fieldPermission];
             let profileMap = new Map();
@@ -365,7 +360,6 @@ export default class ProfileCompare extends ProfileActions {
         objPermRowHeaders.push("allowRead");
         objPermRowHeaders.push("modifyAllRecords");
         objPermRowHeaders.push("viewAllRecords");
-        index = objRowHeaders.length - 1;
       }
       objPermRow.push(String(objPerm.allowCreate));
       objPermRow.push(String(objPerm.allowDelete));

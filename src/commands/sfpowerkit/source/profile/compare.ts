@@ -8,8 +8,6 @@ import {
 
 import * as _ from "lodash";
 import { SFPowerkit } from "../../../../sfpowerkit";
-import * as path from "path";
-import { METADATA_INFO } from "../../../../impl/metadata/metadataInfo";
 import ProfileCompare from "../../../../impl/source/profiles/profileCompare";
 
 // Initialize Messages with the current plugin directory
@@ -85,14 +83,12 @@ export default class Compare extends SfdxCommand {
 
     let argProfileList: string[] = this.flags.profilelist;
 
-    let folders: string[] = [];
-
     const profileUtils = new ProfileCompare(
       this.org,
       this.flags.loglevel == "debug"
     );
 
-    let syncPofles = await profileUtils.compare(argProfileList || []);
+    await profileUtils.compare(argProfileList || []);
 
     return null;
   }
