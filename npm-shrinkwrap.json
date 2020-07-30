@@ -1,6 +1,6 @@
 {
   "name": "sfpowerkit",
-  "version": "2.0.15",
+  "version": "2.0.16",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -5974,10 +5974,10 @@
       "version": "3.0.3"
     },
     "simple-git": {
-      "version": "2.11.0",
+      "version": "2.15.0",
       "requires": {
         "@kwsites/file-exists": "^1.1.1",
-        "@kwsites/promise-deferred": "^1.0.1",
+        "@kwsites/promise-deferred": "^1.1.1",
         "debug": "^4.1.1"
       }
     },
