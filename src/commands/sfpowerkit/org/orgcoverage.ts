@@ -178,7 +178,7 @@ export default class OrgCoverage extends SfdxCommand {
   private getComments(percentage: number) {
     return percentage < 75
       ? "Action required"
-      : percentage < 85 && percentage >= 75
+      : percentage >= 75 && percentage < 85
       ? "Looks fine but target more than 85%"
       : "";
   }
