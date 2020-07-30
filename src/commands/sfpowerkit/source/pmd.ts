@@ -207,7 +207,7 @@ export default class Pmd extends SfdxCommand {
 
         if (!this.flags.supressoutput) {
           let violations = fs.readFileSync(this.flags.report).toString();
-          //SFPowerkit.log(violations, LoggerLevel.INFO);
+          SFPowerkit.log(violations, LoggerLevel.INFO);
         }
       } else if (code == 1) {
         SFPowerkit.log("PMD Exited with some exceptions ", LoggerLevel.INFO);
