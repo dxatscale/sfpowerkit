@@ -5,6 +5,8 @@ const path = require("path");
 const _ = require("lodash");
 const os = require("os");
 
+const SEP = /\/|\\/;
+
 export const PLUGIN_CACHE_FOLDER = "sfpowerkit";
 
 export default class FileUtils {
@@ -127,7 +129,7 @@ export default class FileUtils {
     filePath: string,
     extension?: string
   ): string {
-    let fileParts = filePath.split(path.sep);
+    let fileParts = filePath.split(SEP);
     let fileName = fileParts[fileParts.length - 1];
     if (extension) {
       fileName = fileName.substr(0, fileName.lastIndexOf(extension));

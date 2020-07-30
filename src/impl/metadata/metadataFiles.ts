@@ -13,6 +13,8 @@ import * as glob from "glob";
 import { SFPowerkit } from "../../sfpowerkit";
 import { LoggerLevel } from "@salesforce/core";
 
+const SEP = /\/|\\/;
+
 export default class MetadataFiles {
   public static sourceOnly: boolean = false;
   forceignore: any;
@@ -28,7 +30,7 @@ export default class MetadataFiles {
   static getFullApiName(fileName: string): string {
     let fullName = "";
     let metadateType = MetadataInfo.getMetadataName(fileName);
-    let splitFilepath = fileName.split(path.sep);
+    let splitFilepath = fileName.split(SEP);
     let isObjectChild = METADATA_INFO.CustomObject.childXmlNames.includes(
       metadateType
     );
@@ -44,7 +46,7 @@ export default class MetadataFiles {
   static getFullApiNameWithExtension(fileName: string): string {
     let fullName = "";
     let metadateType = MetadataInfo.getMetadataName(fileName);
-    let splitFilepath = fileName.split(path.sep);
+    let splitFilepath = fileName.split(SEP);
     let isObjectChild = METADATA_INFO.CustomObject.childXmlNames.includes(
       metadateType
     );
@@ -60,7 +62,7 @@ export default class MetadataFiles {
 
   public static isCustomMetadata(filepath: string, name: string): boolean {
     let result = true;
-    let splitFilepath = filepath.split(path.sep);
+    let splitFilepath = filepath.split(SEP);
     let componentName = splitFilepath[splitFilepath.length - 1];
     componentName = componentName.substring(0, componentName.indexOf("."));
     if (
@@ -77,7 +79,7 @@ export default class MetadataFiles {
     name: string
   ): string {
     let member: string;
-    let splitFilepath = filepath.split(path.sep);
+    let splitFilepath = filepath.split(SEP);
     let lastIndex = splitFilepath.length - 1;
     let isObjectChild = METADATA_INFO.CustomObject.childXmlNames.includes(name);
     let metadataDescribe: MetadataDescribe = METADATA_INFO[name];
@@ -90,7 +92,7 @@ export default class MetadataFiles {
       let baseIndex = filepath.indexOf(baseName) + baseName.length;
       let cmpPath = filepath.substring(baseIndex + 1); // add 1 to remove the path seperator
       cmpPath = cmpPath.substring(0, cmpPath.indexOf("."));
-      member = cmpPath.replace(path.sep, "/");
+      member = cmpPath.replace(SEP, "/");
     } else {
       if (SOURCE_EXTENSION_REGEX.test(splitFilepath[lastIndex])) {
         member = splitFilepath[lastIndex].replace(SOURCE_EXTENSION_REGEX, "");
@@ -105,7 +107,7 @@ export default class MetadataFiles {
           let baseName = "staticresources";
           let baseIndex = filepath.indexOf(baseName) + baseName.length;
           let cmpPath = filepath.substring(baseIndex + 1); // add 1 to remove the path seperator
-          member = cmpPath.split(path.sep)[0];
+          member = cmpPath.split(SEP)[0];
           let extension = path.parse(member).ext;
 
           member = member.replace(new RegExp(extension + "$"), "");
@@ -152,7 +154,7 @@ export default class MetadataFiles {
               );
 
               if (METADATA_INFO[keys[i]].isChildComponent) {
-                let fileParts = metadataFile.split(path.sep);
+                let fileParts = metadataFile.split(SEP);
                 let parentName = fileParts[fileParts.length - 3];
                 name = parentName + "." + name;
               }
@@ -253,7 +255,7 @@ export default class MetadataFiles {
       return;
     }
 
-    let filePathParts = filePath.split(path.sep);
+    let filePathParts = filePath.split(SEP);
 
     if (fs.existsSync(outputFolder) == false) {
       fs.mkdirSync(outputFolder);
@@ -279,7 +281,7 @@ export default class MetadataFiles {
     for (let i = 0; i < files.length; i++) {
       if (fs.lstatSync(files[i]).isDirectory() == false) {
         let oneFilePath = path.join(".", files[i]);
-        let oneFilePathParts = oneFilePath.split(path.sep);
+        let oneFilePathParts = oneFilePath.split(SEP);
         fileName = oneFilePathParts[oneFilePathParts.length - 1];
         let outputPath = path.join(outputFolder, fileName);
         fs.copyFileSync(files[i], outputPath);
