@@ -214,7 +214,7 @@ export default class PoolCreateImpl {
       SFPowerkit.log(JSON.stringify(scriptExecResults), LoggerLevel.TRACE);
       ts = Math.floor(Date.now() / 1000) - ts;
       SFPowerkit.log(
-        `Script Execution completed in ${ts} Seconds`,
+        `Pool Execution completed in ${ts} Seconds`,
         LoggerLevel.INFO
       );
     }
@@ -389,7 +389,7 @@ export default class PoolCreateImpl {
         }
 
         SFPowerkit.log(
-          `Failed to execute scripts for ${scratchOrg.username}.. Returning to Pool`,
+          `Failed to execute scripts for ${scratchOrg.username} with alias ${scratchOrg.alias}.. Returning to Pool`,
           LoggerLevel.ERROR
         );
 
@@ -651,6 +651,10 @@ export default class PoolCreateImpl {
           scratchOrg.isScriptExecuted = false;
 
         if (scratchOrg.isScriptExecuted) {
+          SFPowerkit.log(
+            `Script Execution completed for ${scratchOrg.username} with alias ${scratchOrg.alias}`,
+            LoggerLevel.INFO
+          );
           ScratchOrgUtils.setScratchOrgInfo(
             {
               Id: scratchOrg.recordId,
