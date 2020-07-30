@@ -1,5 +1,5 @@
 {
-  "version": "2.0.14",
+  "version": "2.0.15",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -874,7 +874,7 @@
     "sfpowerkit:source:pmd": {
       "id": "sfpowerkit:source:pmd",
       "description": "This command is a wrapper around PMD ( downloads PMD for the first time) with some predefined defaults, such as ruleset, output format, output file. The command is to be run from the project directory",
-      "usage": "<%= command.id %> [-d <string>] [-r <string>] [-f <string>] [-o <string>] [--javahome <string>] [--supressoutput] [--version <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "usage": "<%= command.id %> [-d <string>] [-r <string>] [-f <string>] [-o <filepath>] [--javahome <string>] [--supressoutput] [--version <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],
@@ -906,7 +906,7 @@
             "ERROR",
             "FATAL"
           ],
-          "default": "warn"
+          "default": "info"
         },
         "directory": {
           "name": "directory",
@@ -919,7 +919,7 @@
           "name": "ruleset",
           "type": "option",
           "char": "r",
-          "description": "[default: sfpowerkit] The pmd ruleset that will be utilzied for analyzing the apex classes,  Checkout https://pmd.github.io/latest/pmd_userdocs_making_rulesets.html to create your own ruleset",
+          "description": "[default: [sfpowerkit](https://github.com/Accenture/sfpowerkit/blob/main/resources/pmd-ruleset.xml)] The pmd ruleset that will be utilzied for analyzing the apex classes,  Checkout https://pmd.github.io/latest/pmd_userdocs_making_rulesets.html to create your own ruleset",
           "required": false
         },
         "format": {
@@ -956,7 +956,7 @@
           "type": "option",
           "description": "[default: 6.21.0] The version of the pmd to be utilized for the analysis, this version will be downloaded to sfpowerkit's cache directory",
           "required": false,
-          "default": "6.22.0"
+          "default": "6.26.0"
         }
       },
       "args": []

@@ -42,7 +42,7 @@ export default class Pmd extends SfdxCommand {
       default: "text",
       description: messages.getMessage("formatFlagDescription")
     }),
-    report: flags.string({
+    report: flags.filepath({
       required: false,
       char: "o",
       default: "pmd-output",
@@ -59,8 +59,27 @@ export default class Pmd extends SfdxCommand {
     }),
     version: flags.string({
       required: false,
-      default: "6.22.0",
+      default: "6.26.0",
       description: messages.getMessage("versionFlagDescription")
+    }),
+    loglevel: flags.enum({
+      description: "logging level for this command invocation",
+      default: "info",
+      required: false,
+      options: [
+        "trace",
+        "debug",
+        "info",
+        "warn",
+        "error",
+        "fatal",
+        "TRACE",
+        "DEBUG",
+        "INFO",
+        "WARN",
+        "ERROR",
+        "FATAL"
+      ]
     })
   };
 
@@ -129,8 +148,13 @@ export default class Pmd extends SfdxCommand {
         )
       : this.flags.ruleset;
 
-    console.log(`PMD release ${this.flags.version}`);
-    console.log(`Now analyzing ${packageDirectory}`);
+    SFPowerkit.log(`PMD release ${this.flags.version}`, LoggerLevel.INFO);
+    SFPowerkit.log(`Now analyzing ${packageDirectory}`, LoggerLevel.INFO);
+
+    let dir = path.parse(this.flags.report).dir;
+    if (!fs.existsSync(dir)) {
+      FileUtils.mkDirByPathSync(dir);
+    }
 
     const pmdCmd = spawn(path.join(this.javahome, "bin", "java"), [
       "-cp",
@@ -260,8 +284,9 @@ export default class Pmd extends SfdxCommand {
         }
       });
 
-      console.debug(
-        `PMD analyzation complete  for module '${moduleName}' containing ${violationCount} issues, Report available at ${this.flags.report}`
+      SFPowerkit.log(
+        `PMD analyzation complete  for module '${moduleName}' containing ${violationCount} issues, Report available at ${this.flags.report}`,
+        LoggerLevel.INFO
       );
     });
 
