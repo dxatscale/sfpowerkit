@@ -125,14 +125,18 @@ export default class OrgCoverage extends SfdxCommand {
     const output = [];
     if (results.size > 0) {
       results.records.forEach(element => {
-        let percentage =
-          element.NumLinesCovered === 0
-            ? 0
-            : Math.round(
-                (element.NumLinesCovered /
-                  (element.NumLinesCovered + element.NumLinesUncovered)) *
-                  100
-              );
+        let percentage;
+        let comments = "";
+        if (element.NumLinesCovered === 0 && element.NumLinesUncovered === 0) {
+          percentage = "NA";
+        } else {
+          percentage = this.percentCalculate(
+            element.NumLinesCovered,
+            element.NumLinesUncovered
+          );
+          comments = this.getComments(percentage);
+          percentage = `${percentage}%`;
+        }
         output.push({
           id: element.ApexClassOrTriggerId,
           package: metadataVsPackageMap.has(element.ApexClassOrTrigger.Name)
@@ -140,13 +144,8 @@ export default class OrgCoverage extends SfdxCommand {
             : "",
           name: element.ApexClassOrTrigger.Name,
           type: element.ApexClassOrTrigger.attributes.url.split("/")[6],
-          percentage: `${percentage}%`,
-          comments:
-            percentage < 75
-              ? "Action required"
-              : percentage < 85 && percentage >= 75
-              ? "Looks fine but target more than 85%"
-              : "",
+          percentage: percentage,
+          comments: comments,
           uncoveredLines: element.Coverage.uncoveredLines.join(";")
         });
       });
@@ -170,6 +169,18 @@ export default class OrgCoverage extends SfdxCommand {
       }
     }
     return output;
+  }
+  private percentCalculate(covered: number, uncovered: number) {
+    return covered === 0
+      ? 0
+      : Math.round((covered / (covered + uncovered)) * 100);
+  }
+  private getComments(percentage: number) {
+    return percentage < 75
+      ? "Action required"
+      : percentage >= 75 && percentage < 85
+      ? "Looks fine but target more than 85%"
+      : "";
   }
   private async generateJsonOutput(testResult: AnyJson, outputDir: string) {
     let outputJsonPath = `${outputDir}/output.json`;
