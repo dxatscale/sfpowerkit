@@ -1,6 +1,5 @@
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import MetadataFiles from "../../metadata/metadataFiles";
-import * as _ from "lodash";
 import ProfileActions from "./profileActions";
 import { Workbook } from "exceljs";
 import Profile, {
@@ -9,8 +8,6 @@ import Profile, {
   ApplicationVisibility
 } from "../../../impl/metadata/schema";
 import { Org } from "@salesforce/core";
-
-const unsupportedprofiles = [];
 
 export default class ProfileCompare extends ProfileActions {
   metadataFiles: MetadataFiles;
@@ -330,7 +327,6 @@ export default class ProfileCompare extends ProfileActions {
         fieldRowHeaders.push("");
         fieldPermRowHeaders.push("editable");
         fieldPermRowHeaders.push("readable");
-        index = fieldRowHeaders.length - 1;
       }
       fieldPermRow.push(String(fieldPerm.editable));
       fieldPermRow.push(String(fieldPerm.readable));
@@ -385,7 +381,6 @@ export default class ProfileCompare extends ProfileActions {
         appRowHeaders.push("");
         appVisibilityRowHeaders.push("visible");
         appVisibilityRowHeaders.push("default");
-        index = appRowHeaders.length - 1;
       }
       appVisibilityRow.push(String(appVisibility.visible));
       appVisibilityRow.push(String(appVisibility.default));

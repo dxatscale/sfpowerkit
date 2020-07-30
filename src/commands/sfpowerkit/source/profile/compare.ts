@@ -6,7 +6,6 @@ import {
   SfdxResult
 } from "@salesforce/command";
 
-import * as _ from "lodash";
 import { SFPowerkit } from "../../../../sfpowerkit";
 import ProfileCompare from "../../../../impl/source/profiles/profileCompare";
 
