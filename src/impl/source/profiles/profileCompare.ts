@@ -8,45 +8,60 @@ import Excel, { Workbook, Worksheet } from "exceljs";
 import ProfileWriter from "../../../impl/metadata/writer/profileWriter";
 import Profile, {
   ProfileObjectPermissions,
-  ProfileFieldLevelSecurity
+  ProfileFieldLevelSecurity,
+  ApplicationVisibility
 } from "../../../impl/metadata/schema";
+import { Org } from "@salesforce/core";
 
 const unsupportedprofiles = [];
 
 export default class ProfileCompare extends ProfileActions {
   metadataFiles: MetadataFiles;
+  workbook: Workbook;
+  public constructor(public org: Org, debugFlag?: boolean) {
+    super(org, debugFlag);
+  }
 
   public async compare(profiles?: string[], isdelete?: boolean) {
     SFPowerkit.log("Retrieving profiles", LoggerLevel.DEBUG);
     SFPowerkit.log("Requested  profiles are..", LoggerLevel.DEBUG);
     SFPowerkit.log(profiles, LoggerLevel.DEBUG);
-    let srcFolders = await SFPowerkit.getProjectDirectories();
-
-    /*
-    let profileObjs = await this.profileRetriever.loadProfiles(
-      profiles,
-      this.conn
-    );
-    */
 
     let profileObjs = await this.readProfileFromOrg(this.conn, profiles);
-    const workbook = new Workbook();
-    this.compareObjectPermissions(workbook, profileObjs as Profile[]);
-    this.compareFieldPermissions(workbook, profileObjs as Profile[]);
-    await workbook.xlsx.writeFile("profileCompare.xlsx");
+    this.workbook = new Workbook();
+    this.compareObjectPermissions(profileObjs as Profile[]);
+    this.compareFieldPermissions(profileObjs as Profile[]);
+    this.compareApplicationVisibilitiess(profileObjs as Profile[]);
+    await this.workbook.xlsx.writeFile("profileCompare.xlsx");
   }
 
-  private compareFieldPermissions(workbook: Workbook, profileList: Profile[]) {
+  private compareFieldPermissions(profileList: Profile[]) {
+    let mapObjectProfileFieldPermissions: Map<
+      string,
+      Map<string, ProfileFieldLevelSecurity[]>
+    > = this.buildFieldPermissionsMap(profileList);
+    mapObjectProfileFieldPermissions.forEach(
+      (profilesMap: Map<string, ProfileFieldLevelSecurity[]>, objectName) => {
+        this.writeObjectFieldPermissions(profilesMap, objectName);
+      }
+    );
+  }
+
+  private writeObjectFieldPermissions(
+    profilesMap: Map<string, ProfileFieldLevelSecurity[]>,
+    objectName
+  ) {
+    let profileHeaderRow = ["Profiles", "Fields"];
     let fieldRowHeaders = [""];
     let fieldPermRowHeaders = [""];
-    let profileHeaderRow = ["Profiles", "Objects"];
     let permRows = [];
-    // let mapObjectProfileFieldPermissions:Map<string, Map<string,ProfileFieldLevelSecurity[]>> = this.buildFieldPermissionsMap(profileList);
-    for (let profileObj of profileList) {
-      if (profileObj.fieldPermissions !== undefined) {
+    let profiles = profilesMap.keys();
+    for (const profile of profiles) {
+      let fieldsPermissions = profilesMap.get(profile);
+      if (fieldsPermissions !== undefined) {
         let fieldPermRow = this.writeFieldPermission(
-          profileObj.fullName,
-          profileObj.fieldPermissions,
+          profile,
+          fieldsPermissions,
           fieldRowHeaders,
           fieldPermRowHeaders
         );
@@ -60,7 +75,7 @@ export default class ProfileCompare extends ProfileActions {
     rows.push(...permRows);
 
     //const workbook = new Workbook();
-    const sheet = workbook.addWorksheet("Fields Permissions", {
+    const sheet = this.workbook.addWorksheet(objectName, {
       properties: { tabColor: { argb: "DE4EB957" } }
     });
     sheet.state = "visible";
@@ -79,7 +94,7 @@ export default class ProfileCompare extends ProfileActions {
       }
     };
     sheet.getColumn(1).width = 30;
-    for (let i = 4; i <= profileList.length + 3; i++) {
+    for (let i = 4; i <= profilesMap.size + 3; i++) {
       for (let j = 2; j < fieldRowHeaders.length + 1; j++) {
         if (sheet.getCell(i, j).value === "true") {
           sheet.getCell(i, j).style = {
@@ -151,7 +166,7 @@ export default class ProfileCompare extends ProfileActions {
     }
     return mapObjectProfileFieldPermissions;
   }
-  private compareObjectPermissions(workbook: Workbook, profileList: Profile[]) {
+  private compareObjectPermissions(profileList: Profile[]) {
     let objRowHeaders = [""];
     let objPermRowHeaders = [""];
     let profileHeaderRow = ["Profiles", "Objects"];
@@ -174,7 +189,7 @@ export default class ProfileCompare extends ProfileActions {
     rows.push(...permRows);
 
     //const workbook = new Workbook();
-    const sheet = workbook.addWorksheet("Object Permissions", {
+    const sheet = this.workbook.addWorksheet("Object Permissions", {
       properties: { tabColor: { argb: "FFC0000" } }
     });
     sheet.state = "visible";
@@ -209,14 +224,6 @@ export default class ProfileCompare extends ProfileActions {
               ]
             }
           };
-          /*
-          sheet.getCell(i, j).style = {
-            ...sheet.getCell(i, j).style,
-            font: {
-              color: { argb: "DE4EB957" }
-            }
-          };
-          */
         } else {
           sheet.getCell(i, j).style = {
             ...sheet.getCell(i, j).style,
@@ -231,14 +238,82 @@ export default class ProfileCompare extends ProfileActions {
               ]
             }
           };
-          /*
+        }
+      }
+    }
+  }
+  private compareApplicationVisibilitiess(profileList: Profile[]) {
+    let appRowHeaders = [""];
+    let appVisibilityRowHeaders = [""];
+    let profileHeaderRow = ["Profiles", "Applications"];
+    let permRows = [];
+    for (let profileObj of profileList) {
+      if (profileObj.applicationVisibilities !== undefined) {
+        let objPermRow = this.writeAppVisibilities(
+          profileObj.fullName,
+          profileObj.applicationVisibilities,
+          appRowHeaders,
+          appVisibilityRowHeaders
+        );
+        permRows.push(objPermRow);
+      }
+    }
+    let rows = [];
+    rows.push(profileHeaderRow);
+    rows.push(appRowHeaders);
+    rows.push(appVisibilityRowHeaders);
+    rows.push(...permRows);
+
+    //const workbook = new Workbook();
+    const sheet = this.workbook.addWorksheet("App Visibilities", {
+      properties: { tabColor: { argb: "FFC0000" } }
+    });
+    sheet.state = "visible";
+    sheet.addRows(rows, "i");
+    for (let i = 2; i <= appRowHeaders.length; i = i + 2) {
+      sheet.mergeCells(2, i, 2, i + 1);
+    }
+    sheet.mergeCells(1, 2, 1, appRowHeaders.length);
+    sheet.mergeCells(1, 1, 3, 1);
+
+    console.log("formating the cells");
+    sheet.getColumn(1).style = {
+      ...sheet.getColumn(1).style,
+      font: {
+        bold: true
+      }
+    };
+    sheet.getColumn(1).width = 30;
+    for (let i = 4; i <= profileList.length + 3; i++) {
+      for (let j = 2; j < appRowHeaders.length + 1; j++) {
+        if (sheet.getCell(i, j).value === "true") {
           sheet.getCell(i, j).style = {
             ...sheet.getCell(i, j).style,
-            font: {
-              color: { argb: "DEFE351A" }
+            fill: {
+              type: "gradient",
+              gradient: "angle",
+              degree: 0,
+              stops: [
+                { position: 0, color: { argb: "DE4EB957" } },
+                { position: 0.5, color: { argb: "DE4EB957" } },
+                { position: 1, color: { argb: "DE4EB957" } }
+              ]
             }
           };
-          */
+        } else {
+          sheet.getCell(i, j).style = {
+            ...sheet.getCell(i, j).style,
+            fill: {
+              type: "gradient",
+              gradient: "angle",
+              degree: 0,
+              stops: [
+                { position: 0, color: { argb: "DEFE351A" } },
+                { position: 0.5, color: { argb: "DEFE351A" } },
+                { position: 1, color: { argb: "DEFE351A" } }
+              ]
+            }
+          };
         }
       }
     }
@@ -252,7 +327,8 @@ export default class ProfileCompare extends ProfileActions {
   ) {
     let fieldPermRow = [profileName];
     for (const fieldPerm of fieldPermissions) {
-      let fieldName = fieldPerm.field;
+      let fieldName = fieldPerm.field.split(".")[1];
+
       let index = fieldRowHeaders.indexOf(fieldName);
       if (index < 0) {
         fieldRowHeaders.push(fieldName);
@@ -299,5 +375,27 @@ export default class ProfileCompare extends ProfileActions {
       objPermRow.push(String(objPerm.viewAllRecords));
     }
     return objPermRow;
+  }
+  private writeAppVisibilities(
+    profileName: string,
+    applicationVisibilities: ApplicationVisibility[],
+    appRowHeaders: string[],
+    appVisibilityRowHeaders: string[]
+  ) {
+    let appVisibilityRow = [profileName];
+    for (const appVisibility of applicationVisibilities) {
+      let appName = appVisibility.application;
+      let index = appRowHeaders.indexOf(appName);
+      if (index < 0) {
+        appRowHeaders.push(appName);
+        appRowHeaders.push("");
+        appVisibilityRowHeaders.push("visible");
+        appVisibilityRowHeaders.push("default");
+        index = appRowHeaders.length - 1;
+      }
+      appVisibilityRow.push(String(appVisibility.visible));
+      appVisibilityRow.push(String(appVisibility.default));
+    }
+    return appVisibilityRow;
   }
 }
