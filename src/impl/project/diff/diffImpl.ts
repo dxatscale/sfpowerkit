@@ -39,6 +39,8 @@ const permissionExtensions = PROFILE_PERMISSIONSET_EXTENSION.map(elem => {
   return elem.sourceExtension;
 });
 
+const SEP = /\/|\\/;
+
 export default class DiffImpl {
   destructivePackageObjPre: any[];
   destructivePackageObjPost: any[];
@@ -282,7 +284,7 @@ export default class DiffImpl {
             );
 
             if (METADATA_INFO[key].isChildComponent) {
-              let fileParts = filePath.split(path.sep);
+              let fileParts = filePath.split(SEP);
               let parentName = fileParts[fileParts.length - 3];
               name = parentName + "." + name;
             }
