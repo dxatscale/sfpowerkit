@@ -193,7 +193,7 @@ export default class DiffUtil {
           fs.mkdirSync(outputFolder);
         }
       }
-      let fileContent = await git.show(["--raw", gitFile.revision]);
+      let fileContent = await git.binaryCatFile(["-p", gitFile.revision]);
       fs.writeFileSync(outputPath, fileContent);
     }
   }
