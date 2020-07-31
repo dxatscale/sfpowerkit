@@ -2530,6 +2530,91 @@
       },
       "args": []
     },
+    "sfpowerkit:project:datamodel:report": {
+      "id": "sfpowerkit:project:datamodel:report",
+      "description": "This command is used to generate datamodel report from project",
+      "usage": "<%= command.id %> -d <string> -t <array> [-p <array>] [-f json|csv|md] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "pluginName": "sfpowerkit",
+      "pluginType": "core",
+      "aliases": [],
+      "examples": [
+        "$ sfdx sfpowerkit:project:datamodel:report",
+        "$ sfdx sfpowerkit:project:datamodel:report -p force-app/main/default/objects -d result",
+        "$ sfdx sfpowerkit:project:datamodel:report -p force-app/main/default/objects -t CustomField,RecordType",
+        "$ sfdx sfpowerkit:project:datamodel:report -p force-app/main/default/objects -t CustomField,RecordType -f csv",
+        "$ sfdx sfpowerkit:project:datamodel:report -f md -d docs"
+      ],
+      "flags": {
+        "json": {
+          "name": "json",
+          "type": "boolean",
+          "description": "format output as json",
+          "allowNo": false
+        },
+        "loglevel": {
+          "name": "loglevel",
+          "type": "option",
+          "description": "logging level for this command invocation",
+          "required": false,
+          "helpValue": "(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)",
+          "options": [
+            "trace",
+            "debug",
+            "info",
+            "warn",
+            "error",
+            "fatal",
+            "TRACE",
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "ERROR",
+            "FATAL"
+          ],
+          "default": "info"
+        },
+        "objectspath": {
+          "name": "objectspath",
+          "type": "option",
+          "char": "p",
+          "description": "list of Paths to object location, if not provided all the project paths from sfdx-project.json",
+          "required": false
+        },
+        "outputdir": {
+          "name": "outputdir",
+          "type": "option",
+          "char": "d",
+          "description": "location to create the datamodel report",
+          "required": true,
+          "default": "datamodelreport"
+        },
+        "filtertype": {
+          "name": "filtertype",
+          "type": "option",
+          "char": "t",
+          "description": "apply filter to reduce the result by types",
+          "required": true,
+          "default": [
+            "CustomField",
+            "BusinessProcess",
+            "RecordType",
+            "ValidationRule",
+            "CustomObject"
+          ]
+        },
+        "format": {
+          "name": "format",
+          "type": "option",
+          "char": "f",
+          "description": "format of the output file to create",
+          "required": false,
+          "helpValue": "(json|csv|md)",
+          "options": ["json", "csv", "md"],
+          "default": "json"
+        }
+      },
+      "args": []
+    },
     "sfpowerkit:project:manifest:diff": {
       "id": "sfpowerkit:project:manifest:diff",
       "description": "run diff between two package.xml and get the difference",
@@ -2939,91 +3024,6 @@
           "char": "p",
           "description": "The name of the package that needs to be reconciled",
           "required": true
-        }
-      },
-      "args": []
-    },
-    "sfpowerkit:source:datamodel:report": {
-      "id": "sfpowerkit:source:datamodel:report",
-      "description": "This command is used to generate datamodel report from project",
-      "usage": "<%= command.id %> -d <string> -t <array> [-p <array>] [-f json|csv|md] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
-      "pluginName": "sfpowerkit",
-      "pluginType": "core",
-      "aliases": [],
-      "examples": [
-        "$ sfdx sfpowerkit:source:datamodel:report",
-        "$ sfdx sfpowerkit:source:datamodel:report -p force-app/main/default/objects -d result",
-        "$ sfdx sfpowerkit:source:datamodel:report -p force-app/main/default/objects -t CustomField,RecordType",
-        "$ sfdx sfpowerkit:source:datamodel:report -p force-app/main/default/objects -t CustomField,RecordType -f csv",
-        "$ sfdx sfpowerkit:source:datamodel:report -f md -d docs"
-      ],
-      "flags": {
-        "json": {
-          "name": "json",
-          "type": "boolean",
-          "description": "format output as json",
-          "allowNo": false
-        },
-        "loglevel": {
-          "name": "loglevel",
-          "type": "option",
-          "description": "logging level for this command invocation",
-          "required": false,
-          "helpValue": "(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)",
-          "options": [
-            "trace",
-            "debug",
-            "info",
-            "warn",
-            "error",
-            "fatal",
-            "TRACE",
-            "DEBUG",
-            "INFO",
-            "WARN",
-            "ERROR",
-            "FATAL"
-          ],
-          "default": "info"
-        },
-        "objectspath": {
-          "name": "objectspath",
-          "type": "option",
-          "char": "p",
-          "description": "list of Paths to object location, if not provided all the project paths from sfdx-project.json",
-          "required": false
-        },
-        "outputdir": {
-          "name": "outputdir",
-          "type": "option",
-          "char": "d",
-          "description": "location to create the datamodel report",
-          "required": true,
-          "default": "datamodelreport"
-        },
-        "filtertype": {
-          "name": "filtertype",
-          "type": "option",
-          "char": "t",
-          "description": "apply filter to reduce the result by types",
-          "required": true,
-          "default": [
-            "CustomField",
-            "BusinessProcess",
-            "RecordType",
-            "ValidationRule",
-            "CustomObject"
-          ]
-        },
-        "format": {
-          "name": "format",
-          "type": "option",
-          "char": "f",
-          "description": "format of the output file to create",
-          "required": false,
-          "helpValue": "(json|csv|md)",
-          "options": ["json", "csv", "md"],
-          "default": "json"
         }
       },
       "args": []

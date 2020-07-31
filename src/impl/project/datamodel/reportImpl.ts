@@ -6,8 +6,10 @@ import { METADATA_INFO } from "../../metadata/metadataInfo";
 import xmlUtil from "../../../utils/xmlUtil";
 import { AnyJson } from "@salesforce/ts-types";
 import MarkdownGeneratorImpl from "./MarkdownGeneratorImpl";
+import { isNullOrUndefined } from "util";
 
 var path = require("path");
+const SEP = /\/|\\/;
 
 export default class ReportImpl {
   private filtertype: string[];
@@ -71,7 +73,7 @@ export default class ReportImpl {
             metadataDescribe.sourceExtension
           );
 
-          let fileParts = metadataFile.split(path.sep);
+          let fileParts = metadataFile.split(SEP);
 
           let metadataJson = await xmlUtil.xmlToJSON(metadataFile);
           delete metadataJson[type]["$"];
@@ -111,40 +113,46 @@ export default class ReportImpl {
     return result;
   }
   public async generateCSVOutput(result: any[]) {
-    let outputcsvPath = `${this.outputDir}/output.csv`;
+    let outputcsvPath = `${this.outputDir}${path.sep}output.csv`;
     let dir = path.parse(outputcsvPath).dir;
     if (!fs.existsSync(dir)) {
       FileUtils.mkDirByPathSync(dir);
     }
     let newLine = "\r\n";
     let output =
-      "Metadata type,Name,ObjectName,fieldType,status(recordtypes/validation rules),source Path" +
+      "Metadata type,Name,Label,ObjectName,fieldType,status(recordtypes/validation rules),source Path" +
       newLine;
     result.forEach(element => {
       let fieldType =
-        element.metadatype === "CustomField" ? element.metadataJson.type : "";
+        element.metadatype === "CustomField" &&
+        !isNullOrUndefined(element.metadataJson.type)
+          ? element.metadataJson.type
+          : "";
       let status =
         element.metadatype === "RecordType" ||
         element.metadatype === "ValidationRule"
           ? element.metadataJson.active
           : "";
-      output = `${output}${element.metadatype},${element.name},${element.objectName},${fieldType},${status},${element.sourcePath}${newLine}`;
+      let elementLabel = !isNullOrUndefined(element.metadataJson.label)
+        ? element.metadataJson.label
+        : "";
+      output = `${output}${element.metadatype},${element.name},${elementLabel},${element.objectName},${fieldType},${status},${element.sourcePath}${newLine}`;
     });
     fs.writeFileSync(outputcsvPath, output);
     SFPowerkit.log(
-      `Output ${this.outputDir}/output.csv is generated successfully`,
+      `Output ${outputcsvPath} is generated successfully`,
       LoggerLevel.INFO
     );
   }
   private async generateJsonOutput(result: any[]) {
-    let outputJsonPath = `${this.outputDir}/output.json`;
+    let outputJsonPath = `${this.outputDir}${path.sep}output.json`;
     let dir = path.parse(outputJsonPath).dir;
     if (!fs.existsSync(dir)) {
       FileUtils.mkDirByPathSync(dir);
     }
     fs.writeFileSync(outputJsonPath, JSON.stringify(result));
     SFPowerkit.log(
-      `Output ${this.outputDir}/output.json is generated successfully`,
+      `Output ${outputJsonPath} is generated successfully`,
       LoggerLevel.INFO
     );
   }
@@ -153,7 +161,7 @@ export default class ReportImpl {
     for (let item of result) {
       let filepath =
         this.outputDir + item.sourcePath.split("objects")[1] + ".md";
-      filepath = filepath.split("/").join("\\");
+      filepath = filepath.split("/").join(path.sep);
       let dir = path.parse(filepath).dir;
       if (!fs.existsSync(dir)) {
         FileUtils.mkDirByPathSync(dir);
