@@ -2,7 +2,6 @@ import ScratchOrgUtils, { ScratchOrg } from "../../../utils/scratchOrgUtils";
 import { Connection, LoggerLevel, Org, AuthInfo } from "@salesforce/core";
 import { SFPowerkit } from "../../../sfpowerkit";
 import * as fs from "fs-extra";
-
 import { exec } from "child_process";
 import Bottleneck from "bottleneck";
 import { isNullOrUndefined } from "util";
@@ -10,16 +9,11 @@ import RelaxIPRangeImpl from "../../org/relaxIPRangeImpl";
 import FileUtils from "../../../utils/fileutils";
 import * as path from "path";
 import * as rimraf from "rimraf";
-
-const limiter = new Bottleneck({
-  maxConcurrent: 10
-});
+import { SfdxApi } from "../../../sfdxnode/types";
 
 export default class PoolCreateImpl {
-  private poolconfigFilePath: string;
-  private hubOrg: Org;
   private hubConn: Connection;
-  private apiversion: string;
+
   private poolConfig: PoolConfig;
   private totalToBeAllocated: number;
   private ipRangeExecResults;
@@ -27,22 +21,27 @@ export default class PoolCreateImpl {
   private limits;
   private scriptFileExists: boolean;
   private totalAllocated: number = 0;
-
-  private scriptExecutorWrappedForBottleneck = limiter.wrap(
-    this.scriptExecutor
-  );
-  private ipRangeRelaxerWrappedForBottleneck = limiter.wrap(
-    this.ipRangeRelaxer
-  );
+  private limiter;
+  private scriptExecutorWrappedForBottleneck;
+  private ipRangeRelaxerWrappedForBottleneck;
 
   public constructor(
-    poolconfigFilePath: string,
-    hubOrg: Org,
-    apiversion: string
+    private poolconfigFilePath: string,
+    private hubOrg: Org,
+    private apiversion: string,
+    private sfdx: SfdxApi,
+    private batchSize: number
   ) {
-    this.poolconfigFilePath = poolconfigFilePath;
-    this.hubOrg = hubOrg;
-    this.apiversion = apiversion;
+    this.limiter = new Bottleneck({
+      maxConcurrent: batchSize
+    });
+
+    this.scriptExecutorWrappedForBottleneck = this.limiter.wrap(
+      this.scriptExecutor
+    );
+    this.ipRangeRelaxerWrappedForBottleneck = this.limiter.wrap(
+      this.ipRangeRelaxer
+    );
   }
 
   public async poolScratchOrgs(): Promise<boolean> {
@@ -117,6 +116,7 @@ export default class PoolCreateImpl {
     );
 
     if (
+      !this.poolConfig.pool.relax_all_ip_ranges &&
       isNullOrUndefined(this.poolConfig.pool.relax_ip_ranges) &&
       !this.poolConfig.pool.user_mode
     ) {
@@ -149,26 +149,33 @@ export default class PoolCreateImpl {
     //Generate Scratch Orgs
     await this.generateScratchOrgs();
 
+    // Setup Logging Directory
+    rimraf.sync("script_exec_outputs");
+    FileUtils.mkDirByPathSync("script_exec_outputs");
+
     // Assign workers to executed scripts
     let ts = Math.floor(Date.now() / 1000);
     for (let poolUser of this.poolConfig.poolUsers) {
       for (let scratchOrg of poolUser.scratchOrgs) {
         SFPowerkit.log(JSON.stringify(scratchOrg), LoggerLevel.DEBUG);
 
-        if (this.poolConfig.pool.relax_ip_ranges) {
+        if (
+          this.poolConfig.pool.relax_all_ip_ranges ||
+          this.poolConfig.pool.relax_ip_ranges
+        ) {
           let resultForIPRelaxation = this.ipRangeRelaxerWrappedForBottleneck(
             scratchOrg
           );
           ipRangeExecPromises.push(resultForIPRelaxation);
         }
 
-        
+        //Wait for scripts to finish execution
+        if (
+          this.poolConfig.pool.relax_all_ip_ranges ||
+          this.poolConfig.pool.relax_ip_ranges
+        )
+          this.ipRangeExecResults = await Promise.all(ipRangeExecPromises);
 
-    //Wait for scripts to finish execution
-    if (this.poolConfig.pool.relax_ip_ranges)
-      this.ipRangeExecResults = await Promise.all(ipRangeExecPromises);
-
-      
         if (this.scriptFileExists) {
           let result = this.scriptExecutorWrappedForBottleneck(
             this.poolConfig.pool.script_file_path,
@@ -191,9 +198,11 @@ export default class PoolCreateImpl {
       }
     }
 
-
     //Get IP Range results
-    if (!isNullOrUndefined(this.poolConfig.pool.relax_ip_ranges))
+    if (
+      this.poolConfig.pool.relax_ip_ranges ||
+      !isNullOrUndefined(this.poolConfig.pool.relax_ip_ranges)
+    )
       this.ipRangeExecResultsAsObject = this.arrayToObject(
         this.ipRangeExecResults,
         "username"
@@ -205,7 +214,7 @@ export default class PoolCreateImpl {
       SFPowerkit.log(JSON.stringify(scriptExecResults), LoggerLevel.TRACE);
       ts = Math.floor(Date.now() / 1000) - ts;
       SFPowerkit.log(
-        `Script Execution completed in ${ts} Seconds`,
+        `Pool Execution completed in ${ts} Seconds`,
         LoggerLevel.INFO
       );
     }
@@ -334,11 +343,12 @@ export default class PoolCreateImpl {
       poolUser.scratchOrgs = new Array<ScratchOrg>();
       for (let i = 0; i < poolUser.to_allocate; i++) {
         SFPowerkit.log(
-          `Creating Scratch  Org for ${count} of ${this.totalToBeAllocated}..`,
+          `Creating Scratch  Org  ${count} of ${this.totalToBeAllocated}..`,
           LoggerLevel.INFO
         );
         try {
           let scratchOrg: ScratchOrg = await ScratchOrgUtils.createScratchOrg(
+            this.sfdx,
             count,
             poolUser.username,
             this.poolConfig.pool.config_file_path,
@@ -379,7 +389,7 @@ export default class PoolCreateImpl {
         }
 
         SFPowerkit.log(
-          `Failed to execute scripts for ${scratchOrg.username}.. Returning to Pool`,
+          `Failed to execute scripts for ${scratchOrg.username} with alias ${scratchOrg.alias}.. Returning to Pool`,
           LoggerLevel.ERROR
         );
 
@@ -389,13 +399,17 @@ export default class PoolCreateImpl {
           let activeScratchOrgRecordId = await ScratchOrgUtils.getActiveScratchOrgRecordIdGivenScratchOrg(
             this.hubOrg,
             this.apiversion,
-            scratchOrg.recordId
+            scratchOrg.orgId
           );
 
           await ScratchOrgUtils.deleteScratchOrg(
             this.hubOrg,
             this.apiversion,
             activeScratchOrgRecordId
+          );
+          SFPowerkit.log(
+            `Succesfully deleted scratchorg  ${scratchOrg.username}`,
+            LoggerLevel.TRACE
           );
         } catch (error) {
           SFPowerkit.log(
@@ -552,11 +566,22 @@ export default class PoolCreateImpl {
     const connection = await Connection.create({
       authInfo: await AuthInfo.create({ username: scratchOrg.username })
     });
-    return RelaxIPRangeImpl.setIp(
-      connection,
-      scratchOrg.username,
-      this.poolConfig.pool.relax_ip_ranges
-    );
+
+    if (this.poolConfig.pool.relax_all_ip_ranges) {
+      this.poolConfig.pool.relax_ip_ranges = [];
+      return RelaxIPRangeImpl.setIp(
+        connection,
+        scratchOrg.username,
+        this.poolConfig.pool.relax_ip_ranges,
+        this.poolConfig.pool.relax_all_ip_ranges
+      );
+    } else {
+      return RelaxIPRangeImpl.setIp(
+        connection,
+        scratchOrg.username,
+        this.poolConfig.pool.relax_ip_ranges
+      );
+    }
   }
 
   private async scriptExecutor(
@@ -566,14 +591,10 @@ export default class PoolCreateImpl {
   ): Promise<ScriptExecutionResult> {
     //executue using bash
     let cmd;
-    let logRestricter = 0;
 
     SFPowerkit.log(`Script File Path: ${scriptFilePath}`, LoggerLevel.TRACE);
 
     scriptFilePath = path.normalize(scriptFilePath);
-
-    rimraf.sync("script_exec_outputs");
-    FileUtils.mkDirByPathSync("script_exec_outputs");
 
     if (process.platform != "win32") {
       cmd = `bash ${scriptFilePath}  ${scratchOrg.username}  ${hubOrgUserName} `;
@@ -588,15 +609,17 @@ export default class PoolCreateImpl {
     );
 
     SFPowerkit.log(
-      `Script Execution result written to script_exec_outputs/${scratchOrg.alias} `,
+      `Script Execution result is being written to script_exec_outputs/${scratchOrg.alias}.log, Please note this will take a significant time depending on the  script being executed`,
       LoggerLevel.INFO
     );
+
+    let fdr = fs.openSync(`script_exec_outputs/${scratchOrg.alias}.log`, "a");
 
     return new Promise((resolve, reject) => {
       let ls = exec(cmd, { cwd: process.cwd() }, (error, stdout, stderr) => {
         if (error) {
           SFPowerkit.log(
-            `failed to execute script for ${scratchOrg.username}`,
+            `Failed to execute script for ${scratchOrg.username}`,
             LoggerLevel.WARN
           );
           scratchOrg.isScriptExecuted = false;
@@ -612,18 +635,26 @@ export default class PoolCreateImpl {
 
         if (stderr) {
           SFPowerkit.log(stderr, LoggerLevel.DEBUG);
-          fs.appendFileSync(`script_exec_outputs/${scratchOrg.alias}`, stderr);
+          fs.appendFileSync(
+            `script_exec_outputs/${scratchOrg.alias}.log`,
+            stderr
+          );
         }
 
         scratchOrg.isScriptExecuted = true;
 
         if (
-          this.poolConfig.pool.relax_ip_ranges &&
+          (this.poolConfig.pool.relax_all_ip_ranges ||
+            this.poolConfig.pool.relax_ip_ranges) &&
           !this.ipRangeExecResultsAsObject[scratchOrg.username]["success"]
         )
           scratchOrg.isScriptExecuted = false;
 
         if (scratchOrg.isScriptExecuted) {
+          SFPowerkit.log(
+            `Script Execution completed for ${scratchOrg.username} with alias ${scratchOrg.alias}`,
+            LoggerLevel.INFO
+          );
           ScratchOrgUtils.setScratchOrgInfo(
             {
               Id: scratchOrg.recordId,
@@ -634,6 +665,7 @@ export default class PoolCreateImpl {
           ).then(
             (result: boolean) => {
               scratchOrg.isScriptExecuted = true;
+              fs.closeSync(fdr);
               resolve({
                 isSuccess: true,
                 message: "Successfuly set the scratch org record in Pool",
@@ -642,6 +674,7 @@ export default class PoolCreateImpl {
               });
             },
             (reason: any) => {
+              fs.closeSync(fdr);
               scratchOrg.isScriptExecuted = false;
               resolve({
                 isSuccess: false,
@@ -655,15 +688,7 @@ export default class PoolCreateImpl {
       });
 
       ls.stdout.on("data", function(data) {
-        fs.appendFileSync(`script_exec_outputs/${scratchOrg.alias}`, data);
-        //Print only processing if there is more than 5 logs, Restrict Verbose scripts like sfpowerkit package dependencies install
-        if (logRestricter % 10 == 0) {
-          SFPowerkit.log(
-            `Processing for ${scratchOrg.alias} with ${scratchOrg.username}: IN_PROGRESS....`,
-            LoggerLevel.INFO
-          );
-        }
-        logRestricter++;
+        fs.appendFileSync(`script_exec_outputs/${scratchOrg.alias}.log`, data);
       });
     });
   }
@@ -686,6 +711,7 @@ export interface Pool {
   script_file_path?: string;
   tag: string;
   user_mode: boolean;
+  relax_all_ip_ranges: boolean;
   relax_ip_ranges: IpRanges[];
   max_allocation: number;
 }

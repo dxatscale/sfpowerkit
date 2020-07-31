@@ -21,7 +21,7 @@
             <operation>equals</operation>
             <value>Allocate</value>
         </criteriaItems>
-        <description>sfpowerkit:org:scratchorg:pool:fetch with Allocate the Scratch org and this workflow update the status to Assigned</description>
+        <description>sfpowerkit:org:scratchorg:pool:fetch will allocate the Scratch org and update the status to Assigned</description>
         <triggerType>onCreateOrTriggeringUpdate</triggerType>
     </rules>
 </Workflow>

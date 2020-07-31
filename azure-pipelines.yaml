@@ -1,6 +1,4 @@
-trigger:
-  - main
-  - hotfix/*
+trigger: none
 
 stages:
   - stage: Alpha
@@ -119,4 +117,3 @@ stages:
                 - template: templates/build-template.yml
                   parameters:
                     version: latest
-

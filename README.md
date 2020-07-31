@@ -52,6 +52,7 @@ $ sfdx plugins:link
     - [`sfpowerkit:project:manifest:diff`](#sfpowerkitprojectmanifestdiff)
     - [`sfpowerkit:project:manifest:merge`](#sfpowerkitprojectmanifestmerge)
     - [`sfpowerkit:source:datamodel:report`](#sfpowerkitsourcedatamodelreport)
+    - [`sfpowerkit:project:datamodel:diff [BETA]`](#sfpowerkitprojectdatamodeldiff-beta)
   - [Unlocked Package Related Functionalities](#unlocked-package-related-functionalities)
     - [`sfpowerkit:package:dependencies:install`](#sfpowerkitpackagedependenciesinstall)
     - [`sfpowerkit:package:version:codecoverage`](#sfpowerkitpackageversioncodecoverage)
@@ -98,18 +99,27 @@ This command is a wrapper around PMD ( downloads PMD for the first time) with so
 ```
 
 USAGE
-  $ sfdx sfpowerkit:source:pmd [-d <string>] [-r <string>] [-f <string>] [-o <string>] [--javahome <string>] [--supressoutput] [--version <string> [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+  $ sfdx sfpowerkit:source:pmd [-d <string>] [-r <string>] [-f <string>] [-o <filepath>] [--javahome <string>] [--supressoutput] [--version <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -d, --directory=directory       [default: Default project directory as mentioned in sfdx-project.json ] Override this to set a different directory in the project folder
-  -f, --format=format             [default: text] The format for the pmd output, Possible values are available at https://pmd.github.io/latest/pmd_userdocs_cli_reference.html#available-report-formats
-  -o, --report=report             [default: pmd-output] The path to where the output of the analysis should be written
-  -r, --ruleset=ruleset           [default: [sfpowerkit](https://github.com/Accenture/sfpowerkit/blob/master/resources/pmd-ruleset.xml)] The pmd ruleset that will be utilzied for analyzing  the apex classes,  Checkout https://pmd.github.io/pmd_userdocs_making_rulesets.html to create your own ruleset
-  --javahome=javahome             The command will try to locate the javahome path to execute PMD  automatically, set this flag to override it to  another javahome path
-  --supressoutput                 [default: false] Supress the ouptut of the analysis to be displayed in the console
-  --version=version               [default: 6.18.0] [default: 6.18.0] The version of the pmd to be utilized for the analysis, this version will be downloaded to sfpowerkit's cache directory
-  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
-
+  -d, --directory=directory                                                         [default: Default project directory as mentioned in sfdx-project.json] Override this to set a
+                                                                                    different directory in the project folder
+  -f, --format=format                                                               [default: text] [default: text] The format for the pmd output, Possible values are available
+                                                                                    at https://pmd.github.io/latest/pmd_userdocs_cli_reference.html#available-report-formats
+  -o, --report=report                                                               [default: pmd-output] [default: pmd-output] The path to where the output of the analysis
+                                                                                    should be written
+  -r, --ruleset=ruleset                                                             [default:
+                                                                                    [sfpowerkit](https://github.com/Accenture/sfpowerkit/blob/main/resources/pmd-ruleset.xml)]
+                                                                                    The pmd ruleset that will be utilzied for analyzing the apex classes,  Checkout
+                                                                                    https://pmd.github.io/latest/pmd_userdocs_making_rulesets.html to create your own ruleset
+  --javahome=javahome                                                               The command will try to locate the javahome path to execute PMD automatically, set this flag
+                                                                                    to override it to another javahome path
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
+  --supressoutput                                                                   [default: false] Supress the ouptut of the analysis to be displayed in the console
+  --version=version                                                                 [default: 6.26.0] [default: 6.21.0] The version of the pmd to be utilized for the analysis,
+                                                                                    this version will be downloaded to sfpowerkit's cache directory
 EXAMPLE
   $ sfdx sfpowerkit:source:pmd
 
@@ -453,6 +463,28 @@ EXAMPLES
   $ sfdx sfpowerkit:source:datamodel:report -p force-app/main/default/objects -t CustomField,RecordType
   $ sfdx sfpowerkit:source:datamodel:report -p force-app/main/default/objects -t CustomField,RecordType -f csv
   $ sfdx sfpowerkit:source:datamodel:report -f md -d doc
+```
+
+### `sfpowerkit:project:datamodel:diff [BETA]`
+
+Provides an audit history of the metadata change between two commit ID's for data model ( CustomFields, RecordTypes, BusinessProcess)
+
+```
+USAGE
+  $ sfdx sfpowerkit:project:datamodel:diff -r <string> [-t <string>] [-p <string>] [-d <directory>] [--csv] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -d, --outputdir=outputdir                                                         Directory to output the results
+  -p, --packagedirectories=packagedirectories                                       Run diff only for specified package directories
+  -r, --revisionfrom=revisionfrom                                                   (required) Base revision from which to generate the diff
+  -t, --revisionto=revisionto                                                       [default: HEAD] Target revision from which to generate the diff
+  --csv                                                                             Output to csv file
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:project:datamodel:diff --revisionfrom revisionfrom --revisionto revisionto --csv
 ```
 
 ## Unlocked Package Related Functionalities
@@ -1247,11 +1279,14 @@ Creates a pool of prebuilt scratchorgs, which can the be consumed by users or CI
 
 ```
 USAGE
-  $ sfdx sfpowerkit:pool:create -f <filepath> [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+  $ sfdx sfpowerkit:pool:create -f <filepath> [-b <number>] [-v <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -f, --configfilepath=configfilepath                                               (required) Relative Path to the pool configuration json file. The schema of the file could be found in
-                                                                                    the Wiki
+  -b, --batchsize=batchsize                                                         [default: 10] Number of scratch org to be created in a single batch
+
+  -f, --configfilepath=configfilepath                                               (required) Relative Path to the pool configuration json file. The schema of the file could
+                                                                                    be found in the Wiki
 
   -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
 
@@ -1272,20 +1307,26 @@ Gets an active/unused scratch org from the scratch org pool
 
 ```
 USAGE
-  $ sfdx sfpowerkit:pool:fetch -t <string> [-m] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+  $ sfdx sfpowerkit:pool:fetch -t <string> [-m] [-s <string>] [-v <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
   -m, --mypool                                                                      Filter the tag for any additions created  by the executor of the command
-  -t, --tag=tag                                                                     (required) tag used to identify the scratch org pool
+  -s, --sendtouser=sendtouser                                                       Send the credentials of the fetched scratchorg to another DevHub user, Useful
+                                                                                    for situations when pool is only limited to certain users
+  -t, --tag=tag                                                                     (required) (required) tag used to identify the scratch org pool
+
   -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
   --apiversion=apiversion                                                           override the api version used for api requests made by this command
   --json                                                                            format output as json
-  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
 
 EXAMPLES
   $ sfdx sfpowerkit:pool:fetch -t core
   $ sfdx sfpowerkit:pool:fetch -t core -v devhub
   $ sfdx sfpowerkit:pool:fetch -t core -v devhub -m
+  $ sfdx sfpowerkit:pool:fetch -t core -v devhub -s testuser@test.com
 ```
 
 ### `sfpowerkit:pool:list`

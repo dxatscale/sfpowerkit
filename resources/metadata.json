@@ -232,8 +232,8 @@
       "knownIssues": [
         {
           "url": "https://success.salesforce.com/issues_view?id=a1p3A0000003UjdQAE",
-          "lastUpdated": "2019-03-16",
-          "affectedUsers": 0,
+          "lastUpdated": "2020-05-05",
+          "affectedUsers": 1,
           "tags": null,
           "status": "In Review",
           "summary": "Unable to create namespaced package2 version when workflow references a custom object. Package versioning gets failed with an error like this : \r\nERROR:  The ObjectType references 'Pkgabcd__Bundle__c', which doesn't exist as an object in the org.",
@@ -241,10 +241,10 @@
         },
         {
           "url": "https://success.salesforce.com/issues_view?id=a1p3A0000003UjxQAE",
-          "lastUpdated": "2019-11-14",
-          "affectedUsers": 8,
+          "lastUpdated": "2020-02-14",
+          "affectedUsers": 10,
           "tags": "Salesforce DX",
-          "status": "In Review",
+          "status": "No Fix",
           "summary": "Not able to add a Workflow for a base Unlocked package custom object in extension Unlocked package, it throws an error similar to :\r\n\r\nERROR:  You're trying to include Workflow <your object's name> in Package ver 1.0. This component already exists in Package ver 1.0, which Package ver 1.0 depends on. You can't include the same component in both packages.",
           "title": "Not able to add a Workflow for a base Unlocked package custom object in extension Unlocked package"
         }
@@ -270,10 +270,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"CASECLASSIFICATION\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"CASECLASSIFICATION\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"CASECLASSIFICATION\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"CASECLASSIFICATION\"]}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"settings\":{\"omniChannelSettings\":{\"enableOmniSkillsRouting\":true,\"enableOmniChannel\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"settings\":{\"omniChannelSettings\":{\"enableOmniSkillsRouting\":true,\"enableOmniChannel\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"settings\":{\"omniChannelSettings\":{\"enableOmniSkillsRouting\":true,\"enableOmniChannel\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"settings\":{\"omniChannelSettings\":{\"enableOmniSkillsRouting\":true,\"enableOmniChannel\":true}}}"
       },
       "knownIssues": null,
       "channels": {
@@ -343,6 +343,31 @@
         "apexMetadataApi": false
       }
     },
+    "WebStoreTemplate": {
+      "details": [
+        {
+          "url": "https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_webstoretemplate.htm",
+          "name": "Metadata API Documentation"
+        }
+      ],
+      "scratchDefinitions": {
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"B2BCOMMERCE\",\"COMMUNITIES\"],\"settings\":{\"communitiesSettings\":{\"enableNetworksEnabled\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"COMMUNITIES\"],\"settings\":{\"communitiesSettings\":{\"enableNetworksEnabled\":true}}}"
+      },
+      "knownIssues": null,
+      "channels": {
+        "unlockedPackagingWithoutNamespace": true,
+        "unlockedPackagingWithNamespace": true,
+        "toolingApi": true,
+        "sourceTracking": true,
+        "metadataApi": true,
+        "managedPackaging": true,
+        "classicUnmanagedPackaging": true,
+        "classicManagedPackaging": true,
+        "changeSets": true,
+        "apexMetadataApi": false
+      }
+    },
     "WebLink": {
       "details": [
         {
@@ -378,10 +403,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"DEVELOPMENTWAVE\"]}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}"
       },
       "knownIssues": null,
       "channels": {
@@ -405,10 +430,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"DEVELOPMENTWAVE\"]}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableWaveTemplate\":true,\"enableInsights\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableWaveTemplate\":true,\"enableInsights\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableWaveTemplate\":true,\"enableInsights\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableWaveTemplate\":true,\"enableInsights\":true}}}"
       },
       "knownIssues": null,
       "channels": {
@@ -432,10 +457,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"DEVELOPMENTWAVE\"]}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}"
       },
       "knownIssues": null,
       "channels": {
@@ -459,10 +484,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"DEVELOPMENTWAVE\"]}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}"
       },
       "knownIssues": null,
       "channels": {
@@ -486,10 +511,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"DEVELOPMENTWAVE\"]}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}"
       },
       "knownIssues": null,
       "channels": {
@@ -513,10 +538,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"DEVELOPMENTWAVE\"]}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}"
       },
       "knownIssues": null,
       "channels": {
@@ -540,10 +565,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"DEVELOPMENTWAVE\"]}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}"
       },
       "knownIssues": null,
       "channels": {
@@ -567,10 +592,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"DEVELOPMENTWAVE\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"DEVELOPMENTWAVE\"]}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"ANALYTICSAPPEMBEDDED\"],\"settings\":{\"analyticsSettings\":{\"enableInsights\":true}}}"
       },
       "knownIssues": null,
       "channels": {
@@ -625,6 +650,33 @@
       "channels": {
         "unlockedPackagingWithoutNamespace": true,
         "unlockedPackagingWithNamespace": true,
+        "toolingApi": true,
+        "sourceTracking": true,
+        "metadataApi": true,
+        "managedPackaging": true,
+        "classicUnmanagedPackaging": true,
+        "classicManagedPackaging": true,
+        "changeSets": true,
+        "apexMetadataApi": false
+      }
+    },
+    "UserProvisioningConfig": {
+      "details": [
+        {
+          "url": "https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_userprovisioningconfig.htm",
+          "name": "Metadata API Documentation"
+        }
+      ],
+      "scratchDefinitions": {
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\"}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\"}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\"}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\"}"
+      },
+      "knownIssues": null,
+      "channels": {
+        "unlockedPackagingWithoutNamespace": false,
+        "unlockedPackagingWithNamespace": false,
         "toolingApi": true,
         "sourceTracking": true,
         "metadataApi": true,
@@ -837,8 +889,8 @@
       "knownIssues": [
         {
           "url": "https://success.salesforce.com/issues_view?id=a1p3A000000ATThQAO",
-          "lastUpdated": "9 days ago",
-          "affectedUsers": 70,
+          "lastUpdated": "6 days ago",
+          "affectedUsers": 96,
           "tags": "Salesforce DX",
           "status": "In Review",
           "summary": "SFDX pull command not retrieving imported Translation records/data from Scratch orgs",
@@ -1299,8 +1351,8 @@
       "knownIssues": [
         {
           "url": "https://success.salesforce.com/issues_view?id=a1p3A000001YnUtQAK",
-          "lastUpdated": "7 days ago",
-          "affectedUsers": 32,
+          "lastUpdated": "3 days ago",
+          "affectedUsers": 77,
           "tags": "Metadata, Lightning",
           "status": "In Review",
           "summary": "When trying to push the standard value set for ContractStatus results in a error  \n\"force-app\\main\\default\\standardValueSets\\ContractStatus.standardValueSet-meta.xml  Field: null is not a picklist\"",
@@ -1308,7 +1360,7 @@
         }
       ],
       "channels": {
-        "unlockedPackagingWithoutNamespace": false,
+        "unlockedPackagingWithoutNamespace": true,
         "unlockedPackagingWithNamespace": false,
         "toolingApi": true,
         "sourceTracking": true,
@@ -1324,6 +1376,33 @@
       "details": [
         {
           "url": "https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_customvalue.htm",
+          "name": "Metadata API Documentation"
+        }
+      ],
+      "scratchDefinitions": {
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\"}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\"}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\"}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\"}"
+      },
+      "knownIssues": null,
+      "channels": {
+        "unlockedPackagingWithoutNamespace": false,
+        "unlockedPackagingWithNamespace": false,
+        "toolingApi": false,
+        "sourceTracking": true,
+        "metadataApi": true,
+        "managedPackaging": false,
+        "classicUnmanagedPackaging": false,
+        "classicManagedPackaging": false,
+        "changeSets": false,
+        "apexMetadataApi": false
+      }
+    },
+    "SourceTrackingSettings": {
+      "details": [
+        {
+          "url": "https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_sourcetrackingsettings.htm",
           "name": "Metadata API Documentation"
         }
       ],
@@ -1471,10 +1550,10 @@
       "knownIssues": [
         {
           "url": "https://success.salesforce.com/issues_view?id=a1p3A0000019QdwQAE",
-          "lastUpdated": "5 days ago",
-          "affectedUsers": 56,
+          "lastUpdated": "2020-02-15",
+          "affectedUsers": 57,
           "tags": "AppExchange, Change Sets, Communities",
-          "status": "Release In Progress",
+          "status": "Fixed",
           "summary": "This issue occurs when deploying a community from an org to another using change sets.\r\n\r\nTypically the error thrown when validating the change set in the target org is \"An unknown exception has occurred.\"\r\n\r\nBelow is a technical explanation of how this issue occurs.\r\n\r\nWhen a Force.com Site for a community is first created in any org, it uses the naming convention \"<Community_Name>1\". However, if renamed later, the naming convention is changed to \"<Community_Name>_C\".\r\n\r\nThis community naming convention mismatch between the community's site component may cause the deployment to fail with the generic error above.\r\n\r\nYou can verify whether this is the scenario by clicking (View Source) for the community's Network component in the inbound change set. Locate the 'picassoSite' property and if its value ends with \"_C\" it would indicate the site had been renamed in the source org at some point in time.\r\n\r\nTo check the naming convention of your Community Site in the target org you can run the following query:\r\nSELECT Id, MasterLabel, Name, SiteType FROM Site WHERE SiteType = 'ChatterNetworkPicasso'\r\n\r\nReview the Name field value and check to see if it ends with \"1\" and if so, it's unlikely the community has been renamed. If the two values described above match then the deployment should be successful.",
           "title": "Deploying change set containing community fails with error: \"An unknown exception has occurred\""
         }
@@ -1617,6 +1696,7 @@
       ],
       "scratchDefinitions": {
         "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\"}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\"}",
         "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\"}",
         "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\"}"
       },
@@ -1720,10 +1800,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"CASECLASSIFICATION\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"CASECLASSIFICATION\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"CASECLASSIFICATION\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"CASECLASSIFICATION\"]}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"settings\":{\"omniChannelSettings\":{\"enableOmniChannel\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"settings\":{\"omniChannelSettings\":{\"enableOmniChannel\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"settings\":{\"omniChannelSettings\":{\"enableOmniChannel\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"settings\":{\"omniChannelSettings\":{\"enableOmniChannel\":true}}}"
       },
       "knownIssues": null,
       "channels": {
@@ -1747,10 +1827,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"CASECLASSIFICATION\"],\"settings\":{\"omniChannelSettings\":{\"enableOmniSecondaryRoutingPriority\":true}}}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"CASECLASSIFICATION\"],\"settings\":{\"omniChannelSettings\":{\"enableOmniSecondaryRoutingPriority\":true}}}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"CASECLASSIFICATION\"],\"settings\":{\"omniChannelSettings\":{\"enableOmniSecondaryRoutingPriority\":true}}}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"CASECLASSIFICATION\"],\"settings\":{\"omniChannelSettings\":{\"enableOmniSecondaryRoutingPriority\":true}}}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"settings\":{\"omniChannelSettings\":{\"enableOmniSecondaryRoutingPriority\":true,\"enableOmniChannel\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"settings\":{\"omniChannelSettings\":{\"enableOmniSecondaryRoutingPriority\":true,\"enableOmniChannel\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"settings\":{\"omniChannelSettings\":{\"enableOmniSecondaryRoutingPriority\":true,\"enableOmniChannel\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"settings\":{\"omniChannelSettings\":{\"enableOmniSecondaryRoutingPriority\":true,\"enableOmniChannel\":true}}}"
       },
       "knownIssues": null,
       "channels": {
@@ -1901,6 +1981,33 @@
         "apexMetadataApi": false
       }
     },
+    "SalesWorkQueueSettings": {
+      "details": [
+        {
+          "url": "https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_salesworkqueuesettings.htm",
+          "name": "Metadata API Documentation"
+        }
+      ],
+      "scratchDefinitions": {
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"HIGHVELOCITYSALES\"],\"settings\":{\"highVelocitySalesSettings\":{\"enableHighVelocitySales\":true},\"eACSettings\":{\"provisionProductivityFeatures\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"HIGHVELOCITYSALES\"],\"settings\":{\"highVelocitySalesSettings\":{\"enableHighVelocitySales\":true},\"eACSettings\":{\"provisionProductivityFeatures\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"HIGHVELOCITYSALES\"],\"settings\":{\"highVelocitySalesSettings\":{\"enableHighVelocitySales\":true},\"eACSettings\":{\"provisionProductivityFeatures\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"HIGHVELOCITYSALES\"],\"settings\":{\"highVelocitySalesSettings\":{\"enableHighVelocitySales\":true},\"eACSettings\":{\"provisionProductivityFeatures\":true}}}"
+      },
+      "knownIssues": null,
+      "channels": {
+        "unlockedPackagingWithoutNamespace": false,
+        "unlockedPackagingWithNamespace": false,
+        "toolingApi": false,
+        "sourceTracking": false,
+        "metadataApi": true,
+        "managedPackaging": false,
+        "classicUnmanagedPackaging": false,
+        "classicManagedPackaging": false,
+        "changeSets": false,
+        "apexMetadataApi": false
+      }
+    },
     "SalesAgreementSettings": {
       "details": [
         {
@@ -1989,10 +2096,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"RESTRICTIONRULESPILOT\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"RESTRICTIONRULESPILOT\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"RESTRICTIONRULESPILOT\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"RESTRICTIONRULESPILOT\"]}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"ACCESSCONTROLPOLICIESPILOT\",\"RESTRICTIONRULESFORSCOPINGPILOT\"]}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"ACCESSCONTROLPOLICIESPILOT\",\"RESTRICTIONRULESFORSCOPINGPILOT\"]}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"ACCESSCONTROLPOLICIESPILOT\",\"RESTRICTIONRULESFORSCOPINGPILOT\"]}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"ACCESSCONTROLPOLICIESPILOT\",\"RESTRICTIONRULESFORSCOPINGPILOT\"]}"
       },
       "knownIssues": null,
       "channels": {
@@ -2086,8 +2193,8 @@
         },
         {
           "url": "https://success.salesforce.com/issues_view?id=a1p3A000000JWcfQAG",
-          "lastUpdated": "2019-12-11",
-          "affectedUsers": 58,
+          "lastUpdated": "2020-04-24",
+          "affectedUsers": 62,
           "tags": "Salesforce DX",
           "status": "In Review",
           "summary": "Not able to convert the Report metadata to SFDX format when the report is in sub folder , for eg :\r\n\r\nunzipped folder >>> package.xml file + reports folders >>> parent folder >>> sub folder + metadata file >>> metadata file.",
@@ -2375,10 +2482,10 @@
         },
         {
           "url": "https://success.salesforce.com/issues_view?id=a1p3A000000JWYOQA4",
-          "lastUpdated": "2018-10-29",
-          "affectedUsers": 0,
+          "lastUpdated": "10 days ago",
+          "affectedUsers": 2,
           "tags": "Metadata",
-          "status": "No Fix",
+          "status": "In Review",
           "summary": "Some customers may have observed the following error concerning the translation of global quick action fields.\r\n\r\nquickActions>\r\n       <label>My translated success message</label>\r\n        <name>MyAction1</name>\r\n    </quickActions>\r\n    <quickActions>\r\n        <label>My translated field label</label>\r\n        <name>MyAction1</name>\r\n    </quickActions>\r\n\r\n\" Duplicate translation specified for QuickAction:MyAction1\"\r\n\r\nThe quickActions field on the Translation metadata type (https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_translations.htm) does not support full definition of the data that is allowed to be customized by a user in the Setup UI.  Specifically, when translating a Global Action, the user can specify a translation for both a Field Label and Informational Message (selected as \"Aspects\" in the Setup UI), but the metadata XML that is generated for this when the Metadata is retrieved is structured as follows, with the same \"name\" for each of these fields:",
           "title": "Translations for Quick Action \"Informational Message\" and \"Field Label\" not supported properly in Translations Metadata API type"
         }
@@ -2404,10 +2511,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"CASECLASSIFICATION\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"CASECLASSIFICATION\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"CASECLASSIFICATION\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"CASECLASSIFICATION\"]}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"ATTRIBUTEBASEDROUTINGFORCHATS\"],\"settings\":{\"omniChannelSettings\":{\"enableOmniSkillsRouting\":true,\"enableOmniChannel\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"ATTRIBUTEBASEDROUTINGFORCHATS\"],\"settings\":{\"omniChannelSettings\":{\"enableOmniSkillsRouting\":true,\"enableOmniChannel\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"ATTRIBUTEBASEDROUTINGFORCHATS\"],\"settings\":{\"omniChannelSettings\":{\"enableOmniSkillsRouting\":true,\"enableOmniChannel\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"ATTRIBUTEBASEDROUTINGFORCHATS\"],\"settings\":{\"omniChannelSettings\":{\"enableOmniSkillsRouting\":true,\"enableOmniChannel\":true}}}"
       },
       "knownIssues": null,
       "channels": {
@@ -2611,19 +2718,14 @@
           "name": "Metadata API Documentation"
         }
       ],
-      "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"PRIVATECONNECTION\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"PRIVATECONNECTION\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"PRIVATECONNECTION\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"PRIVATECONNECTION\"]}"
-      },
+      "scratchDefinitions": null,
       "knownIssues": null,
       "channels": {
         "unlockedPackagingWithoutNamespace": false,
         "unlockedPackagingWithNamespace": false,
         "toolingApi": false,
-        "sourceTracking": true,
-        "metadataApi": true,
+        "sourceTracking": false,
+        "metadataApi": false,
         "managedPackaging": false,
         "classicUnmanagedPackaging": false,
         "classicManagedPackaging": false,
@@ -2666,10 +2768,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"CASECLASSIFICATION\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"CASECLASSIFICATION\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"CASECLASSIFICATION\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"CASECLASSIFICATION\"]}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"settings\":{\"omniChannelSettings\":{\"enableOmniChannel\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"settings\":{\"omniChannelSettings\":{\"enableOmniChannel\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"settings\":{\"omniChannelSettings\":{\"enableOmniChannel\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"settings\":{\"omniChannelSettings\":{\"enableOmniChannel\":true}}}"
       },
       "knownIssues": null,
       "channels": {
@@ -2693,10 +2795,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"CASECLASSIFICATION\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"CASECLASSIFICATION\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"CASECLASSIFICATION\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"CASECLASSIFICATION\"]}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"settings\":{\"omniChannelSettings\":{\"enableOmniChannel\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"settings\":{\"omniChannelSettings\":{\"enableOmniChannel\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"settings\":{\"omniChannelSettings\":{\"enableOmniChannel\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"settings\":{\"omniChannelSettings\":{\"enableOmniChannel\":true}}}"
       },
       "knownIssues": null,
       "channels": {
@@ -2800,19 +2902,14 @@
           "name": "Metadata API Documentation"
         }
       ],
-      "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\"}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\"}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\"}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\"}"
-      },
+      "scratchDefinitions": null,
       "knownIssues": null,
       "channels": {
-        "unlockedPackagingWithoutNamespace": true,
-        "unlockedPackagingWithNamespace": true,
+        "unlockedPackagingWithoutNamespace": false,
+        "unlockedPackagingWithNamespace": false,
         "toolingApi": false,
-        "sourceTracking": true,
-        "metadataApi": true,
+        "sourceTracking": false,
+        "metadataApi": false,
         "managedPackaging": false,
         "classicUnmanagedPackaging": false,
         "classicManagedPackaging": false,
@@ -2881,19 +2978,14 @@
           "name": "Metadata API Documentation"
         }
       ],
-      "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\"}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\"}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\"}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\"}"
-      },
+      "scratchDefinitions": null,
       "knownIssues": null,
       "channels": {
         "unlockedPackagingWithoutNamespace": false,
         "unlockedPackagingWithNamespace": false,
         "toolingApi": false,
-        "sourceTracking": true,
-        "metadataApi": true,
+        "sourceTracking": false,
+        "metadataApi": false,
         "managedPackaging": false,
         "classicUnmanagedPackaging": false,
         "classicManagedPackaging": false,
@@ -2917,8 +3009,8 @@
       "knownIssues": [
         {
           "url": "https://success.salesforce.com/issues_view?id=a1p3A00000030tMQAQ",
-          "lastUpdated": "2019-10-27",
-          "affectedUsers": 6,
+          "lastUpdated": "2020-05-09",
+          "affectedUsers": 7,
           "tags": "Salesforce DX",
           "status": "In Review",
           "summary": "Changing a 'Managed' Platform Cache Partition (which is included in an installed Managed package)  in a Scratch Org causes the following error on:\r\n\r\nsfdx force:source:pull\r\n\r\nERROR:  Entity of type 'PlatformCachePartition' named '<Partition Name>' cannot be found.\r\n\r\nThis is happening on managed partitions only, the same operation works on local partitions or unmanaged partitions.",
@@ -2954,8 +3046,8 @@
       "knownIssues": [
         {
           "url": "https://success.salesforce.com/issues_view?id=a1p3A0000003Uk2QAE",
-          "lastUpdated": "6 days ago",
-          "affectedUsers": 51,
+          "lastUpdated": "2 days ago",
+          "affectedUsers": 92,
           "tags": "Salesforce DX",
           "status": "In Review",
           "summary": "Picklist values not getting deployed during package upgrades, the newly added picklist value is not showing up in upgraded version of unlocked package",
@@ -3106,10 +3198,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"ORDERMANAGEMENT\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"ORDERMANAGEMENT\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"ORDERMANAGEMENT\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"ORDERMANAGEMENT\"]}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"CUSTOMFIELDDATATRANSLATION\"]}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"CUSTOMFIELDDATATRANSLATION\"]}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"B2BCOMMERCE\"]}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\"}"
       },
       "knownIssues": null,
       "channels": {
@@ -3304,6 +3396,31 @@
         "apexMetadataApi": false
       }
     },
+    "OutboundNetworkConnection": {
+      "details": [
+        {
+          "url": "https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_outboundnetworkconnection.htm",
+          "name": "Metadata API Documentation"
+        }
+      ],
+      "scratchDefinitions": {
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\"}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\"}"
+      },
+      "knownIssues": null,
+      "channels": {
+        "unlockedPackagingWithoutNamespace": false,
+        "unlockedPackagingWithNamespace": false,
+        "toolingApi": true,
+        "sourceTracking": true,
+        "metadataApi": true,
+        "managedPackaging": false,
+        "classicUnmanagedPackaging": true,
+        "classicManagedPackaging": true,
+        "changeSets": true,
+        "apexMetadataApi": false
+      }
+    },
     "OrgWideEmailAddress": {
       "details": [
         {
@@ -3435,23 +3552,18 @@
           "name": "Metadata API Documentation"
         }
       ],
-      "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"IOT\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"IOT\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"IOT\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"IOT\"]}"
-      },
+      "scratchDefinitions": null,
       "knownIssues": null,
       "channels": {
         "unlockedPackagingWithoutNamespace": false,
         "unlockedPackagingWithNamespace": false,
         "toolingApi": false,
-        "sourceTracking": true,
-        "metadataApi": true,
+        "sourceTracking": false,
+        "metadataApi": false,
         "managedPackaging": false,
-        "classicUnmanagedPackaging": true,
-        "classicManagedPackaging": true,
-        "changeSets": true,
+        "classicUnmanagedPackaging": false,
+        "classicManagedPackaging": false,
+        "changeSets": false,
         "apexMetadataApi": false
       }
     },
@@ -3462,23 +3574,18 @@
           "name": "Metadata API Documentation"
         }
       ],
-      "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"IOT\"],\"settings\":{\"ioTSettings\":{\"enableIoT\":true}}}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"IOT\"],\"settings\":{\"ioTSettings\":{\"enableIoT\":true}}}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"IOT\"],\"settings\":{\"ioTSettings\":{\"enableIoT\":true}}}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"IOT\"],\"settings\":{\"ioTSettings\":{\"enableIoT\":true}}}"
-      },
+      "scratchDefinitions": null,
       "knownIssues": null,
       "channels": {
         "unlockedPackagingWithoutNamespace": false,
         "unlockedPackagingWithNamespace": false,
         "toolingApi": false,
-        "sourceTracking": true,
-        "metadataApi": true,
+        "sourceTracking": false,
+        "metadataApi": false,
         "managedPackaging": false,
-        "classicUnmanagedPackaging": true,
-        "classicManagedPackaging": true,
-        "changeSets": true,
+        "classicUnmanagedPackaging": false,
+        "classicManagedPackaging": false,
+        "changeSets": false,
         "apexMetadataApi": false
       }
     },
@@ -3494,6 +3601,30 @@
         "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\"}",
         "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\"}",
         "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\"}"
+      },
+      "knownIssues": null,
+      "channels": {
+        "unlockedPackagingWithoutNamespace": false,
+        "unlockedPackagingWithNamespace": false,
+        "toolingApi": false,
+        "sourceTracking": true,
+        "metadataApi": true,
+        "managedPackaging": false,
+        "classicUnmanagedPackaging": false,
+        "classicManagedPackaging": false,
+        "changeSets": false,
+        "apexMetadataApi": false
+      }
+    },
+    "OpportunityScoreSettings": {
+      "details": [
+        {
+          "url": "https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_opportunityscoresettings.htm",
+          "name": "Metadata API Documentation"
+        }
+      ],
+      "scratchDefinitions": {
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"SALESCLOUDEINSTEIN\"]}"
       },
       "knownIssues": null,
       "channels": {
@@ -3753,10 +3884,8 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"PRIVATECONNECTION\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"PRIVATECONNECTION\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"PRIVATECONNECTION\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"PRIVATECONNECTION\"]}"
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\"}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\"}"
       },
       "knownIssues": null,
       "channels": {
@@ -3965,10 +4094,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"CHATBOT\",\"EINSTEINASSISTANT\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"CHATBOT\",\"EINSTEINASSISTANT\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"CHATBOT\",\"EINSTEINASSISTANT\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"CHATBOT\",\"EINSTEINASSISTANT\"]}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"CHATBOT\",\"LIVEAGENT\"],\"settings\":{\"botSettings\":{\"enableBots\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"CHATBOT\",\"LIVEAGENT\"],\"settings\":{\"botSettings\":{\"enableBots\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"CHATBOT\",\"LIVEAGENT\"],\"settings\":{\"botSettings\":{\"enableBots\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"CHATBOT\"],\"settings\":{\"botSettings\":{\"enableBots\":true}}}"
       },
       "knownIssues": null,
       "channels": {
@@ -4134,9 +4263,7 @@
       ],
       "scratchDefinitions": {
         "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\"}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\"}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\"}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\"}"
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\"}"
       },
       "knownIssues": null,
       "channels": {
@@ -4428,7 +4555,17 @@
         "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\"}",
         "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\"}"
       },
-      "knownIssues": null,
+      "knownIssues": [
+        {
+          "url": "https://success.salesforce.com/issues_view?id=a1p3A0000003UjYQAU",
+          "lastUpdated": "2019-03-15",
+          "affectedUsers": 0,
+          "tags": "Salesforce DX",
+          "status": "In Review",
+          "summary": "Uninstalling Second Generation  Package where Custom Tab is defined in an Extension package , incorrectly deletes ListView defined in Base Package.",
+          "title": "Uninstalling Second Generation PAckage  where Custom Tab is defined in extension package incorrectly deletes ListView defined in base package"
+        }
+      ],
       "channels": {
         "unlockedPackagingWithoutNamespace": true,
         "unlockedPackagingWithNamespace": true,
@@ -5089,6 +5226,85 @@
         "apexMetadataApi": false
       }
     },
+    "InboundNetworkConnection": {
+      "details": [
+        {
+          "url": "https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_inboundnetworkconnection.htm",
+          "name": "Metadata API Documentation"
+        }
+      ],
+      "scratchDefinitions": {
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\"}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\"}"
+      },
+      "knownIssues": null,
+      "channels": {
+        "unlockedPackagingWithoutNamespace": false,
+        "unlockedPackagingWithNamespace": false,
+        "toolingApi": true,
+        "sourceTracking": true,
+        "metadataApi": true,
+        "managedPackaging": false,
+        "classicUnmanagedPackaging": true,
+        "classicManagedPackaging": true,
+        "changeSets": true,
+        "apexMetadataApi": false
+      }
+    },
+    "InboundCertificate": {
+      "details": [
+        {
+          "url": "https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_inboundcertificate.htm",
+          "name": "Metadata API Documentation"
+        }
+      ],
+      "scratchDefinitions": {
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"MUTUALAUTHENTICATION\"]}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"MUTUALAUTHENTICATION\"]}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"MUTUALAUTHENTICATION\"]}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"MUTUALAUTHENTICATION\"]}"
+      },
+      "knownIssues": null,
+      "channels": {
+        "unlockedPackagingWithoutNamespace": false,
+        "unlockedPackagingWithNamespace": false,
+        "toolingApi": false,
+        "sourceTracking": true,
+        "metadataApi": true,
+        "managedPackaging": false,
+        "classicUnmanagedPackaging": false,
+        "classicManagedPackaging": false,
+        "changeSets": false,
+        "apexMetadataApi": false
+      }
+    },
+    "IframeWhiteListUrlSettings": {
+      "details": [
+        {
+          "url": "https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_iframewhitelisturlsettings.htm",
+          "name": "Metadata API Documentation"
+        }
+      ],
+      "scratchDefinitions": {
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\"}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\"}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\"}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\"}"
+      },
+      "knownIssues": null,
+      "channels": {
+        "unlockedPackagingWithoutNamespace": false,
+        "unlockedPackagingWithNamespace": false,
+        "toolingApi": false,
+        "sourceTracking": false,
+        "metadataApi": true,
+        "managedPackaging": false,
+        "classicUnmanagedPackaging": false,
+        "classicManagedPackaging": false,
+        "changeSets": false,
+        "apexMetadataApi": false
+      }
+    },
     "IdeasSettings": {
       "details": [
         {
@@ -5352,6 +5568,33 @@
         "apexMetadataApi": false
       }
     },
+    "FunctionReference": {
+      "details": [
+        {
+          "url": "https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_functionreference.htm",
+          "name": "Metadata API Documentation"
+        }
+      ],
+      "scratchDefinitions": {
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"FUNCTIONS\"]}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"FUNCTIONS\"]}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"FUNCTIONS\"]}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"FUNCTIONS\"]}"
+      },
+      "knownIssues": null,
+      "channels": {
+        "unlockedPackagingWithoutNamespace": true,
+        "unlockedPackagingWithNamespace": true,
+        "toolingApi": false,
+        "sourceTracking": true,
+        "metadataApi": true,
+        "managedPackaging": true,
+        "classicUnmanagedPackaging": true,
+        "classicManagedPackaging": true,
+        "changeSets": true,
+        "apexMetadataApi": false
+      }
+    },
     "FormulaSettings": {
       "details": [
         {
@@ -5386,19 +5629,14 @@
           "name": "Metadata API Documentation"
         }
       ],
-      "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"FORMSPILOT\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"FORMSPILOT\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"FORMSPILOT\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"FORMSPILOT\"]}"
-      },
+      "scratchDefinitions": null,
       "knownIssues": null,
       "channels": {
-        "unlockedPackagingWithoutNamespace": true,
-        "unlockedPackagingWithNamespace": true,
-        "toolingApi": true,
-        "sourceTracking": true,
-        "metadataApi": true,
+        "unlockedPackagingWithoutNamespace": false,
+        "unlockedPackagingWithNamespace": false,
+        "toolingApi": false,
+        "sourceTracking": false,
+        "metadataApi": false,
         "managedPackaging": false,
         "classicUnmanagedPackaging": false,
         "classicManagedPackaging": false,
@@ -5419,19 +5657,14 @@
           "name": "Pilot"
         }
       ],
-      "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"FORMSPILOT\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"FORMSPILOT\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"FORMSPILOT\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"FORMSPILOT\"]}"
-      },
+      "scratchDefinitions": null,
       "knownIssues": null,
       "channels": {
-        "unlockedPackagingWithoutNamespace": true,
-        "unlockedPackagingWithNamespace": true,
-        "toolingApi": true,
-        "sourceTracking": true,
-        "metadataApi": true,
+        "unlockedPackagingWithoutNamespace": false,
+        "unlockedPackagingWithNamespace": false,
+        "toolingApi": false,
+        "sourceTracking": false,
+        "metadataApi": false,
         "managedPackaging": false,
         "classicUnmanagedPackaging": false,
         "classicManagedPackaging": false,
@@ -5562,17 +5795,17 @@
       "knownIssues": [
         {
           "url": "https://success.salesforce.com/issues_view?id=a1p3A0000003UVoQAM",
-          "lastUpdated": "5 days ago",
-          "affectedUsers": 119,
+          "lastUpdated": "2020-02-20",
+          "affectedUsers": 126,
           "tags": "Salesforce DX",
-          "status": "In Review",
+          "status": "Fixed",
           "summary": "Unable to open the Process Builder when installed from Unlocked Package, getting Internal Server Error : 1173818564-103493 (1201824199)",
           "title": "Unable to open Process Builder when installed from Unlocked Package"
         },
         {
           "url": "https://success.salesforce.com/issues_view?id=a1p3A0000003UoYQAU",
-          "lastUpdated": "8 days ago",
-          "affectedUsers": 30,
+          "lastUpdated": "11 days ago",
+          "affectedUsers": 37,
           "tags": "Salesforce DX",
           "status": "In Review",
           "summary": "Not able to Upgrade Flow in unlocked packages, upgraded version of Flow not getting installed.",
@@ -5717,6 +5950,33 @@
       "channels": {
         "unlockedPackagingWithoutNamespace": false,
         "unlockedPackagingWithNamespace": false,
+        "toolingApi": false,
+        "sourceTracking": true,
+        "metadataApi": true,
+        "managedPackaging": false,
+        "classicUnmanagedPackaging": false,
+        "classicManagedPackaging": false,
+        "changeSets": false,
+        "apexMetadataApi": false
+      }
+    },
+    "FieldServiceMobileExtension": {
+      "details": [
+        {
+          "url": "https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_fieldservicemobileextension.htm",
+          "name": "Metadata API Documentation"
+        }
+      ],
+      "scratchDefinitions": {
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"FIELDSERVICE\",\"FIELDSERVICEMOBILEEXTENSION\"],\"settings\":{\"fieldServiceSettings\":{\"fieldServiceOrgPref\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"FIELDSERVICE\",\"FIELDSERVICEMOBILEEXTENSION\"],\"settings\":{\"fieldServiceSettings\":{\"fieldServiceOrgPref\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"FIELDSERVICE\",\"FIELDSERVICEMOBILEEXTENSION\"],\"settings\":{\"fieldServiceSettings\":{\"fieldServiceOrgPref\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"FIELDSERVICEMOBILEEXTENSION\"]}"
+      },
+      "knownIssues": null,
+      "channels": {
+        "unlockedPackagingWithoutNamespace": true,
+        "unlockedPackagingWithNamespace": true,
         "toolingApi": false,
         "sourceTracking": true,
         "metadataApi": true,
@@ -5898,8 +6158,8 @@
       "knownIssues": [
         {
           "url": "https://success.salesforce.com/issues_view?id=a1p3A0000003UuHQAU",
-          "lastUpdated": "2019-12-04",
-          "affectedUsers": 1,
+          "lastUpdated": "2020-04-15",
+          "affectedUsers": 3,
           "tags": "Salesforce DX",
           "status": "In Review",
           "summary": "External data source using Apex connector fails during package version creation of unlocked package, package version will get failed with an error:\r\n\r\nAn unexpected error occurred. Please contact Salesforce Support and provide the following error code: 1860394534-100348 (1658854796)",
@@ -6260,19 +6520,14 @@
           "name": "Metadata API Documentation"
         }
       ],
-      "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\"}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\"}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\"}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\"}"
-      },
+      "scratchDefinitions": null,
       "knownIssues": null,
       "channels": {
         "unlockedPackagingWithoutNamespace": false,
         "unlockedPackagingWithNamespace": false,
         "toolingApi": false,
-        "sourceTracking": true,
-        "metadataApi": true,
+        "sourceTracking": false,
+        "metadataApi": false,
         "managedPackaging": false,
         "classicUnmanagedPackaging": false,
         "classicManagedPackaging": false,
@@ -6317,8 +6572,8 @@
       },
       "knownIssues": null,
       "channels": {
-        "unlockedPackagingWithoutNamespace": true,
-        "unlockedPackagingWithNamespace": true,
+        "unlockedPackagingWithoutNamespace": false,
+        "unlockedPackagingWithNamespace": false,
         "toolingApi": true,
         "sourceTracking": true,
         "metadataApi": true,
@@ -6337,15 +6592,15 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\"}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\"}",
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"SITEFORCECONTRIBUTOR\"]}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"FLOWSITES\",\"SITEFORCECONTRIBUTOR\"]}",
         "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\"}",
         "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\"}"
       },
       "knownIssues": null,
       "channels": {
         "unlockedPackagingWithoutNamespace": true,
-        "unlockedPackagingWithNamespace": true,
+        "unlockedPackagingWithNamespace": false,
         "toolingApi": true,
         "sourceTracking": true,
         "metadataApi": true,
@@ -6396,15 +6651,15 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"SITEFORCECONTRIBUTOR\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"SITEFORCECONTRIBUTOR\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\"}",
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"LIGHTNINGSCHEDULER\",\"SITEFORCECONTRIBUTOR\"]}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"FLOWSITES\",\"LIGHTNINGSCHEDULER\",\"SITEFORCECONTRIBUTOR\"]}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"LIGHTNINGSCHEDULER\"]}",
         "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\"}"
       },
       "knownIssues": null,
       "channels": {
         "unlockedPackagingWithoutNamespace": true,
-        "unlockedPackagingWithNamespace": true,
+        "unlockedPackagingWithNamespace": false,
         "toolingApi": true,
         "sourceTracking": true,
         "metadataApi": true,
@@ -6431,7 +6686,7 @@
       "knownIssues": null,
       "channels": {
         "unlockedPackagingWithoutNamespace": true,
-        "unlockedPackagingWithNamespace": true,
+        "unlockedPackagingWithNamespace": false,
         "toolingApi": true,
         "sourceTracking": true,
         "metadataApi": true,
@@ -7143,7 +7398,7 @@
         "unlockedPackagingWithoutNamespace": false,
         "unlockedPackagingWithNamespace": false,
         "toolingApi": false,
-        "sourceTracking": false,
+        "sourceTracking": true,
         "metadataApi": true,
         "managedPackaging": false,
         "classicUnmanagedPackaging": false,
@@ -7174,15 +7429,6 @@
           "status": "In Review",
           "summary": "Newly added Tab does not reflect in upgraded version of Unlocked Package.",
           "title": "New tab is not added to TabSet on Unlocked Package upgrade"
-        },
-        {
-          "url": "https://success.salesforce.com/issues_view?id=a1p3A0000003UjYQAU",
-          "lastUpdated": "2019-03-15",
-          "affectedUsers": 0,
-          "tags": "Salesforce DX",
-          "status": "In Review",
-          "summary": "Uninstalling Second Generation  Package where Custom Tab is defined in an Extension package , incorrectly deletes ListView defined in Base Package.",
-          "title": "Uninstalling Second Generation PAckage  where Custom Tab is defined in extension package incorrectly deletes ListView defined in base package"
         }
       ],
       "channels": {
@@ -7367,8 +7613,8 @@
         },
         {
           "url": "https://success.salesforce.com/issues_view?id=a1p3A0000003cvIQAQ",
-          "lastUpdated": "2019-10-22",
-          "affectedUsers": 4,
+          "lastUpdated": "27 days ago",
+          "affectedUsers": 9,
           "tags": "Salesforce DX",
           "status": "In Review",
           "summary": "SharingModel change is not getting updated in Unlocked Package.",
@@ -7376,8 +7622,8 @@
         },
         {
           "url": "https://success.salesforce.com/issues_view?id=a1p3A000001SGSDQA4",
-          "lastUpdated": "6 days ago",
-          "affectedUsers": 44,
+          "lastUpdated": "4 days ago",
+          "affectedUsers": 47,
           "tags": "Salesforce DX",
           "status": "In Review",
           "summary": "'sfdx force:source:push' will not push changes to detail object alone in M-D relationship",
@@ -7467,8 +7713,8 @@
       "knownIssues": [
         {
           "url": "https://success.salesforce.com/issues_view?id=a1p3A000000JWY4QAO",
-          "lastUpdated": "2019-10-03",
-          "affectedUsers": 4,
+          "lastUpdated": "2020-05-12",
+          "affectedUsers": 5,
           "tags": "Salesforce DX",
           "status": "In Review",
           "summary": "Some customers may have observed when building a DX project, push some fields, force:source:push fails to recognize that the fields are an addition.",
@@ -7742,6 +7988,33 @@
         "classicUnmanagedPackaging": true,
         "classicManagedPackaging": true,
         "changeSets": true,
+        "apexMetadataApi": false
+      }
+    },
+    "ConversationalIntelligenceSettings": {
+      "details": [
+        {
+          "url": "https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_conversationalintelligencesettings.htm",
+          "name": "Metadata API Documentation"
+        }
+      ],
+      "scratchDefinitions": {
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\"}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\"}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\"}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\"}"
+      },
+      "knownIssues": null,
+      "channels": {
+        "unlockedPackagingWithoutNamespace": false,
+        "unlockedPackagingWithNamespace": false,
+        "toolingApi": false,
+        "sourceTracking": true,
+        "metadataApi": true,
+        "managedPackaging": false,
+        "classicUnmanagedPackaging": false,
+        "classicManagedPackaging": false,
+        "changeSets": false,
         "apexMetadataApi": false
       }
     },
@@ -8209,6 +8482,33 @@
         "apexMetadataApi": false
       }
     },
+    "ChannelObjectLinkingRule": {
+      "details": [
+        {
+          "url": "https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_channelobjectlinkingrule.htm",
+          "name": "Metadata API Documentation"
+        }
+      ],
+      "scratchDefinitions": {
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"OBJECTLINKING\"],\"settings\":{\"objectLinkingSettings\":{\"enableObjectLinking\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"OBJECTLINKING\"],\"settings\":{\"objectLinkingSettings\":{\"enableObjectLinking\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"OBJECTLINKING\"],\"settings\":{\"objectLinkingSettings\":{\"enableObjectLinking\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"OBJECTLINKING\"],\"settings\":{\"objectLinkingSettings\":{\"enableObjectLinking\":true}}}"
+      },
+      "knownIssues": null,
+      "channels": {
+        "unlockedPackagingWithoutNamespace": true,
+        "unlockedPackagingWithNamespace": true,
+        "toolingApi": false,
+        "sourceTracking": true,
+        "metadataApi": true,
+        "managedPackaging": false,
+        "classicUnmanagedPackaging": false,
+        "classicManagedPackaging": false,
+        "changeSets": false,
+        "apexMetadataApi": false
+      }
+    },
     "ChannelLayout": {
       "details": [
         {
@@ -8224,8 +8524,8 @@
       },
       "knownIssues": null,
       "channels": {
-        "unlockedPackagingWithoutNamespace": true,
-        "unlockedPackagingWithNamespace": true,
+        "unlockedPackagingWithoutNamespace": false,
+        "unlockedPackagingWithNamespace": false,
         "toolingApi": true,
         "sourceTracking": true,
         "metadataApi": true,
@@ -8344,6 +8644,33 @@
         "apexMetadataApi": false
       }
     },
+    "CareSystemFieldMapping": {
+      "details": [
+        {
+          "url": "https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_caresystemfieldmapping.htm",
+          "name": "Metadata API Documentation"
+        }
+      ],
+      "scratchDefinitions": {
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"HEALTHCLOUDUSER\"]}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"HEALTHCLOUDUSER\"]}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"HEALTHCLOUDUSER\"]}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"HEALTHCLOUDUSER\"]}"
+      },
+      "knownIssues": null,
+      "channels": {
+        "unlockedPackagingWithoutNamespace": true,
+        "unlockedPackagingWithNamespace": true,
+        "toolingApi": true,
+        "sourceTracking": true,
+        "metadataApi": true,
+        "managedPackaging": true,
+        "classicUnmanagedPackaging": true,
+        "classicManagedPackaging": true,
+        "changeSets": true,
+        "apexMetadataApi": false
+      }
+    },
     "CareProviderSearchConfig": {
       "details": [
         {
@@ -8452,6 +8779,33 @@
         "apexMetadataApi": false
       }
     },
+    "CallCoachingMediaProvider": {
+      "details": [
+        {
+          "url": "https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_callcoachingmediaprovider.htm",
+          "name": "Metadata API Documentation"
+        }
+      ],
+      "scratchDefinitions": {
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\"}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\"}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\"}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\"}"
+      },
+      "knownIssues": null,
+      "channels": {
+        "unlockedPackagingWithoutNamespace": false,
+        "unlockedPackagingWithNamespace": false,
+        "toolingApi": false,
+        "sourceTracking": false,
+        "metadataApi": true,
+        "managedPackaging": false,
+        "classicUnmanagedPackaging": false,
+        "classicManagedPackaging": false,
+        "changeSets": false,
+        "apexMetadataApi": false
+      }
+    },
     "CallCenter": {
       "details": [
         {
@@ -8503,6 +8857,31 @@
         "apexMetadataApi": false
       }
     },
+    "BusinessProcessGroup": {
+      "details": [
+        {
+          "url": "https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_businessprocessgroup.htm",
+          "name": "Metadata API Documentation"
+        }
+      ],
+      "scratchDefinitions": {
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"SURVEYADVANCEDFEATURES\"],\"settings\":{\"surveySettings\":{\"enableSurvey\":true,\"enableIndustriesCxmEnabled\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"SURVEYADVANCEDFEATURES\"],\"settings\":{\"surveySettings\":{\"enableSurvey\":true,\"enableIndustriesCxmEnabled\":true}}}"
+      },
+      "knownIssues": null,
+      "channels": {
+        "unlockedPackagingWithoutNamespace": true,
+        "unlockedPackagingWithNamespace": true,
+        "toolingApi": false,
+        "sourceTracking": true,
+        "metadataApi": true,
+        "managedPackaging": false,
+        "classicUnmanagedPackaging": true,
+        "classicManagedPackaging": true,
+        "changeSets": true,
+        "apexMetadataApi": false
+      }
+    },
     "BusinessProcess": {
       "details": [
         {
@@ -8519,7 +8898,7 @@
       "knownIssues": [
         {
           "url": "https://success.salesforce.com/issues_view?id=a1p3A000001RXCcQAO",
-          "lastUpdated": "20 days ago",
+          "lastUpdated": "2020-01-08",
           "affectedUsers": 18,
           "tags": "Process Builder, Salesforce DX",
           "status": "In Review",
@@ -8608,10 +8987,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"CHATBOT\",\"LIVEAGENT\"],\"settings\":{\"liveAgentSettings\":{\"enableLiveAgent\":true},\"botSettings\":{\"enableBots\":true}}}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"CHATBOT\",\"LIVEAGENT\"],\"settings\":{\"liveAgentSettings\":{\"enableLiveAgent\":true},\"botSettings\":{\"enableBots\":true}}}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"CHATBOT\",\"LIVEAGENT\"],\"settings\":{\"liveAgentSettings\":{\"enableLiveAgent\":true},\"botSettings\":{\"enableBots\":true}}}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"CHATBOT\"],\"settings\":{\"liveAgentSettings\":{\"enableLiveAgent\":true},\"botSettings\":{\"enableBots\":true}}}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"CHATBOT\",\"LIVEAGENT\"],\"settings\":{\"botSettings\":{\"enableBots\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"CHATBOT\",\"LIVEAGENT\"],\"settings\":{\"botSettings\":{\"enableBots\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"CHATBOT\",\"LIVEAGENT\"],\"settings\":{\"botSettings\":{\"enableBots\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"CHATBOT\"],\"settings\":{\"botSettings\":{\"enableBots\":true}}}"
       },
       "knownIssues": null,
       "channels": {
@@ -8674,10 +9053,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"CHATBOT\",\"LIVEAGENT\"],\"settings\":{\"liveAgentSettings\":{\"enableLiveAgent\":true},\"botSettings\":{\"enableBots\":true}}}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"CHATBOT\",\"LIVEAGENT\"],\"settings\":{\"liveAgentSettings\":{\"enableLiveAgent\":true},\"botSettings\":{\"enableBots\":true}}}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"CHATBOT\",\"LIVEAGENT\"],\"settings\":{\"liveAgentSettings\":{\"enableLiveAgent\":true},\"botSettings\":{\"enableBots\":true}}}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"CHATBOT\"],\"settings\":{\"liveAgentSettings\":{\"enableLiveAgent\":true},\"botSettings\":{\"enableBots\":true}}}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"CHATBOT\",\"LIVEAGENT\"],\"settings\":{\"botSettings\":{\"enableBots\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"CHATBOT\",\"LIVEAGENT\"],\"settings\":{\"botSettings\":{\"enableBots\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"CHATBOT\",\"LIVEAGENT\"],\"settings\":{\"botSettings\":{\"enableBots\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"CHATBOT\"],\"settings\":{\"botSettings\":{\"enableBots\":true}}}"
       },
       "knownIssues": null,
       "channels": {
@@ -8716,6 +9095,33 @@
         "managedPackaging": false,
         "classicUnmanagedPackaging": false,
         "classicManagedPackaging": false,
+        "changeSets": false,
+        "apexMetadataApi": false
+      }
+    },
+    "BlacklistedConsumer": {
+      "details": [
+        {
+          "url": "https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_blacklistedconsumer.htm",
+          "name": "Metadata API Documentation"
+        }
+      ],
+      "scratchDefinitions": {
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\"}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\"}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\"}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\"}"
+      },
+      "knownIssues": null,
+      "channels": {
+        "unlockedPackagingWithoutNamespace": false,
+        "unlockedPackagingWithNamespace": false,
+        "toolingApi": false,
+        "sourceTracking": true,
+        "metadataApi": true,
+        "managedPackaging": false,
+        "classicUnmanagedPackaging": true,
+        "classicManagedPackaging": true,
         "changeSets": false,
         "apexMetadataApi": false
       }
@@ -8787,10 +9193,10 @@
       "knownIssues": [
         {
           "url": "https://success.salesforce.com/issues_view?id=a1p3A000000JWYJQA4",
-          "lastUpdated": "5 days ago",
-          "affectedUsers": 13,
+          "lastUpdated": "22 days ago",
+          "affectedUsers": 16,
           "tags": "Metadata, Spring 18",
-          "status": "In Review",
+          "status": "Fixed",
           "summary": "Some customers have observed that after the first authentication of a user in Lightning for Email, the following error is thrown when pulling metadata using the Salesforce CLI.\r\n\r\nERROR:  Entity of type 'AuthProvider' named 'Lightning For Gmail' cannot be found.",
           "title": "Metadata cannot be pulled after first authentication with Lightning for GMail"
         }
@@ -8868,10 +9274,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"EINSTEINASSISTANT\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"EINSTEINASSISTANT\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"EINSTEINASSISTANT\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"EINSTEINASSISTANT\"]}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"EINSTEINASSISTANT\"],\"settings\":{\"einsteinAssistantSettings\":{\"enableEinsteinAssistantEnabled\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"EINSTEINASSISTANT\"],\"settings\":{\"einsteinAssistantSettings\":{\"enableEinsteinAssistantEnabled\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"EINSTEINASSISTANT\"],\"settings\":{\"einsteinAssistantSettings\":{\"enableEinsteinAssistantEnabled\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"EINSTEINASSISTANT\"],\"settings\":{\"einsteinAssistantSettings\":{\"enableEinsteinAssistantEnabled\":true}}}"
       },
       "knownIssues": null,
       "channels": {
@@ -8895,10 +9301,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"EINSTEINASSISTANT\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"EINSTEINASSISTANT\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"EINSTEINASSISTANT\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"EINSTEINASSISTANT\"]}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"EINSTEINASSISTANT\"],\"settings\":{\"einsteinAssistantSettings\":{\"enableEinsteinAssistantEnabled\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"EINSTEINASSISTANT\"],\"settings\":{\"einsteinAssistantSettings\":{\"enableEinsteinAssistantEnabled\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"EINSTEINASSISTANT\"],\"settings\":{\"einsteinAssistantSettings\":{\"enableEinsteinAssistantEnabled\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"EINSTEINASSISTANT\"],\"settings\":{\"einsteinAssistantSettings\":{\"enableEinsteinAssistantEnabled\":true}}}"
       },
       "knownIssues": null,
       "channels": {
@@ -8922,10 +9328,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"EINSTEINASSISTANT\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"EINSTEINASSISTANT\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"EINSTEINASSISTANT\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"EINSTEINASSISTANT\"]}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"EINSTEINASSISTANT\"],\"settings\":{\"einsteinAssistantSettings\":{\"enableEinsteinAssistantEnabled\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"EINSTEINASSISTANT\"],\"settings\":{\"einsteinAssistantSettings\":{\"enableEinsteinAssistantEnabled\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"EINSTEINASSISTANT\"],\"settings\":{\"einsteinAssistantSettings\":{\"enableEinsteinAssistantEnabled\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"EINSTEINASSISTANT\"],\"settings\":{\"einsteinAssistantSettings\":{\"enableEinsteinAssistantEnabled\":true}}}"
       },
       "knownIssues": null,
       "channels": {
@@ -8949,10 +9355,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"EINSTEINASSISTANT\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"EINSTEINASSISTANT\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"EINSTEINASSISTANT\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"EINSTEINASSISTANT\"]}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"EINSTEINASSISTANT\"],\"settings\":{\"einsteinAssistantSettings\":{\"enableEinsteinAssistantEnabled\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"EINSTEINASSISTANT\"],\"settings\":{\"einsteinAssistantSettings\":{\"enableEinsteinAssistantEnabled\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"EINSTEINASSISTANT\"],\"settings\":{\"einsteinAssistantSettings\":{\"enableEinsteinAssistantEnabled\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"EINSTEINASSISTANT\"],\"settings\":{\"einsteinAssistantSettings\":{\"enableEinsteinAssistantEnabled\":true}}}"
       },
       "knownIssues": null,
       "channels": {
@@ -8976,10 +9382,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"EINSTEINASSISTANT\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"EINSTEINASSISTANT\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"EINSTEINASSISTANT\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"EINSTEINASSISTANT\"]}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"EINSTEINASSISTANT\"],\"settings\":{\"einsteinAssistantSettings\":{\"enableEinsteinAssistantEnabled\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"EINSTEINASSISTANT\"],\"settings\":{\"einsteinAssistantSettings\":{\"enableEinsteinAssistantEnabled\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"EINSTEINASSISTANT\"],\"settings\":{\"einsteinAssistantSettings\":{\"enableEinsteinAssistantEnabled\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"EINSTEINASSISTANT\"],\"settings\":{\"einsteinAssistantSettings\":{\"enableEinsteinAssistantEnabled\":true}}}"
       },
       "knownIssues": null,
       "channels": {
@@ -9318,8 +9724,8 @@
       "knownIssues": [
         {
           "url": "https://success.salesforce.com/issues_view?id=a1p300000008YkUAAU",
-          "lastUpdated": "2019-12-20",
-          "affectedUsers": 229,
+          "lastUpdated": "10 days ago",
+          "affectedUsers": 236,
           "tags": "Metadata, Eclipse IDE, Change Sets",
           "status": "In Review",
           "summary": "Remove the property from the controller and remove it's reference from VF page then deploy the VF page and controller together - it throw below error during deployment.\r\n\r\nError: \"The property Boolean XXXXXXX is referenced by Visualforce Page (ELA_Checklist) in salesforce.com. Remove the usage and try again.",
@@ -9336,6 +9742,33 @@
         "classicUnmanagedPackaging": true,
         "classicManagedPackaging": true,
         "changeSets": true,
+        "apexMetadataApi": false
+      }
+    },
+    "ApexEmailNotifications": {
+      "details": [
+        {
+          "url": "https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_apexemailnotifications.htm",
+          "name": "Metadata API Documentation"
+        }
+      ],
+      "scratchDefinitions": {
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\"}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\"}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\"}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\"}"
+      },
+      "knownIssues": null,
+      "channels": {
+        "unlockedPackagingWithoutNamespace": true,
+        "unlockedPackagingWithNamespace": true,
+        "toolingApi": false,
+        "sourceTracking": true,
+        "metadataApi": true,
+        "managedPackaging": true,
+        "classicUnmanagedPackaging": false,
+        "classicManagedPackaging": false,
+        "changeSets": false,
         "apexMetadataApi": false
       }
     },
@@ -9391,8 +9824,8 @@
         },
         {
           "url": "https://success.salesforce.com/issues_view?id=a1p3A0000003UjnQAE",
-          "lastUpdated": "2019-08-19",
-          "affectedUsers": 0,
+          "lastUpdated": "2020-03-15",
+          "affectedUsers": 1,
           "tags": "Salesforce DX",
           "status": "In Review",
           "summary": "Unable to create Unlocked Package if its metadata contain a class referencing to the PendingServiceRouting object, it throws an error :\r\n\r\n\"ERROR: OmniChannelService: Invalid type: PendingServiceRouting,OmniChannelService: Variable does not exist: queueItem,OmniChannelService: Invalid type",
@@ -9510,6 +9943,28 @@
         "apexMetadataApi": false
       }
     },
+    "AnalysisConfiguration": {
+      "details": [
+        {
+          "url": "https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_analysisconfiguration.htm",
+          "name": "Metadata API Documentation"
+        }
+      ],
+      "scratchDefinitions": null,
+      "knownIssues": null,
+      "channels": {
+        "unlockedPackagingWithoutNamespace": false,
+        "unlockedPackagingWithNamespace": false,
+        "toolingApi": false,
+        "sourceTracking": false,
+        "metadataApi": false,
+        "managedPackaging": false,
+        "classicUnmanagedPackaging": false,
+        "classicManagedPackaging": false,
+        "changeSets": false,
+        "apexMetadataApi": false
+      }
+    },
     "AddressSettings": {
       "details": [
         {
@@ -9599,10 +10054,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"INDUSTRIESACTIONPLAN\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"INDUSTRIESACTIONPLAN\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"INDUSTRIESACTIONPLAN\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"INDUSTRIESACTIONPLAN\"]}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"HEALTHCLOUDUSER\"]}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"HEALTHCLOUDUSER\"]}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"HEALTHCLOUDUSER\"]}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"HEALTHCLOUDUSER\"]}"
       },
       "knownIssues": null,
       "channels": {
@@ -9653,10 +10108,10 @@
         }
       ],
       "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"INDUSTRIESMFGTARGETSPILOT\"],\"settings\":{\"industriesManufacturingSettings\":{\"enableIndustriesMfgTargets\":true}}}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"INDUSTRIESMFGTARGETSPILOT\"],\"settings\":{\"industriesManufacturingSettings\":{\"enableIndustriesMfgTargets\":true}}}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"INDUSTRIESMFGTARGETSPILOT\"],\"settings\":{\"industriesManufacturingSettings\":{\"enableIndustriesMfgTargets\":true}}}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"INDUSTRIESMFGTARGETSPILOT\"],\"settings\":{\"industriesManufacturingSettings\":{\"enableIndustriesMfgTargets\":true}}}"
+        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"HEALTHCLOUDUSER\"],\"settings\":{\"industriesManufacturingSettings\":{\"enableIndustriesMfgTargets\":true}}}",
+        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"HEALTHCLOUDUSER\"],\"settings\":{\"industriesManufacturingSettings\":{\"enableIndustriesMfgTargets\":true}}}",
+        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"HEALTHCLOUDUSER\"],\"settings\":{\"industriesManufacturingSettings\":{\"enableIndustriesMfgTargets\":true}}}",
+        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"HEALTHCLOUDUSER\"],\"settings\":{\"industriesManufacturingSettings\":{\"enableIndustriesMfgTargets\":true}}}"
       },
       "knownIssues": null,
       "channels": {
@@ -9856,6 +10311,28 @@
         "apexMetadataApi": false
       }
     },
+    "AILiveMetricDefinition": {
+      "details": [
+        {
+          "url": "https://developer.salesforce.com/docs/atlas.en-us.api_meta.meta/api_meta/meta_ailivemetricdefinition.htm",
+          "name": "Metadata API Documentation"
+        }
+      ],
+      "scratchDefinitions": null,
+      "knownIssues": null,
+      "channels": {
+        "unlockedPackagingWithoutNamespace": false,
+        "unlockedPackagingWithNamespace": false,
+        "toolingApi": false,
+        "sourceTracking": false,
+        "metadataApi": false,
+        "managedPackaging": false,
+        "classicUnmanagedPackaging": false,
+        "classicManagedPackaging": false,
+        "changeSets": false,
+        "apexMetadataApi": false
+      }
+    },
     "AIAssistantTemplate": {
       "details": [
         {
@@ -9863,19 +10340,14 @@
           "name": "Metadata API Documentation"
         }
       ],
-      "scratchDefinitions": {
-        "professional": "{\"orgName\":\"Sample Org\",\"edition\":\"professional\",\"features\":[\"EINSTEINASSISTANT\"]}",
-        "group": "{\"orgName\":\"Sample Org\",\"edition\":\"group\",\"features\":[\"EINSTEINASSISTANT\"]}",
-        "enterprise": "{\"orgName\":\"Sample Org\",\"edition\":\"enterprise\",\"features\":[\"EINSTEINASSISTANT\"]}",
-        "developer": "{\"orgName\":\"Sample Org\",\"edition\":\"developer\",\"features\":[\"EINSTEINASSISTANT\"]}"
-      },
+      "scratchDefinitions": null,
       "knownIssues": null,
       "channels": {
-        "unlockedPackagingWithoutNamespace": true,
-        "unlockedPackagingWithNamespace": true,
-        "toolingApi": true,
-        "sourceTracking": true,
-        "metadataApi": true,
+        "unlockedPackagingWithoutNamespace": false,
+        "unlockedPackagingWithNamespace": false,
+        "toolingApi": false,
+        "sourceTracking": false,
+        "metadataApi": false,
         "managedPackaging": false,
         "classicUnmanagedPackaging": false,
         "classicManagedPackaging": false,
@@ -9884,5 +10356,5 @@
       }
     }
   },
-  "versions": { "selected": 48, "max": 48, "min": 43 }
+  "versions": { "selected": 49, "max": 49, "min": 43 }
 }

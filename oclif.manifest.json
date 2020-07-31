@@ -1,5 +1,5 @@
 {
-  "version": "2.0.7",
+  "version": "2.0.16",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -400,7 +400,7 @@
     "sfpowerkit:pool:create": {
       "id": "sfpowerkit:pool:create",
       "description": "Creates a pool of prebuilt scratchorgs, which can the be consumed by users or CI",
-      "usage": "<%= command.id %> -f <filepath> [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "usage": "<%= command.id %> -f <filepath> [-b <number>] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],
@@ -454,6 +454,14 @@
           "char": "f",
           "description": "Relative Path to the pool configuration json file. The schema of the file could be found in the Wiki",
           "required": true
+        },
+        "batchsize": {
+          "name": "batchsize",
+          "type": "option",
+          "char": "b",
+          "description": "Number of scratch org to be created in a single batch",
+          "required": false,
+          "default": 10
         }
       },
       "args": []
@@ -540,14 +548,15 @@
     "sfpowerkit:pool:fetch": {
       "id": "sfpowerkit:pool:fetch",
       "description": "Gets an active/unused scratch org from the scratch org pool",
-      "usage": "<%= command.id %> -t <string> [-m] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "usage": "<%= command.id %> -t <string> [-m] [-s <string>] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],
       "examples": [
         "$ sfdx sfpowerkit:pool:fetch -t core ",
         "$ sfdx sfpowerkit:pool:fetch -t core -v devhub",
-        "$ sfdx sfpowerkit:pool:fetch -t core -v devhub -m"
+        "$ sfdx sfpowerkit:pool:fetch -t core -v devhub -m",
+        "$ sfdx sfpowerkit:pool:fetch -t core -v devhub -s testuser@test.com"
       ],
       "flags": {
         "json": {
@@ -576,7 +585,7 @@
             "ERROR",
             "FATAL"
           ],
-          "default": "warn"
+          "default": "info"
         },
         "targetdevhubusername": {
           "name": "targetdevhubusername",
@@ -603,6 +612,13 @@
           "description": "Filter the tag for any additions created  by the executor of the command",
           "required": false,
           "allowNo": false
+        },
+        "sendtouser": {
+          "name": "sendtouser",
+          "type": "option",
+          "char": "s",
+          "description": "Send the credentials of the fetched scratchorg to another DevHub user, Useful for situations when pool is only limited to certain users",
+          "required": false
         }
       },
       "args": []
@@ -858,7 +874,7 @@
     "sfpowerkit:source:pmd": {
       "id": "sfpowerkit:source:pmd",
       "description": "This command is a wrapper around PMD ( downloads PMD for the first time) with some predefined defaults, such as ruleset, output format, output file. The command is to be run from the project directory",
-      "usage": "<%= command.id %> [-d <string>] [-r <string>] [-f <string>] [-o <string>] [--javahome <string>] [--supressoutput] [--version <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "usage": "<%= command.id %> [-d <string>] [-r <string>] [-f <string>] [-o <filepath>] [--javahome <string>] [--supressoutput] [--version <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],
@@ -890,7 +906,7 @@
             "ERROR",
             "FATAL"
           ],
-          "default": "warn"
+          "default": "info"
         },
         "directory": {
           "name": "directory",
@@ -903,7 +919,7 @@
           "name": "ruleset",
           "type": "option",
           "char": "r",
-          "description": "[default: sfpowerkit] The pmd ruleset that will be utilzied for analyzing the apex classes,  Checkout https://pmd.github.io/latest/pmd_userdocs_making_rulesets.html to create your own ruleset",
+          "description": "[default: [sfpowerkit](https://github.com/Accenture/sfpowerkit/blob/main/resources/pmd-ruleset.xml)] The pmd ruleset that will be utilzied for analyzing the apex classes,  Checkout https://pmd.github.io/latest/pmd_userdocs_making_rulesets.html to create your own ruleset",
           "required": false
         },
         "format": {
@@ -940,7 +956,7 @@
           "type": "option",
           "description": "[default: 6.21.0] The version of the pmd to be utilized for the analysis, this version will be downloaded to sfpowerkit's cache directory",
           "required": false,
-          "default": "6.22.0"
+          "default": "6.26.0"
         }
       },
       "args": []
@@ -2211,7 +2227,7 @@
             "ERROR",
             "FATAL"
           ],
-          "default": "warn"
+          "default": "info"
         },
         "targetdevhubusername": {
           "name": "targetdevhubusername",
@@ -2432,6 +2448,84 @@
           "name": "apiversion",
           "type": "option",
           "description": "API version"
+        }
+      },
+      "args": []
+    },
+    "sfpowerkit:project:datamodel:diff": {
+      "id": "sfpowerkit:project:datamodel:diff",
+      "description": "Provides an audit history of the metadata change between two commit ID's for data model ( CustomFields, RecordTypes, BusinessProcess)",
+      "usage": "<%= command.id %> -r <string> [-t <string>] [-p <string>] [-d <directory>] [--csv] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "pluginName": "sfpowerkit",
+      "pluginType": "core",
+      "aliases": [],
+      "examples": [
+        "$ sfdx sfpowerkit:project:datamodel:diff --revisionfrom revisionfrom --revisionto revisionto --csv"
+      ],
+      "flags": {
+        "json": {
+          "name": "json",
+          "type": "boolean",
+          "description": "format output as json",
+          "allowNo": false
+        },
+        "loglevel": {
+          "name": "loglevel",
+          "type": "option",
+          "description": "logging level for this command invocation",
+          "required": false,
+          "helpValue": "(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)",
+          "options": [
+            "trace",
+            "debug",
+            "info",
+            "warn",
+            "error",
+            "fatal",
+            "TRACE",
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "ERROR",
+            "FATAL"
+          ],
+          "default": "info"
+        },
+        "revisionfrom": {
+          "name": "revisionfrom",
+          "type": "option",
+          "char": "r",
+          "description": "Base revision from which to generate the diff",
+          "required": true
+        },
+        "revisionto": {
+          "name": "revisionto",
+          "type": "option",
+          "char": "t",
+          "description": "Target revision from which to generate the diff",
+          "required": false,
+          "default": "HEAD"
+        },
+        "packagedirectories": {
+          "name": "packagedirectories",
+          "type": "option",
+          "char": "p",
+          "description": "Run diff only for specified package directories",
+          "required": false
+        },
+        "outputdir": {
+          "name": "outputdir",
+          "type": "option",
+          "char": "d",
+          "description": "Directory to output the results",
+          "required": false
+        },
+        "csv": {
+          "name": "csv",
+          "type": "boolean",
+          "description": "Output to csv file",
+          "required": false,
+          "allowNo": false
         }
       },
       "args": []

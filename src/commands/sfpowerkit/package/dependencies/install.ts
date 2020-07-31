@@ -1,12 +1,14 @@
 //Code initially based from https://github.com/texei/texei-sfdx-plugin
-//Updated to reflect mono repo, individual package and skip install if already installed scenarios
+//Updated to reflect mono repo (mpd), handle tags, individual package and skip install if already installed scenarios
 
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { JsonArray, JsonMap } from "@salesforce/ts-types";
 import { SfdxProject } from "@salesforce/core";
-
-const spawn = require("child-process-promise").spawn;
-const exec = require("child-process-promise").exec;
+import { loadSFDX } from "../../../../sfdxnode/GetNodeWrapper";
+import { sfdx } from "../../../..//sfdxnode/parallel";
+import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
+import { isNullOrUndefined } from "util";
+let retry = require("async-retry");
 
 const packageIdPrefix = "0Ho";
 const packageVersionIdPrefix = "04t";
@@ -85,6 +87,25 @@ export default class Install extends SfdxCommand {
       required: false,
       description:
         "in a mono repo project, filter packageDirectories using path and install dependent packages only for the specified path"
+    }),
+    loglevel: flags.enum({
+      description: "logging level for this command invocation",
+      default: "info",
+      required: false,
+      options: [
+        "trace",
+        "debug",
+        "info",
+        "warn",
+        "error",
+        "fatal",
+        "TRACE",
+        "DEBUG",
+        "INFO",
+        "WARN",
+        "ERROR",
+        "FATAL"
+      ]
     })
   };
 
@@ -103,6 +124,8 @@ export default class Install extends SfdxCommand {
   public async run(): Promise<any> {
     const result = { installedPackages: {} };
 
+    SFPowerkit.setLogLevel(this.flags.loglevel, false);
+
     // this.org is guaranteed because requiresUsername=true, as opposed to supportsUsername
     const username = this.org.getUsername();
 
@@ -119,7 +142,21 @@ export default class Install extends SfdxCommand {
     }
 
     //Validate Packages  installed in the target org
-    let installedpackages = await this.getInstalledPackages(username);
+
+    let installedpackages = [];
+    try {
+      installedpackages = await this.getInstalledPackages(username);
+    } catch (error) {
+      console.log(
+        "Unable to retrieve the packages installed in the org, Proceeding",
+        LoggerLevel.WARN
+      );
+    }
+
+    if (isNullOrUndefined(installedpackages) || installedpackages.length == 0) {
+      this.flags.updateall = true;
+      installedpackages = [];
+    }
 
     let individualpackage = this.flags.individualpackage;
 
@@ -242,6 +279,9 @@ export default class Install extends SfdxCommand {
     }
 
     if (packagesToInstall.size > 0) {
+      //Load SFDX
+      loadSFDX();
+
       // Installing Packages
       let installationKeyMap: Map<string, string> = new Map<string, string>();
 
@@ -266,6 +306,7 @@ export default class Install extends SfdxCommand {
       ]);
 
       this.ux.log(`\n`);
+
       for (let packageInfo of packagesToInstallArray) {
         packageInfo = packageInfo as JsonMap;
         if (
@@ -279,17 +320,12 @@ export default class Install extends SfdxCommand {
           continue;
         }
 
-        // Split arguments to use spawn
-        const args = [];
-        args.push("force:package:install");
-
+        //Build up options
+        let flags = {};
         // USERNAME
-        args.push("--targetusername");
-        args.push(`${username}`);
-
+        flags["targetusername"] = username;
         // PACKAGE ID
-        args.push("--package");
-        args.push(`${packageInfo.packageVersionId}`);
+        flags["package"] = packageInfo.packageVersionId;
 
         // INSTALLATION KEY
         if (
@@ -297,26 +333,25 @@ export default class Install extends SfdxCommand {
           installationKeyMap.has(packageInfo.packageName.toString())
         ) {
           let key = installationKeyMap.get(packageInfo.packageName.toString());
-          args.push("-k");
-          args.push(`${key}`);
+          flags["installationkey"] = key;
         }
 
         // WAIT
         const wait = this.flags.wait ? this.flags.wait.trim() : defaultWait;
-        args.push("-w");
-        args.push(`${wait}`);
-        args.push("-b");
-        args.push(`${wait}`);
-
-        // NOPROMPT
-        if (this.flags.noprompt) {
-          args.push("--noprompt");
-        }
+        flags["wait"] = wait;
+        flags["publishwait"] = wait;
 
         if (this.flags.apexcompileonlypackage) {
-          args.push("-a");
-          args.push(`package`);
+          flags["apexcompile"] = "package";
         }
+
+        let opts = [];
+        // NOPROMPT
+        if (this.flags.noprompt) {
+          opts.push("--noprompt");
+        }
+
+        let startTime = new Date().valueOf();
 
         this.ux.log(
           `Installing package ${packageInfo.packageVersionId} : ${
@@ -328,8 +363,7 @@ export default class Install extends SfdxCommand {
           }`
         );
 
-        var startTime = new Date().valueOf();
-        await spawn("sfdx", args, { stdio: "inherit" });
+        await sfdx.force.package.install(flags, opts);
 
         var endTime = new Date().valueOf();
 
@@ -429,29 +463,40 @@ export default class Install extends SfdxCommand {
       "SubscriberPackageVersion.PatchVersion, SubscriberPackageVersion.BuildNumber FROM InstalledSubscriberPackage " +
       "ORDER BY SubscriberPackageId";
     const conn = this.org.getConnection();
-    await conn.tooling.query(installedPackagesQuery).then(queryResult => {
-      const records = queryResult.records;
-      if (records && records.length > 0) {
-        this.ux.log(`Installed Packages in the org ${targetOrg}`);
-        const output = [];
-        records.forEach(record => {
-          packages.push(record["SubscriberPackageVersion"]["Id"]);
-          output.push({
-            name: record["SubscriberPackage"]["Name"],
-            package_version_name: record["SubscriberPackageVersion"]["Name"],
-            package_version_id: record["SubscriberPackageVersion"]["Id"],
-            versionNumber: `${record["SubscriberPackageVersion"]["MajorVersion"]}.${record["SubscriberPackageVersion"]["MinorVersion"]}.${record["SubscriberPackageVersion"]["PatchVersion"]}.${record["SubscriberPackageVersion"]["BuildNumber"]}`
+
+    return await retry(
+      async bail => {
+        SFPowerkit.log("QUERY:" + installedPackagesQuery, LoggerLevel.TRACE);
+
+        const results = (await conn.tooling.query(
+          installedPackagesQuery
+        )) as any;
+
+        const records = results.records;
+        if (records && records.length > 0) {
+          this.ux.log(`Installed Packages in the org ${targetOrg}`);
+          const output = [];
+          records.forEach(record => {
+            packages.push(record["SubscriberPackageVersion"]["Id"]);
+            output.push({
+              name: record["SubscriberPackage"]["Name"],
+              package_version_name: record["SubscriberPackageVersion"]["Name"],
+              package_version_id: record["SubscriberPackageVersion"]["Id"],
+              versionNumber: `${record["SubscriberPackageVersion"]["MajorVersion"]}.${record["SubscriberPackageVersion"]["MinorVersion"]}.${record["SubscriberPackageVersion"]["PatchVersion"]}.${record["SubscriberPackageVersion"]["BuildNumber"]}`
+            });
           });
-        });
-        this.ux.table(output, [
-          "name",
-          "package_version_name",
-          "package_version_id",
-          "versionNumber"
-        ]);
-      }
-    });
-    return packages;
+          this.ux.table(output, [
+            "name",
+            "package_version_name",
+            "package_version_id",
+            "versionNumber"
+          ]);
+
+          return packages;
+        }
+      },
+      { retries: 3, minTimeout: 3000 }
+    );
   }
   private parseKeyValueMapfromString(
     request: string,
