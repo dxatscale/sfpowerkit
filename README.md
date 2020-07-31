@@ -51,7 +51,7 @@ $ sfdx plugins:link
     - [`sfpowerkit:project:orgdiff`](#sfpowerkitprojectorgdiff)
     - [`sfpowerkit:project:manifest:diff`](#sfpowerkitprojectmanifestdiff)
     - [`sfpowerkit:project:manifest:merge`](#sfpowerkitprojectmanifestmerge)
-    - [`sfpowerkit:source:datamodel:report`](#sfpowerkitsourcedatamodelreport)
+    - [`sfpowerkit:project:datamodel:report [BETA]`](#sfpowerkitprojectdatamodelreport-beta)
     - [`sfpowerkit:project:datamodel:diff [BETA]`](#sfpowerkitprojectdatamodeldiff-beta)
   - [Unlocked Package Related Functionalities](#unlocked-package-related-functionalities)
     - [`sfpowerkit:package:dependencies:install`](#sfpowerkitpackagedependenciesinstall)
@@ -437,13 +437,13 @@ EXAMPLE
   $ sfdx sfpowerkit:project:manifest:merge -p project1/path/to/package.xml,project2/path/to/package.xml -d result/package.xml
 ```
 
-### `sfpowerkit:source:datamodel:report`
+### `sfpowerkit:project:datamodel:report [BETA]`
 
 This command is used to generate datamodel report from project
 
 ```
 USAGE
-  $ sfdx sfpowerkit:source:datamodel:report -d <string> -t <array> [-p <array>] [-f json|csv|md] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+  $ sfdx sfpowerkit:project:datamodel:report -d <string> -t <array> [-p <array>] [-f json|csv|md] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
   -d, --outputdir=outputdir                                                         (required) [default: datamodelreport] location to create the datamodel report
@@ -458,11 +458,11 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
 
 EXAMPLES
-  $ sfdx sfpowerkit:source:datamodel:report
-  $ sfdx sfpowerkit:source:datamodel:report -p force-app/main/default/objects -d result
-  $ sfdx sfpowerkit:source:datamodel:report -p force-app/main/default/objects -t CustomField,RecordType
-  $ sfdx sfpowerkit:source:datamodel:report -p force-app/main/default/objects -t CustomField,RecordType -f csv
-  $ sfdx sfpowerkit:source:datamodel:report -f md -d doc
+  $ sfdx sfpowerkit:project:datamodel:report
+  $ sfdx sfpowerkit:project:datamodel:report -p force-app/main/default/objects -d result
+  $ sfdx sfpowerkit:project:datamodel:report -p force-app/main/default/objects -t CustomField,RecordType
+  $ sfdx sfpowerkit:project:datamodel:report -p force-app/main/default/objects -t CustomField,RecordType -f csv
+  $ sfdx sfpowerkit:project:datamodel:report -f md -d doc
 ```
 
 ### `sfpowerkit:project:datamodel:diff [BETA]`

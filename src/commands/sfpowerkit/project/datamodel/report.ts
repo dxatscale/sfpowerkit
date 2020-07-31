@@ -1,7 +1,7 @@
 import { AnyJson } from "@salesforce/ts-types";
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { SFPowerkit } from "../../../../sfpowerkit";
-import datamodelReportImpl from "../../../../impl/source/datamodel/reportimpl";
+import datamodelReportImpl from "../../../../impl/project/datamodel/reportimpl";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -16,11 +16,11 @@ export default class Report extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:source:datamodel:report`,
-    `$ sfdx sfpowerkit:source:datamodel:report -p force-app/main/default/objects -d result`,
-    `$ sfdx sfpowerkit:source:datamodel:report -p force-app/main/default/objects -t CustomField,RecordType`,
-    `$ sfdx sfpowerkit:source:datamodel:report -p force-app/main/default/objects -t CustomField,RecordType -f csv`,
-    `$ sfdx sfpowerkit:source:datamodel:report -f md -d docs`
+    `$ sfdx sfpowerkit:project:datamodel:report`,
+    `$ sfdx sfpowerkit:project:datamodel:report -p force-app/main/default/objects -d result`,
+    `$ sfdx sfpowerkit:project:datamodel:report -p force-app/main/default/objects -t CustomField,RecordType`,
+    `$ sfdx sfpowerkit:project:datamodel:report -p force-app/main/default/objects -t CustomField,RecordType -f csv`,
+    `$ sfdx sfpowerkit:project:datamodel:report -f md -d docs`
   ];
 
   protected static flagsConfig = {

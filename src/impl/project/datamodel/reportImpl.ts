@@ -4,7 +4,7 @@ import fs from "fs-extra";
 import FileUtils from "../../../utils/fileutils";
 import { METADATA_INFO } from "../../metadata/metadataInfo";
 import xmlUtil from "../../../utils/xmlUtil";
-import { AnyJson, JsonArray } from "@salesforce/ts-types";
+import { AnyJson } from "@salesforce/ts-types";
 import MarkdownGeneratorImpl from "./MarkdownGeneratorImpl";
 
 var path = require("path");
