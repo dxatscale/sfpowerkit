@@ -56,7 +56,7 @@ export default class ProfileSync extends ProfileActions {
       });
     }
 
-    let profileList: string[] = [];
+    //let profileList: string[] = [];
     let profileNames: string[] = [];
     let profilePathAssoc = {};
     let profileStatus = await this.getProfileFullNamesWithLocalStatus(profiles);
@@ -121,7 +121,7 @@ export default class ProfileSync extends ProfileActions {
             profileObj,
             profilePathAssoc[profileObj.fullName]
           );
-          profileList.push(profileObj.fullName);
+          //profileList.push(profileObj.fullName);
         }
         progressBar.increment(j - i > chunk ? chunk : j - i);
       }
