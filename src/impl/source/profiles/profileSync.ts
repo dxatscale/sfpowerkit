@@ -7,6 +7,7 @@ import Profile from "../../../impl/metadata/schema";
 import * as _ from "lodash";
 import ProfileActions from "./profileActions";
 import ProfileWriter from "../../../impl/metadata/writer/profileWriter";
+import { ProgressBar } from "../../../ui/progressBar";
 
 const unsupportedprofiles = [];
 
@@ -23,8 +24,10 @@ export default class ProfileSync extends ProfileActions {
     updated: string[];
   }> {
     SFPowerkit.log("Retrieving profiles", LoggerLevel.DEBUG);
-    SFPowerkit.log("Requested  profiles are..", LoggerLevel.DEBUG);
-    SFPowerkit.log(profiles, LoggerLevel.DEBUG);
+    if (!_.isNil(profiles) && profiles.length !== 0) {
+      SFPowerkit.log("Requested  profiles are..", LoggerLevel.DEBUG);
+      SFPowerkit.log(profiles, LoggerLevel.DEBUG);
+    }
 
     let fetchNewProfiles = _.isNil(srcFolders) || srcFolders.length === 0;
     if (fetchNewProfiles) {
@@ -42,69 +45,89 @@ export default class ProfileSync extends ProfileActions {
       this.metadataFiles.loadComponents(normalizedPath);
     }
 
+    //get local profiles when profile path is provided
+    if (!fetchNewProfiles && profiles.length < 1) {
+      METADATA_INFO.Profile.files.forEach(element => {
+        let oneName = path.basename(
+          element,
+          METADATA_INFO.Profile.sourceExtension
+        );
+        profiles.push(oneName);
+      });
+    }
+
     let profileList: string[] = [];
     let profileNames: string[] = [];
     let profilePathAssoc = {};
     let profileStatus = await this.getProfileFullNamesWithLocalStatus(profiles);
-    SFPowerkit.log(profileStatus, LoggerLevel.DEBUG);
-    let metadataFiles = profileStatus.updated || [];
+
+    let metadataFiles = [];
     if (fetchNewProfiles) {
+      //Retriving local profiles and anything extra found in the org
       metadataFiles = _.union(profileStatus.added, profileStatus.updated);
     } else {
-      metadataFiles = profileStatus.added;
+      //Retriving only local profiles
+      metadataFiles = profileStatus.updated;
+      profileStatus.added = [];
     }
     metadataFiles.sort();
+    SFPowerkit.log(profileStatus, LoggerLevel.DEBUG);
 
     SFPowerkit.log(metadataFiles, LoggerLevel.TRACE);
 
-    for (var i = 0; i < metadataFiles.length; i++) {
-      var profileComponent = metadataFiles[i];
-      var profileName = path.basename(
-        profileComponent,
-        METADATA_INFO.Profile.sourceExtension
-      );
+    if (metadataFiles.length > 0) {
+      for (var i = 0; i < metadataFiles.length; i++) {
+        var profileComponent = metadataFiles[i];
+        var profileName = path.basename(
+          profileComponent,
+          METADATA_INFO.Profile.sourceExtension
+        );
 
-      var supported = !unsupportedprofiles.includes(profileName);
-      if (supported) {
-        profilePathAssoc[profileName] = profileComponent;
-        profileNames.push(profileName);
+        var supported = !unsupportedprofiles.includes(profileName);
+        if (supported) {
+          profilePathAssoc[profileName] = profileComponent;
+          profileNames.push(profileName);
+        }
       }
-    }
 
-    var i: number,
-      j: number,
-      chunk: number = 10;
-    var temparray;
-    SFPowerkit.log(
-      "Number of profiles found in the target org " + profileNames.length,
-      LoggerLevel.INFO
-    );
-    for (i = 0, j = profileNames.length; i < j; i += chunk) {
-      temparray = profileNames.slice(i, i + chunk);
-      //SfPowerKit.ux.log(temparray.length);
-      let start = i + 1;
-      let end = i + chunk;
+      var i: number,
+        j: number,
+        chunk: number = 10;
+      var temparray;
       SFPowerkit.log(
-        "Loading profiles in batches " + start + " to " + end,
+        `Number of profiles found in the target org ${profileNames.length}`,
         LoggerLevel.INFO
       );
 
-      var metadataList = await this.profileRetriever.loadProfiles(
-        temparray,
-        this.conn
+      let progressBar = new ProgressBar().create(
+        `Loading profiles in batches `,
+        ` Profiles`,
+        LoggerLevel.INFO
       );
+      progressBar.start(profileNames.length);
+      for (i = 0, j = profileNames.length; i < j; i += chunk) {
+        temparray = profileNames.slice(i, i + chunk);
 
-      let profileWriter = new ProfileWriter();
-      for (var count = 0; count < metadataList.length; count++) {
-        var profileObj = metadataList[count] as Profile;
-
-        profileWriter.writeProfile(
-          profileObj,
-          profilePathAssoc[profileObj.fullName]
+        var metadataList = await this.profileRetriever.loadProfiles(
+          temparray,
+          this.conn
         );
-        //SfPowerKit.ux.log("Profile " + profileObj.fullName + " Sync!");
-        profileList.push(profileObj.fullName);
+
+        let profileWriter = new ProfileWriter();
+        for (var count = 0; count < metadataList.length; count++) {
+          var profileObj = metadataList[count] as Profile;
+
+          profileWriter.writeProfile(
+            profileObj,
+            profilePathAssoc[profileObj.fullName]
+          );
+          profileList.push(profileObj.fullName);
+        }
+        progressBar.increment(j - i > chunk ? chunk : j - i);
       }
+      progressBar.stop();
+    } else {
+      SFPowerkit.log(`No Profiles found to retrieve`, LoggerLevel.INFO);
     }
 
     if (profileStatus.deleted && isdelete) {
