@@ -5,6 +5,7 @@ import {
   getInstalledPackages,
   PackageDetail
 } from "../../../utils/packageUtils";
+let retry = require("async-retry");
 
 export default class PackageInfo {
   conn: Connection;
@@ -40,13 +41,18 @@ export default class PackageInfo {
       }
     });
 
+    let pkdIdsAsString = pkgIds.join(`','`);
+
     if (pkgIds.length > 0) {
-      let installedPackagesQuery = `SELECT SubscriberPackageVersionId, HasPassedCodeCoverageCheck,CodeCoverage,ValidationSkipped FROM Package2Version WHERE SubscriberPackageVersionId IN('${pkgIds.join(
-        "','"
-      )}')`;
-      let response = (await hubconn.tooling.query(
-        installedPackagesQuery
-      )) as any;
+      let installedPackagesQuery = `SELECT SubscriberPackageVersionId, HasPassedCodeCoverageCheck,CodeCoverage,ValidationSkipped FROM Package2Version WHERE SubscriberPackageVersionId IN('${pkdIdsAsString}')`;
+
+      let response = await retry(
+        async bail => {
+          return await hubconn.tooling.query(installedPackagesQuery);
+        },
+        { retries: 3, minTimeout: 3000 }
+      );
+
       if (response.records && response.records.length > 0) {
         response.records.forEach(record => {
           for (let pkg of pkgDetails) {
