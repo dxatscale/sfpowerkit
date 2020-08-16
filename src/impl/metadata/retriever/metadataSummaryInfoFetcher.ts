@@ -5,7 +5,7 @@ import { DescribeMetadataResult, FileProperties } from "jsforce";
 import { chunkArray } from "../../../utils/chunkArray";
 import { ProgressBar } from "../../../ui/progressBar";
 import GetDefaults from "../../../utils/getDefaults";
-import retry from "async-retry";
+const retry = require("async-retry");
 
 export default class MetadataSummaryInfoFetcher {
   private static NotSupportedTypes = [
@@ -149,7 +149,7 @@ export default class MetadataSummaryInfoFetcher {
         );
         progressBar.increment(typesInChunk.length);
       } catch (error) {
-        throw new SfdxError("Unable to retrieve metadata from the org");
+        throw new SfdxError("Unable to retrieve metadata from the org" + error);
       }
     }
 
@@ -170,13 +170,14 @@ export default class MetadataSummaryInfoFetcher {
             GetDefaults.getApiVersion()
           );
 
-          for (let result of results) {
-            metadataMap.set(result.id, {
-              id: result.id,
-              fullName: result.fullName,
-              type: result.type
-            });
-          }
+          if (results.length > 0)
+            for (let result of results) {
+              metadataMap.set(result.id, {
+                id: result.id,
+                fullName: result.fullName,
+                type: result.type
+              });
+            }
 
           return metadataMap;
         } catch (error) {
