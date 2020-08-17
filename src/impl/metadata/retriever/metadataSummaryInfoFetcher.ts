@@ -5,6 +5,7 @@ import { DescribeMetadataResult, FileProperties } from "jsforce";
 import { chunkArray } from "../../../utils/chunkArray";
 import { ProgressBar } from "../../../ui/progressBar";
 import GetDefaults from "../../../utils/getDefaults";
+import { isArray } from "util";
 const retry = require("async-retry");
 
 export default class MetadataSummaryInfoFetcher {
@@ -75,6 +76,7 @@ export default class MetadataSummaryInfoFetcher {
     "ProfileSessionSetting",
     "MyDomainDiscoverableLogin",
     "OauthCustomScope",
+    "LeadConvertSettings",
     "DataCategoryGroup",
     "RemoteSiteSetting",
     "CspTrustedSite",
@@ -97,7 +99,8 @@ export default class MetadataSummaryInfoFetcher {
     "DelegateGroup",
     "ManagedContentType",
     "EmailServicesFunction",
-    "SamlSsoConfig"
+    "SamlSsoConfig",
+    "EmbeddedServiceLiveAgent"
   ];
 
   public static async fetchMetadataSummaryFromAnOrg(
@@ -149,7 +152,17 @@ export default class MetadataSummaryInfoFetcher {
         );
         progressBar.increment(typesInChunk.length);
       } catch (error) {
-        throw new SfdxError("Unable to retrieve metadata from the org" + error);
+        if (error.message == "Undefinded Metadata Type") {
+          SFPowerkit.log(
+            `Unknown Types ${JSON.stringify(
+              typesInChunk
+            )} Encountered while retrieving types from the org, Please raise an issue!`,
+            LoggerLevel.WARN
+          );
+        } else {
+          progressBar.stop();
+          throw new SfdxError(error);
+        }
       }
     }
 
@@ -164,25 +177,25 @@ export default class MetadataSummaryInfoFetcher {
   ) {
     return await retry(
       async bail => {
-        try {
-          let results: FileProperties[] = await conn.metadata.list(
-            types,
-            GetDefaults.getApiVersion()
-          );
+        let results: FileProperties[] = await conn.metadata.list(
+          types,
+          GetDefaults.getApiVersion()
+        );
 
-          if (results.length > 0)
-            for (let result of results) {
-              metadataMap.set(result.id, {
-                id: result.id,
-                fullName: result.fullName,
-                type: result.type
-              });
-            }
-
-          return metadataMap;
-        } catch (error) {
-          throw error;
+        if (!isArray(results)) {
+          throw new Error("Undefinded Metadata Type");
         }
+
+        // if (results.length > 0)
+        for (let result of results) {
+          metadataMap.set(result.id, {
+            id: result.id,
+            fullName: result.fullName,
+            type: result.type
+          });
+        }
+
+        return metadataMap;
       },
       { retries: 3, minTimeout: 2000 }
     );
