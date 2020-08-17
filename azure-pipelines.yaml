@@ -61,7 +61,7 @@ stages:
   - stage: Hotfix
     displayName: Hotfix
     dependsOn: []
-    condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/hotifix/')
+    condition: startsWith(variables['Build.SourceBranch'], 'refs/heads/hotfix/')
 
     jobs:
       - deployment: BuildAndPublishExtension
