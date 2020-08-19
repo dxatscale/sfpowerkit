@@ -7,7 +7,8 @@ import { SOURCE_EXTENSION_REGEX } from "../../../impl/metadata/metadataInfo";
 import { METADATA_INFO } from "../../../impl/metadata/metadataInfo";
 import { SFPowerkit } from "../../../sfpowerkit";
 import { LoggerLevel } from "@salesforce/core";
-import simplegit, { SimpleGit } from "simple-git/promise";
+import simplegit, { SimpleGit } from "simple-git";
+const SEP = /\/|\\/;
 
 export interface DiffFileStatus {
   revisionFrom: string;
@@ -69,7 +70,7 @@ export default class DiffUtil {
   > {
     let relativeFiles = [];
 
-    let filePathParts = filePath.split(path.sep);
+    let filePathParts = filePath.split(SEP);
 
     const statResourcesRegExp = new RegExp(
       METADATA_INFO.StaticResource.directoryName
@@ -179,7 +180,7 @@ export default class DiffUtil {
 
       let outputPath = path.join(outputFolder, gitFile.path);
 
-      let filePathParts = gitFile.path.split(path.sep);
+      let filePathParts = gitFile.path.split(SEP);
 
       if (fs.existsSync(outputFolder) == false) {
         fs.mkdirSync(outputFolder);
@@ -192,7 +193,7 @@ export default class DiffUtil {
           fs.mkdirSync(outputFolder);
         }
       }
-      let fileContent = await git.show(["--raw", gitFile.revision]);
+      let fileContent = await git.binaryCatFile(["-p", gitFile.revision]);
       fs.writeFileSync(outputPath, fileContent);
     }
   }

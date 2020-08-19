@@ -16,7 +16,7 @@ import { diff_match_patch } from "diff-match-patch";
 import "diff-match-patch-line-and-word"; // import globally to  enhanse the class
 import FileUtils from "../../../utils/fileutils";
 import * as rimraf from "rimraf";
-import { ProgressBar } from "../../../../src/ui/progressBar";
+import { ProgressBar } from "../../../ui/progressBar";
 
 const dmp = new diff_match_patch();
 

@@ -66,8 +66,13 @@ export default abstract class ProfileActions {
       FileUtils.mkDirByPathSync(profilePath);
     }
 
+    // Query the profiles from org
+    const profiles = await retrieveMetadata(
+      [{ type: "Profile", folder: null }],
+      this.conn
+    );
+
     if (profileNames && profileNames.length > 0) {
-      metadataFiles = [];
       for (let i = 0; i < profileNames.length; i++) {
         let profileName = profileNames[i];
         let found = false;
@@ -79,18 +84,11 @@ export default abstract class ProfileActions {
             METADATA_INFO.Profile.sourceExtension
           );
           if (profileName === oneName) {
-            //metadataFiles.push(profileComponent);
             profilesStatus.updated.push(profileComponent);
             found = true;
             break;
           }
         }
-        //Query the profile from the server
-
-        let profiles = await retrieveMetadata(
-          [{ type: "Profile", folder: null }],
-          this.conn
-        );
 
         if (!found) {
           for (let k = 0; k < profiles.length; k++) {
@@ -99,7 +97,6 @@ export default abstract class ProfileActions {
                 profilePath,
                 profiles[k] + METADATA_INFO.Profile.sourceExtension
               );
-              //metadataFiles.push(newProfilePath);
               profilesStatus.added.push(newProfilePath);
               found = true;
               break;
@@ -114,11 +111,6 @@ export default abstract class ProfileActions {
       SFPowerkit.log(
         "Load new profiles from server into the project directory",
         LoggerLevel.DEBUG
-      );
-      // Query the org
-      const profiles = await retrieveMetadata(
-        [{ type: "Profile", folder: null }],
-        this.conn
       );
 
       profilesStatus.deleted = metadataFiles.filter(file => {
@@ -163,7 +155,6 @@ export default abstract class ProfileActions {
               profilePath,
               newProfiles[i] + METADATA_INFO.Profile.sourceExtension
             );
-            //metadataFiles.push(newPRofilePath);
             profilesStatus.added.push(newPRofilePath);
           }
         } else {
@@ -174,7 +165,6 @@ export default abstract class ProfileActions {
         }
       }
     }
-    //metadataFiles = metadataFiles.sort();
     return Promise.resolve(profilesStatus);
   }
 
