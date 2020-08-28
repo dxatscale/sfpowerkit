@@ -11,7 +11,7 @@ export async function getInstalledPackages(
   let installedPackagesQuery =
     "SELECT Id, SubscriberPackageId, SubscriberPackage.NamespacePrefix, SubscriberPackage.Name, " +
     "SubscriberPackageVersion.Id, SubscriberPackageVersion.Name, SubscriberPackageVersion.MajorVersion, SubscriberPackageVersion.MinorVersion, " +
-    "SubscriberPackageVersion.PatchVersion, SubscriberPackageVersion.BuildNumber FROM InstalledSubscriberPackage " +
+    "SubscriberPackageVersion.PatchVersion, SubscriberPackageVersion.BuildNumber, SubscriberPackageVersion.Package2ContainerOptions, SubscriberPackageVersion.IsOrgDependent FROM InstalledSubscriberPackage " +
     "ORDER BY SubscriberPackageId";
 
   let packageNamespacePrefixList = [];
@@ -31,6 +31,10 @@ export async function getInstalledPackages(
           packageDetail.packageVersionId =
             record["SubscriberPackageVersion"]["Id"];
           packageDetail.packageVersionNumber = `${record["SubscriberPackageVersion"]["MajorVersion"]}.${record["SubscriberPackageVersion"]["MinorVersion"]}.${record["SubscriberPackageVersion"]["PatchVersion"]}.${record["SubscriberPackageVersion"]["BuildNumber"]}`;
+          packageDetail.type =
+            record["SubscriberPackageVersion"]["Package2ContainerOptions"];
+          packageDetail.IsOrgDependent =
+            record["SubscriberPackageVersion"]["IsOrgDependent"];
           packageDetails.push(packageDetail);
           if (packageDetail.packageNamespacePrefix) {
             packageNamespacePrefixList.push(
@@ -48,7 +52,8 @@ export async function getInstalledPackages(
             if (queryResult.records && queryResult.records.length > 0) {
               queryResult.records.forEach(record => {
                 let licenseDetailObj = {} as PackageDetail;
-                licenseDetailObj.allowedLicenses = record["AllowedLicenses"];
+                licenseDetailObj.allowedLicenses =
+                  record["AllowedLicenses"] > 0 ? record["AllowedLicenses"] : 0;
                 licenseDetailObj.usedLicenses = record["UsedLicenses"];
                 licenseDetailObj.expirationDate = record["ExpirationDate"];
                 licenseDetailObj.status = record["Status"];
@@ -90,4 +95,9 @@ export interface PackageDetail {
   usedLicenses: number;
   expirationDate: string;
   status: string;
+  type: string;
+  IsOrgDependent: boolean;
+  CodeCoverage: number;
+  codeCoverageCheckPassed: boolean;
+  validationSkipped: boolean;
 }

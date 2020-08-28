@@ -1,5 +1,5 @@
 {
-  "version": "2.0.18",
+  "version": "2.1.2",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -2402,7 +2402,7 @@
     "sfpowerkit:package:version:info": {
       "id": "sfpowerkit:package:version:info",
       "description": "This command is list all the installed (managed/unmanaged) packages in an org",
-      "usage": "<%= command.id %> [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "usage": "<%= command.id %> [-v <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],
@@ -2437,6 +2437,12 @@
             "FATAL"
           ],
           "default": "info"
+        },
+        "targetdevhubusername": {
+          "name": "targetdevhubusername",
+          "type": "option",
+          "char": "v",
+          "description": "username or alias for the dev hub org; overrides default dev hub org"
         },
         "targetusername": {
           "name": "targetusername",
