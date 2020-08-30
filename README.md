@@ -1021,7 +1021,7 @@ OPTIONS
                                                           source org for a cloned sandbox.
 
   -l, --licensetype=DEVELOPER|DEVELOPER_PRO|PARTIAL|FULL  (required) Type of the sandbox. Valid values are
-                                                          DEVELOPER,DEVELOPER_PRO,PARTIAL,FULL
+                                                          DEVELOPER,DEVELOPER_PRO,PARTIAL,FULL. Provide this if the sandbox is to be created from Production
 
   -n, --name=name                                         (required) Name of the sandbox
 
@@ -1035,8 +1035,8 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal)          [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx sfpowerkit:org:sandbox:create -d Testsandbox -l DEVELOPER -n test2 -v myOrg@example.com
-     Successfully Enqueued Creation of Sandbox
+    $ sfdx sfpowerkit:org:sandbox:create -d Testsandbox -f sitSandbox -n test2 -v myOrg@example.com
+    $ sfdx sfpowerkit:org:sandbox:create -d Testsandbox -l DEVELOPER -n test2 -v myOrg@example.com
 ```
 
 _See code: [src\commands\sfpowerkit\org\sandbox\create.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/sandbox/create.ts)_
@@ -1089,8 +1089,8 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx sfpowerkit:org:sandbox:refresh -n test2  -f sitSandbox -u myOrg@example.com
-     Successfully Enqueued Refresh of Sandbox
+    $ sfdx sfpowerkit:org:sandbox:refresh -n test2 -f sitSandbox -v myOrg@example.com
+    $ sfdx sfpowerkit:org:sandbox:refresh -n test2 -l DEVELOPER -v myOrg@example.com
 ```
 
 _See code: [src\commands\sfpowerkit\org\sandbox\refresh.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/sandbox/refresh.ts)_

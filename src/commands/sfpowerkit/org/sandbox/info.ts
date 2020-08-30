@@ -1,9 +1,8 @@
 import { core, flags, SfdxCommand, Result } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
-import * as fs from "fs-extra";
 let request = require("request-promise-native");
-import * as rimraf from "rimraf";
 import { SfdxError } from "@salesforce/core";
+import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -39,12 +38,7 @@ export default class Info extends SfdxCommand {
   protected static requiresDevhubUsername = true;
 
   public async run(): Promise<AnyJson> {
-    rimraf.sync("temp_sfpowerkit");
-
-    // const conn = await Connection.create({
-    //   authInfo: await AuthInfo.create({ username: `${this.org.getUsername()}` })
-    // });
-
+    SFPowerkit.setLogLevel("INFO", false);
     await this.hubOrg.refreshAuth();
 
     const conn = this.hubOrg.getConnection();
@@ -54,23 +48,15 @@ export default class Info extends SfdxCommand {
 
     var result = await this.getSandboxInfo(conn, this.flags.name);
 
-    if (this.flags.outputfile) {
-      await fs.outputJSON(this.flags.outputfile, result);
-    }
-
-    this.ux.log(`Successfully Retrieved Sandbox Details`);
+    SFPowerkit.log(`Successfully Retrieved Sandbox Details`, LoggerLevel.INFO);
 
     if (!this.flags.json) this.ux.logJson(result);
-
-    rimraf.sync("temp_sfpowerkit");
 
     return result;
   }
 
   private async getSandboxInfo(conn: core.Connection, name: string) {
     var query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=SELECT+Id,SandboxName+FROM+SandboxProcess+WHERE+SandboxName+in+('${name}')+ORDER+BY+EndDate+DESC`;
-
-    //this.ux.log(`Query URI ${query_uri}`);
 
     const sandbox_query_result = await request({
       method: "get",
@@ -109,8 +95,6 @@ export default class Info extends SfdxCommand {
     conn: core.Connection
   ) {
     const query_uri = `${conn.instanceUrl}${sandboxInfoUl}`;
-
-    //this.ux.log(`Query URI ${query_uri}`);
 
     const sandbox_query_result = await request({
       method: "get",
