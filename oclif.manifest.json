@@ -1,5 +1,5 @@
 {
-  "version": "2.1.3",
+  "version": "2.1.4",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -1730,7 +1730,8 @@
       "pluginType": "core",
       "aliases": [],
       "examples": [
-        "$ sfdx sfpowerkit:org:sandbox:create -d Testsandbox -l DEVELOPER -n test2 -u myOrg@example.com\n  Successfully Enqueued Creation of Sandbox\n  "
+        "$ sfdx sfpowerkit:org:sandbox:create -d Testsandbox -f sitSandbox -n test2 -v myOrg@example.com",
+        "$ sfdx sfpowerkit:org:sandbox:create -d Testsandbox -l DEVELOPER -n test2 -v myOrg@example.com"
       ],
       "flags": {
         "json": {
@@ -1790,7 +1791,7 @@
           "name": "licensetype",
           "type": "option",
           "char": "l",
-          "description": "Type of the sandbox. Valid values are  DEVELOPER,DEVELOPER_PRO,PARTIAL,FULL",
+          "description": "Type of the sandbox. Valid values are  DEVELOPER,DEVELOPER_PRO,PARTIAL,FULL. Provide this if the sandbox is to be created from Production",
           "required": true,
           "options": ["DEVELOPER", "DEVELOPER_PRO", "PARTIAL", "FULL"]
         },
@@ -1889,7 +1890,8 @@
       "pluginType": "core",
       "aliases": [],
       "examples": [
-        "$ sfdx sfpowerkit:org:sandbox:refresh -n test2  -f sitSandbox -v myOrg@example.com\n  Successfully Enqueued Refresh of Sandbox\n  "
+        "$ sfdx sfpowerkit:org:sandbox:refresh -n test2 -f sitSandbox -v myOrg@example.com",
+        "$ sfdx sfpowerkit:org:sandbox:refresh -n test2 -l DEVELOPER -v myOrg@example.com"
       ],
       "flags": {
         "json": {
