@@ -44,6 +44,7 @@ export default class Info extends SfdxCommand {
 
   // Comment this out if your command does not require an org username
   protected static requiresUsername = true;
+  public static readonly supportsDevhubUsername = true;
   public async run(): Promise<AnyJson> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
@@ -60,19 +61,31 @@ export default class Info extends SfdxCommand {
       this.flags.json
     );
 
-    const result = (await packageInfoImpl.getPackages()) as any;
+    let result = (await packageInfoImpl.getPackages()) as any;
 
     result.sort((a, b) => (a.packageName > b.packageName ? 1 : -1));
 
+    if (this.hubOrg) {
+      result = (await packageInfoImpl.getPackagesDetailsfromDevHub(
+        this.hubOrg.getConnection(),
+        result
+      )) as any;
+    }
+
     this.ux.table(result, [
       "packageName",
+      "type",
+      "IsOrgDependent",
       "packageNamespacePrefix",
       "packageVersionNumber",
       "packageVersionId",
       "allowedLicenses",
       "usedLicenses",
       "expirationDate",
-      "status"
+      "status",
+      "CodeCoverage",
+      "codeCoverageCheckPassed",
+      "validationSkipped"
     ]);
     return result;
   }
