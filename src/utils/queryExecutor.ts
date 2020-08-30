@@ -1,5 +1,5 @@
 import { core } from "@salesforce/command";
-import retry from "async-retry";
+const retry = require("async-retry");
 
 export default class QueryExecutor {
   constructor(private conn: core.Connection) {}

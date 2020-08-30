@@ -5443,10 +5443,10 @@ write-json-file@^4.1.1:
     sort-keys "^4.0.0"
     write-file-atomic "^3.0.0"
 
-xml-formatter@^2.1.2:
-  version "2.1.2"
-  resolved "https://registry.yarnpkg.com/xml-formatter/-/xml-formatter-2.1.2.tgz#2567afc255455a14f0483159d59dd0582575c104"
-  integrity sha512-zSCjkdH9DSWl1ycwWVv5XEPRMkr68S4Ev/LxNgeOljwJjJN4fXc61vFscYXUdkNC3g1tvy8hE2XTpJcAP1blBg==
+xml-formatter@^2.1.3:
+  version "2.1.3"
+  resolved "https://registry.yarnpkg.com/xml-formatter/-/xml-formatter-2.1.3.tgz#f4274c46fb90fa868d46fe3a3cf7d1c5161bee4c"
+  integrity sha512-4l8HSMhEfdX67qidWWvq2rbxuhhZbafPwCJ7JWrGAmWPgWMDSQ2DEuGYQ+Cvd6lO0YXQcze8po3bkW0/LLMdDw==
   dependencies:
     xml-parser-xo "^3.0.0"
 

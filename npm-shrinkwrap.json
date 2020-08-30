@@ -5563,7 +5563,7 @@
       }
     },
     "xml-formatter": {
-      "version": "2.1.2",
+      "version": "2.1.3",
       "requires": {
         "xml-parser-xo": "^3.0.0"
       }
