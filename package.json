@@ -50,7 +50,7 @@
     "request": "^2.88.2",
     "request-promise-native": "^1.0.9",
     "salesforce-alm": "^49.8.0",
-    "simple-git": "2.15.0",
+    "simple-git": "2.17.0",
     "ts-node": "^8.10.1",
     "tslib": "1",
     "unzip-stream": "0.3.0",
