@@ -433,7 +433,7 @@
     mkdirp "1.0.4"
     sfdx-faye "^1.0.9"
 
-"@salesforce/core@^2.1.4", "@salesforce/core@^2.1.6", "@salesforce/core@^2.6.0", "@salesforce/core@^2.7.0":
+"@salesforce/core@^2.1.4", "@salesforce/core@^2.1.6", "@salesforce/core@^2.6.0":
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-2.7.0.tgz#191f265a2649aebaac1b79f74685fe38e3a5a4f3"
   integrity sha512-U9TxDzL5RdJmEoGls7supYtgs4exrWseCaF6oCcBgmYUDLEM8kRl9MoqG42LBtkoCPHdZ8LrBZ/+01iwtjbpOw==
@@ -450,7 +450,7 @@
     mkdirp "1.0.4"
     sfdx-faye "^1.0.9"
 
-"@salesforce/core@^2.9.3":
+"@salesforce/core@^2.9.3", "@salesforce/core@^2.9.4":
   version "2.11.0"
   resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-2.11.0.tgz#b3b5c3a6395f86f6aacdc11809b5b8e11dbfb3c0"
   integrity sha512-xxt56g7viF93SRQ+OGk/AykM4BufHF4dc6OJC4sxlJ5+aLRwBZFci52XlS0L4aJ91nvgk9HNRUiLQ0QNQywXTw==
