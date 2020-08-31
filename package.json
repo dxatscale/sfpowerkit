@@ -51,7 +51,7 @@
     "request-promise-native": "^1.0.9",
     "salesforce-alm": "^49.8.0",
     "simple-git": "2.15.0",
-    "ts-node": "^8.10.1",
+    "ts-node": "^8.10.2",
     "tslib": "1",
     "unzip-stream": "0.3.0",
     "unzipper": "0.10.11",
