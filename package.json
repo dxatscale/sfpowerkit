@@ -35,7 +35,7 @@
     "bottleneck": "^2.19.5",
     "child-process": "^1.0.2",
     "child-process-promise": "^2.2.1",
-    "cli-ux": "^5.4.7",
+    "cli-ux": "^5.4.10",
     "diff": "^4.0.1",
     "diff-match-patch": "^1.0.4",
     "diff-match-patch-line-and-word": "^0.1.2",
