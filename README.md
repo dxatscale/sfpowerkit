@@ -1347,3 +1347,4 @@ EXAMPLES
   $ sfdx sfpowerkit:pool:delete -t core -v devhub -m
   $ sfdx sfpowerkit:pool:delete -t core -v devhub -m -a
 ```
+
