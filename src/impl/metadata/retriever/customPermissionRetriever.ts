@@ -1,5 +1,5 @@
 import { CustomPermission } from "../schema";
-import { Org } from "@salesforce/core";
+import { core } from "@salesforce/command";
 import * as _ from "lodash";
 import { METADATA_INFO } from "../metadataInfo";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
@@ -10,12 +10,12 @@ export default class CustomPermissionRetriever extends BaseMetadataRetriever<
   CustomPermission
 > {
   private static instance: CustomPermissionRetriever;
-  private constructor(public org: Org) {
+  private constructor(public org: core.Org) {
     super(org, false);
     super.setQuery(QUERY);
   }
 
-  public static getInstance(org: Org): CustomPermissionRetriever {
+  public static getInstance(org: core.Org): CustomPermissionRetriever {
     if (!CustomPermissionRetriever.instance) {
       CustomPermissionRetriever.instance = new CustomPermissionRetriever(org);
     }
@@ -61,7 +61,7 @@ export default class CustomPermissionRetriever extends BaseMetadataRetriever<
     if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let custumPermissions = await this.getCustomPermissions();
-      let foundCp = custumPermissions.find(customPermission => {
+      let foundCp = custumPermissions.find((customPermission) => {
         return customPermission.FullName === customPermissionStr;
       });
       found = !_.isNil(foundCp);

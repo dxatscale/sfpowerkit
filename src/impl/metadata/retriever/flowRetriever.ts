@@ -1,5 +1,5 @@
 import { Flow } from "../schema";
-import { Org } from "@salesforce/core";
+import { core } from "@salesforce/command";
 import * as _ from "lodash";
 import { METADATA_INFO } from "../metadataInfo";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
@@ -9,12 +9,12 @@ import { retrieveMetadata } from "../../../utils/retrieveMetadata";
 const QUERY = "SELECT Id, MasterLabel, FullName  From Flow";
 export default class FlowRetriever extends BaseMetadataRetriever<Flow> {
   private static instance: FlowRetriever;
-  private constructor(public org: Org) {
+  private constructor(public org: core.Org) {
     super(org, true);
     super.setQuery(QUERY);
   }
 
-  public static getInstance(org: Org): FlowRetriever {
+  public static getInstance(org: core.Org): FlowRetriever {
     if (!FlowRetriever.instance) {
       FlowRetriever.instance = new FlowRetriever(org);
     }
@@ -38,7 +38,7 @@ export default class FlowRetriever extends BaseMetadataRetriever<Flow> {
     let toReturn: Promise<Flow[]> = new Promise<Flow[]>((resolve, reject) => {
       this.org
         .getConnection()
-        .metadata.list([{ type: "Flow", folder: null }], apiversion, function(
+        .metadata.list([{ type: "Flow", folder: null }], apiversion, function (
           err,
           metadata
         ) {
@@ -50,7 +50,7 @@ export default class FlowRetriever extends BaseMetadataRetriever<Flow> {
             let flow: Flow = {
               FullName: metadata[i].fullName,
               NamespacePrefix: metadata[i].namespacePrefix,
-              Id: ""
+              Id: "",
             };
             if (
               metadata[i].namespacePrefix !== "" &&
@@ -80,7 +80,7 @@ export default class FlowRetriever extends BaseMetadataRetriever<Flow> {
     if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let flows = await this.getFlows();
-      let foundFlow = flows.find(flow => {
+      let foundFlow = flows.find((flow) => {
         return flow.FullName === flowStr;
       });
       found = !_.isNil(foundFlow);

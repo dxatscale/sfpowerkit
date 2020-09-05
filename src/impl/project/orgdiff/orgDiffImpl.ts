@@ -3,7 +3,7 @@ import {
   MetadataDescribe,
   METADATA_INFO,
   SOURCE_EXTENSION_REGEX,
-  UNSPLITED_METADATA
+  UNSPLITED_METADATA,
 } from "../../../impl/metadata/metadataInfo";
 
 import * as fs from "fs-extra";
@@ -12,7 +12,7 @@ import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import FileUtils from "../../../utils/fileutils";
 import MetadataFiles from "../../../impl/metadata/metadataFiles";
 import DiffUtil from "../diff/diffUtil";
-import { Org } from "@salesforce/core";
+import { core } from "@salesforce/command";
 import { checkRetrievalStatus } from "../../../utils/checkRetrievalStatus";
 import { AsyncResult } from "jsforce";
 import { extract } from "../../../utils/extract";
@@ -28,12 +28,12 @@ const jsdiff = require("diff");
 const CRLF_REGEX = /\r\n/;
 const LF_REGEX = /\n/;
 
-const unsplitedMetadataExtensions = UNSPLITED_METADATA.filter(elem => {
+const unsplitedMetadataExtensions = UNSPLITED_METADATA.filter((elem) => {
   return (
     elem.xmlName !== METADATA_INFO.Profile.xmlName &&
     elem.xmlName !== METADATA_INFO.PermissionSet.xmlName
   );
-}).map(elem => {
+}).map((elem) => {
   return elem.sourceExtension;
 });
 
@@ -41,14 +41,14 @@ export default class OrgDiffImpl {
   private output = [];
   public constructor(
     private filesOrFolders: string[],
-    private org: Org,
+    private org: core.Org,
     private addConflictMarkers: boolean
   ) {}
 
   public async orgDiff() {
     let packageobj = new Array();
     SFPowerkit.setStatus("Building package metadata for retrieve");
-    this.filesOrFolders.forEach(async fileOrFolder => {
+    this.filesOrFolders.forEach(async (fileOrFolder) => {
       SFPowerkit.log("Processing " + fileOrFolder, LoggerLevel.DEBUG);
       fileOrFolder = path.normalize(fileOrFolder);
 
@@ -61,7 +61,7 @@ export default class OrgDiffImpl {
         } else if (stats.isDirectory()) {
           //Process File
           let files = FileUtils.getAllFilesSync(fileOrFolder);
-          files.forEach(async oneFile => {
+          files.forEach(async (oneFile) => {
             packageobj = await this.buildPackageObj(oneFile, packageobj);
           });
         }
@@ -109,19 +109,19 @@ export default class OrgDiffImpl {
       let members = await CustomLabelsDiff.getMembers(filePath);
       packageobj.push({
         name: "CustomLabel",
-        members: members
+        members: members,
       });
     }
     if (filePath.endsWith(METADATA_INFO.SharingRules.sourceExtension)) {
       let name = MetadataInfo.getMetadataName(filePath, false);
       let objectName = MetadataFiles.getMemberNameFromFilepath(filePath, name);
       let members = await SharingRuleDiff.getMembers(filePath);
-      Object.keys(members).forEach(key => {
+      Object.keys(members).forEach((key) => {
         packageobj.push({
           name: key,
-          members: members[key].map(elem => {
+          members: members[key].map((elem) => {
             return objectName + "." + elem;
-          })
+          }),
         });
       });
     }
@@ -129,12 +129,12 @@ export default class OrgDiffImpl {
       let name = MetadataInfo.getMetadataName(filePath, false);
       let objectName = MetadataFiles.getMemberNameFromFilepath(filePath, name);
       let members = await WorkflowDiff.getMembers(filePath);
-      Object.keys(members).forEach(key => {
+      Object.keys(members).forEach((key) => {
         packageobj.push({
           name: key,
-          members: members[key].map(elem => {
+          members: members[key].map((elem) => {
             return objectName + "." + elem;
-          })
+          }),
         });
       });
     }
@@ -147,7 +147,7 @@ export default class OrgDiffImpl {
       ""
     );
 
-    this.filesOrFolders.forEach(fileOrFolder => {
+    this.filesOrFolders.forEach((fileOrFolder) => {
       fileOrFolder = path.normalize(fileOrFolder);
 
       let pathExists = fs.existsSync(fileOrFolder);
@@ -159,7 +159,7 @@ export default class OrgDiffImpl {
         } else if (stats.isDirectory()) {
           //Read files in directory
           let files = FileUtils.getAllFilesSync(fileOrFolder, "");
-          files.forEach(oneFile => {
+          files.forEach((oneFile) => {
             //process file
             this.processFile(oneFile, fetchedFiles);
           });
@@ -187,7 +187,7 @@ export default class OrgDiffImpl {
     }
 
     // find the files
-    let foundFile = fetchedFiles.find(fetchFile => {
+    let foundFile = fetchedFiles.find((fetchFile) => {
       let fetchedMetaType = MetadataInfo.getMetadataName(fetchFile, false);
       let fetchedMember = MetadataFiles.getMemberNameFromFilepath(
         fetchFile,
@@ -255,7 +255,7 @@ export default class OrgDiffImpl {
         status: "Local Added / Remote Deleted",
         metadataType: metaType,
         componentName: member,
-        path: localFile
+        path: localFile,
       });
     }
   }
@@ -351,7 +351,7 @@ export default class OrgDiffImpl {
         status: status,
         metadataType: metaType,
         componentName: member,
-        path: filePath
+        path: filePath,
       });
     }
   }
@@ -361,12 +361,12 @@ export default class OrgDiffImpl {
     rimraf.sync("temp_sfpowerkit");
     const apiversion = await this.org.getConnection().retrieveMaxApiVersion();
     let retrieveRequest = {
-      apiVersion: apiversion
+      apiVersion: apiversion,
     };
 
     retrieveRequest["singlePackage"] = true;
     retrieveRequest["unpackaged"] = {
-      types: packageObj
+      types: packageObj,
     };
 
     // if(!this.flags.json)
@@ -380,7 +380,7 @@ export default class OrgDiffImpl {
 
     let retrievedId;
     SFPowerkit.log("Retrieve request sent ", LoggerLevel.INFO);
-    await conn.metadata.retrieve(retrieveRequest, function(
+    await conn.metadata.retrieve(retrieveRequest, function (
       error,
       result: AsyncResult
     ) {
@@ -408,7 +408,7 @@ export default class OrgDiffImpl {
 
     fs.mkdirSync("temp_sfpowerkit");
     fs.writeFileSync(zipFileName, metadata_retrieve_result.zipFile, {
-      encoding: "base64"
+      encoding: "base64",
     });
 
     SFPowerkit.log("Extracting retrieved metadata ", LoggerLevel.DEBUG);
@@ -442,7 +442,7 @@ export default class OrgDiffImpl {
       quiet: false,
       cwd: path.join(process.cwd(), "temp_sfpowerkit"),
       rootdir: "mdapi",
-      outputdir: "source"
+      outputdir: "source",
     });
 
     //Should remove the mdapi folder

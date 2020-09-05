@@ -1,4 +1,4 @@
-import { Org } from "@salesforce/core";
+import { core } from "@salesforce/command";
 import { METADATA_INFO } from "../metadataInfo";
 import * as _ from "lodash";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
@@ -11,12 +11,12 @@ export default class TabDefinitionRetriever extends BaseMetadataRetriever<
   TabDefinition
 > {
   private static instance: TabDefinitionRetriever;
-  private constructor(public org: Org) {
+  private constructor(public org: core.Org) {
     super(org, true);
     super.setQuery(QUERY);
   }
 
-  public static getInstance(org: Org): TabDefinitionRetriever {
+  public static getInstance(org: core.Org): TabDefinitionRetriever {
     if (!TabDefinitionRetriever.instance) {
       TabDefinitionRetriever.instance = new TabDefinitionRetriever(org);
     }
@@ -47,7 +47,7 @@ export default class TabDefinitionRetriever extends BaseMetadataRetriever<
     if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let tabs = await this.getTabs();
-      let foundTab = tabs.find(t => {
+      let foundTab = tabs.find((t) => {
         return t.Name === tab;
       });
       found = !_.isNil(foundTab);

@@ -390,8 +390,8 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
 
 EXAMPLES
-  $ sfdx sfpowerkit:project:orgdiff --folder directory --noconflictmarkers --targetusername sandbox
-  $ sfdx sfpowerkit:project:orgdiff  --filename fileName --targetusername sandbox
+  $ sfdx sfpowerkit:project:orgdiff --filesorfolders directory --noconflictmarkers --targetusername sandbox
+  $ sfdx sfpowerkit:project:orgdiff -f fileName --targetusername sandbox
 ```
 
 ### `sfpowerkit:project:manifest:diff`
@@ -1347,4 +1347,3 @@ EXAMPLES
   $ sfdx sfpowerkit:pool:delete -t core -v devhub -m
   $ sfdx sfpowerkit:pool:delete -t core -v devhub -m -a
 ```
-

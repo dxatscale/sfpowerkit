@@ -3,7 +3,7 @@ import {
   SfdxCommand,
   FlagsConfig,
   flags,
-  SfdxResult
+  SfdxResult,
 } from "@salesforce/command";
 import { SFPowerkit } from "../../../sfpowerkit";
 import OrgDiffImpl from "../../../impl/project/orgdiff/orgDiffImpl";
@@ -20,8 +20,8 @@ export default class OrgDiff extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:project:orgdiff --folder directory --noconflictmarkers --targetusername sandbox`,
-    `$ sfdx sfpowerkit:project:orgdiff  --filename fileName --targetusername sandbox`
+    `$ sfdx sfpowerkit:project:orgdiff --filesorfolders directory --noconflictmarkers --targetusername sandbox`,
+    `$ sfdx sfpowerkit:project:orgdiff -f fileName --targetusername sandbox`,
   ];
 
   protected static flagsConfig: FlagsConfig = {
@@ -29,12 +29,12 @@ export default class OrgDiff extends SfdxCommand {
       char: "f",
       description: messages.getMessage("filesOrFoldersFlagDescription"),
       required: true,
-      map: (f: string) => f.trim()
+      map: (f: string) => f.trim(),
     }),
     noconflictmarkers: flags.boolean({
       char: "c",
       description: messages.getMessage("noConflictMarkersDescription"),
-      required: false
+      required: false,
     }),
     loglevel: flags.enum({
       description: "logging level for this command invocation",
@@ -52,15 +52,15 @@ export default class OrgDiff extends SfdxCommand {
         "INFO",
         "WARN",
         "ERROR",
-        "FATAL"
-      ]
+        "FATAL",
+      ],
     }),
     outputformat: flags.enum({
       required: false,
       char: "o",
       description: messages.getMessage("outputFormatFlagDescription"),
-      options: ["json", "csv"]
-    })
+      options: ["json", "csv"],
+    }),
   };
 
   public static result: SfdxResult = {
@@ -69,14 +69,14 @@ export default class OrgDiff extends SfdxCommand {
         { key: "status", label: "Status" },
         { key: "metadataType", label: "Type" },
         { key: "componentName", label: "Component Name" },
-        { key: "path", label: "Path" }
-      ]
+        { key: "path", label: "Path" },
+      ],
     },
     display() {
       if (Array.isArray(this.data) && this.data.length) {
         this.ux.table(this.data, this.tableColumnData);
       }
-    }
+    },
   };
 
   protected static requiresUsername = true;
@@ -107,7 +107,7 @@ export default class OrgDiff extends SfdxCommand {
   public async generateCSVOutput(result: any[]) {
     let newLine = "\r\n";
     let output = "status,metadataType,componentName,path" + newLine;
-    result.forEach(element => {
+    result.forEach((element) => {
       output = `${output}${element.status},${element.metadataType},${element.componentName},${element.path}${newLine}`;
     });
     fs.writeFile("orgdiff.csv", output);

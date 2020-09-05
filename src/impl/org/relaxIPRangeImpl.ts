@@ -1,7 +1,7 @@
 import * as fs from "fs-extra";
 import * as rimraf from "rimraf";
 import { AsyncResult, DeployResult } from "jsforce";
-import { Connection } from "@salesforce/core";
+import { core } from "@salesforce/command";
 import * as xml2js from "xml2js";
 import * as util from "util";
 
@@ -15,7 +15,7 @@ import { SFPowerkit, LoggerLevel } from "../../sfpowerkit";
 
 export default class RelaxIPRangeImpl {
   public static async setIp(
-    conn: Connection,
+    conn: core.Connection,
     username: string,
     ipRangeToSet: any[],
     addall: Boolean = false,
@@ -24,17 +24,17 @@ export default class RelaxIPRangeImpl {
     const apiversion = await conn.retrieveMaxApiVersion();
 
     let retrieveRequest = {
-      apiVersion: apiversion
+      apiVersion: apiversion,
     };
 
     //Retrieve Duplicate Rule
     retrieveRequest["singlePackage"] = true;
     retrieveRequest["unpackaged"] = {
-      types: { name: "Settings", members: "Security" }
+      types: { name: "Settings", members: "Security" },
     };
     conn.metadata.pollTimeout = 60;
     let retrievedId;
-    await conn.metadata.retrieve(retrieveRequest, function(
+    await conn.metadata.retrieve(retrieveRequest, function (
       error,
       result: AsyncResult
     ) {
@@ -60,7 +60,7 @@ export default class RelaxIPRangeImpl {
     var zipFileName = `${retriveLocation}/unpackaged.zip`;
     fs.mkdirSync(retriveLocation);
     fs.writeFileSync(zipFileName, metadata_retrieve_result.zipFile, {
-      encoding: "base64"
+      encoding: "base64",
     });
 
     await extract(`./${retriveLocation}/unpackaged.zip`, retriveLocation);
@@ -98,7 +98,7 @@ export default class RelaxIPRangeImpl {
           return { username: username, success: true };
         } else {
           retrieve_securitySetting.SecuritySettings.networkAccess = {
-            ipRanges: ipRangeToSet
+            ipRanges: ipRangeToSet,
           };
           SFPowerkit.log(
             `Currently No Ip range set in ${conn.getUsername()}.`,
@@ -140,7 +140,7 @@ export default class RelaxIPRangeImpl {
       await conn.metadata.deploy(
         zipStream,
         { rollbackOnError: true, singlePackage: true },
-        function(error, result: AsyncResult) {
+        function (error, result: AsyncResult) {
           if (error) {
             return console.error(error);
           }

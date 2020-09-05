@@ -1,4 +1,4 @@
-import { Org } from "@salesforce/core";
+import { core } from "@salesforce/command";
 import * as _ from "lodash";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 import { EntityDefinition } from "../schema";
@@ -16,12 +16,12 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
   private static instance: EntityDefinitionRetriever;
   private objectForPermission: string[];
   private describePromise = null;
-  private constructor(public org: Org) {
+  private constructor(public org: core.Org) {
     super(org, false);
     super.setQuery(QUERY);
   }
 
-  public static getInstance(org: Org): EntityDefinitionRetriever {
+  public static getInstance(org: core.Org): EntityDefinitionRetriever {
     if (!EntityDefinitionRetriever.instance) {
       EntityDefinitionRetriever.instance = new EntityDefinitionRetriever(org);
     }
@@ -33,7 +33,7 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
       return this.describePromise;
     }
     this.describePromise = new Promise<any[]>((resolve, reject) => {
-      this.org.getConnection().describeGlobal(function(err, res) {
+      this.org.getConnection().describeGlobal(function (err, res) {
         if (err) {
           SFPowerkit.log(
             `Error when running gllobal describe `,
@@ -46,9 +46,9 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
             `Org describe completed successfully. ${res.sobjects.length} object found! `,
             LoggerLevel.INFO
           );
-          let entities = res.sobjects.map(sObject => {
+          let entities = res.sobjects.map((sObject) => {
             return {
-              QualifiedApiName: sObject.name
+              QualifiedApiName: sObject.name,
             };
           });
           resolve(entities);
@@ -74,7 +74,7 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
       );
 
     if (res !== undefined) {
-      this.objectForPermission = res.records.map(elem => {
+      this.objectForPermission = res.records.map((elem) => {
         return elem["SobjectType"];
       });
     }
@@ -106,7 +106,7 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
     if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let objects = await this.getObjects();
-      let foundObj = objects.find(obj => {
+      let foundObj = objects.find((obj) => {
         return obj.QualifiedApiName === custonObjectStr;
       });
       found = foundObj !== undefined;

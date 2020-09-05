@@ -1,5 +1,5 @@
 import { RecordType } from "../schema";
-import { Org, LoggerLevel } from "@salesforce/core";
+import { core } from "@salesforce/command";
 import { METADATA_INFO } from "../metadataInfo";
 import * as _ from "lodash";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
@@ -12,12 +12,12 @@ export default class RecordTypeRetriever extends BaseMetadataRetriever<
   RecordType
 > {
   private static instance: RecordTypeRetriever;
-  private constructor(public org: Org) {
+  private constructor(public org: core.Org) {
     super(org);
     super.setQuery(QUERY);
   }
 
-  public static getInstance(org: Org): RecordTypeRetriever {
+  public static getInstance(org: core.Org): RecordTypeRetriever {
     if (!RecordTypeRetriever.instance) {
       RecordTypeRetriever.instance = new RecordTypeRetriever(org);
     }
@@ -30,7 +30,7 @@ export default class RecordTypeRetriever extends BaseMetadataRetriever<
       !this.dataLoaded
     ) {
       let objects = await super.getObjects();
-      objects = objects.map(elem => {
+      objects = objects.map((elem) => {
         let namespace = "";
         if (
           elem.NamespacePrefix !== undefined &&
@@ -70,7 +70,7 @@ export default class RecordTypeRetriever extends BaseMetadataRetriever<
     if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let recordTypes = await this.getrecordTypes();
-      let foundRecordType = recordTypes.find(rt => {
+      let foundRecordType = recordTypes.find((rt) => {
         return rt.FullName === recordType;
       });
       found = !_.isNil(foundRecordType);

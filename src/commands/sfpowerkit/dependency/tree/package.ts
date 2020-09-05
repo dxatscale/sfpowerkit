@@ -1,9 +1,9 @@
 import { core, flags, SfdxCommand } from "@salesforce/command";
-import { SfdxError, Connection } from "@salesforce/core";
+import { SfdxError } from "@salesforce/core";
 
 import DependencyImpl from "../../../../impl/dependency/dependencyImpl";
 import MetadataSummaryInfoFetcher, {
-  MetadataSummary
+  MetadataSummary,
 } from "../../../../impl/metadata/retriever/metadataSummaryInfoFetcher";
 import * as path from "path";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
@@ -32,36 +32,36 @@ export default class Tree extends SfdxCommand {
     "$ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx -o outputdir -f json",
     "$ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx -o outputdir -f csv",
     "$ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx -o outputdir -f csv -p",
-    "$ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx -o outputdir -f csv -s"
+    "$ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx -o outputdir -f csv -s",
   ];
 
   protected static flagsConfig = {
     package: flags.string({
       char: "n",
       required: true,
-      description: messages.getMessage("packageDescription")
+      description: messages.getMessage("packageDescription"),
     }),
     packagefilter: flags.boolean({
       description: messages.getMessage("packagefilterDescription"),
       char: "p",
-      required: false
+      required: false,
     }),
     showall: flags.boolean({
       char: "s",
       description: messages.getMessage("showallDescription"),
-      required: false
+      required: false,
     }),
     format: flags.enum({
       required: false,
       char: "f",
       description: messages.getMessage("formatDescription"),
       options: ["json", "csv"],
-      default: "json"
+      default: "json",
     }),
     output: flags.string({
       char: "o",
       description: messages.getMessage("outputDescription"),
-      required: true
+      required: true,
     }),
     loglevel: flags.enum({
       description: messages.getMessage("loglevelDescription"),
@@ -79,14 +79,14 @@ export default class Tree extends SfdxCommand {
         "INFO",
         "WARN",
         "ERROR",
-        "FATAL"
-      ]
-    })
+        "FATAL",
+      ],
+    }),
   };
 
   // Comment this out if your command does not require an org username
   protected static requiresUsername = true;
-  protected conn: Connection;
+  protected conn: core.Connection;
   protected installedPackagesMap: Map<string, PackageDetail>;
   protected dependencyMap: Map<string, string[]>;
   protected metadataMap: Map<string, MetadataSummary>;
@@ -107,7 +107,7 @@ export default class Tree extends SfdxCommand {
       ).getPackages();
 
       this.installedPackagesMap = new Map(
-        packageDetails.map(obj => [obj.subcriberPackageId, obj])
+        packageDetails.map((obj) => [obj.subcriberPackageId, obj])
       );
     } catch (error) {
       throw new SfdxError(
@@ -182,7 +182,7 @@ export default class Tree extends SfdxCommand {
       this.metadataMap.set(metaObj, result.get(metaObj));
 
     let membersWithoutDependency = packageMembers.filter(
-      x => !Array.from(this.dependencyMap.keys()).includes(x)
+      (x) => !Array.from(this.dependencyMap.keys()).includes(x)
     );
     await this.getDetailsFromId(
       this.flags.packagefilter,
@@ -262,7 +262,7 @@ export default class Tree extends SfdxCommand {
 
     if (this.flags.showall) {
       //items with dependency
-      membersWithoutDependency.forEach(member => {
+      membersWithoutDependency.forEach((member) => {
         let currentItem: any = JSON.parse(
           JSON.stringify(
             this.metadataMap.has(member)
@@ -309,7 +309,7 @@ export default class Tree extends SfdxCommand {
         ? "DEPENDENT PACKAGE"
         : "DEPENDENT ID,DEPENDENT NAME,DEPENDENT TYPE,DEPENDENT PACKAGE") +
       newLine;
-    result.forEach(element => {
+    result.forEach((element) => {
       if (element.dependentMetadata && element.dependentMetadata.length > 0) {
         for (let dependent of element.dependentMetadata) {
           output = `${output}${element.id},${element.fullName},${element.type},${dependent.id},${dependent.fullName},${dependent.type},${dependent.package}${newLine}`;

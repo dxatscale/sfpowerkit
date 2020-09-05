@@ -1,5 +1,5 @@
 import { Layout } from "../schema";
-import { Org } from "@salesforce/core";
+import { core } from "@salesforce/command";
 import { METADATA_INFO } from "../metadataInfo";
 import * as _ from "lodash";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
@@ -10,12 +10,12 @@ const QUERY =
 
 export default class LayoutRetriever extends BaseMetadataRetriever<Layout> {
   private static instance: LayoutRetriever;
-  private constructor(public org: Org) {
+  private constructor(public org: core.Org) {
     super(org, true);
     super.setQuery(QUERY);
   }
 
-  public static getInstance(org: Org): LayoutRetriever {
+  public static getInstance(org: core.Org): LayoutRetriever {
     if (!LayoutRetriever.instance) {
       LayoutRetriever.instance = new LayoutRetriever(org);
     }
@@ -106,7 +106,7 @@ export default class LayoutRetriever extends BaseMetadataRetriever<Layout> {
     if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let layouts = await this.getLayouts();
-      let foundLayout = layouts.find(l => {
+      let foundLayout = layouts.find((l) => {
         return l.FullName === layout;
       });
       found = !_.isNil(foundLayout);

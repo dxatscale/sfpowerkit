@@ -1,4 +1,5 @@
-import { SfdxError, Connection } from "@salesforce/core";
+import { SfdxError } from "@salesforce/core";
+import { core } from "@salesforce/command";
 import getDefaults from "../../../utils/getDefaults";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import { DescribeMetadataResult, FileProperties } from "jsforce";
@@ -100,11 +101,11 @@ export default class MetadataSummaryInfoFetcher {
     "ManagedContentType",
     "EmailServicesFunction",
     "SamlSsoConfig",
-    "EmbeddedServiceLiveAgent"
+    "EmbeddedServiceLiveAgent",
   ];
 
   public static async fetchMetadataSummaryFromAnOrg(
-    conn: Connection,
+    conn: core.Connection,
     isDisplayProgressBar: boolean = false,
     filterTypes: string[] = MetadataSummaryInfoFetcher.NotSupportedTypes
   ): Promise<Map<string, MetadataSummary>> {
@@ -118,7 +119,7 @@ export default class MetadataSummaryInfoFetcher {
       getDefaults.getApiVersion()
     );
 
-    result.metadataObjects.forEach(metadata => {
+    result.metadataObjects.forEach((metadata) => {
       //Not supported .. ignore
       if (!this.NotSupportedTypes.includes(metadata.xmlName)) {
         types.push({ type: metadata.xmlName });
@@ -171,12 +172,12 @@ export default class MetadataSummaryInfoFetcher {
   }
 
   public static async fetchMetadataSummaryByTypesFromAnOrg(
-    conn: Connection,
+    conn: core.Connection,
     types: any[],
     metadataMap: Map<string, MetadataSummary>
   ) {
     return await retry(
-      async bail => {
+      async (bail) => {
         let results: FileProperties[] = await conn.metadata.list(
           types,
           GetDefaults.getApiVersion()
@@ -191,7 +192,7 @@ export default class MetadataSummaryInfoFetcher {
           metadataMap.set(result.id, {
             id: result.id,
             fullName: result.fullName,
-            type: result.type
+            type: result.type,
           });
         }
 

@@ -1,10 +1,11 @@
 import { retrieveMetadata } from "../../../utils/retrieveMetadata";
-import { Org, LoggerLevel } from "@salesforce/core";
+import { LoggerLevel } from "@salesforce/core";
+import { core } from "@salesforce/command";
 import * as path from "path";
 import * as fs from "fs";
 import {
   METADATA_INFO,
-  MetadataInfo
+  MetadataInfo,
 } from "../../../impl/metadata/metadataInfo";
 import ProfileRetriever from "../../../impl/metadata/retriever/profileRetriever";
 import ProfileWriter from "../../../impl/metadata/writer/profileWriter";
@@ -24,14 +25,14 @@ const CRLF_REGEX = /\r\n/;
 const LF_REGEX = /\n/;
 
 export default class ProfileDiffImpl {
-  private sourceOrg: Org = null;
+  private sourceOrg: core.Org = null;
   public output = [];
   private sourceLabel = "Local";
   private targetLabel = "Remote";
   public constructor(
     private profileList: string[],
     private sourceOrgStr: string,
-    private targetOrg: Org,
+    private targetOrg: core.Org,
     private outputFolder: string
   ) {
     this.targetLabel = this.targetOrg.getConnection().getUsername();
@@ -45,9 +46,9 @@ export default class ProfileDiffImpl {
     //let profileXmlMapPromise: Promise<string[]> = null;
     if (this.sourceOrgStr) {
       SFPowerkit.log("Creating source org ", LoggerLevel.INFO);
-      this.sourceOrg = await Org.create({
+      this.sourceOrg = await core.Org.create({
         aliasOrUsername: this.sourceOrgStr,
-        isDevHub: false
+        isDevHub: false,
       });
     }
     if (
@@ -65,7 +66,7 @@ export default class ProfileDiffImpl {
         [{ type: "Profile", folder: null }],
         conn
       );
-      profileSource = profileNamesPromise.then(profileNames => {
+      profileSource = profileNamesPromise.then((profileNames) => {
         return this.retrieveProfiles(profileNames, this.sourceOrg);
       });
     } else {
@@ -84,8 +85,8 @@ export default class ProfileDiffImpl {
       if (!this.profileList || this.profileList.length === 0) {
         this.profileList = METADATA_INFO.Profile.files;
       } else {
-        this.profileList = this.profileList.map(profilename => {
-          const foundFile = METADATA_INFO.Profile.files.find(file => {
+        this.profileList = this.profileList.map((profilename) => {
+          const foundFile = METADATA_INFO.Profile.files.find((file) => {
             const apiName = MetadataFiles.getFullApiName(file);
             return apiName === profilename;
           });
@@ -98,7 +99,7 @@ export default class ProfileDiffImpl {
           return foundFile;
         });
 
-        this.profileList = this.profileList.filter(file => {
+        this.profileList = this.profileList.filter((file) => {
           return file !== undefined;
         });
       }
@@ -135,7 +136,7 @@ export default class ProfileDiffImpl {
           METADATA_INFO.Profile.sourceExtension
         );
         profilesMap.push({
-          [profileName]: profileXml.toString()
+          [profileName]: profileXml.toString(),
         });
         progressBar.increment(1);
       }
@@ -151,9 +152,9 @@ export default class ProfileDiffImpl {
     }
 
     //REtrieve profiles from target
-    return profileSource.then(profilesSourceMap => {
+    return profileSource.then((profilesSourceMap) => {
       let profileNames = [];
-      profilesSourceMap.forEach(profileXml => {
+      profilesSourceMap.forEach((profileXml) => {
         profileNames.push(...Object.keys(profileXml));
       });
       let targetConn = this.targetOrg.getConnection();
@@ -162,8 +163,8 @@ export default class ProfileDiffImpl {
         targetConn
       );
       let profileTarget = profileNamesPromise
-        .then(targetProfileNames => {
-          let profileToRetrieveinTarget = profileNames.filter(oneProfile => {
+        .then((targetProfileNames) => {
+          let profileToRetrieveinTarget = profileNames.filter((oneProfile) => {
             return targetProfileNames.includes(oneProfile);
           });
           return this.retrieveProfiles(
@@ -171,13 +172,13 @@ export default class ProfileDiffImpl {
             this.targetOrg
           );
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error.message);
           return [];
         });
 
       return profileTarget
-        .then(profilesTargetMap => {
+        .then((profilesTargetMap) => {
           SFPowerkit.log("Handling diff ", LoggerLevel.INFO);
           let progressBar = new ProgressBar().create(
             "Diff processing ",
@@ -191,7 +192,7 @@ export default class ProfileDiffImpl {
             let sourceProfileXml = profilesSourceMap[i];
             let sourceKeys = Object.keys(sourceProfileXml);
             let sourceProfileName = sourceKeys[0];
-            let targetProfileXml = profilesTargetMap.find(targetProfile => {
+            let targetProfileXml = profilesTargetMap.find((targetProfile) => {
               let targetKeys = Object.keys(targetProfile);
               let targetProfileName = targetKeys[0];
               return targetProfileName === sourceProfileName;
@@ -225,7 +226,7 @@ export default class ProfileDiffImpl {
           progressBar.stop();
           return this.output;
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error.message);
         });
     });
@@ -257,7 +258,7 @@ export default class ProfileDiffImpl {
       );
       retrievePromises.push(
         metadataListPromise
-          .then(metadataList => {
+          .then((metadataList) => {
             let profileWriter = new ProfileWriter();
             let profilesXmls = [];
             for (let count = 0; count < metadataList.length; count++) {
@@ -266,13 +267,13 @@ export default class ProfileDiffImpl {
 
               let profileXml = profileWriter.toXml(profileObj);
               profilesXmls.push({
-                [profileObj.fullName]: profileXml
+                [profileObj.fullName]: profileXml,
               });
               progressBar.increment(1);
             }
             return profilesXmls;
           })
-          .catch(error => {
+          .catch((error) => {
             console.error(error.message);
             progressBar.stop();
             return [];
@@ -280,15 +281,15 @@ export default class ProfileDiffImpl {
       );
     }
     return Promise.all(retrievePromises)
-      .then(metadataList => {
+      .then((metadataList) => {
         let profiles = [];
-        metadataList.forEach(elem => {
+        metadataList.forEach((elem) => {
           profiles.push(...elem);
         });
         progressBar.stop();
         return profiles;
       })
-      .catch(error => {
+      .catch((error) => {
         console.error(error.message);
         progressBar.stop();
         return [];
@@ -396,7 +397,7 @@ export default class ProfileDiffImpl {
         status: status,
         metadataType: metaType,
         componentName: member,
-        path: filePath
+        path: filePath,
       });
     }
   }

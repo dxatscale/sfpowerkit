@@ -1,5 +1,5 @@
 import { ApexPage } from "../schema";
-import { Org } from "@salesforce/core";
+import { core } from "@salesforce/command";
 import * as _ from "lodash";
 import { METADATA_INFO } from "../metadataInfo";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
@@ -8,12 +8,12 @@ import MetadataFiles from "../metadataFiles";
 const QUERY = "Select Id, Name, NameSpacePrefix From ApexPage";
 export default class ApexPageRetriever extends BaseMetadataRetriever<ApexPage> {
   private static instance: ApexPageRetriever;
-  private constructor(public org: Org) {
+  private constructor(public org: core.Org) {
     super(org, true);
     super.setQuery(QUERY);
   }
 
-  public static getInstance(org: Org): ApexPageRetriever {
+  public static getInstance(org: core.Org): ApexPageRetriever {
     if (!ApexPageRetriever.instance) {
       ApexPageRetriever.instance = new ApexPageRetriever(org);
     }
@@ -53,7 +53,7 @@ export default class ApexPageRetriever extends BaseMetadataRetriever<ApexPage> {
     if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let pages = await this.getPages();
-      let foundPage = pages.find(p => {
+      let foundPage = pages.find((p) => {
         return p.FullName === page;
       });
       found = !_.isNil(foundPage);

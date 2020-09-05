@@ -1,4 +1,4 @@
-import { Org } from "@salesforce/core";
+import { core } from "@salesforce/command";
 import * as _ from "lodash";
 import { METADATA_INFO } from "../metadataInfo";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
@@ -12,12 +12,12 @@ export default class CustomApplicationRetriever extends BaseMetadataRetriever<
   CustomApplication
 > {
   private static instance: CustomApplicationRetriever;
-  private constructor(public org: Org) {
+  private constructor(public org: core.Org) {
     super(org, true);
     super.setQuery(QUERY);
   }
 
-  public static getInstance(org: Org): CustomApplicationRetriever {
+  public static getInstance(org: core.Org): CustomApplicationRetriever {
     if (!CustomApplicationRetriever.instance) {
       CustomApplicationRetriever.instance = new CustomApplicationRetriever(org);
     }
@@ -57,7 +57,7 @@ export default class CustomApplicationRetriever extends BaseMetadataRetriever<
     if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let apps = await this.getApps();
-      let foundApp = apps.find(app => {
+      let foundApp = apps.find((app) => {
         return app.FullName === application;
       });
       found = !_.isNil(foundApp);

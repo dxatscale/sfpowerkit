@@ -1,5 +1,5 @@
 import { UserLicence } from "../schema";
-import { Org } from "@salesforce/core";
+import { core } from "@salesforce/command";
 import * as _ from "lodash";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 
@@ -8,12 +8,12 @@ export default class UserLicenseRetriever extends BaseMetadataRetriever<
   UserLicence
 > {
   private static instance: UserLicenseRetriever;
-  private constructor(public org: Org) {
+  private constructor(public org: core.Org) {
     super(org, false);
     super.setQuery(QUERY);
   }
 
-  public static getInstance(org: Org): UserLicenseRetriever {
+  public static getInstance(org: core.Org): UserLicenseRetriever {
     if (!UserLicenseRetriever.instance) {
       UserLicenseRetriever.instance = new UserLicenseRetriever(org);
     }
@@ -37,7 +37,7 @@ export default class UserLicenseRetriever extends BaseMetadataRetriever<
 
   public async userLicenseExists(license: string): Promise<boolean> {
     let licenses = await this.getUserLicenses();
-    let foundLicense = licenses.find(aLicense => {
+    let foundLicense = licenses.find((aLicense) => {
       return aLicense.Name === license;
     });
     return !_.isNil(foundLicense);

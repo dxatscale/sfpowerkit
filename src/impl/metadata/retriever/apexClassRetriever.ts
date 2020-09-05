@@ -1,5 +1,5 @@
 import { ApexClass } from "../schema";
-import { Org } from "@salesforce/core";
+import { core } from "@salesforce/command";
 import * as _ from "lodash";
 import { METADATA_INFO } from "../metadataInfo";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
@@ -10,12 +10,12 @@ export default class ApexClassRetriever extends BaseMetadataRetriever<
   ApexClass
 > {
   private static instance: ApexClassRetriever;
-  private constructor(public org: Org) {
+  private constructor(public org: core.Org) {
     super(org, true);
     super.setQuery(QUERY);
   }
 
-  public static getInstance(org: Org): ApexClassRetriever {
+  public static getInstance(org: core.Org): ApexClassRetriever {
     if (!ApexClassRetriever.instance) {
       ApexClassRetriever.instance = new ApexClassRetriever(org);
     }
@@ -55,7 +55,7 @@ export default class ApexClassRetriever extends BaseMetadataRetriever<
     if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let classes = await this.getClasses();
-      let foundCls = classes.find(aCls => {
+      let foundCls = classes.find((aCls) => {
         return aCls.FullName === cls;
       });
       found = !_.isNil(foundCls);

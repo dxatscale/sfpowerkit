@@ -1,15 +1,16 @@
-import { Connection, LoggerLevel, Org, SfdxError } from "@salesforce/core";
+import { LoggerLevel, SfdxError } from "@salesforce/core";
+import { core } from "@salesforce/command";
 import { SFPowerkit } from "../../../sfpowerkit";
 import ScratchOrgUtils, { ScratchOrg } from "../../../utils/scratchOrgUtils";
 import { getUserEmail } from "../../../utils/getUserDetails";
 export default class PoolFetchImpl {
-  private hubOrg: Org;
+  private hubOrg: core.Org;
   private tag: string;
   private mypool: boolean;
   private sendToUser: string;
 
   public constructor(
-    hubOrg: Org,
+    hubOrg: core.Org,
     tag: string,
     mypool: boolean,
     sendToUser: string

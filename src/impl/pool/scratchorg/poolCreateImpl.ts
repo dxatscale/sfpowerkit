@@ -1,5 +1,6 @@
 import ScratchOrgUtils, { ScratchOrg } from "../../../utils/scratchOrgUtils";
-import { Connection, LoggerLevel, Org, AuthInfo } from "@salesforce/core";
+import { core } from "@salesforce/command";
+import { LoggerLevel } from "@salesforce/core";
 import { SFPowerkit } from "../../../sfpowerkit";
 import * as fs from "fs-extra";
 import { exec } from "child_process";
@@ -12,7 +13,7 @@ import * as rimraf from "rimraf";
 import { SfdxApi } from "../../../sfdxnode/types";
 
 export default class PoolCreateImpl {
-  private hubConn: Connection;
+  private hubConn: core.Connection;
 
   private poolConfig: PoolConfig;
   private totalToBeAllocated: number;
@@ -27,13 +28,13 @@ export default class PoolCreateImpl {
 
   public constructor(
     private poolconfigFilePath: string,
-    private hubOrg: Org,
+    private hubOrg: core.Org,
     private apiversion: string,
     private sfdx: SfdxApi,
     private batchSize: number
   ) {
     this.limiter = new Bottleneck({
-      maxConcurrent: batchSize
+      maxConcurrent: batchSize,
     });
 
     this.scriptExecutorWrappedForBottleneck = this.limiter.wrap(
@@ -190,7 +191,7 @@ export default class PoolCreateImpl {
             {
               Id: scratchOrg.recordId,
               Pooltag__c: this.poolConfig.pool.tag,
-              Password__c: scratchOrg.password
+              Password__c: scratchOrg.password,
             },
             this.hubOrg
           );
@@ -266,7 +267,7 @@ export default class PoolCreateImpl {
       max_allocation: this.poolConfig.pool.max_allocation,
       is_build_pooluser: false,
       expiry: this.poolConfig.pool.expiry,
-      priority: 1
+      priority: 1,
     };
     //Add a single user
     this.poolConfig.poolUsers = [];
@@ -305,7 +306,7 @@ export default class PoolCreateImpl {
       scratchOrgsResult.records = scratchOrgsResult.records.sort();
 
       let scratchOrgsRecordAsMapByUser = scratchOrgsResult.records.reduce(
-        function(obj, v) {
+        function (obj, v) {
           obj[v.SignupEmail] = (obj[v.SignupEmail] || 0) + 1;
           return obj;
         },
@@ -473,7 +474,7 @@ export default class PoolCreateImpl {
     let totalMaxOrgRequired: number = 0,
       totalMinOrgRequired: number = 0;
 
-    poolUsers.forEach(pooluser => {
+    poolUsers.forEach((pooluser) => {
       SFPowerkit.log(pooluser, LoggerLevel.TRACE);
       pooluser.to_allocate = 0;
 
@@ -502,7 +503,7 @@ export default class PoolCreateImpl {
 
     if (totalMaxOrgRequired <= remainingScratchOrgs) {
       // Satisfy max. allocate max
-      poolUsers.forEach(pooluser => {
+      poolUsers.forEach((pooluser) => {
         pooluser.to_allocate = pooluser.to_satisfy_max;
         totalToBeAllocated += pooluser.to_satisfy_max;
       });
@@ -510,7 +511,7 @@ export default class PoolCreateImpl {
       // Satisfy min
       //First allocate minimum to everyone
 
-      poolUsers.forEach(pooluser => {
+      poolUsers.forEach((pooluser) => {
         pooluser.to_allocate = pooluser.to_satisfy_min;
         totalToBeAllocated += pooluser.to_satisfy_min;
       });
@@ -520,7 +521,7 @@ export default class PoolCreateImpl {
       if (leftOver > 0) {
         //Allocate LeftOver in a round robin model
         while (leftOver >= 0) {
-          poolUsers.forEach(pooluser => {
+          poolUsers.forEach((pooluser) => {
             if (leftOver == 0) return;
             if (
               pooluser.current_allocation + pooluser.to_allocate <
@@ -538,7 +539,7 @@ export default class PoolCreateImpl {
 
       //Allocate LeftOver in a round robin model
       while (leftOver >= 0) {
-        poolUsers.forEach(pooluser => {
+        poolUsers.forEach((pooluser) => {
           if (
             pooluser.current_allocation + pooluser.to_allocate <
             pooluser.to_satisfy_max
@@ -563,8 +564,8 @@ export default class PoolCreateImpl {
       `Relaxing ip ranges for scratchOrg with user ${scratchOrg.username}`,
       LoggerLevel.INFO
     );
-    const connection = await Connection.create({
-      authInfo: await AuthInfo.create({ username: scratchOrg.username })
+    const connection = await core.Connection.create({
+      authInfo: await core.AuthInfo.create({ username: scratchOrg.username }),
     });
 
     if (this.poolConfig.pool.relax_all_ip_ranges) {
@@ -628,7 +629,7 @@ export default class PoolCreateImpl {
             isSuccess: false,
             message: error.message,
             scratchOrgUsername: scratchOrg.username,
-            status: "failure"
+            status: "failure",
           });
           return;
         }
@@ -659,7 +660,7 @@ export default class PoolCreateImpl {
             {
               Id: scratchOrg.recordId,
               Pooltag__c: this.poolConfig.pool.tag,
-              Password__c: scratchOrg.password
+              Password__c: scratchOrg.password,
             },
             this.hubOrg
           ).then(
@@ -670,7 +671,7 @@ export default class PoolCreateImpl {
                 isSuccess: true,
                 message: "Successfuly set the scratch org record in Pool",
                 scratchOrgUsername: scratchOrg.username,
-                status: "success"
+                status: "success",
               });
             },
             (reason: any) => {
@@ -680,14 +681,14 @@ export default class PoolCreateImpl {
                 isSuccess: false,
                 message: "Unable to set the scratch org record in Pool",
                 scratchOrgUsername: scratchOrg.username,
-                status: "failure"
+                status: "failure",
               });
             }
           );
         }
       });
 
-      ls.stdout.on("data", function(data) {
+      ls.stdout.on("data", function (data) {
         fs.appendFileSync(`script_exec_outputs/${scratchOrg.alias}.log`, data);
       });
     });

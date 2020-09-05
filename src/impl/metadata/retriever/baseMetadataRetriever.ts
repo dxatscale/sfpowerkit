@@ -1,4 +1,5 @@
-import { Org, LoggerLevel } from "@salesforce/core";
+import { LoggerLevel } from "@salesforce/core";
+import { core } from "@salesforce/command";
 import { SFPowerkit } from "../../../sfpowerkit";
 import { ProgressBar } from "../../.../../../ui/progressBar";
 
@@ -14,7 +15,10 @@ export default abstract class BaseMetadataRetriever<T> {
   protected cacheFileName = "";
   protected objectName = "";
 
-  protected constructor(public org: Org, private tooling: boolean = false) {}
+  protected constructor(
+    public org: core.Org,
+    private tooling: boolean = false
+  ) {}
 
   protected setQuery(query: string) {
     this.query = query;
@@ -78,7 +82,7 @@ export async function executeToolingQueryAsync(
 
     let queryRun = conn.tooling
       .query(query)
-      .on("record", function(record) {
+      .on("record", function (record) {
         if (!hasInitProgress) {
           hasInitProgress = true;
 
@@ -88,19 +92,19 @@ export async function executeToolingQueryAsync(
 
         progressBar.increment(1);
       })
-      .on("end", function() {
+      .on("end", function () {
         progressBar.stop();
 
         resolve(records);
       })
-      .on("error", function(error) {
+      .on("error", function (error) {
         progressBar.stop();
 
         reject(error);
       })
       .run({
         autoFetch: true,
-        maxFetch: 1000000
+        maxFetch: 1000000,
       });
   });
   return promiseQuery;
@@ -125,7 +129,7 @@ export async function executeBulkQueryAsync(
 
     conn.bulk
       .query(query)
-      .on("record", function(record) {
+      .on("record", function (record) {
         if (!hasInitProgress) {
           hasInitProgress = true;
           progressBar.start(recordCount);
@@ -133,12 +137,12 @@ export async function executeBulkQueryAsync(
         records.push(record);
         progressBar.increment(1);
       })
-      .on("end", function() {
+      .on("end", function () {
         progressBar.stop();
 
         resolve(records);
       })
-      .on("error", function(error) {
+      .on("error", function (error) {
         progressBar.stop();
         SFPowerkit.log(`Error when using bulk api `, LoggerLevel.ERROR);
         SFPowerkit.log(error, LoggerLevel.ERROR);
@@ -159,7 +163,7 @@ export async function executeQueryAsync(query, conn, object): Promise<any[]> {
 
     let queryRun = conn
       .query(query)
-      .on("record", function(record) {
+      .on("record", function (record) {
         if (!hasInitProgress) {
           hasInitProgress = true;
 
@@ -169,19 +173,19 @@ export async function executeQueryAsync(query, conn, object): Promise<any[]> {
 
         progressBar.increment(1);
       })
-      .on("end", function() {
+      .on("end", function () {
         progressBar.stop();
 
         resolve(records);
       })
-      .on("error", function(error) {
+      .on("error", function (error) {
         progressBar.stop();
 
         reject(error);
       })
       .run({
         autoFetch: true,
-        maxFetch: 1000000
+        maxFetch: 1000000,
       });
   });
   return promiseQuery;

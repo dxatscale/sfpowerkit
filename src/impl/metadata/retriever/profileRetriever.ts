@@ -1,9 +1,9 @@
 import Profile, {
   ProfileObjectPermissions,
-  ProfileUserPermission
+  ProfileUserPermission,
 } from "../schema";
 import MetadataFiles from "../metadataFiles";
-import { Connection, Org } from "@salesforce/core";
+import { core } from "@salesforce/command";
 import { MetadataInfo } from "jsforce";
 import UserPermissionBuilder from "../builder/userPermissionBuilder";
 
@@ -23,8 +23,8 @@ const unsuportedObjects = ["PersonAccount"];
 const userLicenceMap = [
   {
     name: "Guest User License",
-    unsupportedPermissions: ["PasswordNeverExpires"]
-  }
+    unsupportedPermissions: ["PasswordNeverExpires"],
+  },
 ];
 
 const QUERY = "SELECT Id, Name, UserType, Description From Profile";
@@ -40,15 +40,15 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
     "ApexPage",
     "CustomTab",
     "RecordType",
-    "SystemPermissions"
+    "SystemPermissions",
   ];
 
   supportedPermissions: string[] = [];
-  conn: Connection;
+  conn: core.Connection;
 
   metadataFiles: MetadataFiles;
 
-  public constructor(public org: Org, private debugFlag?: boolean) {
+  public constructor(public org: core.Org, private debugFlag?: boolean) {
     super(org);
     super.setQuery(QUERY);
     if (this.org !== undefined) {
@@ -110,7 +110,7 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
       profileObj.userPermissions.length > 0
     ) {
       profileObj.userPermissions = profileObj.userPermissions.filter(
-        permission => {
+        (permission) => {
           var supported = !unsupportedLicencePermissions.includes(
             permission.name
           );
@@ -120,13 +120,13 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
     }
 
     let notRetrievedPermissions = this.supportedPermissions.filter(
-      permission => {
+      (permission) => {
         let found = null;
         if (
           profileObj.userPermissions != null &&
           profileObj.userPermissions.length > 0
         ) {
-          found = profileObj.userPermissions.find(element => {
+          found = profileObj.userPermissions.find((element) => {
             return element.name === permission;
           });
         }
@@ -143,7 +143,7 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
       for (var i = 0; i < notRetrievedPermissions.length; i++) {
         var newPermission: ProfileUserPermission = {
           enabled: false,
-          name: notRetrievedPermissions[i]
+          name: notRetrievedPermissions[i],
         };
         if (profileObj.userPermissions === undefined) {
           profileObj.userPermissions = new Array();
@@ -203,7 +203,7 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
 
     let objects = await utils.getObjectForPermission();
 
-    objects.forEach(name => {
+    objects.forEach((name) => {
       if (unsuportedObjects.includes(name)) {
         return;
       }
@@ -256,7 +256,7 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
       allowRead: access,
       modifyAllRecords: access,
       object: objectName,
-      viewAllRecords: access
+      viewAllRecords: access,
     };
     return newObjPerm;
   }
@@ -307,7 +307,7 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
       if (this.supportedPermissions.includes(permissionName)) {
         let permission = {
           name: permissionName,
-          enabled: true
+          enabled: true,
         } as ProfileUserPermission;
         profileObj.userPermissions.push(permission);
       }

@@ -1,13 +1,13 @@
-import { Org } from "@salesforce/core";
+import { core } from "@salesforce/command";
 import { isNullOrUndefined } from "util";
 import { SFPowerkit, LoggerLevel } from "../sfpowerkit";
 let retry = require("async-retry");
 
-export async function getUserEmail(username: string, hubOrg: Org) {
+export async function getUserEmail(username: string, hubOrg: core.Org) {
   let hubConn = hubOrg.getConnection();
 
   return await retry(
-    async bail => {
+    async (bail) => {
       if (isNullOrUndefined(username)) {
         bail(new Error("username cannot be null. provide a valid username"));
         return;

@@ -1,12 +1,12 @@
-import { Connection } from "@salesforce/core";
+import { core } from "@salesforce/command";
 
 export async function retrieveMetadata(
   types: any,
-  connection: Connection
+  connection: core.Connection
 ): Promise<string[]> {
   const apiversion = await connection.retrieveMaxApiVersion();
   let toReturn: Promise<string[]> = new Promise<string[]>((resolve, reject) => {
-    connection.metadata.list(types, apiversion, function(err, metadata) {
+    connection.metadata.list(types, apiversion, function (err, metadata) {
       if (err) {
         return reject(err);
       }

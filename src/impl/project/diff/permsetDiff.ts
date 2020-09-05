@@ -1,6 +1,4 @@
 import * as fs from "fs-extra";
-import { Org } from "@salesforce/core";
-import { Connection } from "@salesforce/core";
 import * as xml2js from "xml2js";
 import * as util from "util";
 import * as _ from "lodash";
@@ -13,18 +11,18 @@ const nonArayProperties = [
   "license",
   "userLicense",
   "$",
-  "fullName"
+  "fullName",
 ];
 
 const parser = new xml2js.Parser({
   explicitArray: false,
   valueProcessors: [
-    function(name) {
+    function (name) {
       if (name === "true") name = true;
       if (name === "false") name = false;
       return name;
-    }
-  ]
+    },
+  ],
 });
 
 export default abstract class PermsetDiff {
@@ -130,7 +128,7 @@ export default abstract class PermsetDiff {
     if (permsetObj.label != undefined) {
       var builder = new xml2js.Builder({ rootName: "PermissionSet" });
       permsetObj["$"] = {
-        xmlns: "http://soap.sforce.com/2006/04/metadata"
+        xmlns: "http://soap.sforce.com/2006/04/metadata",
       };
       var xml = builder.buildObject(permsetObj);
 

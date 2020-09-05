@@ -1,5 +1,5 @@
 import { ExternalDataSource } from "../schema";
-import { Org } from "@salesforce/core";
+import { core } from "@salesforce/command";
 import * as _ from "lodash";
 import { METADATA_INFO } from "../metadataInfo";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
@@ -11,12 +11,12 @@ export default class ExternalDataSourceRetriever extends BaseMetadataRetriever<
   ExternalDataSource
 > {
   private static instance: ExternalDataSourceRetriever;
-  private constructor(public org: Org) {
+  private constructor(public org: core.Org) {
     super(org, false);
     super.setQuery(QUERY);
   }
 
-  public static getInstance(org: Org): ExternalDataSourceRetriever {
+  public static getInstance(org: core.Org): ExternalDataSourceRetriever {
     if (!ExternalDataSourceRetriever.instance) {
       ExternalDataSourceRetriever.instance = new ExternalDataSourceRetriever(
         org
@@ -58,7 +58,7 @@ export default class ExternalDataSourceRetriever extends BaseMetadataRetriever<
     if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let dataSources = await this.getExternalDataSources();
-      let foundDts = dataSources.find(dts => {
+      let foundDts = dataSources.find((dts) => {
         return dts.FullName === dataSource;
       });
       found = !_.isNil(foundDts);

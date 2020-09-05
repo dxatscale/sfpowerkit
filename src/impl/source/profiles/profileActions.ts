@@ -4,15 +4,15 @@ import * as path from "path";
 import FileUtils from "../../../utils/fileutils";
 import { retrieveMetadata } from "../../../utils/retrieveMetadata";
 
-import { Connection, Org } from "@salesforce/core";
+import { core } from "@salesforce/command";
 import ProfileRetriever from "../../metadata/retriever/profileRetriever";
 
 export default abstract class ProfileActions {
-  protected conn: Connection;
+  protected conn: core.Connection;
   protected debugFlag: boolean;
   protected profileRetriever: ProfileRetriever;
 
-  public constructor(public org: Org, debugFlag?: boolean) {
+  public constructor(public org: core.Org, debugFlag?: boolean) {
     if (this.org !== undefined) {
       this.conn = this.org.getConnection();
     }
@@ -30,7 +30,7 @@ export default abstract class ProfileActions {
     let profilesStatus = {
       added: [],
       deleted: [],
-      updated: []
+      updated: [],
     };
     let metadataFiles = METADATA_INFO.Profile.files || [];
 
@@ -96,14 +96,14 @@ export default abstract class ProfileActions {
         LoggerLevel.DEBUG
       );
 
-      profilesStatus.deleted = metadataFiles.filter(file => {
+      profilesStatus.deleted = metadataFiles.filter((file) => {
         let oneName = path.basename(
           file,
           METADATA_INFO.Profile.sourceExtension
         );
         return !profiles.includes(oneName);
       });
-      profilesStatus.updated = metadataFiles.filter(file => {
+      profilesStatus.updated = metadataFiles.filter((file) => {
         let oneName = path.basename(
           file,
           METADATA_INFO.Profile.sourceExtension
@@ -112,7 +112,7 @@ export default abstract class ProfileActions {
       });
 
       if (profiles && profiles.length > 0) {
-        let newProfiles = profiles.filter(profileObj => {
+        let newProfiles = profiles.filter((profileObj) => {
           let found = false;
           for (let i = 0; i < profilesStatus.updated.length; i++) {
             let profileComponent = profilesStatus.updated[i];

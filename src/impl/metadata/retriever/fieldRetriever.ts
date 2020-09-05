@@ -1,4 +1,4 @@
-import { Org } from "@salesforce/core";
+import { core } from "@salesforce/command";
 import * as _ from "lodash";
 import BaseMetadataRetriever from "./baseMetadataRetriever";
 import { Field } from "../schema";
@@ -10,11 +10,11 @@ const QUERY =
   "SELECT Id, QualifiedApiName, EntityDefinitionId, DeveloperName, NamespacePrefix FROM FieldDefinition";
 export default class FieldRetriever extends BaseMetadataRetriever<Field> {
   private static instance: FieldRetriever;
-  private constructor(public org: Org) {
+  private constructor(public org: core.Org) {
     super(org, true);
     super.setQuery(QUERY);
   }
-  public static getInstance(org: Org): FieldRetriever {
+  public static getInstance(org: core.Org): FieldRetriever {
     if (!FieldRetriever.instance) {
       FieldRetriever.instance = new FieldRetriever(org);
     }
@@ -40,7 +40,7 @@ export default class FieldRetriever extends BaseMetadataRetriever<Field> {
             "'"
         );
         let fields = await super.getObjects();
-        fields = fields.map(field => {
+        fields = fields.map((field) => {
           field.SobjectType = objectName;
           field.FullName = objectName + "." + field.QualifiedApiName;
           return field;
@@ -51,7 +51,7 @@ export default class FieldRetriever extends BaseMetadataRetriever<Field> {
       this.dataLoaded = true;
     } else {
       if (this.data) {
-        Object.keys(this.data).forEach(key => {
+        Object.keys(this.data).forEach((key) => {
           fieldsToReturn.push(...this.data[key]);
         });
       }
@@ -71,7 +71,7 @@ export default class FieldRetriever extends BaseMetadataRetriever<Field> {
         QUERY + " WHERE EntityDefinition.QualifiedApiName ='" + objectName + "'"
       );
       fields = await super.getObjects();
-      fields = fields.map(field => {
+      fields = fields.map((field) => {
         field.SobjectType = objectName;
         field.FullName = objectName + "." + field.QualifiedApiName;
         return field;
@@ -95,7 +95,7 @@ export default class FieldRetriever extends BaseMetadataRetriever<Field> {
       //not found, check on the org
       let objectName = fieldParts[0];
       let fieldDefinitions = await this.getFieldsByObjectName(objectName);
-      let field = fieldDefinitions.find(field => field.FullName === fullName);
+      let field = fieldDefinitions.find((field) => field.FullName === fullName);
       found = field !== undefined;
     }
     return found;
