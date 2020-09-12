@@ -75,6 +75,9 @@ export default class DiffUtil {
     const statResourcesRegExp = new RegExp(
       METADATA_INFO.StaticResource.directoryName
     );
+    const experienceBundleRegExp = new RegExp(
+      METADATA_INFO.ExperienceBundle.directoryName
+    );
     const auraRegExp = new RegExp(
       METADATA_INFO.AuraDefinitionBundle.directoryName
     );
@@ -97,6 +100,7 @@ export default class DiffUtil {
       });
     } else if (
       statResourcesRegExp.test(filePath) ||
+      experienceBundleRegExp.test(filePath) ||
       auraRegExp.test(filePath) ||
       lwcRegExp.test(filePath)
     ) {
@@ -106,6 +110,7 @@ export default class DiffUtil {
         baseFile = path.join(baseFile, filePathParts[i]);
         if (
           filePathParts[i] === METADATA_INFO.StaticResource.directoryName ||
+          filePathParts[i] === METADATA_INFO.ExperienceBundle.directoryName ||
           filePathParts[i] ===
             METADATA_INFO.AuraDefinitionBundle.directoryName ||
           filePathParts[i] ===

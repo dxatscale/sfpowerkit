@@ -64,6 +64,7 @@ export interface MetadataInfo {
   CustomObject?: MetadataDescribe;
   CustomPermission?: MetadataDescribe;
   ExternalDataSource?: MetadataDescribe;
+  ExperienceBundle?: MetadataDescribe;
   Flow?: MetadataDescribe;
   RecordType?: MetadataDescribe;
   ListView?: MetadataDescribe;
@@ -169,6 +170,7 @@ export class MetadataInfo {
     const auraRegExp = new RegExp("aura");
     const lwcRegExp = new RegExp("lwc");
     const staticResourceRegExp = new RegExp("staticresources");
+    const experienceBundleRegExp = new RegExp("experiences");
     const documentRegExp = new RegExp("documents");
     if (
       auraRegExp.test(metadataFile) &&
@@ -185,6 +187,11 @@ export class MetadataInfo {
       (SOURCE_EXTENSION_REGEX.test(metadataFile) || !validateSourceExtension)
     ) {
       metadataName = METADATA_INFO.StaticResource.xmlName;
+    } else if (
+      experienceBundleRegExp.test(metadataFile) &&
+      (SOURCE_EXTENSION_REGEX.test(metadataFile) || !validateSourceExtension)
+    ) {
+      metadataName = METADATA_INFO.ExperienceBundle.xmlName;
     } else if (
       documentRegExp.test(metadataFile) &&
       (SOURCE_EXTENSION_REGEX.test(metadataFile) || !validateSourceExtension)
