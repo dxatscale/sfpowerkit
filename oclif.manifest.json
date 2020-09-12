@@ -1,5 +1,5 @@
 {
-  "version": "2.2.1",
+  "version": "2.2.2",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -801,8 +801,8 @@
       "pluginType": "core",
       "aliases": [],
       "examples": [
-        "$ sfdx sfpowerkit:project:orgdiff --folder directory --noconflictmarkers --targetusername sandbox",
-        "$ sfdx sfpowerkit:project:orgdiff  --filename fileName --targetusername sandbox"
+        "$ sfdx sfpowerkit:project:orgdiff --filesorfolders directory --noconflictmarkers --targetusername sandbox",
+        "$ sfdx sfpowerkit:project:orgdiff -f fileName --targetusername sandbox"
       ],
       "flags": {
         "json": {
