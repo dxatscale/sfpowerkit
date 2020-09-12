@@ -70,9 +70,14 @@ export default class OrgDiffImpl {
           `Path ${fileOrFolder} does not exists. `,
           LoggerLevel.ERROR
         );
-        throw new Error("Error");
       }
     });
+
+    if (!packageobj || packageobj.length < 1) {
+      throw new Error(
+        "you must pass atleast one valid paths contains metadata."
+      );
+    }
     SFPowerkit.setStatus("Retrieving metadata");
     await this.retrievePackage(packageobj);
     SFPowerkit.setStatus("Comparing files");

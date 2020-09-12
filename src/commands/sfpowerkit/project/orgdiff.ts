@@ -20,8 +20,8 @@ export default class OrgDiff extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:project:orgdiff --folder directory --noconflictmarkers --targetusername sandbox`,
-    `$ sfdx sfpowerkit:project:orgdiff  --filename fileName --targetusername sandbox`
+    `$ sfdx sfpowerkit:project:orgdiff --filesorfolders directory --noconflictmarkers --targetusername sandbox`,
+    `$ sfdx sfpowerkit:project:orgdiff -f fileName --targetusername sandbox`
   ];
 
   protected static flagsConfig: FlagsConfig = {
