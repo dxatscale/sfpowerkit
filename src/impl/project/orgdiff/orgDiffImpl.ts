@@ -74,9 +74,7 @@ export default class OrgDiffImpl {
     });
 
     if (!packageobj || packageobj.length < 1) {
-      throw new Error(
-        "you must pass atleast one valid paths contains metadata."
-      );
+      throw new Error("you must pass atleast one valid path.");
     }
     SFPowerkit.setStatus("Retrieving metadata");
     await this.retrievePackage(packageobj);
