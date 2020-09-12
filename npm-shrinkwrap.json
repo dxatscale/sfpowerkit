@@ -1,6 +1,6 @@
 {
   "name": "sfpowerkit",
-  "version": "2.1.5",
+  "version": "2.2.1",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -1044,7 +1044,8 @@
       "dev": true
     },
     "@types/chai": {
-      "version": "4.2.11"
+      "version": "4.2.11",
+      "dev": true
     },
     "@types/color-name": {
       "version": "1.1.1"
@@ -2332,6 +2333,9 @@
         "stdout-stderr": "^0.1.9"
       },
       "dependencies": {
+        "@types/chai": {
+          "version": "4.2.11"
+        },
         "@types/mocha": {
           "version": "7.0.2"
         },
@@ -4640,6 +4644,129 @@
             }
           }
         },
+        "@oclif/plugin-help": {
+          "version": "2.2.3",
+          "requires": {
+            "@oclif/command": "^1.5.13",
+            "chalk": "^2.4.1",
+            "indent-string": "^4.0.0",
+            "lodash.template": "^4.4.0",
+            "strip-ansi": "^5.0.0",
+            "widest-line": "^2.0.1"
+          }
+        },
+        "@oclif/test": {
+          "version": "1.2.6",
+          "requires": {
+            "fancy-test": "^1.4.3"
+          }
+        },
+        "@salesforce/command": {
+          "version": "3.0.1",
+          "requires": {
+            "@oclif/command": "^1.5.17",
+            "@oclif/errors": "^1.2.2",
+            "@oclif/parser": "^3.8.3",
+            "@oclif/plugin-help": "^2.2.0",
+            "@oclif/test": "^1.2.4",
+            "@salesforce/core": "^2.6.0",
+            "@salesforce/kit": "^1.2.2",
+            "@salesforce/ts-types": "^1.2.0",
+            "chalk": "^2.4.2",
+            "cli-ux": "^4.9.3"
+          },
+          "dependencies": {
+            "@salesforce/core": {
+              "version": "2.7.0",
+              "requires": {
+                "@salesforce/bunyan": "^2.0.0",
+                "@salesforce/kit": "^1.2.2",
+                "@salesforce/schemas": "^1.0.1",
+                "@salesforce/ts-types": "^1.0.0",
+                "@types/jsforce": "1.9.2",
+                "debug": "^3.1.0",
+                "jsen": "0.6.6",
+                "jsforce": "1.9.3",
+                "jsonwebtoken": "8.5.0",
+                "mkdirp": "1.0.4",
+                "sfdx-faye": "^1.0.9"
+              }
+            },
+            "ansi-escapes": {
+              "version": "3.2.0"
+            },
+            "clean-stack": {
+              "version": "2.2.0"
+            },
+            "cli-ux": {
+              "version": "4.9.3",
+              "requires": {
+                "@oclif/errors": "^1.2.2",
+                "@oclif/linewrap": "^1.0.0",
+                "@oclif/screen": "^1.0.3",
+                "ansi-escapes": "^3.1.0",
+                "ansi-styles": "^3.2.1",
+                "cardinal": "^2.1.1",
+                "chalk": "^2.4.1",
+                "clean-stack": "^2.0.0",
+                "extract-stack": "^1.0.0",
+                "fs-extra": "^7.0.0",
+                "hyperlinker": "^1.0.0",
+                "indent-string": "^3.2.0",
+                "is-wsl": "^1.1.0",
+                "lodash": "^4.17.11",
+                "password-prompt": "^1.0.7",
+                "semver": "^5.6.0",
+                "strip-ansi": "^5.0.0",
+                "supports-color": "^5.5.0",
+                "supports-hyperlinks": "^1.0.1",
+                "treeify": "^1.1.0",
+                "tslib": "^1.9.3"
+              }
+            },
+            "extract-stack": {
+              "version": "1.0.0"
+            },
+            "fs-extra": {
+              "version": "7.0.1",
+              "requires": {
+                "graceful-fs": "^4.1.2",
+                "jsonfile": "^4.0.0",
+                "universalify": "^0.1.0"
+              }
+            },
+            "indent-string": {
+              "version": "3.2.0"
+            },
+            "is-wsl": {
+              "version": "1.1.0"
+            },
+            "jsonwebtoken": {
+              "version": "8.5.0",
+              "requires": {
+                "jws": "^3.2.1",
+                "lodash.includes": "^4.3.0",
+                "lodash.isboolean": "^3.0.3",
+                "lodash.isinteger": "^4.0.4",
+                "lodash.isnumber": "^3.0.3",
+                "lodash.isplainobject": "^4.0.6",
+                "lodash.isstring": "^4.0.1",
+                "lodash.once": "^4.0.0",
+                "ms": "^2.1.1",
+                "semver": "^5.6.0"
+              }
+            },
+            "lodash": {
+              "version": "4.17.15"
+            },
+            "mkdirp": {
+              "version": "1.0.4"
+            },
+            "supports-color": {
+              "version": "5.5.0"
+            }
+          }
+        },
         "@salesforce/core": {
           "version": "2.11.0",
           "requires": {
@@ -5027,7 +5154,7 @@
       "version": "3.0.3"
     },
     "simple-git": {
-      "version": "2.17.0",
+      "version": "2.18.0",
       "requires": {
         "@kwsites/file-exists": "^1.1.1",
         "@kwsites/promise-deferred": "^1.1.1",
