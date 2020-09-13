@@ -125,7 +125,7 @@ EXAMPLE
 
 ```
 
-_See code: [src\commands\sfpowerkit\source\pmd.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/source/pmd.ts)_
+_See code: [src\commands\sfpowerkit\source\pmd.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/source/pmd.ts)_
 
 ### `sfpowerkit:source:profile:retrieve`
 
@@ -151,7 +151,7 @@ EXAMPLES
   $ sfdx sfpowerkit:source:profile:retrieve  -f "module1, module2, module3" -n "My Profile1, My profile2"  -u prod
 ```
 
-_See code: [src\commands\sfpowerkit\profile\retrieve.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/retrieve.ts)_
+_See code: [src\commands\sfpowerkit\profile\retrieve.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/profile/retrieve.ts)_
 
 ### `sfpowerkit:source:profile:reconcile`
 
@@ -181,7 +181,7 @@ EXAMPLES
   $ sfdx sfpowerkit:source:profile:reconcile  -u myscratchorg -d destfolder
 ```
 
-_See code: [src\commands\sfpowerkit\profile\reconcile.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/reconcile.ts)_
+_See code: [src\commands\sfpowerkit\profile\reconcile.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/profile/reconcile.ts)_
 
 ### `sfpowerkit:source:profile:merge`
 
@@ -212,7 +212,7 @@ EXAMPLES
   $ sfdx sfpowerkit:source:profile:merge -f "module1, module2, module3" -n "My Profile1, My profile2"  -u sandbox
 ```
 
-_See code: [src\commands\sfpowerkit\profile\merge.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/profile/merge.ts)_
+_See code: [src\commands\sfpowerkit\profile\merge.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/profile/merge.ts)_
 
 ### `sfpowerkit:source:customlabel:create`
 
@@ -391,8 +391,8 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
 
 EXAMPLES
-  $ sfdx sfpowerkit:project:orgdiff --folder directory --noconflictmarkers --targetusername sandbox
-  $ sfdx sfpowerkit:project:orgdiff  --filename fileName --targetusername sandbox
+  $ sfdx sfpowerkit:project:orgdiff --filesorfolders directory --noconflictmarkers --targetusername sandbox
+  $ sfdx sfpowerkit:project:orgdiff -f fileName --targetusername sandbox
 ```
 
 ### `sfpowerkit:project:manifest:diff`
@@ -539,7 +539,7 @@ EXAMPLE
   $ sfdx sfpowerkit:package:dependencies:install -u MyScratchOrg -v MyDevHub -k "MyPackage1:Key MyPackage3:Key" -b "DEV"
 ```
 
-_See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/dependencies/install.ts)_
+_See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/package/dependencies/install.ts)_
 
 ### `sfpowerkit:package:version:codecoverage`
 
@@ -577,7 +577,7 @@ EXAMPLES
   $ sfdx sfpowerkit:package:version:codecoverage -v myOrg@example.com -p 0HoXXXXXXXXXXXXXXX -n 1.2.0.45
 ```
 
-_See code: [src\commands\sfpowerkit\package\version\codecoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/version/codecoverage.ts)_
+_See code: [src\commands\sfpowerkit\package\version\codecoverage.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/package/version/codecoverage.ts)_
 
 ### `sfpowerkit:package:version:info`
 
@@ -585,22 +585,20 @@ This command is used to fetch the version number, namespace prefix, and version 
 
 ```
 USAGE
-  $ sfdx sfpowerkit:package:version:info  -u <string> [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+  $ sfdx sfpowerkit:package:version:info [-v <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
   -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
-
+  -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
   --apiversion=apiversion                                                           API version
-
   --json                                                                            format output as json
-
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] [default: info] logging level for this command invocation
 
 EXAMPLE
   $ sfdx sfpowerkit:package:version:info -u myOrg@example.com
 ```
 
-_See code: [src\commands\sfpowerkit\package\version\codecoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/version/codecoverage.ts)_
+_See code: [src\commands\sfpowerkit\package\version\codecoverage.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/package/version/codecoverage.ts)_
 
 ### `sfpowerkit:package:valid`
 
@@ -635,7 +633,7 @@ EXAMPLE
   --------------------------------------------------------------------------------
 ```
 
-_See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/package/valid.ts)_
+_See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/package/valid.ts)_
 
 ## Org Related Functionalities
 
@@ -665,7 +663,7 @@ EXAMPLE
 
 ```
 
-_See code: [src\commands\sfpowerkit\org\destruct.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/destruct.ts)_
+_See code: [src\commands\sfpowerkit\org\destruct.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/destruct.ts)_
 
 ### `sfpowerkit:org:connectedapp:create`
 
@@ -698,7 +696,7 @@ EXAMPLE
      Created Connected App AzurePipelines in Target Org
 ```
 
-_See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/connectedapp/create.ts)_
+_See code: [src\commands\sfpowerkit\org\connectedapp\create.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/connectedapp/create.ts)_
 
 ### `sfpowerkit:org:connectedapp:retrieve`
 
@@ -723,7 +721,7 @@ EXAMPLE
      Retrived AzurePipelines Consumer Key : XSD21Sd23123w21321
 ```
 
-_See code: [src\commands\sfpowerkit\org\connectedapp\retrieve.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/connectedapp/retrieve.ts)_
+_See code: [src\commands\sfpowerkit\org\connectedapp\retrieve.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/connectedapp/retrieve.ts)_
 
 ### `sfpowerkit:org:duplicaterule:deactivate`
 
@@ -755,7 +753,7 @@ EXAMPLE
        Duplicate Rule CRM Account Rule 2 deactivated
 ```
 
-_See code: [src\commands\sfpowerkit\org\duplicaterule\deactivate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/deactivate.ts)_
+_See code: [src\commands\sfpowerkit\org\duplicaterule\deactivate.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/deactivate.ts)_
 
 ### `sfpowerkit:org:duplicaterule:activate`
 
@@ -787,7 +785,7 @@ EXAMPLE
     Duplicate Rule CRM Account Rule 2 Activated
 ```
 
-_See code: [src\commands\sfpowerkit\org\duplicaterule\activate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/activate.ts)_
+_See code: [src\commands\sfpowerkit\org\duplicaterule\activate.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/activate.ts)_
 
 ### `sfpowerkit:org:matchingrule:deactivate`
 
@@ -818,7 +816,7 @@ EXAMPLE
        Matching Rule for Account deactivated
 ```
 
-_See code: [src\commands\sfpowerkit\org\matchingrule\deactivate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/matchingrule/deactivate.ts)_
+_See code: [src\commands\sfpowerkit\org\matchingrule\deactivate.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/matchingrule/deactivate.ts)_
 
 ### `sfpowerkit:org:matchingrule:activate`
 
@@ -849,7 +847,7 @@ EXAMPLE
     Matching Rule for  Account activated
 ```
 
-_See code: [src\commands\sfpowerkit\org\matchingrule\activate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/matchingrule/activate.ts)_
+_See code: [src\commands\sfpowerkit\org\matchingrule\activate.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/matchingrule/activate.ts)_
 
 ### `sfpowerkit:org:trigger:deactivate`
 
@@ -879,7 +877,7 @@ EXAMPLE
     ApexTrigger AccountTrigger deactivated
 ```
 
-_See code: [src\commands\sfpowerkit\org\trigger\deactivate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/trigger/deactivate.ts)_
+_See code: [src\commands\sfpowerkit\org\trigger\deactivate.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/trigger/deactivate.ts)_
 
 ### `sfpowerkit:org:trigger:activate`
 
@@ -909,7 +907,7 @@ EXAMPLE
     ApexTrigger AccountTrigger Ativated
 ```
 
-_See code: [src\commands\sfpowerkit\org\trigger\activate.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/trigger/activate.ts)_
+_See code: [src\commands\sfpowerkit\org\trigger\activate.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/trigger/activate.ts)_
 
 ### `sfpowerkit:org:healthcheck`
 
@@ -931,7 +929,7 @@ EXAMPLE
      Successfully Retrived the healthstatus of the org
 ```
 
-_See code: [src\commands\sfpowerkit\org\healthcheck.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/healthcheck.ts)_
+_See code: [src\commands\sfpowerkit\org\healthcheck.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/healthcheck.ts)_
 
 ### `sfpowerkit:org:manifest:build`
 
@@ -939,9 +937,11 @@ Generate a complete manifest of all the metadata from the specified org. Once th
 
 ```
 USAGE
-  $ sfdx sfpowerkit:org:manifest:build [-q <string>] [-x] [-o <filepath>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
+  $ sfdx sfpowerkit:org:manifest:build [-q <string>] [-x] [-c] [-o <filepath>] [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
+  -c, --includechilds                              Set to true to include child Metadata in the generated package.xml.
   -o, --outputfile=outputfile                      The output path where the manifest file will be created
 
   -q, --quickfilter=quickfilter                    comma separated values  of metadata type, member or file names to be excluded while building the manifest
@@ -968,7 +968,7 @@ EXAMPLES
        <Package xmlns="http://soap.sforce.com/2006/04/metadata">...</Package>
 ```
 
-_See code: [src\commands\sfpowerkit\org\manifest\build.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/manifest/build.ts)_
+_See code: [src\commands\sfpowerkit\org\manifest\build.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/manifest/build.ts)_
 
 ### `sfpowerkit:org:orgcoverage`
 
@@ -1003,7 +1003,7 @@ EXAMPLE
     Output testResult/output.csv is generated successfully
 ```
 
-_See code: [src\commands\sfpowerkit\org\orgcoverage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/orgcoverage.ts)_
+_See code: [src\commands\sfpowerkit\org\orgcoverage.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/orgcoverage.ts)_
 
 ### `sfpowerkit:org:profile:diff`
 
@@ -1031,7 +1031,7 @@ EXAMPLES
   $ sfdx sfpowerkit:org:profile:diff --sourceusername sourcealias --targetusername username (compare all profile in the source org against the target org)
 ```
 
-_See code: [src\commands\sfpowerkit\org\profile\diff.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/profile/diff.ts)_
+_See code: [src\commands\sfpowerkit\org\profile\diff.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/profile/diff.ts)_
 
 ### `sfpowerkit:org:sandbox:create`
 
@@ -1052,7 +1052,7 @@ OPTIONS
                                                           source org for a cloned sandbox.
 
   -l, --licensetype=DEVELOPER|DEVELOPER_PRO|PARTIAL|FULL  (required) Type of the sandbox. Valid values are
-                                                          DEVELOPER,DEVELOPER_PRO,PARTIAL,FULL
+                                                          DEVELOPER,DEVELOPER_PRO,PARTIAL,FULL. Provide this if the sandbox is to be created from Production
 
   -n, --name=name                                         (required) Name of the sandbox
 
@@ -1066,11 +1066,11 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal)          [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx sfpowerkit:org:sandbox:create -d Testsandbox -l DEVELOPER -n test2 -v myOrg@example.com
-     Successfully Enqueued Creation of Sandbox
+    $ sfdx sfpowerkit:org:sandbox:create -d Testsandbox -f sitSandbox -n test2 -v myOrg@example.com
+    $ sfdx sfpowerkit:org:sandbox:create -d Testsandbox -l DEVELOPER -n test2 -v myOrg@example.com
 ```
 
-_See code: [src\commands\sfpowerkit\org\sandbox\create.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/sandbox/create.ts)_
+_See code: [src\commands\sfpowerkit\org\sandbox\create.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/sandbox/create.ts)_
 
 ### `sfpowerkit:org:sandbox:info`
 
@@ -1094,7 +1094,7 @@ EXAMPLE
      Successfully Enqueued Refresh of Sandbox
 ```
 
-_See code: [src\commands\sfpowerkit\org\sandbox\info.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/sandbox/info.ts)_
+_See code: [src\commands\sfpowerkit\org\sandbox\info.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/sandbox/info.ts)_
 
 ### `sfpowerkit:org:sandbox:refresh`
 
@@ -1120,11 +1120,11 @@ OPTIONS
   --loglevel=(trace|debug|info|warn|error|fatal)  [default: warn] logging level for this command invocation
 
 EXAMPLE
-  $ sfdx sfpowerkit:org:sandbox:refresh -n test2  -f sitSandbox -u myOrg@example.com
-     Successfully Enqueued Refresh of Sandbox
+    $ sfdx sfpowerkit:org:sandbox:refresh -n test2 -f sitSandbox -v myOrg@example.com
+    $ sfdx sfpowerkit:org:sandbox:refresh -n test2 -l DEVELOPER -v myOrg@example.com
 ```
 
-_See code: [src\commands\sfpowerkit\org\sandbox\refresh.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/sandbox/refresh.ts)_
+_See code: [src\commands\sfpowerkit\org\sandbox\refresh.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/sandbox/refresh.ts)_
 
 ### `sfpowerkit:org:scratchorg:usage`
 
@@ -1151,7 +1151,7 @@ EXAMPLE
     Total number of records retrieved: 4.
 ```
 
-_See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/scratchorg/usage.ts)_
+_See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/scratchorg/usage.ts)_
 
 ### `sfpowerkit:org:scratchorg:delete`
 
@@ -1176,7 +1176,7 @@ EXAMPLE
     Deleted Scratch Org 2AS6F000000XbxVWAS
 ```
 
-_See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/org/scratchorg/usage.ts)_
+_See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/scratchorg/usage.ts)_
 
 ### `sfpowerkit:org:relaxiprange`
 
@@ -1265,7 +1265,7 @@ EXAMPLES
   $ sfdx sfpowerkit:dependency:tree:package -u MyScratchOrg -n 04txxxxxxxxxx -o outputdir -f csv -s
 ```
 
-_See code: [src\commands\sfpowerkit\dependency\tree\package.ts](https://github.com/Accenture/sfpowerkit/blob/master/src/commands/sfpowerkit/dependency/tree/package.ts)_
+_See code: [src\commands\sfpowerkit\dependency\tree\package.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/dependency/tree/package.ts)_
 
 ## ScratchOrg Pooling Related Functionalities [BETA]
 

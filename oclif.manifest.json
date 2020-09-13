@@ -1,5 +1,5 @@
 {
-  "version": "2.0.16",
+  "version": "2.2.3",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -801,8 +801,8 @@
       "pluginType": "core",
       "aliases": [],
       "examples": [
-        "$ sfdx sfpowerkit:project:orgdiff --folder directory --noconflictmarkers --targetusername sandbox",
-        "$ sfdx sfpowerkit:project:orgdiff  --filename fileName --targetusername sandbox"
+        "$ sfdx sfpowerkit:project:orgdiff --filesorfolders directory --noconflictmarkers --targetusername sandbox",
+        "$ sfdx sfpowerkit:project:orgdiff -f fileName --targetusername sandbox"
       ],
       "flags": {
         "json": {
@@ -1730,7 +1730,8 @@
       "pluginType": "core",
       "aliases": [],
       "examples": [
-        "$ sfdx sfpowerkit:org:sandbox:create -d Testsandbox -l DEVELOPER -n test2 -u myOrg@example.com\n  Successfully Enqueued Creation of Sandbox\n  "
+        "$ sfdx sfpowerkit:org:sandbox:create -d Testsandbox -f sitSandbox -n test2 -v myOrg@example.com",
+        "$ sfdx sfpowerkit:org:sandbox:create -d Testsandbox -l DEVELOPER -n test2 -v myOrg@example.com"
       ],
       "flags": {
         "json": {
@@ -1790,7 +1791,7 @@
           "name": "licensetype",
           "type": "option",
           "char": "l",
-          "description": "Type of the sandbox. Valid values are  DEVELOPER,DEVELOPER_PRO,PARTIAL,FULL",
+          "description": "Type of the sandbox. Valid values are  DEVELOPER,DEVELOPER_PRO,PARTIAL,FULL. Provide this if the sandbox is to be created from Production",
           "required": true,
           "options": ["DEVELOPER", "DEVELOPER_PRO", "PARTIAL", "FULL"]
         },
@@ -1889,7 +1890,8 @@
       "pluginType": "core",
       "aliases": [],
       "examples": [
-        "$ sfdx sfpowerkit:org:sandbox:refresh -n test2  -f sitSandbox -v myOrg@example.com\n  Successfully Enqueued Refresh of Sandbox\n  "
+        "$ sfdx sfpowerkit:org:sandbox:refresh -n test2 -f sitSandbox -v myOrg@example.com",
+        "$ sfdx sfpowerkit:org:sandbox:refresh -n test2 -l DEVELOPER -v myOrg@example.com"
       ],
       "flags": {
         "json": {
@@ -2402,7 +2404,7 @@
     "sfpowerkit:package:version:info": {
       "id": "sfpowerkit:package:version:info",
       "description": "This command is list all the installed (managed/unmanaged) packages in an org",
-      "usage": "<%= command.id %> [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "usage": "<%= command.id %> [-v <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],
@@ -2437,6 +2439,12 @@
             "FATAL"
           ],
           "default": "info"
+        },
+        "targetdevhubusername": {
+          "name": "targetdevhubusername",
+          "type": "option",
+          "char": "v",
+          "description": "username or alias for the dev hub org; overrides default dev hub org"
         },
         "targetusername": {
           "name": "targetusername",

@@ -733,6 +733,12 @@
       "xmlName": "SiteDotCom"
     },
     {
+      "directoryName": "experiences",
+      "inFolder": false,
+      "metaFile": false,
+      "xmlName": "ExperienceBundle"
+    },
+    {
       "directoryName": "networks",
       "inFolder": false,
       "metaFile": false,

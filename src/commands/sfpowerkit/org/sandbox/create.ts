@@ -1,9 +1,8 @@
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
-import * as fs from "fs-extra";
 let request = require("request-promise-native");
-import * as rimraf from "rimraf";
 import { SfdxError } from "@salesforce/core";
+import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -16,9 +15,8 @@ export default class Create extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:org:sandbox:create -d Testsandbox -l DEVELOPER -n test2 -u myOrg@example.com
-  Successfully Enqueued Creation of Sandbox
-  `
+    `$ sfdx sfpowerkit:org:sandbox:create -d Testsandbox -f sitSandbox -n test2 -v myOrg@example.com`,
+    `$ sfdx sfpowerkit:org:sandbox:create -d Testsandbox -l DEVELOPER -n test2 -v myOrg@example.com`
   ];
 
   protected static flagsConfig = {
@@ -56,7 +54,7 @@ export default class Create extends SfdxCommand {
   protected static requiresDevhubUsername = true;
 
   public async run(): Promise<AnyJson> {
-    rimraf.sync("temp_sfpowerkit");
+    SFPowerkit.setLogLevel("INFO", false);
 
     await this.hubOrg.refreshAuth();
 
@@ -67,9 +65,6 @@ export default class Create extends SfdxCommand {
 
     const uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/sobjects/SandboxInfo/`;
 
-    this.ux.log(`${this.flags.apexclass}  ${this.flags.clonefrom} `);
-
-    var sourceSandboxId: string = "";
     var result;
 
     if (this.flags.clonefrom) {
@@ -94,6 +89,12 @@ export default class Create extends SfdxCommand {
         json: true
       });
     } else {
+      if (!this.flags.licensetype) {
+        throw new SfdxError(
+          "License type is required when clonefrom source org is not provided. you may need to provide -l | --licensetype"
+        );
+      }
+
       result = await request({
         method: "post",
         uri,
@@ -112,25 +113,21 @@ export default class Create extends SfdxCommand {
     }
 
     if (result.success) {
-      this.ux.log(`Successfully Enqueued Creation of Sandbox`);
-      this.ux.log(result);
+      SFPowerkit.log(
+        `Successfully Enqueued Creation of Sandbox`,
+        LoggerLevel.INFO
+      );
+
+      if (!this.flags.json) this.ux.logJson(result);
     } else {
       throw new SfdxError("Unable to Create sandbox");
     }
-
-    if (this.flags.outputfile) {
-      await fs.outputJSON(this.flags.outputfile, result);
-    }
-
-    rimraf.sync("temp_sfpowerkit");
 
     return result;
   }
 
   public async getSandboxId(conn: core.Connection, name: string) {
     const query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=SELECT+Id,SandboxName+FROM+SandboxInfo+WHERE+SandboxName+in+('${name}')`;
-
-    // this.ux.log(`Query URI ${query_uri}`);
 
     const sandbox_query_result = await request({
       method: "get",
@@ -141,15 +138,14 @@ export default class Create extends SfdxCommand {
       json: true
     });
 
-    // this.ux.logJson(sandbox_query_result);
-
     if (sandbox_query_result.records[0] == undefined)
       throw new SfdxError(
         `Unable to continue, Please check your sandbox name: ${name}`
       );
 
-    this.ux.log(
-      `Fetched Sandbox Id for sandbox  ${name}  is ${sandbox_query_result.records[0].Id}`
+    SFPowerkit.log(
+      `Fetched Sandbox Id for sandbox  ${name}  is ${sandbox_query_result.records[0].Id}`,
+      LoggerLevel.INFO
     );
 
     return sandbox_query_result.records[0].Id;

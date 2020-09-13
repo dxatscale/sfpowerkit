@@ -6,7 +6,8 @@ import {
   SfdxResult
 } from "@salesforce/command";
 
-import { SfdxProject } from "@salesforce/core";
+import { SfdxProject, SfdxError } from "@salesforce/core";
+import * as fs from "fs-extra";
 import * as _ from "lodash";
 import { SFPowerkit } from "../../../../sfpowerkit";
 import * as path from "path";
@@ -100,7 +101,11 @@ export default class Retrieve extends SfdxCommand {
 
     let folders: string[] = [];
     if (!_.isNil(argFolder) && argFolder.length !== 0) {
-      SFPowerkit.setDefaultFolder(argFolder[0]);
+      for (let dir of argFolder) {
+        if (!fs.existsSync(dir)) {
+          throw new SfdxError(`The profile path ${dir} doesnot exist.`);
+        }
+      }
       folders.push(...argFolder);
     }
 

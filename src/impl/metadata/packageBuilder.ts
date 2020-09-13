@@ -219,7 +219,9 @@ export class Packagexml {
       version: this.configs.apiVersion
     };
 
-    Object.keys(this.packageTypes).forEach(mdtype => {
+    let mdtypes = Object.keys(this.packageTypes);
+    mdtypes.sort();
+    mdtypes.forEach(mdtype => {
       if (
         this.configs.quickFilters.length === 0 ||
         this.configs.quickFilters.includes(mdtype)

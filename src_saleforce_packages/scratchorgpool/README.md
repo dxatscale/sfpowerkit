@@ -2,9 +2,9 @@
 
 Deploy the following fields along with validation rule to a DevHub to get the associated scratch org commands working.
 
-How to deploy!
+### How to deploy!
 
-### Install the supporting fields and validation rule to DevHub
+Install the supporting fields and validation rule to DevHub
 
 `cd src_salesforce_packages/scratchorgpool`
 

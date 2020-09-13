@@ -15,6 +15,7 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
 > {
   private static instance: EntityDefinitionRetriever;
   private objectForPermission: string[];
+  private describePromise = null;
   private constructor(public org: Org) {
     super(org, false);
     super.setQuery(QUERY);
@@ -28,7 +29,10 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
   }
 
   public async getObjects(): Promise<EntityDefinition[]> {
-    let resultPromise = new Promise<any[]>((resolve, reject) => {
+    if (this.describePromise !== null) {
+      return this.describePromise;
+    }
+    this.describePromise = new Promise<any[]>((resolve, reject) => {
       this.org.getConnection().describeGlobal(function(err, res) {
         if (err) {
           SFPowerkit.log(
@@ -51,7 +55,7 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
         }
       });
     });
-    return resultPromise;
+    return this.describePromise;
   }
   public async getEntityDefinitions(): Promise<EntityDefinition[]> {
     return await this.getObjects();

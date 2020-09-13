@@ -100,11 +100,21 @@ export default class MetadataFiles {
         const auraRegExp = new RegExp("aura");
         const lwcRegExp = new RegExp("lwc");
         const staticResourceRegExp = new RegExp("staticresources");
+        const experienceBundleRegExp = new RegExp("experiences");
         if (auraRegExp.test(filepath) || lwcRegExp.test(filepath)) {
           member = splitFilepath[lastIndex - 1];
         } else if (staticResourceRegExp.test(filepath)) {
           //Return the fileName
           let baseName = "staticresources";
+          let baseIndex = filepath.indexOf(baseName) + baseName.length;
+          let cmpPath = filepath.substring(baseIndex + 1); // add 1 to remove the path seperator
+          member = cmpPath.split(SEP)[0];
+          let extension = path.parse(member).ext;
+
+          member = member.replace(new RegExp(extension + "$"), "");
+        } else if (experienceBundleRegExp.test(filepath)) {
+          //Return the fileName
+          let baseName = "experiences";
           let baseIndex = filepath.indexOf(baseName) + baseName.length;
           let cmpPath = filepath.substring(baseIndex + 1); // add 1 to remove the path seperator
           member = cmpPath.split(SEP)[0];
