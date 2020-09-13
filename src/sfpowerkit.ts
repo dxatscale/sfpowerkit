@@ -9,7 +9,7 @@ export enum LoggerLevel {
   INFO = 30,
   WARN = 40,
   ERROR = 50,
-  FATAL = 60
+  FATAL = 60,
 }
 export class SFPowerkit {
   private static defaultFolder: string;
@@ -32,8 +32,8 @@ export class SFPowerkit {
           levelFirst: true, // --levelFirst
           colorize: true,
           translateTime: true,
-          ignore: "pid,hostname" // --ignore
-        }
+          ignore: "pid,hostname", // --ignore
+        },
       });
     } else {
       //do nothing for now, need to put pino to move to file
@@ -70,7 +70,7 @@ export class SFPowerkit {
       const dxProject = await SfdxProject.resolve();
       const project = await dxProject.retrieveSfdxProjectJson();
       let packages = (project.get("packageDirectories") as any[]) || [];
-      packages.forEach(element => {
+      packages.forEach((element) => {
         SFPowerkit.projectDirectories.push(element.path);
         if (element.default) {
           SFPowerkit.defaultFolder = element.path;
@@ -146,6 +146,21 @@ export class SFPowerkit {
   }
 
   public static setStatus(status: string) {
+    if (isNullOrUndefined(this.logger)) return;
+    if (this.isJsonFormatEnabled) return;
+
     this.ux.setSpinnerStatus(status);
+  }
+  public static startSpinner(message: string) {
+    if (isNullOrUndefined(this.logger)) return;
+    if (this.isJsonFormatEnabled) return;
+
+    this.ux.startSpinner(message);
+  }
+  public static stopSpinner(message: string) {
+    if (isNullOrUndefined(this.logger)) return;
+    if (this.isJsonFormatEnabled) return;
+
+    this.ux.stopSpinner(message);
   }
 }

@@ -20,20 +20,20 @@ export default class Report extends SfdxCommand {
     `$ sfdx sfpowerkit:project:datamodel:report -p force-app/main/default/objects -d result`,
     `$ sfdx sfpowerkit:project:datamodel:report -p force-app/main/default/objects -t CustomField,RecordType`,
     `$ sfdx sfpowerkit:project:datamodel:report -p force-app/main/default/objects -t CustomField,RecordType -f csv`,
-    `$ sfdx sfpowerkit:project:datamodel:report -f md -d docs`
+    `$ sfdx sfpowerkit:project:datamodel:report -f md -d docs -l`,
   ];
 
   protected static flagsConfig = {
     objectspath: flags.array({
       required: false,
       char: "p",
-      description: messages.getMessage("objectspathDescription")
+      description: messages.getMessage("objectspathDescription"),
     }),
     outputdir: flags.string({
       required: true,
       char: "d",
       description: messages.getMessage("outputdirDescription"),
-      default: "datamodelreport"
+      default: "datamodelreport",
     }),
     filtertype: flags.array({
       required: true,
@@ -44,15 +44,25 @@ export default class Report extends SfdxCommand {
         "BusinessProcess",
         "RecordType",
         "ValidationRule",
-        "CustomObject"
-      ]
+        "CustomObject",
+      ],
     }),
     format: flags.enum({
       required: false,
       char: "f",
       description: messages.getMessage("formatDescription"),
       options: ["json", "csv", "md"],
-      default: "json"
+      default: "json",
+    }),
+    includechangelog: flags.boolean({
+      char: "l",
+      description: messages.getMessage("includechangelogDescription"),
+      required: false,
+    }),
+    activechangelogpath: flags.string({
+      required: false,
+      char: "a",
+      description: messages.getMessage("activechangelogpathDescription"),
     }),
     loglevel: flags.enum({
       description: messages.getMessage("loglevelDescription"),
@@ -70,9 +80,9 @@ export default class Report extends SfdxCommand {
         "INFO",
         "WARN",
         "ERROR",
-        "FATAL"
-      ]
-    })
+        "FATAL",
+      ],
+    }),
   };
 
   public async run(): Promise<AnyJson> {
@@ -82,7 +92,9 @@ export default class Report extends SfdxCommand {
       this.flags.filtertype,
       this.flags.objectspath,
       this.flags.format,
-      this.flags.outputdir
+      this.flags.outputdir,
+      this.flags.includechangelog,
+      this.flags.activechangelogpath
     );
 
     let result = await impl.generateReport();

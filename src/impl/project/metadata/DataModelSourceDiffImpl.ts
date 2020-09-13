@@ -14,16 +14,23 @@ export default class DataModelSourceDiffImpl {
   private diffGenerators = {
     customfield: DiffGenerators.SourceDiffGenerator,
     recordtype: DiffGenerators.SourceDiffGenerator,
-    businessprocess: DiffGenerators.SourceDiffGenerator
+    businessprocess: DiffGenerators.SourceDiffGenerator,
   };
 
   private filePattern = {
     customfield: "field",
     recordtype: "recordType",
-    businessprocess: "businessProcess"
+    businessprocess: "businessProcess",
   };
 
   public async exec(): Promise<any> {
+    if (
+      isNullOrUndefined(this.packageDirectories) ||
+      this.packageDirectories.length < 1
+    ) {
+      throw new Error("You must provide a valid path");
+    }
+
     const sourceDiffResult = [];
     for (let metadataType in this.diffGenerators) {
       let changedFiles: string[] = await this.getNameOfChangedFiles(
@@ -33,12 +40,10 @@ export default class DataModelSourceDiffImpl {
         metadataType
       );
 
-      if (!isNullOrUndefined(this.packageDirectories)) {
-        changedFiles = this.filterByPackageDirectory(
-          changedFiles,
-          this.packageDirectories
-        );
-      }
+      changedFiles = this.filterByPackageDirectory(
+        changedFiles,
+        this.packageDirectories
+      );
 
       let sourceDiffGenerator: DiffGenerators.SourceDiffGenerator = new this.diffGenerators[
         metadataType
@@ -47,11 +52,11 @@ export default class DataModelSourceDiffImpl {
       for (let file of changedFiles) {
         let fileRevFrom: string | void = await this.git
           .show([`${this.baseline}:${file}`])
-          .catch(err => {});
+          .catch((err) => {});
 
         let fileRevTo: string | void = await this.git
           .show([`${this.target}:${file}`])
-          .catch(err => {});
+          .catch((err) => {});
 
         let diff = await sourceDiffGenerator.compareRevisions(
           fileRevFrom,
@@ -79,7 +84,7 @@ export default class DataModelSourceDiffImpl {
       target,
       "--name-only",
       "--",
-      `**/objects/**/*${this.filePattern[metadataType]}-meta.xml`
+      `**/objects/**/*${this.filePattern[metadataType]}-meta.xml`,
     ]);
 
     let changedFiles: string[] = gitDiffResult.split("\n");
@@ -92,9 +97,9 @@ export default class DataModelSourceDiffImpl {
     changedFiles: string[],
     packageDirectories: string[]
   ): string[] {
-    let filteredChangedFiles = changedFiles.filter(file => {
+    let filteredChangedFiles = changedFiles.filter((file) => {
       let isFileInPackageDir;
-      packageDirectories.forEach(dir => {
+      packageDirectories.forEach((dir) => {
         if (file.includes(dir)) isFileInPackageDir = true;
       });
       return isFileInPackageDir;

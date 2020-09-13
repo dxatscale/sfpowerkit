@@ -186,7 +186,7 @@ export default class MarkdownGeneratorImpl {
       markdownResult = `${markdownResult}**Summary Filter Items** : \nField | Operation | Value | ValueField \n--- | --- | --- | ---\n`;
       let members = metadataJson.summaryFilterItems;
       if (members.constructor === Array) {
-        members.forEach(element => {
+        members.forEach((element) => {
           markdownResult = `${markdownResult}${element.field} | ${element.operation} | ${element.value} | ${element.valueField} \n`;
         });
       } else {
@@ -215,7 +215,7 @@ export default class MarkdownGeneratorImpl {
         markdownResult = `${markdownResult}Label | Api Name | default\n---|---|---\n`;
         let members = metadataJson.valueSet.valueSetDefinition.value;
         if (members.constructor === Array) {
-          members.forEach(element => {
+          members.forEach((element) => {
             markdownResult = `${markdownResult}${this.wrapStringliteral(
               element.label
             )} | ${this.wrapStringliteral(
@@ -358,7 +358,9 @@ export default class MarkdownGeneratorImpl {
     return request;
   }
   private static contructTrueFalse(request: string) {
-    return request === "true" ? this.tickMark : this.crossMark;
+    return request === "true"
+      ? ` ${request} ${this.tickMark}`
+      : ` ${request} ${this.crossMark}`;
   }
   public static generateMdforRecordType(metadataJson: any) {
     let markdownResult = `## Name : ${metadataJson.fullName} ${this.titleBlock}`;

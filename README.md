@@ -443,18 +443,16 @@ This command is used to generate datamodel report from project
 
 ```
 USAGE
-  $ sfdx sfpowerkit:project:datamodel:report -d <string> -t <array> [-p <array>] [-f json|csv|md] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+  $ sfdx sfpowerkit:project:datamodel:report -d <string> -t <array> [-p <array>] [-f json|csv|md] [-l] [-a <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
+  -a, --activechangelogpath=activechangelogpath                                     Path to existing change if available
   -d, --outputdir=outputdir                                                         (required) [default: datamodelreport] location to create the datamodel report
   -f, --format=(json|csv|md)                                                        [default: json] format of the output file to create
+  -l, --includechangelog                                                            Generate changelog for data model. This will fetch the entire git history for generating changelog, be advised on time consumption
   -p, --objectspath=objectspath                                                     list of Paths to object location, if not provided all the project paths from sfdx-project.json
-
-  -t, --filtertype=filtertype                                                       (required) [default: CustomField,BusinessProcess,RecordType,ValidationRule,CustomObject] apply filter to
-                                                                                    reduce the result by types
-
+  -t, --filtertype=filtertype                                                       (required) [default: CustomField,BusinessProcess,RecordType,ValidationRule,CustomObject] apply filter to reduce the result by types
   --json                                                                            format output as json
-
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
 
 EXAMPLES
@@ -462,7 +460,7 @@ EXAMPLES
   $ sfdx sfpowerkit:project:datamodel:report -p force-app/main/default/objects -d result
   $ sfdx sfpowerkit:project:datamodel:report -p force-app/main/default/objects -t CustomField,RecordType
   $ sfdx sfpowerkit:project:datamodel:report -p force-app/main/default/objects -t CustomField,RecordType -f csv
-  $ sfdx sfpowerkit:project:datamodel:report -f md -d doc
+  $ sfdx sfpowerkit:project:datamodel:report -f md -d docs -l
 ```
 
 ### `sfpowerkit:project:datamodel:diff [BETA]`
