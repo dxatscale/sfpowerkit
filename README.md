@@ -446,7 +446,7 @@ USAGE
   $ sfdx sfpowerkit:project:datamodel:report -d <string> -t <array> [-p <array>] [-f json|csv|md] [-l] [-a <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -a, --activechangelogpath=activechangelogpath                                     Path to existing change if available
+  -a, --activechangelogpath=activechangelogpath                                     Path to existing changeLog.json file if available
   -d, --outputdir=outputdir                                                         (required) [default: datamodelreport] location to create the datamodel report
   -f, --format=(json|csv|md)                                                        [default: json] format of the output file to create
   -l, --includechangelog                                                            Generate changelog for data model. This will fetch the entire git history for generating changelog, be advised on time consumption

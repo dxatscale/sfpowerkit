@@ -5,6 +5,6 @@
   "filterDescription": "apply filter to reduce the result by types",
   "formatDescription": "format of the output file to create",
   "includechangelogDescription": "Generate changelog for data model. This will fetch the entire git history for generating changelog, be advised on time consumption",
-  "activechangelogpathDescription": "Path to existing change if available",
+  "activechangelogpathDescription": "Path to existing changeLog.json file if available",
   "loglevelDescription": "logging level for this command invocation"
 }

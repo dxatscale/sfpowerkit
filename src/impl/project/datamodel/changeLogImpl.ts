@@ -1,6 +1,6 @@
 import DataModelSourceDiffImpl from "../../../impl/project/metadata/DataModelSourceDiffImpl";
 import { ProgressBar } from "../../../ui/progressBar";
-import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
+import { LoggerLevel } from "../../../sfpowerkit";
 
 export default class ChangeLogImpl {
   constructor(
