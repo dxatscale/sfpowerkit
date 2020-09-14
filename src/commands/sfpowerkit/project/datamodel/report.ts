@@ -2,6 +2,7 @@ import { AnyJson } from "@salesforce/ts-types";
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { SFPowerkit } from "../../../../sfpowerkit";
 import datamodelReportImpl from "../../../../impl/project/datamodel/reportimpl";
+import simpleGit, { SimpleGit } from "simple-git";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -87,6 +88,7 @@ export default class Report extends SfdxCommand {
 
   public async run(): Promise<AnyJson> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
+    let git: SimpleGit = simpleGit();
 
     let impl = new datamodelReportImpl(
       this.flags.filtertype,
@@ -94,7 +96,8 @@ export default class Report extends SfdxCommand {
       this.flags.format,
       this.flags.outputdir,
       this.flags.includechangelog,
-      this.flags.activechangelogpath
+      this.flags.activechangelogpath,
+      git
     );
 
     let result = await impl.generateReport();

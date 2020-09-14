@@ -7,7 +7,6 @@ import xmlUtil from "../../../utils/xmlUtil";
 import { AnyJson } from "@salesforce/ts-types";
 import MarkdownGeneratorImpl from "./MarkdownGeneratorImpl";
 import { isNullOrUndefined } from "util";
-import simpleGit, { SimpleGit } from "simple-git";
 import ChangeLogImpl from "./ChangeLogImpl";
 
 var path = require("path");
@@ -20,6 +19,7 @@ export default class ReportImpl {
   private outputDir: string;
   private includechangelog: boolean;
   private existingchangelogPath: string;
+  private git;
 
   public constructor(
     filtertype: string[],
@@ -27,7 +27,8 @@ export default class ReportImpl {
     outputFormat: string,
     outputDir: string,
     includechangelog: boolean = false,
-    existingchangelogPath: string
+    existingchangelogPath: string,
+    git
   ) {
     this.filtertype = filtertype;
     this.objectspath = objectspath;
@@ -35,6 +36,7 @@ export default class ReportImpl {
     this.outputDir = outputDir;
     this.includechangelog = includechangelog;
     this.existingchangelogPath = existingchangelogPath;
+    this.git = git;
   }
 
   public async generateReport(): Promise<AnyJson> {
@@ -70,92 +72,6 @@ export default class ReportImpl {
 
     SFPowerkit.log("Paths to process : " + this.objectspath, LoggerLevel.DEBUG);
 
-    let changeLog = {};
-    if (this.includechangelog) {
-      let activeLogFrom;
-      let activeLogTo;
-      if (
-        this.existingchangelogPath &&
-        fs.existsSync(this.existingchangelogPath)
-      ) {
-        SFPowerkit.log(
-          `Loading active change Log  ${this.existingchangelogPath}`,
-          LoggerLevel.DEBUG
-        );
-        let activeLog = JSON.parse(
-          fs.readFileSync(`${this.existingchangelogPath}`, "utf8")
-        );
-        if (activeLog && activeLog.revisionTo && activeLog.changeLog) {
-          changeLog = activeLog.changeLog;
-          activeLogFrom = activeLog.revisionFrom;
-          activeLogTo = activeLog.revisionTo;
-        }
-      }
-
-      let git: SimpleGit = simpleGit();
-
-      if (!activeLogTo) {
-        // get git log to find first commit id
-        let gitLog = await git.log(["--reverse"]);
-        activeLogTo = gitLog.latest.hash;
-      }
-
-      const revisionFrom: string = await git.revparse(["--short", activeLogTo]);
-      const revisionTo: string = await git.revparse(["--short", "HEAD"]);
-
-      if (revisionFrom != revisionTo) {
-        let parsedPath = [];
-        this.objectspath.forEach((element) => {
-          parsedPath.push(element.split("\\").join("/"));
-        });
-
-        SFPowerkit.log(
-          `Fetching change Log from ${revisionFrom} to ${revisionTo} `,
-          LoggerLevel.DEBUG
-        );
-
-        let changeLogImpl = new ChangeLogImpl(
-          git,
-          revisionFrom,
-          revisionTo,
-          parsedPath
-        );
-
-        let generatedChangeLog = await changeLogImpl.exec();
-
-        if (changeLog && Object.keys(changeLog).length > 0) {
-          Object.keys(generatedChangeLog).forEach((key) => {
-            if (changeLog[key]) {
-              changeLog[key].push(generatedChangeLog[key]);
-            } else {
-              changeLog[key] = generatedChangeLog[key];
-            }
-          });
-        } else {
-          changeLog = generatedChangeLog;
-        }
-
-        let outputPath = `${this.outputDir}${path.sep}changeLog.json`;
-        let dir = path.parse(outputPath).dir;
-        if (!fs.existsSync(dir)) {
-          FileUtils.mkDirByPathSync(dir);
-        }
-
-        fs.writeFileSync(
-          outputPath,
-          JSON.stringify({
-            revisionFrom: activeLogFrom ? activeLogFrom : revisionFrom,
-            revisionTo: revisionTo,
-            changeLog: changeLog,
-          })
-        );
-        SFPowerkit.log(
-          `Change log ${outputPath} is generated successfully`,
-          LoggerLevel.INFO
-        );
-      }
-    }
-
     var metadataFiles: string[] = [];
     for (let dir of this.objectspath) {
       metadataFiles = metadataFiles.concat(FileUtils.getAllFilesSync(dir));
@@ -178,7 +94,9 @@ export default class ReportImpl {
 
           let metadataJson = await xmlUtil.xmlToJSON(metadataFile);
           delete metadataJson[type]["$"];
-
+          let packageName = await SFPowerkit.getPackageName(
+            metadataFile.split("\\").join("/")
+          );
           let component = {
             name: name,
             metadatype: type,
@@ -187,6 +105,7 @@ export default class ReportImpl {
               : "",
             sourcePath: metadataFile.split("\\").join("/"),
             metadataJson: metadataJson[type],
+            package: packageName,
           };
 
           result.push(component);
@@ -196,6 +115,8 @@ export default class ReportImpl {
 
     if (result.length > 0) {
       SFPowerkit.log(`Items Found ${result.length}`, LoggerLevel.INFO);
+
+      let changeLog = await this.generateChangelog(result);
 
       if (this.outputFormat === "json") {
         await this.generateJsonOutput(result);
@@ -221,7 +142,7 @@ export default class ReportImpl {
     }
     let newLine = "\r\n";
     let output =
-      "Metadata type,Name,Label,ObjectName,fieldType,status(recordtypes/validation rules),source Path" +
+      "Metadata type,Name,Label,ObjectName,fieldType,status(recordtypes/validation rules),Package Name,source Path" +
       newLine;
     result.forEach((element) => {
       let fieldType =
@@ -237,7 +158,7 @@ export default class ReportImpl {
       let elementLabel = !isNullOrUndefined(element.metadataJson.label)
         ? element.metadataJson.label
         : "";
-      output = `${output}${element.metadatype},${element.name},${elementLabel},${element.objectName},${fieldType},${status},${element.sourcePath}${newLine}`;
+      output = `${output}${element.metadatype},${element.name},${elementLabel},${element.objectName},${fieldType},${status},${element.package},${element.sourcePath}${newLine}`;
     });
     fs.writeFileSync(outputcsvPath, output);
     SFPowerkit.log(
@@ -277,24 +198,15 @@ export default class ReportImpl {
   private generateMdFromType(filepath: string, file: any, changeLog: any) {
     let result = "";
     if (file.metadatype === "CustomField") {
-      result = MarkdownGeneratorImpl.generateMdforCustomField(
-        file.metadataJson
-      );
+      result = MarkdownGeneratorImpl.generateMdforCustomField(file);
     } else if (file.metadatype === "BusinessProcess") {
-      result = MarkdownGeneratorImpl.generateMdforBusinessProcess(
-        file.metadataJson
-      );
+      result = MarkdownGeneratorImpl.generateMdforBusinessProcess(file);
     } else if (file.metadatype === "RecordType") {
-      result = MarkdownGeneratorImpl.generateMdforRecordType(file.metadataJson);
+      result = MarkdownGeneratorImpl.generateMdforRecordType(file);
     } else if (file.metadatype === "ValidationRule") {
-      result = MarkdownGeneratorImpl.generateMdforValidationRule(
-        file.metadataJson
-      );
+      result = MarkdownGeneratorImpl.generateMdforValidationRule(file);
     } else if (file.metadatype === "CustomObject") {
-      result = MarkdownGeneratorImpl.generateMdforCustomObject(
-        file.metadataJson,
-        file.name
-      );
+      result = MarkdownGeneratorImpl.generateMdforCustomObject(file);
     }
     let keys = Object.keys(changeLog);
     if (keys.includes(file.sourcePath)) {
@@ -312,5 +224,93 @@ export default class ReportImpl {
       }
     }
     fs.writeFileSync(filepath, result);
+  }
+  private async generateChangelog(metadataFiles: any[]) {
+    let changeLog = {};
+    if (this.includechangelog) {
+      let activeLogFrom;
+      let activeLogTo;
+      if (
+        this.existingchangelogPath &&
+        fs.existsSync(this.existingchangelogPath)
+      ) {
+        SFPowerkit.log(
+          `Loading active change Log  ${this.existingchangelogPath}`,
+          LoggerLevel.DEBUG
+        );
+        let activeLog = JSON.parse(
+          fs.readFileSync(`${this.existingchangelogPath}`, "utf8")
+        );
+        if (activeLog && activeLog.revisionTo && activeLog.changeLog) {
+          changeLog = activeLog.changeLog;
+          activeLogFrom = activeLog.revisionFrom;
+          activeLogTo = activeLog.revisionTo;
+        }
+      }
+
+      if (!activeLogTo) {
+        // get git log to find last commit id
+        let options = {
+          format: { hash: "%H", date: "%ai", author_name: "%aN" },
+          "--reverse": true,
+          file: "**/objects/*-meta.xml",
+        };
+        let gitLog = await this.git.log(options);
+        activeLogTo = gitLog.latest.hash;
+      }
+      const revisionFrom: string = await this.git.revparse([
+        "--short",
+        activeLogTo,
+      ]);
+      const revisionTo: string = await this.git.revparse(["--short", "HEAD"]);
+
+      if (revisionFrom != revisionTo) {
+        SFPowerkit.log(
+          `Fetching change Log from ${revisionFrom} to ${revisionTo} `,
+          LoggerLevel.DEBUG
+        );
+        let parsedPath = metadataFiles.map((file) => file.sourcePath);
+        let changeLogImpl = new ChangeLogImpl(
+          this.git,
+          revisionFrom,
+          revisionTo,
+          parsedPath
+        );
+
+        let generatedChangeLog = await changeLogImpl.exec();
+
+        if (changeLog && Object.keys(changeLog).length > 0) {
+          Object.keys(generatedChangeLog).forEach((key) => {
+            if (changeLog[key]) {
+              changeLog[key].push(generatedChangeLog[key]);
+            } else {
+              changeLog[key] = generatedChangeLog[key];
+            }
+          });
+        } else {
+          changeLog = generatedChangeLog;
+        }
+
+        let outputPath = `${this.outputDir}${path.sep}changeLog.json`;
+        let dir = path.parse(outputPath).dir;
+        if (!fs.existsSync(dir)) {
+          FileUtils.mkDirByPathSync(dir);
+        }
+
+        fs.writeFileSync(
+          outputPath,
+          JSON.stringify({
+            revisionFrom: activeLogFrom ? activeLogFrom : revisionFrom,
+            revisionTo: revisionTo,
+            changeLog: changeLog,
+          })
+        );
+        SFPowerkit.log(
+          `Change log ${outputPath} is generated successfully`,
+          LoggerLevel.INFO
+        );
+      }
+    }
+    return changeLog;
   }
 }

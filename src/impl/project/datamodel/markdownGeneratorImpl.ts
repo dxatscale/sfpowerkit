@@ -3,8 +3,16 @@ export default class MarkdownGeneratorImpl {
   private static titleBlock = "\n---\n";
   private static tickMark = ":heavy_check_mark:";
   private static crossMark = ":x:";
-  public static generateMdforCustomField(metadataJson: any) {
-    let markdownResult = `## Name : ${metadataJson.fullName} ${this.titleBlock}`;
+  public static generateMdforCustomField(file: any) {
+    let metadataJson = file.metadataJson;
+    let markdownResult = `## Name : ${metadataJson.fullName}`;
+    if (file.objectName) {
+      markdownResult = `${markdownResult}\n**Object : ${file.objectName}**\n`;
+    }
+    if (file.package) {
+      markdownResult = `${markdownResult}**Package : ${file.package}**\n`;
+    }
+    markdownResult = `${markdownResult}${this.titleBlock}`;
     if (metadataJson.label) {
       markdownResult = `${markdownResult}**Label** : ${metadataJson.label}\n`;
     }
@@ -362,8 +370,16 @@ export default class MarkdownGeneratorImpl {
       ? ` ${request} ${this.tickMark}`
       : ` ${request} ${this.crossMark}`;
   }
-  public static generateMdforRecordType(metadataJson: any) {
-    let markdownResult = `## Name : ${metadataJson.fullName} ${this.titleBlock}`;
+  public static generateMdforRecordType(file: any) {
+    let metadataJson = file.metadataJson;
+    let markdownResult = `## Name : ${metadataJson.fullName}`;
+    if (file.objectName) {
+      markdownResult = `${markdownResult}\n**Object : ${file.objectName}**`;
+    }
+    if (file.package) {
+      markdownResult = `${markdownResult}\n**Package : ${file.package}**`;
+    }
+    markdownResult = `${markdownResult}${this.titleBlock}`;
     if (metadataJson.label) {
       markdownResult = `${markdownResult}**Label** : ${metadataJson.label}\n`;
     }
@@ -429,8 +445,16 @@ export default class MarkdownGeneratorImpl {
     result = `${result}</tbody>  </table>`;
     return result;
   }
-  public static generateMdforBusinessProcess(metadataJson: any) {
-    let markdownResult = `## Name : ${metadataJson.fullName} ${this.titleBlock}`;
+  public static generateMdforBusinessProcess(file: any) {
+    let metadataJson = file.metadataJson;
+    let markdownResult = `## Name : ${metadataJson.fullName}`;
+    if (file.objectName) {
+      markdownResult = `${markdownResult}\n**Object : ${file.objectName}**`;
+    }
+    if (file.package) {
+      markdownResult = `${markdownResult}\n**Package : ${file.package}**`;
+    }
+    markdownResult = `${markdownResult}${this.titleBlock}`;
 
     if (metadataJson.isActive) {
       markdownResult = `${markdownResult}**is Active ?** : ${this.contructTrueFalse(
@@ -450,8 +474,16 @@ export default class MarkdownGeneratorImpl {
     }
     return markdownResult;
   }
-  public static generateMdforValidationRule(metadataJson: any) {
-    let markdownResult = `## Name : ${metadataJson.fullName} ${this.titleBlock}`;
+  public static generateMdforValidationRule(file: any) {
+    let metadataJson = file.metadataJson;
+    let markdownResult = `## Name : ${metadataJson.fullName}`;
+    if (file.objectName) {
+      markdownResult = `${markdownResult}\n**Object : ${file.objectName}**`;
+    }
+    if (file.package) {
+      markdownResult = `${markdownResult}\n**Package : ${file.package}**`;
+    }
+    markdownResult = `${markdownResult}${this.titleBlock}`;
 
     if (metadataJson.active) {
       markdownResult = `${markdownResult}**is Active ?** : ${this.contructTrueFalse(
@@ -474,8 +506,9 @@ export default class MarkdownGeneratorImpl {
     }
     return markdownResult;
   }
-  public static generateMdforCustomObject(metadataJson: any, name: string) {
-    let markdownResult = `## Name : ${name} ${this.titleBlock}`;
+  public static generateMdforCustomObject(file: any) {
+    let metadataJson = file.metadataJson;
+    let markdownResult = `## Name : ${file.name} ${this.titleBlock}`;
 
     if (metadataJson.description) {
       markdownResult = `${markdownResult}**Description** : ${metadataJson.description}\n`;

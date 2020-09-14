@@ -1,5 +1,5 @@
 {
-  "version": "2.2.3",
+  "version": "2.2.4",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -2541,7 +2541,7 @@
     "sfpowerkit:project:datamodel:report": {
       "id": "sfpowerkit:project:datamodel:report",
       "description": "This command is used to generate datamodel report from project",
-      "usage": "<%= command.id %> -d <string> -t <array> [-p <array>] [-f json|csv|md] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "usage": "<%= command.id %> -d <string> -t <array> [-p <array>] [-f json|csv|md] [-l] [-a <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],
@@ -2550,7 +2550,7 @@
         "$ sfdx sfpowerkit:project:datamodel:report -p force-app/main/default/objects -d result",
         "$ sfdx sfpowerkit:project:datamodel:report -p force-app/main/default/objects -t CustomField,RecordType",
         "$ sfdx sfpowerkit:project:datamodel:report -p force-app/main/default/objects -t CustomField,RecordType -f csv",
-        "$ sfdx sfpowerkit:project:datamodel:report -f md -d docs"
+        "$ sfdx sfpowerkit:project:datamodel:report -f md -d docs -l"
       ],
       "flags": {
         "json": {
@@ -2619,6 +2619,21 @@
           "helpValue": "(json|csv|md)",
           "options": ["json", "csv", "md"],
           "default": "json"
+        },
+        "includechangelog": {
+          "name": "includechangelog",
+          "type": "boolean",
+          "char": "l",
+          "description": "Generate changelog for data model. This will fetch the entire git history for generating changelog, be advised on time consumption",
+          "required": false,
+          "allowNo": false
+        },
+        "activechangelogpath": {
+          "name": "activechangelogpath",
+          "type": "option",
+          "char": "a",
+          "description": "Path to existing change if available",
+          "required": false
         }
       },
       "args": []

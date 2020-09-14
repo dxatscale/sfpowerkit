@@ -20,6 +20,7 @@ export class SFPowerkit {
   private static sourceApiVersion: any;
   private static logger;
   public static logLevel;
+  private static packageInfos: any[];
 
   public static setLogLevel(logLevel: string, isJsonFormatEnabled: boolean) {
     logLevel = logLevel.toLowerCase();
@@ -88,6 +89,22 @@ export class SFPowerkit {
   }
   public static setDefaultFolder(defaultFolder: string) {
     SFPowerkit.defaultFolder = defaultFolder;
+  }
+  public static async getPackageName(filePath: string) {
+    if (!SFPowerkit.packageInfos) {
+      SFPowerkit.packageInfos = [];
+      const dxProject = await SfdxProject.resolve();
+      const project = await dxProject.retrieveSfdxProjectJson();
+      let packages = (project.get("packageDirectories") as any[]) || [];
+      SFPowerkit.packageInfos = packages;
+    }
+    let packageName = "";
+    SFPowerkit.packageInfos.forEach((packageInfo) => {
+      if (filePath.includes(packageInfo.path) && packageInfo.package) {
+        packageName = packageInfo.package;
+      }
+    });
+    return packageName;
   }
 
   public static async getConfig() {

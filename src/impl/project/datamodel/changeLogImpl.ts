@@ -23,7 +23,7 @@ export default class ChangeLogImpl {
       from: this.baseline,
       to: this.target,
       format: { hash: "%H", date: "%ai", author_name: "%aN" },
-      file: this.packageDirectories,
+      file: "**/objects/*-meta.xml",
     };
     const gitLogResult = await this.git.log(options);
 
