@@ -1,0 +1,6 @@
+{
+  "commandDescription": "Fetch dependencies version details of a package",
+  "usedependencyvalidatedpackagesDescription": "use dependency validated packages that matches the version number schema provide",
+  "updateprojectDescription": "update the sfdx-project.json with result",
+  "filterpathsDescription": "filter packageDirectories using path to get dependent packages details only for the specified path"
+}
