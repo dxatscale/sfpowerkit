@@ -119,7 +119,7 @@ export default class OrgCoverage extends SfdxCommand {
   ) {
     let metadataVsPackageMap = await this.getmetadataVsPackageMap(conn);
     let query =
-      "SELECT ApexClassOrTriggerId, ApexClassOrTrigger.Name, NumLinesCovered, NumLinesUncovered, coverage FROM ApexCodeCoverageAggregate ORDER BY ApexClassOrTrigger.Name";
+      "SELECT ApexClassOrTriggerId, ApexClassOrTrigger.Name, NumLinesCovered, NumLinesUncovered, coverage FROM ApexCodeCoverageAggregate WHERE ApexClassOrTriggerId != null AND ApexClassOrTrigger.Name != null ORDER BY ApexClassOrTrigger.Name";
 
     const results = (await conn.tooling.query(query)) as any;
     const output = [];
