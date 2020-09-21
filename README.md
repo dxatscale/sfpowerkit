@@ -55,6 +55,7 @@ $ sfdx plugins:link
     - [`sfpowerkit:project:datamodel:diff [BETA]`](#sfpowerkitprojectdatamodeldiff-beta)
   - [Unlocked Package Related Functionalities](#unlocked-package-related-functionalities)
     - [`sfpowerkit:package:dependencies:install`](#sfpowerkitpackagedependenciesinstall)
+    - [`sfpowerkit:package:dependencies:list`](#sfpowerkitpackagedependencieslist)
     - [`sfpowerkit:package:version:codecoverage`](#sfpowerkitpackageversioncodecoverage)
     - [`sfpowerkit:package:version:info`](#sfpowerkitpackageversioninfo)
     - [`sfpowerkit:package:valid`](#sfpowerkitpackagevalid)
@@ -538,6 +539,37 @@ EXAMPLE
 ```
 
 _See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/package/dependencies/install.ts)_
+
+### `sfpowerkit:package:dependencies:list`
+
+Fetch dependencies version details of a package
+
+```
+USAGE
+  $ sfdx sfpowerkit:package:dependencies:list [-p <array>] [-s] [--usedependencyvalidatedpackages] [-v <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -p, --filterpaths=filterpaths                                                     filter packageDirectories using path to get dependent packages details only for the
+                                                                                    specified path
+
+  -s, --updateproject                                                               update the sfdx-project.json with result
+
+  -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
+
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+
+  --json                                                                            format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+  --usedependencyvalidatedpackages                                                  use dependency validated packages that matches the version number schema provide
+
+EXAMPLES
+  $ sfdx sfpowerkit:package:dependencies:list -v MyDevHub -s src/dreamhouse
+  $ sfdx sfpowerkit:package:dependencies:list -v MyDevHub --updateproject
+  $ sfdx sfpowerkit:package:dependencies:list -v MyDevHub -s --usedependencyvalidatedpackages
+```
 
 ### `sfpowerkit:package:version:codecoverage`
 
