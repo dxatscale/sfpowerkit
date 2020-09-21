@@ -54,7 +54,7 @@ $ sfdx plugins:link
     - [`sfpowerkit:project:datamodel:diff [BETA]`](#sfpowerkitprojectdatamodeldiff-beta)
   - [Unlocked Package Related Functionalities](#unlocked-package-related-functionalities)
     - [`sfpowerkit:package:dependencies:install`](#sfpowerkitpackagedependenciesinstall)
-    - [`sfpowerkit:package:dependencies:versionlist`](#sfpowerkitpackagedependenciesversionlist)
+    - [`sfpowerkit:package:dependencies:list`](#sfpowerkitpackagedependencieslist)
     - [`sfpowerkit:package:version:codecoverage`](#sfpowerkitpackageversioncodecoverage)
     - [`sfpowerkit:package:version:info`](#sfpowerkitpackageversioninfo)
     - [`sfpowerkit:package:valid`](#sfpowerkitpackagevalid)
@@ -513,13 +513,13 @@ EXAMPLE
 
 _See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/package/dependencies/install.ts)_
 
-### `sfpowerkit:package:dependencies:versionlist`
+### `sfpowerkit:package:dependencies:list`
 
 Fetch dependencies version details of a package
 
 ```
 USAGE
-  $ sfdx sfpowerkit:package:dependencies:versionlist [-p <array>] [-s] [--usedependencyvalidatedpackages] [-v <string>] [--apiversion <string>] [--json] [--loglevel
+  $ sfdx sfpowerkit:package:dependencies:list [-p <array>] [-s] [--usedependencyvalidatedpackages] [-v <string>] [--apiversion <string>] [--json] [--loglevel
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
@@ -539,9 +539,9 @@ OPTIONS
   --usedependencyvalidatedpackages                                                  use dependency validated packages that matches the version number schema provide
 
 EXAMPLES
-  $ sfdx sfpowerkit:package:dependencies:versionlist -v MyDevHub -s src/dreamhouse
-  $ sfdx sfpowerkit:package:dependencies:versionlist -v MyDevHub --updateproject
-  $ sfdx sfpowerkit:package:dependencies:versionlist -v MyDevHub -s --usedependencyvalidatedpackages
+  $ sfdx sfpowerkit:package:dependencies:list -v MyDevHub -s src/dreamhouse
+  $ sfdx sfpowerkit:package:dependencies:list -v MyDevHub --updateproject
+  $ sfdx sfpowerkit:package:dependencies:list -v MyDevHub -s --usedependencyvalidatedpackages
 ```
 
 ### `sfpowerkit:package:version:codecoverage`

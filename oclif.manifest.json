@@ -2324,17 +2324,17 @@
       },
       "args": []
     },
-    "sfpowerkit:package:dependencies:versionlist": {
-      "id": "sfpowerkit:package:dependencies:versionlist",
+    "sfpowerkit:package:dependencies:list": {
+      "id": "sfpowerkit:package:dependencies:list",
       "description": "Fetch dependencies version details of a package",
       "usage": "<%= command.id %> [-p <array>] [-s] [--usedependencyvalidatedpackages] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],
       "examples": [
-        "$ sfdx sfpowerkit:package:dependencies:versionlist -v MyDevHub -s src/dreamhouse",
-        "$ sfdx sfpowerkit:package:dependencies:versionlist -v MyDevHub --updateproject",
-        "$ sfdx sfpowerkit:package:dependencies:versionlist -v MyDevHub -s --usedependencyvalidatedpackages"
+        "$ sfdx sfpowerkit:package:dependencies:list -v MyDevHub -s src/dreamhouse",
+        "$ sfdx sfpowerkit:package:dependencies:list -v MyDevHub --updateproject",
+        "$ sfdx sfpowerkit:package:dependencies:list -v MyDevHub -s --usedependencyvalidatedpackages"
       ],
       "flags": {
         "json": {

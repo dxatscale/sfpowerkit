@@ -15,13 +15,13 @@ const messages = core.Messages.loadMessages(
   "dependency_versionlist"
 );
 
-export default class Versionlist extends SfdxCommand {
+export default class List extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    "$ sfdx sfpowerkit:package:dependencies:versionlist -v MyDevHub -s src/dreamhouse",
-    "$ sfdx sfpowerkit:package:dependencies:versionlist -v MyDevHub --updateproject",
-    "$ sfdx sfpowerkit:package:dependencies:versionlist -v MyDevHub -s --usedependencyvalidatedpackages",
+    "$ sfdx sfpowerkit:package:dependencies:list -v MyDevHub -s src/dreamhouse",
+    "$ sfdx sfpowerkit:package:dependencies:list -v MyDevHub --updateproject",
+    "$ sfdx sfpowerkit:package:dependencies:list -v MyDevHub -s --usedependencyvalidatedpackages",
   ];
 
   protected static flagsConfig = {
