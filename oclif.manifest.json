@@ -1,5 +1,5 @@
 {
-  "version": "2.2.3",
+  "version": "2.2.4",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -2320,6 +2320,83 @@
           "char": "f",
           "description": "in a mono repo project, filter packageDirectories using path and install dependent packages only for the specified path",
           "required": false
+        }
+      },
+      "args": []
+    },
+    "sfpowerkit:package:dependencies:list": {
+      "id": "sfpowerkit:package:dependencies:list",
+      "description": "Fetch dependencies version details of a package",
+      "usage": "<%= command.id %> [-p <array>] [-s] [--usedependencyvalidatedpackages] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "pluginName": "sfpowerkit",
+      "pluginType": "core",
+      "aliases": [],
+      "examples": [
+        "$ sfdx sfpowerkit:package:dependencies:list -v MyDevHub -s src/dreamhouse",
+        "$ sfdx sfpowerkit:package:dependencies:list -v MyDevHub --updateproject",
+        "$ sfdx sfpowerkit:package:dependencies:list -v MyDevHub -s --usedependencyvalidatedpackages"
+      ],
+      "flags": {
+        "json": {
+          "name": "json",
+          "type": "boolean",
+          "description": "format output as json",
+          "allowNo": false
+        },
+        "loglevel": {
+          "name": "loglevel",
+          "type": "option",
+          "description": "logging level for this command invocation",
+          "required": false,
+          "helpValue": "(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)",
+          "options": [
+            "trace",
+            "debug",
+            "info",
+            "warn",
+            "error",
+            "fatal",
+            "TRACE",
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "ERROR",
+            "FATAL"
+          ],
+          "default": "warn"
+        },
+        "targetdevhubusername": {
+          "name": "targetdevhubusername",
+          "type": "option",
+          "char": "v",
+          "description": "username or alias for the dev hub org; overrides default dev hub org"
+        },
+        "apiversion": {
+          "name": "apiversion",
+          "type": "option",
+          "description": "override the api version used for api requests made by this command"
+        },
+        "filterpaths": {
+          "name": "filterpaths",
+          "type": "option",
+          "char": "p",
+          "description": "filter packageDirectories using path to get dependent packages details only for the specified path",
+          "required": false
+        },
+        "updateproject": {
+          "name": "updateproject",
+          "type": "boolean",
+          "char": "s",
+          "description": "update the sfdx-project.json with result",
+          "required": false,
+          "allowNo": false
+        },
+        "usedependencyvalidatedpackages": {
+          "name": "usedependencyvalidatedpackages",
+          "type": "boolean",
+          "description": "use dependency validated packages that matches the version number schema provide",
+          "required": false,
+          "allowNo": false
         }
       },
       "args": []
