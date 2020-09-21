@@ -72,7 +72,7 @@ export default class List extends SfdxCommand {
           packageDirectory.dependencies[0] !== undefined
         ) {
           this.ux.log(
-            `\nPackage dependencies found for package directory ${packageDirectory.path}`
+            `\nPackage dependencies for the given package directory ${packageDirectory.path}`
           );
           for (let dependency of packageDirectory.dependencies) {
             if (
@@ -148,7 +148,11 @@ export default class List extends SfdxCommand {
 
       if (resultPackageId.size === 0) {
         // Query returned no result
-        const errorMessage = `Unable to find SubscriberPackageVersionId for dependent package ${dependency.package}`;
+        const errorMessage = `Unable to find package ${
+          dependency.package
+        } of version ${
+          dependency.versionNumber
+        } in devhub ${this.hubOrg.getUsername()}. Are you sure it is created yet?`;
         throw new core.SfdxError(errorMessage);
       } else {
         let versionId = resultPackageId.records[0].SubscriberPackageVersionId;
