@@ -173,9 +173,7 @@ export default class Generatepatch extends SfdxCommand {
 
         if (
           field_metadata.CustomField.valueSet &&
-          (!field_metadata.CustomField.fieldManageability ||
-            field_metadata.CustomField.fieldManageability ===
-              "DeveloperControlled")
+          !field_metadata.CustomField.fieldManageability
         ) {
           result.push(file);
           SFPowerkit.log(`Copied Original to Patch: ${file}`, LoggerLevel.INFO);
