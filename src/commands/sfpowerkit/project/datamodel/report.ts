@@ -1,7 +1,7 @@
 import { AnyJson } from "@salesforce/ts-types";
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { SFPowerkit } from "../../../../sfpowerkit";
-import datamodelReportImpl from "../../../../impl/project/datamodel/reportimpl";
+import datamodelReportImpl from "../../../../impl/project/datamodel/reportImpl";
 import simpleGit, { SimpleGit } from "simple-git";
 
 // Initialize Messages with the current plugin directory
