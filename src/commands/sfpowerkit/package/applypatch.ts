@@ -3,12 +3,8 @@ import fs from "fs-extra";
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import rimraf = require("rimraf");
 import { AsyncResult, DeployResult } from "jsforce";
-import { AsyncResource } from "async_hooks";
 import { SfdxError } from "@salesforce/core";
-import xml2js = require("xml2js");
-import util = require("util");
 // tslint:disable-next-line:ordered-imports
-var jsforce = require("jsforce");
 var path = require("path");
 import { checkRetrievalStatus } from "../../../utils/checkRetrievalStatus";
 import { checkDeploymentStatus } from "../../../utils/checkDeploymentStatus";
