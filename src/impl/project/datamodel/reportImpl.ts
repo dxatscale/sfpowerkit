@@ -5,9 +5,9 @@ import FileUtils from "../../../utils/fileutils";
 import { METADATA_INFO } from "../../metadata/metadataInfo";
 import xmlUtil from "../../../utils/xmlUtil";
 import { AnyJson } from "@salesforce/ts-types";
-import MarkdownGeneratorImpl from "./MarkdownGeneratorImpl";
+import MarkdownGeneratorImpl from "./markdownGeneratorImpl";
 import { isNullOrUndefined } from "util";
-import ChangeLogImpl from "./ChangeLogImpl";
+import ChangeLogImpl from "./changeLogImpl";
 
 var path = require("path");
 const SEP = /\/|\\/;
