@@ -1,0 +1,5 @@
+{
+  "commandDescription": "Retrieves and applies the patch, Useful after a package upgrade in a CD Environment",
+  "nameFlagDescription": "Name of the static resource to be patched",
+  "usernameFlagDescription": "Username for the org"
+}
