@@ -1,0 +1,420 @@
+{
+  "customField": {
+    "label": {
+      "type": "string",
+      "title": "Label"
+    },
+    "type": {
+      "type": "string",
+      "title": "Type"
+    },
+    "length": {
+      "type": "string",
+      "title": "Length"
+    },
+    "precision": {
+      "type": "string",
+      "title": "Decimal Precision"
+    },
+    "visibleLines": {
+      "type": "string",
+      "title": "Visible Lines"
+    },
+    "required": {
+      "type": "boolean",
+      "title": "Required"
+    },
+    "unique": {
+      "type": "boolean",
+      "title": "Unique"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "defaultValue": {
+      "type": "string",
+      "title": "Default Value"
+    },
+    "deprecated": {
+      "type": "boolean",
+      "title": "Deprecated"
+    },
+    "caseSensitive": {
+      "type": "boolean",
+      "title": "Case Sensitive"
+    },
+    "complianceGroup": {
+      "type": "string",
+      "title": "Compliance Group"
+    },
+    "deleteConstraint": {
+      "type": "string",
+      "title": "Delete Constraint"
+    },
+    "displayFormat": {
+      "type": "string",
+      "title": "Display Format"
+    },
+    "startingNumber": {
+      "type": "string",
+      "title": "Starting Number"
+    },
+    "encrypted": {
+      "type": "boolean",
+      "title": "Encrypted"
+    },
+    "encryptionScheme": {
+      "type": "string",
+      "title": "*Encryption Scheme"
+    },
+    "externalDeveloperName": {
+      "type": "string",
+      "title": "External Developer Name"
+    },
+    "externalId": {
+      "type": "boolean",
+      "title": "ExternalId ?"
+    },
+    "fieldManageability": {
+      "type": "string",
+      "title": "Field Manageability"
+    },
+    "formula": {
+      "type": "code block",
+      "title": "Formula"
+    },
+    "formulaTreatBlankAs": {
+      "type": "string",
+      "title": "Formula Treat Blank As"
+    },
+    "inlineHelpText": {
+      "type": "string",
+      "title": "Help Text"
+    },
+    "isAIPredictionField": {
+      "type": "boolean",
+      "title": "AI Prediction Field ?"
+    },
+    "isFilteringDisabled": {
+      "type": "boolean",
+      "title": "Filtering Disabled ?"
+    },
+    "isNameField": {
+      "type": "boolean",
+      "title": "Name Field ?"
+    },
+    "isSortingDisabled": {
+      "type": "boolean",
+      "title": "Sorting Disabled ?"
+    },
+    "maskChar": {
+      "type": "string",
+      "title": "Mask Character"
+    },
+    "maskType": {
+      "type": "string",
+      "title": "Mask Type"
+    },
+    "metadataRelationship​ControllingField": {
+      "type": "string",
+      "title": "Metadata Relationship​ Controlling Field"
+    },
+    "populateExistingRows": {
+      "type": "boolean",
+      "title": "Populate Existing Rows"
+    },
+    "referenceTargetField": {
+      "type": "string",
+      "title": "Reference Target Field"
+    },
+    "referenceTo": {
+      "type": "string",
+      "title": "Reference To"
+    },
+    "relationshipLabel": {
+      "type": "string",
+      "title": "Relationship Label"
+    },
+    "relationshipName": {
+      "type": "string",
+      "title": "Relationship Name"
+    },
+    "relationshipOrder": {
+      "type": "string",
+      "title": "Relationship Order"
+    },
+    "reparentableMasterDetail": {
+      "type": "boolean",
+      "title": "Reparentable MasterDetail ?"
+    },
+    "scale": {
+      "type": "string",
+      "title": "Scale"
+    },
+    "securityClassification": {
+      "type": "string",
+      "title": "Security Classification"
+    },
+    "stripMarkup": {
+      "type": "boolean",
+      "title": "Strip Markup"
+    },
+    "summarizedField": {
+      "type": "string",
+      "title": "Summarized Field"
+    },
+    "summaryForeignKey": {
+      "type": "string",
+      "title": "Summary ForeignKey"
+    },
+    "summaryOperation": {
+      "type": "string",
+      "title": "Summary Operation"
+    },
+    "trackFeedHistory": {
+      "type": "boolean",
+      "title": "Track Feed History"
+    },
+    "trackHistory": {
+      "type": "boolean",
+      "title": "Track History"
+    },
+    "trackTrending": {
+      "type": "boolean",
+      "title": "Track Trending"
+    },
+    "writeRequiresMasterRead": {
+      "type": "boolean",
+      "title": "write Requires MasterRead"
+    },
+    "summaryFilterItems": {
+      "type": "summaryFilterItems",
+      "title": "**Summary Filter Items** : \nField | Operation | Value | ValueField \n--- | --- | --- | ---\n"
+    },
+    "valueSet": {
+      "type": "valueSet",
+      "title": "**Picklist valueset** : \nSetting | Value \n --- | ---\n",
+      "valueSet": {
+        "restricted": {
+          "type": "boolean",
+          "title": "Restricted Picklist ?"
+        },
+        "controllingField": {
+          "type": "string",
+          "title": "Controlling Field"
+        },
+        "valueSetName": {
+          "type": "string",
+          "title": "Globalvalueset"
+        },
+        "valueSetDefinition": {
+          "type": "valueSetDefinition",
+          "title": "valueSetDefinition"
+        },
+        "valueSettings": {
+          "type": "valueSettings",
+          "title": "valueSetDefinition"
+        }
+      }
+    },
+    "lookupFilter": {
+      "type": "lookupFilter",
+      "title": "**Lookup Filter** : \nSetting | Value \n --- | ---\n",
+      "lookupFilter": {
+        "active": {
+          "type": "boolean",
+          "title": "is Active ?"
+        },
+        "booleanFilter": {
+          "type": "code block",
+          "title": "Filter logic"
+        },
+        "errorMessage": {
+          "type": "stringliteral",
+          "title": "Error Message"
+        },
+        "infoMessage": {
+          "type": "stringliteral",
+          "title": "Info Message"
+        },
+        "isOptional": {
+          "type": "boolean",
+          "title": "is Optional ?"
+        },
+        "filterItems": {
+          "type": "filterItems",
+          "title": "Filter Items"
+        }
+      }
+    }
+  },
+  "businessProcess": {
+    "isActive": {
+      "type": "boolean",
+      "title": "is Active ?"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "namespacePrefix": {
+      "type": "string",
+      "title": "Namespace Prefix"
+    },
+    "values": {
+      "type": "values",
+      "title": "Values"
+    }
+  },
+  "recordType": {
+    "label": {
+      "type": "string",
+      "title": "Label"
+    },
+    "active": {
+      "type": "boolean",
+      "title": "is Active ?"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "businessProcess": {
+      "type": "string",
+      "title": "Business Process"
+    },
+    "compactLayoutAssignment": {
+      "type": "string",
+      "title": "Compact Layout Assignment"
+    },
+    "picklistValues": {
+      "type": "picklistValues",
+      "title": "**Picklist Values** : \n Picklist Field | Available Values\n--- | --- \n"
+    }
+  },
+  "validationRule": {
+    "active": {
+      "type": "boolean",
+      "title": "is Active ?"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "errorMessage": {
+      "type": "string",
+      "title": "Error Message"
+    },
+    "errorDisplayField": {
+      "type": "string",
+      "title": "Error Display Field"
+    },
+    "errorConditionFormula": {
+      "type": "code block",
+      "title": "**Picklist Values** : \n Picklist Field | Available Values\n--- | --- \n"
+    }
+  },
+  "customObject": {
+    "label": {
+      "type": "string",
+      "title": "Label"
+    },
+    "description": {
+      "type": "string",
+      "title": "Description"
+    },
+    "pluralLabel": {
+      "type": "string",
+      "title": "Plural Label"
+    },
+    "nameField": {
+      "type": "nameField",
+      "title": "Name Field"
+    },
+    "eventType": {
+      "type": "string",
+      "title": "Event Type"
+    },
+    "publishBehavior": {
+      "type": "string",
+      "title": "Publish Behavior"
+    },
+    "visibility": {
+      "type": "string",
+      "title": "Visibility"
+    },
+    "sharingModel": {
+      "type": "string",
+      "title": "Sharing Model"
+    },
+    "externalSharingModel": {
+      "type": "string",
+      "title": "External Sharing Model"
+    },
+    "enableStreamingApi": {
+      "type": "boolean",
+      "title": "Enable Streaming Api"
+    },
+    "enableSharing": {
+      "type": "boolean",
+      "title": "Enable Sharing"
+    },
+    "enableSearch": {
+      "type": "boolean",
+      "title": "Enable Search"
+    },
+    "enableReports": {
+      "type": "boolean",
+      "title": "Enable Reports"
+    },
+    "enableLicensing": {
+      "type": "boolean",
+      "title": "Enable Licensing"
+    },
+    "enableHistory": {
+      "type": "boolean",
+      "title": "Enable History"
+    },
+    "enableFeeds": {
+      "type": "boolean",
+      "title": "Enable Feeds"
+    },
+    "enableBulkApi": {
+      "type": "boolean",
+      "title": "Enable Bulk Api"
+    },
+    "enableActivities": {
+      "type": "boolean",
+      "title": "Enable Activities"
+    },
+    "deprecated": {
+      "type": "boolean",
+      "title": "Deprecated"
+    },
+    "allowInChatterGroups": {
+      "type": "boolean",
+      "title": "Allow In Chatter Groups"
+    },
+    "enableEnhancedLookup": {
+      "type": "boolean",
+      "title": "Enable Enhanced Lookup"
+    },
+    "recordTypeTrackHistory": {
+      "type": "boolean",
+      "title": "RecordType Track History"
+    },
+    "recordTypeTrackFeedHistory": {
+      "type": "boolean",
+      "title": "RecordType Track Feed History"
+    },
+    "compactLayoutAssignment": {
+      "type": "string",
+      "title": "Compact Layout Assignment"
+    },
+    "actionOverrides": {
+      "type": "actionOverrides",
+      "title": "Action Overrides"
+    }
+  }
+}

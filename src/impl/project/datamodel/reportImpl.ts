@@ -180,6 +180,8 @@ export default class ReportImpl {
   }
 
   private generateMdOutput(result: any[], changeLog: any) {
+    MarkdownGeneratorImpl.loadSchema();
+
     for (let item of result) {
       let filepath =
         this.outputDir + item.sourcePath.split("objects")[1] + ".md";
