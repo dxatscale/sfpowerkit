@@ -47,6 +47,7 @@ $ sfdx plugins:link
     - [`sfpowerkit:source:customlabel:reconcile`](#sfpowerkitsourcecustomlabelreconcile)
     - [`sfpowerkit:source:customlabel:buildmanifest`](#sfpowerkitsourcecustomlabelbuildmanifest)
     - [`sfpowerkit:source:apextestsuite:convert`](#sfpowerkitsourceapextestsuiteconvert)
+    - [`sfpowerkit:source:picklist:generatepatch`](#sfpowerkitsourcepicklistgeneratepatch)
     - [`sfpowerkit:project:diff`](#sfpowerkitprojectdiff)
     - [`sfpowerkit:project:orgdiff`](#sfpowerkitprojectorgdiff)
     - [`sfpowerkit:project:manifest:diff`](#sfpowerkitprojectmanifestdiff)
@@ -59,6 +60,7 @@ $ sfdx plugins:link
     - [`sfpowerkit:package:version:codecoverage`](#sfpowerkitpackageversioncodecoverage)
     - [`sfpowerkit:package:version:info`](#sfpowerkitpackageversioninfo)
     - [`sfpowerkit:package:valid`](#sfpowerkitpackagevalid)
+    - [`sfpowerkit:package:applypatch`](#sfpowerkitpackageapplypatch)
   - [Org Related Functionalities](#org-related-functionalities)
     - [`sfpowerkit:org:destruct`](#sfpowerkitorgdestruct)
     - [`sfpowerkit:org:connectedapp:create`](#sfpowerkitorgconnectedappcreate)
@@ -328,6 +330,23 @@ OPTIONS
 EXAMPLE
   $  sfdx sfpowerkit:source:apextestsuite:convert -n MyApexTestSuite
     "ABC2,ABC1Test"
+```
+
+### `sfpowerkit:source:picklist:generatepatch`
+
+Search picklist fields inside project and create a static resource file with picklist fields, used to solve the picklist upgrade issue in dx unlock package https://trailblazer.salesforce.com/issues_view?id=a1p3A0000003Uk2QAE
+
+```
+USAGE
+  $ sfdx sfpowerkit:source:picklist:generatepatch [-p <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -p, --package=package                                                             Name of the package to generate the picklist patch
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] [default: info] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:source:picklist:generatepatch -p sfpowerkit_test
 ```
 
 ### `sfpowerkit:project:diff`
@@ -664,6 +683,26 @@ EXAMPLE
 ```
 
 _See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/package/valid.ts)_
+
+### `sfpowerkit:package:applypatch`
+
+Retrieves and applies the patch, Useful after a package upgrade in a CD Environment
+
+```
+USAGE
+  $ sfdx sfpowerkit:package:applypatch -n <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -n, --name=name                                                                   (required) Name of the static resource to be patched
+  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:package:applypatch -n customer_picklist -u sandbox
+```
 
 ## Org Related Functionalities
 

@@ -3,7 +3,7 @@ import {
   flags,
   FlagsConfig,
   SfdxCommand,
-  Result
+  Result,
 } from "@salesforce/command";
 import { SfdxError } from "@salesforce/core";
 import { AnyJson } from "@salesforce/ts-types";
@@ -15,7 +15,7 @@ import * as rimraf from "rimraf";
 const querystring = require("querystring");
 
 import MetadataSummaryInfoFetcher, {
-  MetadataSummary
+  MetadataSummary,
 } from "../../../impl/metadata/retriever/metadataSummaryInfoFetcher";
 import DependencyImpl from "../../../impl/dependency/dependencyImpl";
 
@@ -44,21 +44,21 @@ export default class OrgCoverage extends SfdxCommand {
   01pxxxx            consumer      sampleHelper          ApexClass     72%           Action required                       62;76;77;78;98;130;131
   01qxxxx            consumer      sampleTrigger         ApexTrigger   100%
   Output testResult/output.csv is generated successfully
-  `
+  `,
   ];
 
   protected static flagsConfig: FlagsConfig = {
     output: flags.string({
       char: "d",
       description: messages.getMessage("outputFolderDescription"),
-      required: false
+      required: false,
     }),
     format: flags.enum({
       required: false,
       char: "f",
       description: messages.getMessage("formatFlagDescription"),
-      options: ["json", "csv"]
-    })
+      options: ["json", "csv"],
+    }),
   };
 
   // Comment this out if your command does not require an org username
@@ -105,9 +105,9 @@ export default class OrgCoverage extends SfdxCommand {
       method: "get",
       url: query_uri,
       headers: {
-        Authorization: `Bearer ${conn.accessToken}`
+        Authorization: `Bearer ${conn.accessToken}`,
       },
-      json: true
+      json: true,
     });
 
     // this.ux.logJson(health_score_query_result);
@@ -119,12 +119,12 @@ export default class OrgCoverage extends SfdxCommand {
   ) {
     let metadataVsPackageMap = await this.getmetadataVsPackageMap(conn);
     let query =
-      "SELECT ApexClassOrTriggerId, ApexClassOrTrigger.Name, NumLinesCovered, NumLinesUncovered, coverage FROM ApexCodeCoverageAggregate ORDER BY ApexClassOrTrigger.Name";
+      "SELECT ApexClassOrTriggerId, ApexClassOrTrigger.Name, NumLinesCovered, NumLinesUncovered, coverage FROM ApexCodeCoverageAggregate WHERE ApexClassOrTriggerId != null AND ApexClassOrTrigger.Name != null ORDER BY ApexClassOrTrigger.Name";
 
     const results = (await conn.tooling.query(query)) as any;
     const output = [];
     if (results.size > 0) {
-      results.records.forEach(element => {
+      results.records.forEach((element) => {
         let percentage;
         let comments = "";
         if (element.NumLinesCovered === 0 && element.NumLinesUncovered === 0) {
@@ -146,7 +146,7 @@ export default class OrgCoverage extends SfdxCommand {
           type: element.ApexClassOrTrigger.attributes.url.split("/")[6],
           percentage: percentage,
           comments: comments,
-          uncoveredLines: element.Coverage.uncoveredLines.join(";")
+          uncoveredLines: element.Coverage.uncoveredLines.join(";"),
         });
       });
 
@@ -157,7 +157,7 @@ export default class OrgCoverage extends SfdxCommand {
         "type",
         "percentage",
         "comments",
-        "uncoveredLines"
+        "uncoveredLines",
       ]);
 
       if (outputDir && this.flags.format === "json") {
@@ -200,7 +200,7 @@ export default class OrgCoverage extends SfdxCommand {
     let newLine = "\r\n";
     let output =
       "ID,PACKAGE,NAME,TYPE,PERCENTAGE,COMMENTS,UNCOVERED LINES" + newLine;
-    testResult.forEach(element => {
+    testResult.forEach((element) => {
       output = `${output}${element.id},${element.package},${element.name},${element.type},${element.percentage},${element.comments},${element.uncoveredLines}${newLine}`;
     });
     fs.writeFileSync(outputcsvPath, output);
@@ -216,7 +216,7 @@ export default class OrgCoverage extends SfdxCommand {
       conn,
       [
         { type: "ApexClass", folder: null },
-        { type: "ApexTrigger", folder: null }
+        { type: "ApexTrigger", folder: null },
       ],
       metadataMap
     );
