@@ -15,7 +15,7 @@ export default class FileUtils {
    * @param deletedComponents Files or directories to delete
    */
   public static deleteComponents(deletedComponents: string[]) {
-    deletedComponents.forEach(component => {
+    deletedComponents.forEach((component) => {
       if (fs.existsSync(component)) {
         if (fs.lstatSync(component).isDirectory()) {
           FileUtils.deleteFolderRecursive(component);
@@ -42,7 +42,7 @@ export default class FileUtils {
       return result;
     }
     let content: string[] = fs.readdirSync(folder);
-    content.forEach(file => {
+    content.forEach((file) => {
       let curFile = path.join(folder, file);
       let stats = fs.statSync(curFile);
       if (stats.isFile()) {
@@ -154,7 +154,7 @@ export default class FileUtils {
         if (!exists) {
           fs.mkdirSync(dest);
         }
-        fs.readdirSync(src).forEach(function(childItemName) {
+        fs.readdirSync(src).forEach(function (childItemName) {
           FileUtils.copyRecursiveSync(
             path.join(src, childItemName),
             path.join(dest, childItemName)
@@ -206,7 +206,7 @@ export default class FileUtils {
    */
   public static deleteFolderRecursive(folder) {
     if (fs.existsSync(folder)) {
-      fs.readdirSync(folder).forEach(function(file, index) {
+      fs.readdirSync(folder).forEach(function (file, index) {
         let curPath = path.join(folder, file);
         if (fs.lstatSync(curPath).isDirectory()) {
           // recurse
@@ -221,5 +221,15 @@ export default class FileUtils {
       //console.log("delete folder "+ folder);
       fs.rmdirSync(folder);
     }
+  }
+  public static makefolderid(length): string {
+    var result = "";
+    var characters =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
   }
 }
