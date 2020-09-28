@@ -56,7 +56,8 @@
     "unzip-stream": "0.3.0",
     "unzipper": "0.10.11",
     "xml-formatter": "^2.1.3",
-    "xml2js": "^0.4.23"
+    "xml2js": "^0.4.23",
+    "apex-parser": "^2.5.0"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.22.2",

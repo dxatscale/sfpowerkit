@@ -2814,6 +2814,53 @@
       },
       "args": []
     },
+    "sfpowerkit:source:apextest:list": {
+      "id": "sfpowerkit:source:apextest:list",
+      "description": "Search picklist fields inside project and create a static resource file with picklist fields, used to solve the picklist upgrade issue in dx unlock package https://trailblazer.salesforce.com/issues_view?id=a1p3A0000003Uk2QAE",
+      "usage": "<%= command.id %> -p <string> [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "pluginName": "sfpowerkit",
+      "pluginType": "core",
+      "aliases": [],
+      "examples": ["$ sfdx sfpowerkit:source:apextest:list -p force-app"],
+      "flags": {
+        "json": {
+          "name": "json",
+          "type": "boolean",
+          "description": "format output as json",
+          "allowNo": false
+        },
+        "loglevel": {
+          "name": "loglevel",
+          "type": "option",
+          "description": "[default: info] logging level for this command invocation",
+          "required": false,
+          "helpValue": "(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)",
+          "options": [
+            "trace",
+            "debug",
+            "info",
+            "warn",
+            "error",
+            "fatal",
+            "TRACE",
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "ERROR",
+            "FATAL"
+          ],
+          "default": "info"
+        },
+        "path": {
+          "name": "path",
+          "type": "option",
+          "char": "p",
+          "description": "Name of the package to generate the picklist patch",
+          "required": true
+        }
+      },
+      "args": []
+    },
     "sfpowerkit:source:apextestsuite:convert": {
       "id": "sfpowerkit:source:apextestsuite:convert",
       "description": "Converts an apex test suite to its consituent apex classes as a single line separated by commas, so that it can be used for metadata api deployment",
