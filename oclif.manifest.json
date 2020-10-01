@@ -1,5 +1,5 @@
 {
-  "version": "2.2.6",
+  "version": "2.2.7",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -2816,8 +2816,8 @@
     },
     "sfpowerkit:source:apextest:list": {
       "id": "sfpowerkit:source:apextest:list",
-      "description": "Search picklist fields inside project and create a static resource file with picklist fields, used to solve the picklist upgrade issue in dx unlock package https://trailblazer.salesforce.com/issues_view?id=a1p3A0000003Uk2QAE",
-      "usage": "<%= command.id %> -p <string> [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "description": "This command helps to get list of all apex text classes located in source path",
+      "usage": "<%= command.id %> -p <string> [--resultasstring] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],
@@ -2855,8 +2855,15 @@
           "name": "path",
           "type": "option",
           "char": "p",
-          "description": "Name of the package to generate the picklist patch",
+          "description": "Source path to get all the apex test",
           "required": true
+        },
+        "resultasstring": {
+          "name": "resultasstring",
+          "type": "boolean",
+          "description": "Use this flag to get comma separated list of apex test as a string",
+          "required": false,
+          "allowNo": false
         }
       },
       "args": []

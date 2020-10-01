@@ -46,6 +46,7 @@ $ sfdx plugins:link
     - [`sfpowerkit:source:customlabel:create`](#sfpowerkitsourcecustomlabelcreate)
     - [`sfpowerkit:source:customlabel:reconcile`](#sfpowerkitsourcecustomlabelreconcile)
     - [`sfpowerkit:source:customlabel:buildmanifest`](#sfpowerkitsourcecustomlabelbuildmanifest)
+    - [`sfpowerkit:source:apextest:list [BETA]`](#sfpowerkitsourceapextestlist-beta)
     - [`sfpowerkit:source:apextestsuite:convert`](#sfpowerkitsourceapextestsuiteconvert)
     - [`sfpowerkit:source:picklist:generatepatch`](#sfpowerkitsourcepicklistgeneratepatch)
     - [`sfpowerkit:project:diff`](#sfpowerkitprojectdiff)
@@ -310,6 +311,24 @@ OPTIONS
 EXAMPLE
   $ sfdx sfpowerkit:source:customlabel:buildmanifest -p project1/path/to/customlabelfile.xml -x mdapiout/package.xml
   $ sfdx sfpowerkit:source:customlabel:buildmanifest -p project1/path/to/customlabelfile.xml,project2/path/to/customlabelfile.xml -x mdapiout/package.xml
+```
+
+### `sfpowerkit:source:apextest:list [BETA]`
+
+This command helps to get list of all apex text classes located in source path
+
+```
+USAGE
+  $ sfdx sfpowerkit:source:apextest:list -p <string> [--resultasstring] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -p, --path=path                                                                   (required) Source path to get all the apex test
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] [default: info] logging level for this command invocation
+  --resultasstring                                                                  Use this flag to get comma separated list of apex test as a string
+
+EXAMPLE
+  $ sfdx sfpowerkit:source:apextest:list -p force-app
 ```
 
 ### `sfpowerkit:source:apextestsuite:convert`

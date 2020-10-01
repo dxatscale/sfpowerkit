@@ -2,12 +2,10 @@ import { AnyJson } from "@salesforce/ts-types";
 import fs from "fs-extra";
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
-import FileUtils from "../../../../utils/fileutils";
-import { ApexLexer, CaseInsensitiveInputStream, ApexParser } from "apex-parser";
-import { CommonTokenStream } from "antlr4ts";
-
-var path = require("path");
-const glob = require("glob");
+import { SfdxError } from "@salesforce/core";
+import ApexTypeFetcher, {
+  ApexSortedByType,
+} from "../../../../impl/parser/ApexTypeFetcher";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -34,6 +32,10 @@ export default class List extends SfdxCommand {
       char: "p",
       description: messages.getMessage("pathFlagDescription"),
     }),
+    resultasstring: flags.boolean({
+      description: messages.getMessage("resultasstringDescription"),
+      required: false,
+    }),
     loglevel: flags.enum({
       description: messages.getMessage("loglevel"),
       default: "info",
@@ -58,55 +60,26 @@ export default class List extends SfdxCommand {
   public async run(): Promise<AnyJson> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
-    //set objects directory
-    let apexDirPaths = glob.sync(this.flags.path + "/**/classes", {
-      absolute: false,
-    });
-
-    let apexClasses = [];
-    if (apexDirPaths.length > 0) {
-      for (let apexDirPath of apexDirPaths) {
-        let classesInPath = FileUtils.getAllFilesSync(apexDirPath, ".cls");
-        apexClasses = apexClasses.concat(classesInPath);
-      }
-    }
-
-    let testClasses = [];
-    if (apexClasses.length > 0) {
-      SFPowerkit.log(
-        `Found ${apexClasses.length} apex classes in ${this.flags.path}`,
-        LoggerLevel.INFO
+    //set apex class directory
+    if (!fs.existsSync(this.flags.path)) {
+      throw new SfdxError(
+        `path ${this.flags.path} does not exist. you must provide a valid path.`
       );
-      for (let cls of apexClasses) {
-        let fileData = fs.readFileSync(path.resolve(cls)).toString();
-        // temp check for @isTest string
-        if (fileData.includes("@isTest") || fileData.includes("@istest")) {
-          let name = FileUtils.getFileNameWithoutExtension(cls, ".cls");
-          testClasses.push({ name, path: cls });
-
-          // apex parser part here
-          let lexer = new ApexLexer(
-            new CaseInsensitiveInputStream(fileData, "@isTest")
-          );
-          console.log("lexer## : ", lexer);
-          let tokens = new CommonTokenStream(lexer);
-          console.log("tokens ## : ", tokens);
-          let parser = new ApexParser(tokens);
-          console.log("parser ## : ", parser);
-          let context = parser.compilationUnit();
-          console.log("context ## :", context);
-
-          break;
-        }
-      }
     }
+
+    let apexTypeFetcher: ApexTypeFetcher = new ApexTypeFetcher();
+    let apexSortedByType: ApexSortedByType = apexTypeFetcher.getApexTypeOfClsFiles(
+      this.flags.path
+    );
+
+    let testClasses = apexSortedByType["testClass"];
 
     if (testClasses.length > 0) {
       SFPowerkit.log(
         `Found ${testClasses.length} apex test classes in ${this.flags.path}`,
         LoggerLevel.INFO
       );
-      this.ux.table(testClasses, ["name", "path"]);
+      this.ux.table(testClasses, ["name", "filepath"]);
     } else {
       SFPowerkit.log(
         `No apex test classes found in ${this.flags.path}`,
@@ -114,6 +87,10 @@ export default class List extends SfdxCommand {
       );
     }
 
-    return testClasses.map((cls) => cls.name);
+    let testClassesList = testClasses.map((cls) => cls.name);
+
+    return this.flags.resultasstring
+      ? testClassesList.join(",")
+      : testClassesList;
   }
 }
