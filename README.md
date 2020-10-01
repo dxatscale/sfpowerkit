@@ -534,7 +534,7 @@ _See code: [src\commands\sfpowerkit\package\dependencies\install.ts](https://git
 
 ### `sfpowerkit:package:dependencies:list`
 
-Fetch dependencies version details of a package
+List the dependencies of each package. The command also resolves the .LATEST to the buildversion number that is available in DevHub, and has an additional option to only list validated dependencies of a given package. This is useful during a CI package build process, to list the exact version numbers the package was built on.
 
 ```
 USAGE
@@ -545,7 +545,7 @@ OPTIONS
   -p, --filterpaths=filterpaths                                                     filter packageDirectories using path to get dependent packages details only for the
                                                                                     specified path
 
-  -s, --updateproject                                                               update the sfdx-project.json with result
+  -w, --updateproject                                                               overwrite the sfdx-project.json with resolved dependencies (replace .LATEST)
 
   -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
 
