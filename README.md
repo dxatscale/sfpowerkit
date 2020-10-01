@@ -659,8 +659,8 @@ _See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/Accentu
 
 ### `sfpowerkit:package:applypatch`
 
-Retrieves and applies the patch, Useful after a package upgrade in a CD Environment
-
+Applies a 'sfpowerkit' patch(such as one built using sfpowerkit:source:picklist:generatepatch) to 
+overcome some known issues with unlocked packaging by redeploying with metadata api
 ```
 USAGE
   $ sfdx sfpowerkit:package:applypatch -n <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel
