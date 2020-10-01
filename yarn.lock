@@ -768,6 +768,11 @@ antlr4@^4.7.2:
   resolved "https://registry.yarnpkg.com/antlr4/-/antlr4-4.8.0.tgz#f938ec171be7fc2855cd3a533e87647185b32b6a"
   integrity sha512-en/MxQ4OkPgGJQ3wD/muzj1uDnFSzdFIhc2+c6bHZokWkuBb6RRvFjpWhPxWLbgQvaEzldJZ0GSQpfSAaE3hqg==
 
+antlr4ts@^0.5.0-alpha.3:
+  version "0.5.0-alpha.3"
+  resolved "https://registry.yarnpkg.com/antlr4ts/-/antlr4ts-0.5.0-alpha.3.tgz#fa6d39d88d6b96341a8afef45867af9abcb38766"
+  integrity sha512-La89tKkGcHFIVuruv4Bm1esc3zLmES2NOTEwwNS1pudz+zx/0FNqQeUu9p48i9/QHKPVqjN87LB+q3buTg7oDQ==
+
 anymatch@~3.1.1:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/anymatch/-/anymatch-3.1.1.tgz#c55ecf02185e2469259399310c173ce31233b142"
@@ -775,6 +780,13 @@ anymatch@~3.1.1:
   dependencies:
     normalize-path "^3.0.0"
     picomatch "^2.0.4"
+
+apex-parser@^2.5.0:
+  version "2.5.0"
+  resolved "https://registry.yarnpkg.com/apex-parser/-/apex-parser-2.5.0.tgz#b47bc2752ca847dbb6f18423988ee4138200a696"
+  integrity sha512-rXZyVgbUSmotjnPTVlJSP8fhIiRwFT6373X6rEwedSC9QorZSV+SqHKy+lhzJCVHUpLIzGXjGRCdtYZLlwkf4Q==
+  dependencies:
+    antlr4ts "^0.5.0-alpha.3"
 
 append-transform@^2.0.0:
   version "2.0.0"
