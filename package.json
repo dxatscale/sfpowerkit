@@ -45,7 +45,7 @@
     "hook-std": "^2.0.0",
     "ignore": "^5.1.8",
     "nested-object-diff": "^1.1.0",
-    "pino": "^6.5.1",
+    "pino": "^6.6.1",
     "pino-pretty": "^4.2.0",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.9",
