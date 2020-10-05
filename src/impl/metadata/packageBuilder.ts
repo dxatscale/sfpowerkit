@@ -72,7 +72,7 @@ const STANDARD_VALUE_SETS = [
   "TaskType",
   "WorkOrderLineItemStatus",
   "WorkOrderPriority",
-  "WorkOrderStatus"
+  "WorkOrderStatus",
 ];
 /**
  * This code was adapted from github:sfdx-jayree-plugin project which was
@@ -122,11 +122,11 @@ export class Packagexml {
       if (!this.packageTypes["StandardValueSet"]) {
         this.packageTypes["StandardValueSet"] = [];
       }
-      STANDARD_VALUE_SETS.forEach(member => {
+      STANDARD_VALUE_SETS.forEach((member) => {
         this.packageTypes["StandardValueSet"].push(member);
         this.result.push({
           type: "StandardValueSet",
-          fullName: member
+          fullName: member,
         });
       });
 
@@ -147,8 +147,8 @@ export class Packagexml {
     // fetch and execute installed package promise to build regex
     let ipRegexStr: string = "^(";
     if (this.ipPromise) {
-      this.ipPromise.then(instPack => {
-        instPack.forEach(pkg => {
+      this.ipPromise.then((instPack) => {
+        instPack.forEach((pkg) => {
           ipRegexStr += pkg.namespacePrefix + "|";
         });
         ipRegexStr += ")+__";
@@ -177,7 +177,7 @@ export class Packagexml {
         const objectType = object.xmlName.replace("Template", "");
         const promise = this.conn.metadata.list(
           {
-            type: `${objectType}Folder`
+            type: `${objectType}Folder`,
           },
           this.configs.apiVersion
         );
@@ -185,7 +185,7 @@ export class Packagexml {
       } else {
         const promise = this.conn.metadata.list(
           {
-            type: object.xmlName
+            type: object.xmlName,
           },
           this.configs.apiVersion
         );
@@ -199,9 +199,12 @@ export class Packagexml {
           this.configs.includeChilds
         ) {
           for (let child of object.childXmlNames) {
+            if (child === "ManagedTopic") {
+              continue;
+            }
             const promise = this.conn.metadata.list(
               {
-                type: child
+                type: child,
               },
               this.configs.apiVersion
             );
@@ -216,28 +219,28 @@ export class Packagexml {
     const packageJson = {
       $: { xmlns: "http://soap.sforce.com/2006/04/metadata" },
       types: [],
-      version: this.configs.apiVersion
+      version: this.configs.apiVersion,
     };
 
     let mdtypes = Object.keys(this.packageTypes);
     mdtypes.sort();
-    mdtypes.forEach(mdtype => {
+    mdtypes.forEach((mdtype) => {
       if (
         this.configs.quickFilters.length === 0 ||
         this.configs.quickFilters.includes(mdtype)
       ) {
         packageJson.types.push({
           name: mdtype,
-          members: this.packageTypes[mdtype].sort()
+          members: this.packageTypes[mdtype].sort(),
         });
       }
     });
 
     const builder = new xml2js.Builder({
-      xmldec: { version: "1.0", encoding: "utf-8" }
+      xmldec: { version: "1.0", encoding: "utf-8" },
     });
     let packageObj = {
-      Package: packageJson
+      Package: packageJson,
     };
     let packageXml = builder.buildObject(packageObj);
     return packageXml;
@@ -266,7 +269,7 @@ export class Packagexml {
             const promise = this.conn.metadata.list(
               {
                 type: objectType,
-                folder: folderItem.fullName
+                folder: folderItem.fullName,
               },
               this.configs.apiVersion
             );
@@ -276,7 +279,7 @@ export class Packagexml {
       }
     }
 
-    (await Promise.all(folderedObjects)).forEach(folderedObject => {
+    (await Promise.all(folderedObjects)).forEach((folderedObject) => {
       try {
         if (folderedObject) {
           let folderedObjectItems = [];
@@ -285,7 +288,7 @@ export class Packagexml {
           } else {
             folderedObjectItems = [folderedObject];
           }
-          folderedObjectItems.forEach(metadataEntries => {
+          folderedObjectItems.forEach((metadataEntries) => {
             if (metadataEntries) {
               this.addMember(metadataEntries.type, metadataEntries);
               this.result.push(metadataEntries);
@@ -303,7 +306,7 @@ export class Packagexml {
   private async handleUnfolderedObjects(
     unfolderedObjects: Promise<FileProperties[]>[]
   ) {
-    (await Promise.all(unfolderedObjects)).forEach(unfolderedObject => {
+    (await Promise.all(unfolderedObjects)).forEach((unfolderedObject) => {
       try {
         if (unfolderedObject) {
           let unfolderedObjectItems = [];
@@ -312,7 +315,7 @@ export class Packagexml {
           } else {
             unfolderedObjectItems = [unfolderedObject];
           }
-          unfolderedObjectItems.forEach(metadataEntries => {
+          unfolderedObjectItems.forEach((metadataEntries) => {
             if (metadataEntries) {
               this.addMember(metadataEntries.type, metadataEntries);
               this.result.push(metadataEntries);
@@ -347,10 +350,8 @@ export class Packagexml {
       try {
         if (member.fileName.includes("ValueSetTranslation")) {
           const x =
-            member.fileName
-              .split(".")[1]
-              .substring(0, 1)
-              .toUpperCase() + member.fileName.split(".")[1].substring(1);
+            member.fileName.split(".")[1].substring(0, 1).toUpperCase() +
+            member.fileName.split(".")[1].substring(1);
           if (!this.packageTypes[x]) {
             this.packageTypes[x] = [];
           }
@@ -395,7 +396,7 @@ export class BuildConfig {
     this.includeChilds = flags["includechilds"];
     this.apiVersion = flags["apiversion"] || apiVersion;
     this.quickFilters = flags["quickfilter"]
-      ? flags["quickfilter"].split(",").map(elem => {
+      ? flags["quickfilter"].split(",").map((elem) => {
           return elem.trim();
         })
       : [];
