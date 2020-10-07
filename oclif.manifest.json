@@ -1,5 +1,5 @@
 {
-  "version": "2.2.8",
+  "version": "2.3.1",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
