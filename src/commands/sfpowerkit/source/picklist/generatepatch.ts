@@ -99,7 +99,10 @@ export default class Generatepatch extends SfdxCommand {
         let fieldsInPath = await this.generatePatchForCustomPicklistField(
           objectsDirPath
         );
-        picklistFields = picklistFields.concat(fieldsInPath);
+        if (fieldsInPath.length > 0) {
+          picklistFields = picklistFields.concat(fieldsInPath);
+          await this.generatePatchForRecordTypes(objectsDirPath);
+        }
       }
     }
 
@@ -195,6 +198,41 @@ export default class Generatepatch extends SfdxCommand {
       LoggerLevel.INFO
     );
     return result;
+  }
+  private async generatePatchForRecordTypes(
+    objectsDirPath: string
+  ): Promise<boolean> {
+    SFPowerkit.log(
+      `Scanning for recordtypes in ${objectsDirPath}`,
+      LoggerLevel.INFO
+    );
+    let recordTypes: any[] = searchFilesInDirectory(
+      objectsDirPath,
+      '<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">',
+      ".xml"
+    );
+
+    if (recordTypes && recordTypes.length > 0) {
+      SFPowerkit.log(
+        `Found ${recordTypes.length} RecordTypes in ${objectsDirPath}`,
+        LoggerLevel.INFO
+      );
+
+      SFPowerkit.log(
+        `Processing and adding the following recordtypes to patch in ${objectsDirPath}`,
+        LoggerLevel.INFO
+      );
+
+      for (const file of recordTypes) {
+        SFPowerkit.log(`Copied Original to Patch: ${file}`, LoggerLevel.INFO);
+        MetadataFiles.copyFile(file, this.folderPath);
+      }
+    }
+    SFPowerkit.log(
+      "--------------------------------------------------------------------------------",
+      LoggerLevel.INFO
+    );
+    return true;
   }
 
   private async generateStaticResource(packageToBeUsed: any) {
