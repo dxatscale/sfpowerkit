@@ -3,7 +3,7 @@ const path = require("path");
 const glob = require("glob");
 import { SFPowerkit, LoggerLevel } from "../../sfpowerkit";
 
-import { CommonTokenStream, ANTLRInputStream } from "antlr4ts";
+import { CommonTokenStream} from "antlr4ts";
 import { ParseTreeWalker } from "antlr4ts/tree/ParseTreeWalker";
 
 import ApexTypeListener from "./listeners/ApexTypeListener";
@@ -13,6 +13,7 @@ import {
   ApexParser,
   ApexParserListener,
   ThrowingErrorListener,
+  CaseInsensitiveInputStream
 } from "apex-parser";
 
 export default class ApexTypeFetcher {
@@ -40,7 +41,8 @@ export default class ApexTypeFetcher {
     }
 
     for (let clsFile of clsFiles) {
-      let clsPayload: string = fs.readFileSync(path.resolve(clsFile), "utf8");
+      const clsPath = path.resolve(clsFile)
+      let clsPayload: string = fs.readFileSync(clsPath, "utf8");
       let fileDescriptor: FileDescriptor = {
         name: path.basename(clsFile, ".cls"),
         filepath: clsFile,
@@ -49,7 +51,7 @@ export default class ApexTypeFetcher {
       // Parse cls file
       let compilationUnitContext;
       try {
-        let lexer = new ApexLexer(new ANTLRInputStream(clsPayload));
+        let lexer = new ApexLexer(new CaseInsensitiveInputStream(clsPath, clsPayload));
         let tokens: CommonTokenStream = new CommonTokenStream(lexer);
 
         let parser = new ApexParser(tokens);
@@ -64,20 +66,7 @@ export default class ApexTypeFetcher {
         );
 
         fileDescriptor["error"] = err;
-
-        // Manually parse class if error is caused by System.runAs() or testMethod modifier
-        if (
-          this.parseSystemRunAs(err, clsPayload) ||
-          this.parseTestMethod(err, clsPayload)
-        ) {
-          SFPowerkit.log(
-            `Manually identified test class ${clsFile}`,
-            LoggerLevel.DEBUG
-          );
-          apexSortedByType["testClass"].push(fileDescriptor);
-        } else {
-          apexSortedByType["parseError"].push(fileDescriptor);
-        }
+        apexSortedByType["parseError"].push(fileDescriptor);
         continue;
       }
 
@@ -107,32 +96,6 @@ export default class ApexTypeFetcher {
     }
 
     return apexSortedByType;
-  }
-
-  /**
-   * Bypass error parsing System.runAs()
-   * @param error
-   * @param clsPayload
-   */
-  private parseSystemRunAs(error, clsPayload: string): boolean {
-    return (
-      error["message"].includes("missing ';' at '{'") &&
-      /System.runAs/i.test(clsPayload) &&
-      /@isTest/i.test(clsPayload)
-    );
-  }
-
-  /**
-   * Bypass error parsing testMethod modifier
-   * @param error
-   * @param clsPayload
-   */
-  private parseTestMethod(error, clsPayload: string): boolean {
-    return (
-      error["message"].includes("no viable alternative at input") &&
-      /testMethod/i.test(error["message"]) &&
-      /testMethod/i.test(clsPayload)
-    );
   }
 }
 

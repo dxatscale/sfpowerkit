@@ -1,5 +1,5 @@
 import { AnyJson } from "@salesforce/ts-types";
-import fs from "fs-extra";
+import { existsSync } from 'fs';
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 import { SfdxError } from "@salesforce/core";
@@ -61,7 +61,7 @@ export default class List extends SfdxCommand {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     //set apex class directory
-    if (!fs.existsSync(this.flags.path)) {
+    if (!existsSync(this.flags.path)) {
       throw new SfdxError(
         `path ${this.flags.path} does not exist. you must provide a valid path.`
       );
