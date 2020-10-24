@@ -93,23 +93,26 @@ export default class Generatepatch extends SfdxCommand {
       absolute: false,
     });
 
-    let picklisFields = [];
+    let picklistFields = [];
     if (objectsDirPaths.length > 0) {
       for (let objectsDirPath of objectsDirPaths) {
-        let fielsInPath = await this.generatePatchForCustomPicklistField(
+        let fieldsInPath = await this.generatePatchForCustomPicklistField(
           objectsDirPath
         );
-        picklisFields = picklisFields.concat(fielsInPath);
+        if (fieldsInPath.length > 0) {
+          picklistFields = picklistFields.concat(fieldsInPath);
+          await this.generatePatchForRecordTypes(objectsDirPath);
+        }
       }
     }
 
-    if (picklisFields.length > 0) {
+    if (picklistFields.length > 0) {
       await this.generateStaticResource(packageToBeUsed);
     }
 
     //clean temp sf powerkit source folder
-    rimraf.sync(`${this.folderPath}`);
-    return picklisFields;
+    rimraf.sync(this.folderPath);
+    return picklistFields;
   }
 
   private async generatePatchForCustomPicklistField(objectsDirPath: string) {
@@ -196,6 +199,41 @@ export default class Generatepatch extends SfdxCommand {
     );
     return result;
   }
+  private async generatePatchForRecordTypes(
+    objectsDirPath: string
+  ): Promise<boolean> {
+    SFPowerkit.log(
+      `Scanning for recordtypes in ${objectsDirPath}`,
+      LoggerLevel.INFO
+    );
+    let recordTypes: any[] = searchFilesInDirectory(
+      objectsDirPath,
+      '<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">',
+      ".xml"
+    );
+
+    if (recordTypes && recordTypes.length > 0) {
+      SFPowerkit.log(
+        `Found ${recordTypes.length} RecordTypes in ${objectsDirPath}`,
+        LoggerLevel.INFO
+      );
+
+      SFPowerkit.log(
+        `Processing and adding the following recordtypes to patch in ${objectsDirPath}`,
+        LoggerLevel.INFO
+      );
+
+      for (const file of recordTypes) {
+        SFPowerkit.log(`Copied Original to Patch: ${file}`, LoggerLevel.INFO);
+        MetadataFiles.copyFile(file, this.folderPath);
+      }
+    }
+    SFPowerkit.log(
+      "--------------------------------------------------------------------------------",
+      LoggerLevel.INFO
+    );
+    return true;
+  }
 
   private async generateStaticResource(packageToBeUsed: any) {
     // sfdx project json file running force source command
@@ -238,13 +276,9 @@ export default class Generatepatch extends SfdxCommand {
       //Create Static Resource Directory if not exist
       let dir = packageToBeUsed.path + `/main/default/staticresources/`;
       if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir);
+        fs.mkdirpSync(dir);
       }
-      fs.copyFileSync(
-        zipFile,
-        packageToBeUsed.path +
-          `/main/default/staticresources/${packageToBeUsed.package}_picklist.zip`
-      );
+      fs.copyFileSync(zipFile, `${dir}${packageToBeUsed.package}_picklist.zip`);
 
       //Store it to static resources
       var metadata: string = `<?xml version="1.0" encoding="UTF-8"?>	
@@ -252,9 +286,7 @@ export default class Generatepatch extends SfdxCommand {
           <cacheControl>Public</cacheControl>	
           <contentType>application/zip</contentType>	
       </StaticResource>`;
-      let targetmetadatapath =
-        packageToBeUsed.path +
-        `/main/default/staticresources/${packageToBeUsed.package}_picklist.resource-meta.xml`;
+      let targetmetadatapath = `${dir}${packageToBeUsed.package}_picklist.resource-meta.xml`;
 
       SFPowerkit.log(
         `Generating static resource file : ${targetmetadatapath}`,

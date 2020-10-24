@@ -1,5 +1,5 @@
 {
-  "version": "2.2.5",
+  "version": "2.3.1",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -2386,8 +2386,8 @@
     },
     "sfpowerkit:package:dependencies:list": {
       "id": "sfpowerkit:package:dependencies:list",
-      "description": "Fetch dependencies version details of a package",
-      "usage": "<%= command.id %> [-p <array>] [-s] [--usedependencyvalidatedpackages] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "description": "List the  dependencies of each package. The command also resolves the .LATEST to the buildversion number that is available in DevHub, and has an additional option to only list validated dependencies of a given package. This is useful during a CI package build process, to list the exact version numbers the package was built on.",
+      "usage": "<%= command.id %> [-p <array>] [-w] [--usedependencyvalidatedpackages] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],
@@ -2446,8 +2446,8 @@
         "updateproject": {
           "name": "updateproject",
           "type": "boolean",
-          "char": "s",
-          "description": "update the sfdx-project.json with result",
+          "char": "w",
+          "description": "overwrite the sfdx-project.json with resolved dependencies (replace .LATEST)",
           "required": false,
           "allowNo": false
         },
@@ -2810,6 +2810,60 @@
           "name": "apiversion",
           "type": "option",
           "description": "The api version to be used create package.xml"
+        }
+      },
+      "args": []
+    },
+    "sfpowerkit:source:apextest:list": {
+      "id": "sfpowerkit:source:apextest:list",
+      "description": "This command helps to get list of all apex text classes located in source path",
+      "usage": "<%= command.id %> -p <string> [--resultasstring] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "pluginName": "sfpowerkit",
+      "pluginType": "core",
+      "aliases": [],
+      "examples": ["$ sfdx sfpowerkit:source:apextest:list -p force-app"],
+      "flags": {
+        "json": {
+          "name": "json",
+          "type": "boolean",
+          "description": "format output as json",
+          "allowNo": false
+        },
+        "loglevel": {
+          "name": "loglevel",
+          "type": "option",
+          "description": "[default: info] logging level for this command invocation",
+          "required": false,
+          "helpValue": "(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)",
+          "options": [
+            "trace",
+            "debug",
+            "info",
+            "warn",
+            "error",
+            "fatal",
+            "TRACE",
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "ERROR",
+            "FATAL"
+          ],
+          "default": "info"
+        },
+        "path": {
+          "name": "path",
+          "type": "option",
+          "char": "p",
+          "description": "Source path to get all the apex test",
+          "required": true
+        },
+        "resultasstring": {
+          "name": "resultasstring",
+          "type": "boolean",
+          "description": "Use this flag to get comma separated list of apex test as a string",
+          "required": false,
+          "allowNo": false
         }
       },
       "args": []

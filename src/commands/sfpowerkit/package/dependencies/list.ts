@@ -31,7 +31,7 @@ export default class List extends SfdxCommand {
       description: messages.getMessage("filterpathsDescription"),
     }),
     updateproject: flags.boolean({
-      char: "s",
+      char: "w",
       required: false,
       description: messages.getMessage("updateprojectDescription"),
     }),
@@ -72,7 +72,7 @@ export default class List extends SfdxCommand {
           packageDirectory.dependencies[0] !== undefined
         ) {
           this.ux.log(
-            `\nPackage dependencies for the given package directory ${packageDirectory.path}`
+            `Package dependencies for the given package directory ${packageDirectory.path}`
           );
           for (let dependency of packageDirectory.dependencies) {
             if (
@@ -104,7 +104,14 @@ export default class List extends SfdxCommand {
     if (this.flags.updateproject) {
       fs.writeFileSync(
         "sfdx-project.json",
-        JSON.stringify(projectConfig, null, 2)
+        JSON.stringify(
+          projectConfig,
+          (key: string, value: any) => {
+            if (key == "versionId") return undefined;
+            else return value;
+          },
+          2
+        )
       );
     }
 
