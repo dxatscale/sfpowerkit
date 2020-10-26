@@ -1,5 +1,5 @@
 {
-  "version": "2.3.1",
+  "version": "2.3.2",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -1016,7 +1016,7 @@
           "type": "option",
           "description": "[default: 6.21.0] The version of the pmd to be utilized for the analysis, this version will be downloaded to sfpowerkit's cache directory",
           "required": false,
-          "default": "6.26.0"
+          "default": "6.30.0"
         }
       },
       "args": []

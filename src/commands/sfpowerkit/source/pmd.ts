@@ -27,40 +27,40 @@ export default class Pmd extends SfdxCommand {
     directory: flags.string({
       required: false,
       char: "d",
-      description: messages.getMessage("directoryFlagDescription")
+      description: messages.getMessage("directoryFlagDescription"),
     }),
 
     ruleset: flags.string({
       required: false,
       char: "r",
-      description: messages.getMessage("rulesetFlagDescription")
+      description: messages.getMessage("rulesetFlagDescription"),
     }),
 
     format: flags.string({
       required: false,
       char: "f",
       default: "text",
-      description: messages.getMessage("formatFlagDescription")
+      description: messages.getMessage("formatFlagDescription"),
     }),
     report: flags.filepath({
       required: false,
       char: "o",
       default: "pmd-output",
-      description: messages.getMessage("reportFlagDescription")
+      description: messages.getMessage("reportFlagDescription"),
     }),
     javahome: flags.string({
       required: false,
-      description: messages.getMessage("javaHomeFlagDescription")
+      description: messages.getMessage("javaHomeFlagDescription"),
     }),
     supressoutput: flags.boolean({
       required: false,
       default: false,
-      description: messages.getMessage("supressoutputFlagDescription")
+      description: messages.getMessage("supressoutputFlagDescription"),
     }),
     version: flags.string({
       required: false,
-      default: "6.26.0",
-      description: messages.getMessage("versionFlagDescription")
+      default: "6.30.0",
+      description: messages.getMessage("versionFlagDescription"),
     }),
     loglevel: flags.enum({
       description: "logging level for this command invocation",
@@ -78,9 +78,9 @@ export default class Pmd extends SfdxCommand {
         "INFO",
         "WARN",
         "ERROR",
-        "FATAL"
-      ]
-    })
+        "FATAL",
+      ],
+    }),
   };
 
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
@@ -169,7 +169,7 @@ export default class Pmd extends SfdxCommand {
       "-f",
       "xml",
       "-r",
-      pmdOutputPath
+      pmdOutputPath,
     ]);
 
     const pmdCmdForConsoleLogging = spawn(
@@ -187,21 +187,21 @@ export default class Pmd extends SfdxCommand {
         "-f",
         this.flags.format,
         "-r",
-        this.flags.report
+        this.flags.report,
       ]
     );
 
     //capture pmd errors
     let pmd_error;
     let pmd_output;
-    pmdCmd.stderr.on("data", data => {
+    pmdCmd.stderr.on("data", (data) => {
       pmd_error = data;
     });
-    pmdCmd.stdout.on("data", data => {
+    pmdCmd.stdout.on("data", (data) => {
       pmd_output = data;
     });
 
-    pmdCmd.on("close", code => {
+    pmdCmd.on("close", (code) => {
       if (code == 4 || code == 0) {
         this.parseXmlReport(pmdOutputPath, packageDirectory);
 
@@ -236,16 +236,16 @@ export default class Pmd extends SfdxCommand {
     await new Promise((resolve, reject) => {
       let stream = request({
         /* Here you should specify the exact link to the file you are trying to download */
-        uri: `https://github.com/pmd/pmd/releases/download/pmd_releases%2F${npm_package_pmd_version}/pmd-bin-${npm_package_pmd_version}.zip`
+        uri: `https://github.com/pmd/pmd/releases/download/pmd_releases%2F${npm_package_pmd_version}/pmd-bin-${npm_package_pmd_version}.zip`,
       })
         .pipe(file)
         .on("finish", () => {
           resolve();
         })
-        .on("error", error => {
+        .on("error", (error) => {
           reject(error);
         });
-    }).catch(error => {
+    }).catch((error) => {
       SFPowerkit.log(`Unable to download: ${error}`, LoggerLevel.ERROR);
     });
   }
