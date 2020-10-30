@@ -1,5 +1,5 @@
 import { AnyJson } from "@salesforce/ts-types";
-import { existsSync } from 'fs';
+import { existsSync } from "fs";
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 import { SfdxError } from "@salesforce/core";
@@ -73,21 +73,24 @@ export default class List extends SfdxCommand {
     );
 
     let testClasses = apexSortedByType["testClass"];
+    let testClassesList = testClasses.map((cls) => cls.name);
 
     if (testClasses.length > 0) {
       SFPowerkit.log(
         `Found ${testClasses.length} apex test classes in ${this.flags.path}`,
         LoggerLevel.INFO
       );
-      this.ux.table(testClasses, ["name", "filepath"]);
+      if (this.flags.resultasstring) {
+        this.ux.log(testClassesList.join(","));
+      } else {
+        this.ux.table(testClasses, ["name", "filepath"]);
+      }
     } else {
       SFPowerkit.log(
         `No apex test classes found in ${this.flags.path}`,
         LoggerLevel.INFO
       );
     }
-
-    let testClassesList = testClasses.map((cls) => cls.name);
 
     return this.flags.resultasstring
       ? testClassesList.join(",")
