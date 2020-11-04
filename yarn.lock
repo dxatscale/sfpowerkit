@@ -395,7 +395,7 @@
     mkdirp "1.0.4"
     sfdx-faye "^1.0.9"
 
-"@salesforce/core@^2.1.6", "@salesforce/core@^2.12.3", "@salesforce/core@^2.6.0":
+"@salesforce/core@^2.1.6", "@salesforce/core@^2.6.0":
   version "2.12.3"
   resolved "https://registry.yarnpkg.com/@salesforce/core/-/core-2.12.3.tgz#50d45615efe3273ad4b437e6b80ed3aa39180038"
   integrity sha512-vDT9XBjRHs31q6tA8HwEBU2JENWKMbDPtkISS3qLX5iKkmPPYobSPJBRVheleP/bMCkwhc7QEwZYUNtHeGHBRw==
