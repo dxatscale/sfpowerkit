@@ -168,7 +168,7 @@ export class Packagexml {
     for await (const object of describe.metadataObjects) {
       if (
         this.configs.quickFilters.length !== 0 &&
-        !this.configs.quickFilters.includes(object.xmlName)
+        this.configs.quickFilters.includes(object.xmlName)
       ) {
         continue;
       }
@@ -227,7 +227,7 @@ export class Packagexml {
     mdtypes.forEach((mdtype) => {
       if (
         this.configs.quickFilters.length === 0 ||
-        this.configs.quickFilters.includes(mdtype)
+        !this.configs.quickFilters.includes(mdtype)
       ) {
         packageJson.types.push({
           name: mdtype,
@@ -317,6 +317,14 @@ export class Packagexml {
           }
           unfolderedObjectItems.forEach((metadataEntries) => {
             if (metadataEntries) {
+              if (
+                this.configs.quickFilters.length !== 0 &&
+                this.configs.quickFilters.includes(
+                  metadataEntries.type + ":" + metadataEntries.fullName
+                )
+              ) {
+                return;
+              }
               this.addMember(metadataEntries.type, metadataEntries);
               this.result.push(metadataEntries);
             } else {
