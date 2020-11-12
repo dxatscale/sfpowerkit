@@ -1,5 +1,5 @@
 {
-  "version": "2.3.6",
+  "version": "2.4.1",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -1379,8 +1379,9 @@
       "pluginType": "core",
       "aliases": [],
       "examples": [
-        "$ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml\n    <?xml version=\"1.0\" encoding=\"UTF-8\"?>\n    <Package xmlns=\"http://soap.sforce.com/2006/04/metadata\">...</Package>\n    ",
-        "$ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml -q 'ApexClass, CustomObject, Report' \n    <?xml version=\"1.0\" encoding=\"UTF-8\"?>\n    <Package xmlns=\"http://soap.sforce.com/2006/04/metadata\">...</Package>\n    "
+        "$ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml",
+        "$ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml -q 'ApexClass,CustomObject,Report'",
+        "$ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml -q 'ApexClass:sampleclass,CustomObject:Account'"
       ],
       "flags": {
         "json": {

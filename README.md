@@ -678,8 +678,9 @@ _See code: [src\commands\sfpowerkit\package\valid.ts](https://github.com/Accentu
 
 ### `sfpowerkit:package:applypatch`
 
-Applies a 'sfpowerkit' patch(such as one built using sfpowerkit:source:picklist:generatepatch) to 
+Applies a 'sfpowerkit' patch(such as one built using sfpowerkit:source:picklist:generatepatch) to
 overcome some known issues with unlocked packaging by redeploying with metadata api
+
 ```
 USAGE
   $ sfdx sfpowerkit:package:applypatch -n <string> [-u <string>] [--apiversion <string>] [--json] [--loglevel
@@ -1002,31 +1003,26 @@ USAGE
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -c, --includechilds                              Set to true to include child Metadata in the generated package.xml.
-  -o, --outputfile=outputfile                      The output path where the manifest file will be created
+  -c, --includechilds                                                               Set to true to include child Metadata in the generated package.xml.
+  -o, --outputfile=outputfile                                                       The output path where the manifest file will be created
 
-  -q, --quickfilter=quickfilter                    comma separated values  of metadata type, member or file names to be excluded while building the manifest
+  -q, --quickfilter=quickfilter                                                     comma separated values  of metadata type, member or file names to be excluded while building the
+                                                                                    manifest
 
-  -u, --targetusername=targetusername              username or alias for the target org; overrides default
-                                                   target org
+  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
 
-  -x, --excludemanaged                             exclude managed packages components from the manifest
+  -x, --excludemanaged                                                              exclude managed packages components from the manifest
 
-  --apiversion=apiversion                          override the api version used for api requests made by this
-                                                   command
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
 
-  --json                                           format output as json
+  --json                                                                            format output as json
 
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
 EXAMPLES
   $ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml
-       <?xml version="1.0" encoding="UTF-8"?>
-       <Package xmlns="http://soap.sforce.com/2006/04/metadata">...</Package>
-
-  $ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml -q 'ApexClass, CustomObject, Report'
-       <?xml version="1.0" encoding="UTF-8"?>
-       <Package xmlns="http://soap.sforce.com/2006/04/metadata">...</Package>
+  $ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml -q 'ApexClass,CustomObject,Report'
+  $ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml -q 'ApexClass:sampleclass,CustomObject:Account'
 ```
 
 _See code: [src\commands\sfpowerkit\org\manifest\build.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/manifest/build.ts)_
