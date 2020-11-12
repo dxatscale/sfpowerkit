@@ -3,7 +3,7 @@ import { Messages } from "@salesforce/core";
 import { AnyJson } from "@salesforce/ts-types";
 import {
   BuildConfig,
-  Packagexml
+  Packagexml,
 } from "../../../../impl/metadata/packageBuilder";
 
 // Initialize Messages with the current plugin directory
@@ -21,10 +21,10 @@ export default class Build extends SfdxCommand {
     <?xml version="1.0" encoding="UTF-8"?>
     <Package xmlns="http://soap.sforce.com/2006/04/metadata">...</Package>
     `,
-    `$ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml -q 'ApexClass, CustomObject, Report' 
+    `$ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml -q 'ApexClass, CustomObject:Account, Report'
     <?xml version="1.0" encoding="UTF-8"?>
     <Package xmlns="http://soap.sforce.com/2006/04/metadata">...</Package>
-    `
+    `,
   ];
 
   public static args = [{ name: "file" }];
@@ -32,20 +32,20 @@ export default class Build extends SfdxCommand {
   protected static flagsConfig = {
     quickfilter: flags.string({
       char: "q",
-      description: messages.getMessage("quickfilterFlagDescription")
+      description: messages.getMessage("quickfilterFlagDescription"),
     }),
     excludemanaged: flags.boolean({
       char: "x",
-      description: messages.getMessage("excludeManagedFlagDescription")
+      description: messages.getMessage("excludeManagedFlagDescription"),
     }),
     includechilds: flags.boolean({
       char: "c",
-      description: messages.getMessage("includeChildsFlagDescription")
+      description: messages.getMessage("includeChildsFlagDescription"),
     }),
     outputfile: flags.filepath({
       char: "o",
-      description: messages.getMessage("outputFileFlagDescription")
-    })
+      description: messages.getMessage("outputFileFlagDescription"),
+    }),
   };
 
   // Comment this out if your command does not require an org username
