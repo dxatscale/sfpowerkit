@@ -29,63 +29,65 @@ export default class LayoutRetriever extends BaseMetadataRetriever<Layout> {
     ) {
       super.setQuery(QUERY);
       let layouts = await super.getObjects();
-      for (let i = 0; i < layouts.length; i++) {
-        let namespace = "";
-        if (
-          layouts[i].NamespacePrefix !== undefined &&
-          layouts[i].NamespacePrefix !== "" &&
-          layouts[i].NamespacePrefix !== null &&
-          layouts[i].NamespacePrefix !== "null"
-        ) {
-          namespace = layouts[i].NamespacePrefix + "__";
-        }
-        if (
-          layouts[i].EntityDefinition !== null &&
-          layouts[i].EntityDefinition !== undefined
-        ) {
-          layouts[i].FullName =
-            layouts[i].EntityDefinition.QualifiedApiName +
-            "-" +
-            namespace +
-            layouts[i].Name.replace(/%/g, "%25")
-              .replace(/\//g, "%2F")
-              .replace(new RegExp(/\\/, "g"), "%5C")
-              .replace(/\(/g, "%28")
-              .replace(/\)/g, "%29")
-              .replace(/#/g, "%23")
-              .replace(/\$/g, "%24")
-              .replace(/&/g, "%26")
-              .replace(/~/g, "%7E")
-              .replace(/\[/g, "%5B")
-              .replace(/\]/g, "%5D")
-              .replace(/\^/g, "%5E")
-              .replace(/\{/g, "%7B")
-              .replace(/\}/g, "%7D")
-              .replace(/\|/g, "%7C")
-              .replace(/@/g, "%40")
-              .replace(/'/g, "%27");
-        } else {
-          layouts[i].FullName =
-            layouts[i].EntityDefinitionId +
-            "-" +
-            namespace +
-            layouts[i].Name.replace(/%/g, "%25")
-              .replace(/\//g, "%2F")
-              .replace(new RegExp(/\\/, "g"), "%5C")
-              .replace(/\(/g, "%28")
-              .replace(/\)/g, "%29")
-              .replace(/#/g, "%23")
-              .replace(/\$/g, "%24")
-              .replace(/&/g, "%26")
-              .replace(/~/g, "%7E")
-              .replace(/\[/g, "%5B")
-              .replace(/\]/g, "%5D")
-              .replace(/\^/g, "%5E")
-              .replace(/\{/g, "%7B")
-              .replace(/\}/g, "%7D")
-              .replace(/\|/g, "%7C")
-              .replace(/@/g, "%40")
-              .replace(/'/g, "%27");
+      if (layouts != undefined && layouts.length > 0) {
+        for (let i = 0; i < layouts.length; i++) {
+          let namespace = "";
+          if (
+            layouts[i].NamespacePrefix !== undefined &&
+            layouts[i].NamespacePrefix !== "" &&
+            layouts[i].NamespacePrefix !== null &&
+            layouts[i].NamespacePrefix !== "null"
+          ) {
+            namespace = layouts[i].NamespacePrefix + "__";
+          }
+          if (
+            layouts[i].EntityDefinition !== null &&
+            layouts[i].EntityDefinition !== undefined
+          ) {
+            layouts[i].FullName =
+              layouts[i].EntityDefinition.QualifiedApiName +
+              "-" +
+              namespace +
+              layouts[i].Name.replace(/%/g, "%25")
+                .replace(/\//g, "%2F")
+                .replace(new RegExp(/\\/, "g"), "%5C")
+                .replace(/\(/g, "%28")
+                .replace(/\)/g, "%29")
+                .replace(/#/g, "%23")
+                .replace(/\$/g, "%24")
+                .replace(/&/g, "%26")
+                .replace(/~/g, "%7E")
+                .replace(/\[/g, "%5B")
+                .replace(/\]/g, "%5D")
+                .replace(/\^/g, "%5E")
+                .replace(/\{/g, "%7B")
+                .replace(/\}/g, "%7D")
+                .replace(/\|/g, "%7C")
+                .replace(/@/g, "%40")
+                .replace(/'/g, "%27");
+          } else {
+            layouts[i].FullName =
+              layouts[i].EntityDefinitionId +
+              "-" +
+              namespace +
+              layouts[i].Name.replace(/%/g, "%25")
+                .replace(/\//g, "%2F")
+                .replace(new RegExp(/\\/, "g"), "%5C")
+                .replace(/\(/g, "%28")
+                .replace(/\)/g, "%29")
+                .replace(/#/g, "%23")
+                .replace(/\$/g, "%24")
+                .replace(/&/g, "%26")
+                .replace(/~/g, "%7E")
+                .replace(/\[/g, "%5B")
+                .replace(/\]/g, "%5D")
+                .replace(/\^/g, "%5E")
+                .replace(/\{/g, "%7B")
+                .replace(/\}/g, "%7D")
+                .replace(/\|/g, "%7C")
+                .replace(/@/g, "%40")
+                .replace(/'/g, "%27");
+          }
         }
       }
       this.data = layouts;
@@ -106,7 +108,7 @@ export default class LayoutRetriever extends BaseMetadataRetriever<Layout> {
     if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let layouts = await this.getLayouts();
-      let foundLayout = layouts.find(l => {
+      let foundLayout = layouts.find((l) => {
         return l.FullName === layout;
       });
       found = !_.isNil(foundLayout);

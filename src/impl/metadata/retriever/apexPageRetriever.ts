@@ -27,12 +27,14 @@ export default class ApexPageRetriever extends BaseMetadataRetriever<ApexPage> {
     ) {
       super.setQuery(QUERY);
       let pages = await super.getObjects();
-      for (let i = 0; i < pages.length; i++) {
-        let page = pages[i];
-        if (!_.isNil(page.NamespacePrefix)) {
-          page.FullName = `${page.NamespacePrefix}__${page.Name}`;
-        } else {
-          page.FullName = page.Name;
+      if (pages != undefined && pages.length > 0) {
+        for (let i = 0; i < pages.length; i++) {
+          let page = pages[i];
+          if (!_.isNil(page.NamespacePrefix)) {
+            page.FullName = `${page.NamespacePrefix}__${page.Name}`;
+          } else {
+            page.FullName = page.Name;
+          }
         }
       }
       this.data = pages;
@@ -53,7 +55,7 @@ export default class ApexPageRetriever extends BaseMetadataRetriever<ApexPage> {
     if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let pages = await this.getPages();
-      let foundPage = pages.find(p => {
+      let foundPage = pages.find((p) => {
         return p.FullName === page;
       });
       found = !_.isNil(foundPage);

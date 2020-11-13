@@ -29,12 +29,14 @@ export default class ApexClassRetriever extends BaseMetadataRetriever<
     ) {
       super.setQuery(QUERY);
       let classes = await super.getObjects();
-      for (let i = 0; i < classes.length; i++) {
-        let cls = classes[i];
-        if (!_.isNil(cls.NamespacePrefix)) {
-          cls.FullName = `${cls.NamespacePrefix}__${cls.Name}`;
-        } else {
-          cls.FullName = cls.Name;
+      if (classes != undefined && classes.length > 0) {
+        for (let i = 0; i < classes.length; i++) {
+          let cls = classes[i];
+          if (!_.isNil(cls.NamespacePrefix)) {
+            cls.FullName = `${cls.NamespacePrefix}__${cls.Name}`;
+          } else {
+            cls.FullName = cls.Name;
+          }
         }
       }
       this.data = classes;
@@ -55,7 +57,7 @@ export default class ApexClassRetriever extends BaseMetadataRetriever<
     if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let classes = await this.getClasses();
-      let foundCls = classes.find(aCls => {
+      let foundCls = classes.find((aCls) => {
         return aCls.FullName === cls;
       });
       found = !_.isNil(foundCls);

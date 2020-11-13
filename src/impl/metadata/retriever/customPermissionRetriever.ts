@@ -29,12 +29,14 @@ export default class CustomPermissionRetriever extends BaseMetadataRetriever<
     ) {
       super.setQuery(QUERY);
       let customPermissions = await super.getObjects();
-      for (let i = 0; i < customPermissions.length; i++) {
-        let cp = customPermissions[i];
-        if (!_.isNil(cp.NamespacePrefix)) {
-          cp.FullName = `${cp.NamespacePrefix}__${cp.DeveloperName}`;
-        } else {
-          cp.FullName = cp.DeveloperName;
+      if (customPermissions != undefined && customPermissions.length > 0) {
+        for (let i = 0; i < customPermissions.length; i++) {
+          let cp = customPermissions[i];
+          if (!_.isNil(cp.NamespacePrefix)) {
+            cp.FullName = `${cp.NamespacePrefix}__${cp.DeveloperName}`;
+          } else {
+            cp.FullName = cp.DeveloperName;
+          }
         }
       }
 
@@ -61,7 +63,7 @@ export default class CustomPermissionRetriever extends BaseMetadataRetriever<
     if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let custumPermissions = await this.getCustomPermissions();
-      let foundCp = custumPermissions.find(customPermission => {
+      let foundCp = custumPermissions.find((customPermission) => {
         return customPermission.FullName === customPermissionStr;
       });
       found = !_.isNil(foundCp);

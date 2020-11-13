@@ -32,12 +32,14 @@ export default class ExternalDataSourceRetriever extends BaseMetadataRetriever<
     ) {
       super.setQuery(QUERY);
       let dataSources = await super.getObjects();
-      for (let i = 0; i < dataSources.length; i++) {
-        let dts = dataSources[i];
-        if (!_.isNil(dts.NamespacePrefix)) {
-          dts.FullName = `${dts.NamespacePrefix}__${dts.DeveloperName}`;
-        } else {
-          dts.FullName = dts.DeveloperName;
+      if (dataSources != undefined && dataSources.length > 0) {
+        for (let i = 0; i < dataSources.length; i++) {
+          let dts = dataSources[i];
+          if (!_.isNil(dts.NamespacePrefix)) {
+            dts.FullName = `${dts.NamespacePrefix}__${dts.DeveloperName}`;
+          } else {
+            dts.FullName = dts.DeveloperName;
+          }
         }
       }
       this.data = dataSources;
@@ -58,7 +60,7 @@ export default class ExternalDataSourceRetriever extends BaseMetadataRetriever<
     if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let dataSources = await this.getExternalDataSources();
-      let foundDts = dataSources.find(dts => {
+      let foundDts = dataSources.find((dts) => {
         return dts.FullName === dataSource;
       });
       found = !_.isNil(foundDts);

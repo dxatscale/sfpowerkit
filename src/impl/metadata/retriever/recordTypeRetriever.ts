@@ -30,26 +30,29 @@ export default class RecordTypeRetriever extends BaseMetadataRetriever<
       !this.dataLoaded
     ) {
       let objects = await super.getObjects();
-      objects = objects.map(elem => {
-        let namespace = "";
-        if (
-          elem.NamespacePrefix !== undefined &&
-          elem.NamespacePrefix !== "" &&
-          elem.NamespacePrefix !== null &&
-          elem.NamespacePrefix !== "null"
-        ) {
-          namespace = elem.NamespacePrefix + "__";
-        }
-        elem.FullName = elem.SobjectType + "." + namespace + elem.DeveloperName;
-        if (
-          elem.DeveloperName === "PersonAccount" &&
-          elem.SobjectType === "Account"
-        ) {
+      if (objects != undefined && objects.length > 0) {
+        objects = objects.map((elem) => {
+          let namespace = "";
+          if (
+            elem.NamespacePrefix !== undefined &&
+            elem.NamespacePrefix !== "" &&
+            elem.NamespacePrefix !== null &&
+            elem.NamespacePrefix !== "null"
+          ) {
+            namespace = elem.NamespacePrefix + "__";
+          }
           elem.FullName =
-            "PersonAccount" + "." + namespace + elem.DeveloperName;
-        }
-        return elem;
-      });
+            elem.SobjectType + "." + namespace + elem.DeveloperName;
+          if (
+            elem.DeveloperName === "PersonAccount" &&
+            elem.SobjectType === "Account"
+          ) {
+            elem.FullName =
+              "PersonAccount" + "." + namespace + elem.DeveloperName;
+          }
+          return elem;
+        });
+      }
 
       this.data = objects;
       this.dataLoaded = true;
@@ -70,7 +73,7 @@ export default class RecordTypeRetriever extends BaseMetadataRetriever<
     if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let recordTypes = await this.getrecordTypes();
-      let foundRecordType = recordTypes.find(rt => {
+      let foundRecordType = recordTypes.find((rt) => {
         return rt.FullName === recordType;
       });
       found = !_.isNil(foundRecordType);
