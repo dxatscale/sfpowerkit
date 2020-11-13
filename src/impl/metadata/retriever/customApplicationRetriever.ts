@@ -31,12 +31,14 @@ export default class CustomApplicationRetriever extends BaseMetadataRetriever<
     ) {
       super.setQuery(QUERY);
       let apps = await super.getObjects();
-      for (let i = 0; i < apps.length; i++) {
-        let app = apps[i];
-        if (!_.isNil(app.NamespacePrefix)) {
-          app.FullName = `${app.NamespacePrefix}__${app.DeveloperName}`;
-        } else {
-          app.FullName = app.DeveloperName;
+      if (apps != undefined && apps.length > 0) {
+        for (let i = 0; i < apps.length; i++) {
+          let app = apps[i];
+          if (!_.isNil(app.NamespacePrefix)) {
+            app.FullName = `${app.NamespacePrefix}__${app.DeveloperName}`;
+          } else {
+            app.FullName = app.DeveloperName;
+          }
         }
       }
       this.data = apps;
@@ -57,7 +59,7 @@ export default class CustomApplicationRetriever extends BaseMetadataRetriever<
     if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let apps = await this.getApps();
-      let foundApp = apps.find(app => {
+      let foundApp = apps.find((app) => {
         return app.FullName === application;
       });
       found = !_.isNil(foundApp);

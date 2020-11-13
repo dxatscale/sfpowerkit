@@ -38,7 +38,7 @@ export default class FlowRetriever extends BaseMetadataRetriever<Flow> {
     let toReturn: Promise<Flow[]> = new Promise<Flow[]>((resolve, reject) => {
       this.org
         .getConnection()
-        .metadata.list([{ type: "Flow", folder: null }], apiversion, function(
+        .metadata.list([{ type: "Flow", folder: null }], apiversion, function (
           err,
           metadata
         ) {
@@ -46,19 +46,21 @@ export default class FlowRetriever extends BaseMetadataRetriever<Flow> {
             return reject(err);
           }
           let flowsObjList: Flow[] = [];
-          for (let i = 0; i < metadata.length; i++) {
-            let flow: Flow = {
-              FullName: metadata[i].fullName,
-              NamespacePrefix: metadata[i].namespacePrefix,
-              Id: ""
-            };
-            if (
-              metadata[i].namespacePrefix !== "" &&
-              metadata[i].namespacePrefix !== undefined
-            ) {
-              flow.FullName = `${metadata[i].namespacePrefix}__${metadata[i].fullName}`;
+          if (metadata != undefined && metadata.length > 0) {
+            for (let i = 0; i < metadata.length; i++) {
+              let flow: Flow = {
+                FullName: metadata[i].fullName,
+                NamespacePrefix: metadata[i].namespacePrefix,
+                Id: "",
+              };
+              if (
+                metadata[i].namespacePrefix !== "" &&
+                metadata[i].namespacePrefix !== undefined
+              ) {
+                flow.FullName = `${metadata[i].namespacePrefix}__${metadata[i].fullName}`;
+              }
+              flowsObjList.push(flow);
             }
-            flowsObjList.push(flow);
           }
           resolve(flowsObjList);
         });
@@ -80,7 +82,7 @@ export default class FlowRetriever extends BaseMetadataRetriever<Flow> {
     if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let flows = await this.getFlows();
-      let foundFlow = flows.find(flow => {
+      let foundFlow = flows.find((flow) => {
         return flow.FullName === flowStr;
       });
       found = !_.isNil(foundFlow);
