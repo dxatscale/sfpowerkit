@@ -46,7 +46,7 @@ export default class FlowRetriever extends BaseMetadataRetriever<Flow> {
             return reject(err);
           }
           let flowsObjList: Flow[] = [];
-          if (flowsObjList != undefined && flowsObjList.length > 0) {
+          if (metadata != undefined && metadata.length > 0) {
             for (let i = 0; i < metadata.length; i++) {
               let flow: Flow = {
                 FullName: metadata[i].fullName,
