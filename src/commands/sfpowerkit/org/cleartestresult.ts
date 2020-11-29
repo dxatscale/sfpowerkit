@@ -1,4 +1,4 @@
-import { core, SfdxCommand } from "@salesforce/command";
+import { SfdxCommand } from "@salesforce/command";
 import { Connection, SfdxError } from "@salesforce/core";
 import { AnyJson } from "@salesforce/ts-types";
 import queryApi from "../../../utils/queryExecutor";
@@ -58,7 +58,9 @@ export default class Cleartestresult extends SfdxCommand {
           idsTodelete
         );
         deleteResults.forEach((elem) => {
-          if (!elem.success) errors.concat(elem.errors);
+          if (!elem.success) {
+            errors = errors.concat(elem.errors);
+          }
         });
       }
 
