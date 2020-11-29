@@ -1,5 +1,5 @@
 {
-  "version": "2.4.4",
+  "version": "2.4.5",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -74,6 +74,59 @@
           "char": "a",
           "description": "Alias ofthe org",
           "required": false
+        }
+      },
+      "args": []
+    },
+    "sfpowerkit:org:cleartestresult": {
+      "id": "sfpowerkit:org:cleartestresult",
+      "description": "This command helps to clear any test results and code coverage in the org to get fresh and enhanced coverage everytime",
+      "usage": "<%= command.id %> [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "pluginName": "sfpowerkit",
+      "pluginType": "core",
+      "aliases": [],
+      "examples": [
+        "$ sfdx sfpowerkit:org:cleartestresult -u myOrg@example.com"
+      ],
+      "flags": {
+        "json": {
+          "name": "json",
+          "type": "boolean",
+          "description": "format output as json",
+          "allowNo": false
+        },
+        "loglevel": {
+          "name": "loglevel",
+          "type": "option",
+          "description": "logging level for this command invocation",
+          "required": false,
+          "helpValue": "(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)",
+          "options": [
+            "trace",
+            "debug",
+            "info",
+            "warn",
+            "error",
+            "fatal",
+            "TRACE",
+            "DEBUG",
+            "INFO",
+            "WARN",
+            "ERROR",
+            "FATAL"
+          ],
+          "default": "warn"
+        },
+        "targetusername": {
+          "name": "targetusername",
+          "type": "option",
+          "char": "u",
+          "description": "username or alias for the target org; overrides default target org"
+        },
+        "apiversion": {
+          "name": "apiversion",
+          "type": "option",
+          "description": "override the api version used for api requests made by this command"
         }
       },
       "args": []
