@@ -32,7 +32,7 @@ stages:
 
         steps:
           - task: CmdLine@2
-            displayName: Run Yarn
+            displayName: Run npm install
             inputs:
               script: "npm install"
 
