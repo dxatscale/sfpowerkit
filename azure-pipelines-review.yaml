@@ -34,7 +34,7 @@ stages:
           - task: CmdLine@2
             displayName: Run Yarn
             inputs:
-              script: "yarn"
+              script: "npm install"
 
           - template: templates/smoke-test-template.yml
             parameters:
