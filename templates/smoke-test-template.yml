@@ -12,8 +12,8 @@ steps:
     displayName: "Install SFDX"
     inputs:
       script: |
-        sudo npm install -g sfdx-cli
-     
+        npm install -g sfdx-cli
+
   - task: CmdLine@2
     displayName: "Install sfpowerkit"
     condition: or ( eq( '${{ parameters.version }}', 'alpha'), eq( '${{ parameters.version }}', 'hotfix'))
