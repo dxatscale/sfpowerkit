@@ -73,6 +73,7 @@ $ sfdx plugins:link
     - [`sfpowerkit:org:trigger:activate`](#sfpowerkitorgtriggeractivate)
     - [`sfpowerkit:org:healthcheck`](#sfpowerkitorghealthcheck)
     - [`sfpowerkit:org:manifest:build`](#sfpowerkitorgmanifestbuild)
+    - [`sfpowerkit:org:cleartestresult`](#sfpowerkitorgcleartestresult)
     - [`sfpowerkit:org:orgcoverage`](#sfpowerkitorgorgcoverage)
     - [`sfpowerkit:org:profile:diff`](#sfpowerkitorgprofilediff)
     - [`sfpowerkit:org:sandbox:create`](#sfpowerkitorgsandboxcreate)
@@ -1026,6 +1027,24 @@ EXAMPLES
 ```
 
 _See code: [src\commands\sfpowerkit\org\manifest\build.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/manifest/build.ts)_
+
+### `sfpowerkit:org:cleartestresult`
+
+This command helps to clear any test results and code coverage in the org to get fresh and enhanced coverage everytime
+
+```
+USAGE
+  $ sfdx sfpowerkit:org:cleartestresult [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+
+OPTIONS
+  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
+
+EXAMPLE
+  $ sfdx sfpowerkit:org:cleartestresult -u myOrg@example.com
+```
 
 ### `sfpowerkit:org:orgcoverage`
 
