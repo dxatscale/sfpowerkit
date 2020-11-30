@@ -1,6 +1,6 @@
 {
   "name": "sfpowerkit",
-  "version": "2.4.7",
+  "version": "2.4.8",
   "author": {
     "name": "DXatScale",
     "email": "dxatscale@accenture.com"
@@ -150,7 +150,7 @@
   "repository": "accenture/sfpowerkit",
   "scripts": {
     "posttest": "tslint -p test -t stylish",
-    "prepare": "rimraf lib && tsc -b && npm shrinkwrap",
+    "prepare": "rimraf lib && tsc -b && oclif-dev manifest && npm shrinkwrap",
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "git add README.md"
   },
