@@ -32,10 +32,10 @@ steps:
       customEndpoint: "npm-sfpowerkit"
 
   - task: CmdLine@2
-    displayName: Run Yarn
+    displayName: Run NPM install
     condition: or(eq( '${{ parameters.version }}', 'alpha'), eq( '${{ parameters.version }}', 'hotfix'), eq( '${{ parameters.version }}', 'review') )
     inputs:
-      script: "yarn"
+      script: "npm install"
 
   - task: Npm@1
     displayName: "Publish Extension with tag ${{ parameters.version }}"
