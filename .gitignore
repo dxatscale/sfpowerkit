@@ -3,8 +3,9 @@
 /.nyc_output
 /dist
 /lib
-/package-lock.json
 /tmp
 node_modules
 .vs
 .sfdx
+test/commands/package/version/*
+test/*

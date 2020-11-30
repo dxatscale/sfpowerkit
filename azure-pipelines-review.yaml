@@ -32,9 +32,9 @@ stages:
 
         steps:
           - task: CmdLine@2
-            displayName: Run Yarn
+            displayName: Run npm install
             inputs:
-              script: "yarn"
+              script: "npm install"
 
           - template: templates/smoke-test-template.yml
             parameters:
