@@ -12,13 +12,15 @@ steps:
     condition: ne( '${{ parameters.version }}', 'review')
     displayName: "Install SFDX"
     inputs:
-      sfpowerkit_version: ${{ parameters.version }}
+      script: |
+        sudo npm install -g sfdx-cli
 
-  - task: sfpwowerscript-installsfdx-task@7
+  - task: CmdLine@2
     condition: eq( '${{ parameters.version }}', 'review')
     displayName: "Install SFDX"
     inputs:
-      sfpowerkit_version: latest
+      script: |
+        echo y | sfdx plugins:install sfpowerkit@${{ parameters.version }}
 
   - task: CmdLine@2
     displayName: "Install sfpowerkit"
