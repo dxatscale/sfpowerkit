@@ -87,9 +87,6 @@
   "engines": {
     "node": ">=8.0.0"
   },
-  "resolutions": {
-    "antlr4": "4.8.0"
-  },
   "files": [
     "/lib",
     "/messages",
@@ -153,9 +150,8 @@
   },
   "repository": "accenture/sfpowerkit",
   "scripts": {
-    "postpack": "rimraf oclif.manifest.json npm-shrinkwrap.json",
     "posttest": "tslint -p test -t stylish",
-    "prepare": "rimraf lib && tsc -b && oclif-dev manifest && npm shrinkwrap",
+    "prepare": "rimraf lib && tsc -b && npm shrinkwrap",
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "git add README.md"
   },
