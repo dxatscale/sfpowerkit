@@ -2,6 +2,7 @@ import { core, flags, SfdxCommand } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import poolHydrateImpl from "../../../impl/pool/scratchorg/PoolDeleteImpl";
+import { SfdxError } from "@salesforce/core";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -22,29 +23,38 @@ export default class Delete extends SfdxCommand {
     `$ sfdx sfpowerkit:pool:delete -t core `,
     `$ sfdx sfpowerkit:pool:delete -t core -v devhub`,
     `$ sfdx sfpowerkit:pool:delete -t core -v devhub -m`,
-    `$ sfdx sfpowerkit:pool:delete -t core -v devhub -m -a`
+    `$ sfdx sfpowerkit:pool:delete -t core -v devhub -m -a`,
   ];
 
   protected static flagsConfig = {
     tag: flags.string({
       char: "t",
       description: messages.getMessage("tagDescription"),
-      required: true
+      required: true,
     }),
     mypool: flags.boolean({
       char: "m",
       description: messages.getMessage("mypoolDescription"),
-      required: false
+      required: false,
     }),
     allscratchorgs: flags.boolean({
       char: "a",
       description: messages.getMessage("allscratchorgsDescription"),
-      required: false
-    })
+      required: false,
+    }),
+    inprogressonly: flags.boolean({
+      char: "i",
+      description: messages.getMessage("inprogressonlyDescription"),
+      required: false,
+    }),
   };
 
   public async run(): Promise<AnyJson> {
     SFPowerkit.setLogLevel("DEBUG", false);
+
+    if (this.flags.allscratchorgs && this.flags.inprogressonly) {
+      throw new SfdxError("Cannot pass both -a and -i flags together.");
+    }
 
     await this.hubOrg.refreshAuth();
     const hubConn = this.hubOrg.getConnection();
@@ -57,7 +67,8 @@ export default class Delete extends SfdxCommand {
       this.flags.apiversion,
       this.flags.tag,
       this.flags.mypool,
-      this.flags.allscratchorgs
+      this.flags.allscratchorgs,
+      this.flags.inprogressonly
     );
 
     let result = await hydrateImpl.execute();

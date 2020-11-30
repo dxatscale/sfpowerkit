@@ -7,6 +7,61 @@ import { isNullOrUndefined } from "util";
 
 const ORDER_BY_FILTER = " ORDER BY CreatedDate ASC";
 export default class ScratchOrgUtils {
+  public static isNewVersionCompatible: boolean = false;
+  public static async checkForNewVersionCompatible(hubOrg: Org) {
+    let conn = hubOrg.getConnection();
+    let expectedValues = ["In Progress", "Available", "Allocate", "Assigned"];
+    let availableValues: string[] = [];
+    await retry(
+      async (bail) => {
+        const describeResult: any = await conn
+          .sobject("ScratchOrgInfo")
+          .describe();
+        if (describeResult) {
+          for (const field of describeResult.fields) {
+            if (
+              field.name === "Allocation_status__c" &&
+              field.picklistValues.length === 4
+            ) {
+              for (let picklistValue of field.picklistValues) {
+                if (picklistValue.active) {
+                  availableValues.push(picklistValue.value);
+                }
+              }
+              break;
+            }
+          }
+        }
+      },
+      { retries: 3, minTimeout: 30000 }
+    );
+
+    this.isNewVersionCompatible = this.checkArray(
+      expectedValues,
+      availableValues
+    );
+    if (!this.isNewVersionCompatible) {
+      SFPowerkit.log(
+        `Required Prerequisite values in ScratchOrgInfo.Allocation_status__c field is missing in the DevHub, expected values are : ${expectedValues}\n` +
+          `Switching back to previous version, we request you to update ScratchOrgInfo.Allocation_status__c field in the DevHub \n` +
+          `For more information Please refer https://github.com/Accenture/sfpowerkit/blob/main/src_saleforce_packages/scratchorgpool/force-app/main/default/objects/ScratchOrgInfo/fields/Allocation_status__c.field-meta.xml \n`,
+        LoggerLevel.WARN
+      );
+    }
+
+    return this.isNewVersionCompatible;
+  }
+  private static checkArray(first: string[], second: string[]) {
+    if (first.length !== second.length) {
+      return false;
+    }
+    for (let i = 0; i < first.length; i++) {
+      if (!second.includes(first[i])) {
+        return false;
+      }
+    }
+    return true;
+  }
   public static async getScratchOrgLimits(hubOrg: Org, apiversion: string) {
     let conn = hubOrg.getConnection();
 
@@ -229,7 +284,7 @@ export default class ScratchOrgUtils {
             "Setting Scratch Org Info:" + JSON.stringify(result),
             LoggerLevel.TRACE
           );
-          return result.success;
+          return result.constructor !== Array ? result.success : true;
         } catch (err) {
           SFPowerkit.log(
             "Failure at setting ScratchOrg Info" + err,
@@ -263,7 +318,9 @@ export default class ScratchOrgUtils {
           query =
             query + ` AND createdby.username = '${hubOrg.getUsername()}' `;
         }
-        if (unAssigned) {
+        if (unAssigned && this.isNewVersionCompatible) {
+          query = query + `AND Allocation_status__c ='Available'`;
+        } else if (unAssigned && !this.isNewVersionCompatible) {
           query = query + `AND Allocation_status__c !='Assigned'`;
         }
         query = query + ORDER_BY_FILTER;

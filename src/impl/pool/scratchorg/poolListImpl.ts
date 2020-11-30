@@ -24,6 +24,7 @@ export default class PoolListImpl {
   }
 
   public async execute(): Promise<ScratchOrg[]> {
+    await ScratchOrgUtils.checkForNewVersionCompatible(this.hubOrg);
     const results = (await ScratchOrgUtils.getScratchOrgsByTag(
       this.tag,
       this.hubOrg,
@@ -31,7 +32,7 @@ export default class PoolListImpl {
       !this.allScratchOrgs
     )) as any;
 
-    let scratchOrgToDelete: ScratchOrg[] = new Array<ScratchOrg>();
+    let scratchOrgList: ScratchOrg[] = new Array<ScratchOrg>();
     if (results.records.length > 0) {
       SFPowerkit.log(
         `${this.tag} pool has ${results.records.length} Scratch orgs available`,
@@ -46,14 +47,23 @@ export default class PoolListImpl {
         soDetail.username = element.SignupUsername;
         soDetail.password = element.Password__c;
         soDetail.expityDate = element.ExpirationDate;
-        soDetail.status = element.Allocation_status__c
-          ? "In use"
-          : "Not in use";
+        if (element.Allocation_status__c === "Assigned") {
+          soDetail.status = "In use";
+        } else if (
+          (ScratchOrgUtils.isNewVersionCompatible &&
+            element.Allocation_status__c === "Available") ||
+          (!ScratchOrgUtils.isNewVersionCompatible &&
+            !element.Allocation_status__c)
+        ) {
+          soDetail.status = "Not in use";
+        } else {
+          soDetail.status = "Provision in progress";
+        }
 
-        scratchOrgToDelete.push(soDetail);
+        scratchOrgList.push(soDetail);
       }
     }
 
-    return scratchOrgToDelete;
+    return scratchOrgList;
   }
 }
