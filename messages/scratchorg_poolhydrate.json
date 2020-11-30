@@ -3,5 +3,5 @@
   "tagDescription": "(required) tag used to identify the scratch org pool",
   "mypoolDescription": "Filter only Scratch orgs created by current user in the pool",
   "allscratchorgsDescription": "Deletes all used and unused Scratch orgs from pool by the tag",
-  "inprogressonly": "Deletes all In Progress Scratch orgs from pool by the tag"
+  "inprogressonlyDescription": "Deletes all In Progress Scratch orgs from pool by the tag"
 }
