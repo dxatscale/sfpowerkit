@@ -8,20 +8,12 @@ parameters:
     default: ubuntu
 
 steps:
-  - task: sfpwowerscript-installsfdx-task@7
-    condition: ne( '${{ parameters.version }}', 'review')
+  - task: CmdLine@2
     displayName: "Install SFDX"
     inputs:
       script: |
         sudo npm install -g sfdx-cli
-
-  - task: CmdLine@2
-    condition: eq( '${{ parameters.version }}', 'review')
-    displayName: "Install SFDX"
-    inputs:
-      script: |
-        echo y | sfdx plugins:install sfpowerkit@${{ parameters.version }}
-
+     
   - task: CmdLine@2
     displayName: "Install sfpowerkit"
     condition: or ( eq( '${{ parameters.version }}', 'alpha'), eq( '${{ parameters.version }}', 'hotfix'))
@@ -31,7 +23,7 @@ steps:
 
   - task: CmdLine@2
     condition: eq( '${{ parameters.version }}', 'review')
-    displayName: "Link Plugin"
+    displayName: "Link Plugin for Review"
     inputs:
       script: |
         sfdx plugins:link
