@@ -10,10 +10,18 @@ parameters:
 steps:
   - task: CmdLine@2
     displayName: "Install SFDX"
+    condition: eq( variables['Agent.OS'], 'Linux')
     inputs:
       script: |
-        sudo npm install -g sfdx-cli
-     
+        sudo npm install -g  sfdx-cli
+
+  - task: CmdLine@2
+    displayName: "Install SFDX"
+    condition: ne( variables['Agent.OS'], 'Linux')
+    inputs:
+      script: |
+        npm install -g  sfdx-cli
+
   - task: CmdLine@2
     displayName: "Install sfpowerkit"
     condition: or ( eq( '${{ parameters.version }}', 'alpha'), eq( '${{ parameters.version }}', 'hotfix'))

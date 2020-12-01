@@ -11,6 +11,16 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
+                <fullName>In Progress</fullName>
+                <default>false</default>
+                <label>In Progress</label>
+            </value>
+            <value>
+                <fullName>Available</fullName>
+                <default>false</default>
+                <label>Available</label>
+            </value>
+            <value>
                 <fullName>Allocate</fullName>
                 <default>false</default>
                 <label>Allocate</label>

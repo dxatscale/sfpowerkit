@@ -1435,10 +1435,11 @@ Deletes the pooled scratch orgs from the Scratch Org Pool
 
 ```
 USAGE
-  $ sfdx sfpowerkit:pool:delete -t <string> [-m] [-a] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+  $ sfdx sfpowerkit:pool:delete -t <string> [-m] [-a] [-i] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
   -a, --allscratchorgs                                                              Deletes all used and unused Scratch orgs from pool by the tag
+  -i, --inprogressonly                                                              Deletes all scratch orgs which are 'In Progress' stage from pool by the tag
   -m, --mypool                                                                      Filter only Scratch orgs created by current user in the pool
   -t, --tag=tag                                                                     (required) tag used to identify the scratch org pool
   -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
