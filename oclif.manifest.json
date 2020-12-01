@@ -1,5 +1,5 @@
 {
-  "version": "2.4.10",
+  "version": "2.4.11",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -636,7 +636,7 @@
           "name": "tag",
           "type": "option",
           "char": "t",
-          "description": "(required) tag used to identify the scratch org pool",
+          "description": "tag used to identify the scratch org pool",
           "required": true
         },
         "mypool": {

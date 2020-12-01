@@ -31,6 +31,11 @@ stages:
           vmImage: $(image)
 
         steps:
+          - task: UseNode@1
+            displayName: "Use Node 12x"
+            inputs:
+              version: 12.x
+
           - task: CmdLine@2
             displayName: Run npm install
             inputs:
