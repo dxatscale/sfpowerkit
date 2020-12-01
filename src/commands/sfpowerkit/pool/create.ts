@@ -23,20 +23,20 @@ export default class Create extends SfdxCommand {
 
   public static examples = [
     `$ sfdx sfpowerkit:pool:create -f config\\core_poolconfig.json`,
-    `$ sfdx sfpowerkit:pool:create -f config\\core_poolconfig.json -v devhub`
+    `$ sfdx sfpowerkit:pool:create -f config\\core_poolconfig.json -v devhub`,
   ];
 
   protected static flagsConfig: FlagsConfig = {
     configfilepath: flags.filepath({
       char: "f",
       description: messages.getMessage("configFilePathDescription"),
-      required: true
+      required: true,
     }),
     batchsize: flags.number({
       char: "b",
       default: 10,
       description: messages.getMessage("batchSizeDescription"),
-      required: false
+      required: false,
     }),
     loglevel: flags.enum({
       description: "logging level for this command invocation",
@@ -54,14 +54,14 @@ export default class Create extends SfdxCommand {
         "INFO",
         "WARN",
         "ERROR",
-        "FATAL"
-      ]
-    })
+        "FATAL",
+      ],
+    }),
   };
 
   public async run(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
-    SFPowerkit.setLogLevel(this.flags.loglevel, false);
+    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     await this.hubOrg.refreshAuth();
     const hubConn = this.hubOrg.getConnection();
