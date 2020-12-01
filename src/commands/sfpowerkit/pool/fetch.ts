@@ -22,24 +22,24 @@ export default class Fetch extends SfdxCommand {
     `$ sfdx sfpowerkit:pool:fetch -t core `,
     `$ sfdx sfpowerkit:pool:fetch -t core -v devhub`,
     `$ sfdx sfpowerkit:pool:fetch -t core -v devhub -m`,
-    `$ sfdx sfpowerkit:pool:fetch -t core -v devhub -s testuser@test.com`
+    `$ sfdx sfpowerkit:pool:fetch -t core -v devhub -s testuser@test.com`,
   ];
 
   protected static flagsConfig = {
     tag: flags.string({
       char: "t",
       description: messages.getMessage("tagDescription"),
-      required: true
+      required: true,
     }),
     mypool: flags.boolean({
       char: "m",
       description: messages.getMessage("mypoolDescription"),
-      required: false
+      required: false,
     }),
     sendtouser: flags.string({
       char: "s",
       description: messages.getMessage("sendToUserDescription"),
-      required: false
+      required: false,
     }),
     loglevel: flags.enum({
       description: "logging level for this command invocation",
@@ -57,13 +57,13 @@ export default class Fetch extends SfdxCommand {
         "INFO",
         "WARN",
         "ERROR",
-        "FATAL"
-      ]
-    })
+        "FATAL",
+      ],
+    }),
   };
 
   public async run(): Promise<AnyJson> {
-    SFPowerkit.setLogLevel(this.flags.loglevel, false);
+    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     await this.hubOrg.refreshAuth();
     const hubConn = this.hubOrg.getConnection();

@@ -47,7 +47,7 @@ export default class List extends SfdxCommand {
   };
 
   public async run(): Promise<AnyJson> {
-    SFPowerkit.setLogLevel("DEBUG", false);
+    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     await this.hubOrg.refreshAuth();
     const hubConn = this.hubOrg.getConnection();
