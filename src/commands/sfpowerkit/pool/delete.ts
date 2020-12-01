@@ -2,7 +2,6 @@ import { core, flags, SfdxCommand } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import poolHydrateImpl from "../../../impl/pool/scratchorg/PoolDeleteImpl";
-import { SfdxError } from "@salesforce/core";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
