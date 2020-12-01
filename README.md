@@ -1439,9 +1439,9 @@ USAGE
 
 OPTIONS
   -a, --allscratchorgs                                                              Deletes all used and unused Scratch orgs from pool by the tag
-  -i, --inprogressonly                                                              Deletes all In Progress Scratch orgs from pool by the tag
+  -i, --inprogressonly                                                              Deletes all scratch orgs which are 'In Progress' stage from pool by the tag
   -m, --mypool                                                                      Filter only Scratch orgs created by current user in the pool
-  -t, --tag=tag                                                                     (required) (required) tag used to identify the scratch org pool
+  -t, --tag=tag                                                                     (required) tag used to identify the scratch org pool
   -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
   --apiversion=apiversion                                                           override the api version used for api requests made by this command
   --json                                                                            format output as json
