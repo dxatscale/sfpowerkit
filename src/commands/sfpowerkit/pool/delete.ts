@@ -46,15 +46,12 @@ export default class Delete extends SfdxCommand {
       char: "i",
       description: messages.getMessage("inprogressonlyDescription"),
       required: false,
+      exclusive: ["allscratchorgs"],
     }),
   };
 
   public async run(): Promise<AnyJson> {
     SFPowerkit.setLogLevel("DEBUG", false);
-
-    if (this.flags.allscratchorgs && this.flags.inprogressonly) {
-      throw new SfdxError("Cannot pass both -a and -i flags together.");
-    }
 
     await this.hubOrg.refreshAuth();
     const hubConn = this.hubOrg.getConnection();

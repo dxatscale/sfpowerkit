@@ -582,7 +582,7 @@
     "sfpowerkit:pool:delete": {
       "id": "sfpowerkit:pool:delete",
       "description": "Deletes the pooled scratch orgs from the Scratch Org Pool",
-      "usage": "<%= command.id %> -t <string> [-m] [-a] [-i] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "usage": "<%= command.id %> -t <string> [-m] [-i | -a] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],

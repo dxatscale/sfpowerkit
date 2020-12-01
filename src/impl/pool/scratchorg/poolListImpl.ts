@@ -55,9 +55,9 @@ export default class PoolListImpl {
           (!ScratchOrgUtils.isNewVersionCompatible &&
             !element.Allocation_status__c)
         ) {
-          soDetail.status = "Not in use";
+          soDetail.status = "Available";
         } else {
-          soDetail.status = "Provision in progress";
+          soDetail.status = "Provisioning in progress";
         }
 
         scratchOrgList.push(soDetail);

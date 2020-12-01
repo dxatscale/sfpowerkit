@@ -75,10 +75,10 @@ export default class List extends SfdxCommand {
       (element) => element.status === "In use"
     );
     let scratchOrgNotInuse = result.filter(
-      (element) => element.status === "Not in use"
+      (element) => element.status === "Available"
     );
     let scratchOrgInProvision = result.filter(
-      (element) => element.status === "Provision in progress"
+      (element) => element.status === "Provisioning in progress"
     );
 
     if (!this.flags.json) {
@@ -102,7 +102,7 @@ export default class List extends SfdxCommand {
         );
         if (scratchOrgInProvision.length && scratchOrgInProvision.length > 0) {
           this.ux.log(
-            `Scratch Orgs Provision in progress in the Pool : ${scratchOrgInProvision.length} \n`
+            `Scratch Orgs being provisioned in the Pool : ${scratchOrgInProvision.length} \n`
           );
         }
 
