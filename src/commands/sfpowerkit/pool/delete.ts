@@ -47,6 +47,25 @@ export default class Delete extends SfdxCommand {
       required: false,
       exclusive: ["allscratchorgs"],
     }),
+    loglevel: flags.enum({
+      description: "logging level for this command invocation",
+      default: "info",
+      required: false,
+      options: [
+        "trace",
+        "debug",
+        "info",
+        "warn",
+        "error",
+        "fatal",
+        "TRACE",
+        "DEBUG",
+        "INFO",
+        "WARN",
+        "ERROR",
+        "FATAL",
+      ],
+    }),
   };
 
   public async run(): Promise<AnyJson> {
