@@ -87,13 +87,22 @@ export default class FieldRetriever extends BaseMetadataRetriever<Field> {
     if (fieldParts.length !== 2) {
       return false;
     }
+    let objectName = fieldParts[0];
+    let fieldName = fieldParts[1];
     //Look first in project files
     if (!_.isNil(METADATA_INFO.CustomField.components)) {
       found = METADATA_INFO.CustomField.components.includes(fullName);
+      if (!found) {
+        if (objectName === "Task" || objectName === "Event") {
+          let activityFieldName = `Activity.${fieldName}`;
+          found = METADATA_INFO.CustomField.components.includes(
+            activityFieldName
+          );
+        }
+      }
     }
     if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
-      let objectName = fieldParts[0];
       let fieldDefinitions = await this.getFieldsByObjectName(objectName);
       let field = fieldDefinitions.find(field => field.FullName === fullName);
       found = field !== undefined;
