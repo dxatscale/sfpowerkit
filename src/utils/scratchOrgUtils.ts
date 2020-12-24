@@ -413,24 +413,12 @@ export default class ScratchOrgUtils {
     );
   }
 
-  public static async deleteScratchOrg(
-    hubOrg: Org,
-    apiversion: string,
-    id: string
-  ) {
+  public static async deleteScratchOrg(hubOrg: Org, scratchOrgIds: string[]) {
     let hubConn = hubOrg.getConnection();
 
     await retry(
       async (bail) => {
-        var query_uri = `${hubConn.instanceUrl}/services/data/v${apiversion}/sobjects/ActiveScratchOrg/${id}`;
-        const info = await request({
-          method: "delete",
-          url: query_uri,
-          headers: {
-            Authorization: `Bearer ${hubConn.accessToken}`,
-          },
-          json: true,
-        });
+        await hubConn.sobject("ActiveScratchOrg").del(scratchOrgIds);
       },
       { retries: 3, minTimeout: 3000 }
     );

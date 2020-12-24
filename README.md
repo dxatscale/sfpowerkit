@@ -1231,25 +1231,24 @@ _See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/
 
 ### `sfpowerkit:org:scratchorg:delete`
 
-Delete the scratch org for a paritcular user
+Deletes the active count of scratch org by given usermame/email in a devhub
 
 ```
 USAGE
-  $ sfdx sfpowerkit:org:scratchorg:delete -v <string>  -e <string>
-  [--loglevel trace|debug|info|warn|error|fatal]
+  $ sfdx sfpowerkit:org:scratchorg:delete [-e <string> | -u <string>] [-v <string>] [--apiversion <string>] [--json] [--loglevel
+  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -v, --targetdevhubusername=targetdevhubusername  (required) username or alias for the dev hub org; overrides default dev hub org
+  -e, --email=email                                                                 Email of the user account that has created the scratch org
+  -u, --username=username                                                           Username of the scratch org to be deleted
+  -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
+  --apiversion=apiversion                                                           override the api version used for api requests made by this command
+  --json                                                                            format output as json
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
-  -e, --email=email                                (required) Email of the user account's whose scratch org to be deleted
-
-
-EXAMPLE
+EXAMPLES
   $ sfdx sfpowerkit:org:scratchorg:delete  -e xyz@kyz.com -v devhub
-    Found Scratch Org Ids for user xyz@kyz.com
-    2AS6F000000XbxVWAS
-    Deleting Scratch Orgs
-    Deleted Scratch Org 2AS6F000000XbxVWAS
+  $ sfdx sfpowerkit:org:scratchorg:delete  -u xyz@kyz.com -v devhub
 ```
 
 _See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/scratchorg/usage.ts)_

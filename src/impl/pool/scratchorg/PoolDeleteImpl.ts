@@ -67,17 +67,14 @@ export default class PoolDeleteImpl {
         );
 
         if (activeScrathOrgs.records.length > 0) {
-          for (let ScratchOrg of activeScrathOrgs.records) {
-            await ScratchOrgUtils.deleteScratchOrg(
-              this.hubOrg,
-              this.apiversion,
-              ScratchOrg.Id
-            );
-            SFPowerkit.log(
-              `Scratch org with username ${ScratchOrg.SignupUsername} is deleted successfully`,
-              LoggerLevel.TRACE
-            );
-          }
+          let scratchOrgIds: string[] = activeScrathOrgs.records.map(
+            (elem) => elem.Id
+          );
+          await ScratchOrgUtils.deleteScratchOrg(this.hubOrg, scratchOrgIds);
+          SFPowerkit.log(
+            "Scratch Org(s) deleted successfully.",
+            LoggerLevel.TRACE
+          );
         }
       }
     }
