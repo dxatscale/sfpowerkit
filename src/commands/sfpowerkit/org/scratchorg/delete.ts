@@ -1,7 +1,6 @@
 import { core, flags, SfdxCommand } from "@salesforce/command";
 import { SfdxError } from "@salesforce/core";
 import { AnyJson } from "@salesforce/ts-types";
-let request = require("request-promise-native");
 import ScratchOrgUtils from "../../../../utils/scratchOrgUtils";
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
