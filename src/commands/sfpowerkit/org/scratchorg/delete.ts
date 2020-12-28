@@ -1,6 +1,6 @@
 import { core, flags, SfdxCommand } from "@salesforce/command";
+import { SfdxError } from "@salesforce/core";
 import { AnyJson } from "@salesforce/ts-types";
-let request = require("request-promise-native");
 import ScratchOrgUtils from "../../../../utils/scratchOrgUtils";
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -13,12 +13,8 @@ export default class Delete extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:org:scratchorg:delete  -e xyz@kyz.com -v devhub
-    Found Scratch Org Ids for user xyz@kyz.com
-    2AS6F000000XbxVWAS
-    Deleting Scratch Orgs
-    Deleted Scratch Org 2AS6F000000XbxVWAS
-  `
+    `$ sfdx sfpowerkit:org:scratchorg:delete  -e xyz@kyz.com -v devhub`,
+    `$ sfdx sfpowerkit:org:scratchorg:delete  -u xyz@kyz.com -v devhub`,
   ];
 
   // Comment this out if your command does not require a hub org username
@@ -26,39 +22,63 @@ export default class Delete extends SfdxCommand {
 
   protected static flagsConfig = {
     email: flags.string({
-      required: true,
+      required: false,
       char: "e",
-      description: messages.getMessage("emailFlagDescription")
-    })
+      exclusive: ["username"],
+      description: messages.getMessage("emailFlagDescription"),
+    }),
+    username: flags.string({
+      required: false,
+      char: "u",
+      exclusive: ["email"],
+      description: messages.getMessage("usernameFlagDescription"),
+    }),
   };
 
   public async run(): Promise<AnyJson> {
+    if (!this.flags.username && !this.flags.email) {
+      throw new SfdxError(
+        "Required flags are missing, Please provide either username or email."
+      );
+    }
+
     await this.hubOrg.refreshAuth();
     const conn = this.hubOrg.getConnection();
     this.flags.apiversion =
       this.flags.apiversion || (await conn.retrieveMaxApiVersion());
 
-    let info = await this.getActiveScratchOrgsForUser(conn, this.flags.email);
+    let info = await this.getActiveScratchOrgsForUser(
+      conn,
+      this.flags.email,
+      this.flags.username
+    );
 
     if (info.totalSize > 0) {
-      this.ux.log(`Found Scratch Org Ids for user ${this.flags.email}`);
+      this.ux.log(
+        `Found ${info.totalSize} Scratch Org(s) for the given ${
+          this.flags.username
+            ? "Username: " + this.flags.username
+            : "Email: " + this.flags.email
+        } in devhub ${this.hubOrg.getUsername()}.\n`
+      );
+      this.ux.table(info.records, [
+        "Id",
+        "SignupUsername",
+        "SignupEmail",
+        "ExpirationDate",
+      ]);
 
-      info.records.forEach(element => {
-        this.ux.log(element.Id);
-      });
-
-      this.ux.log(`Deleting Scratch Orgs`);
-
-      for (let element of info.records) {
-        await ScratchOrgUtils.deleteScratchOrg(
-          this.hubOrg,
-          this.flags.apiversion,
-          element.Id
-        );
-        this.ux.log(`Deleted Scratch Org ${element.Id}`);
-      }
+      let scratchOrgIds: string[] = info.records.map((elem) => elem.Id);
+      await ScratchOrgUtils.deleteScratchOrg(this.hubOrg, scratchOrgIds);
+      this.ux.log("Scratch Org(s) deleted successfully.");
     } else {
-      this.ux.log(`No Scratch Orgs to delete`);
+      this.ux.log(
+        `No Scratch Org(s) found for the given ${
+          this.flags.username
+            ? "Username: " + this.flags.username
+            : "Email: " + this.flags.email
+        } in devhub ${this.hubOrg.getUsername()}.`
+      );
     }
 
     return 1;
@@ -66,20 +86,18 @@ export default class Delete extends SfdxCommand {
 
   private async getActiveScratchOrgsForUser(
     conn: core.Connection,
-    email: string
+    email: string,
+    username: string
   ): Promise<any> {
-    var query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/query?q=SELECT+Id+FROM+ActiveScratchOrg+WHERE+SignupEmail+=+'${email}'`;
+    let query = `SELECT Id, SignupUsername, SignupEmail, ExpirationDate FROM ActiveScratchOrg`;
 
-    //this.ux.log(`Query URI ${query_uri}`);
+    if (username) {
+      query = `${query} WHERE SignupUsername = '${username}'`;
+    } else {
+      query = `${query} WHERE SignupEmail = '${email}'`;
+    }
 
-    const scratch_orgs = await request({
-      method: "get",
-      url: query_uri,
-      headers: {
-        Authorization: `Bearer ${conn.accessToken}`
-      },
-      json: true
-    });
+    const scratch_orgs = (await conn.query(query)) as any;
 
     return scratch_orgs;
   }

@@ -1,5 +1,5 @@
 {
-  "version": "2.5.1",
+  "version": "2.5.2",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -2083,13 +2083,14 @@
     },
     "sfpowerkit:org:scratchorg:delete": {
       "id": "sfpowerkit:org:scratchorg:delete",
-      "description": "Gets the active count of scratch org by users in a devhub",
-      "usage": "<%= command.id %> -e <string> [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "description": "Deletes the active count of scratch org by given usermame/email in a devhub",
+      "usage": "<%= command.id %> [-e <string> | -u <string>] [-v <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],
       "examples": [
-        "$ sfdx sfpowerkit:org:scratchorg:delete  -e xyz@kyz.com -v devhub\n    Found Scratch Org Ids for user xyz@kyz.com\n    2AS6F000000XbxVWAS\n    Deleting Scratch Orgs\n    Deleted Scratch Org 2AS6F000000XbxVWAS\n  "
+        "$ sfdx sfpowerkit:org:scratchorg:delete  -e xyz@kyz.com -v devhub",
+        "$ sfdx sfpowerkit:org:scratchorg:delete  -u xyz@kyz.com -v devhub"
       ],
       "flags": {
         "json": {
@@ -2136,7 +2137,14 @@
           "type": "option",
           "char": "e",
           "description": "Email of the user account that has created the scratch org",
-          "required": true
+          "required": false
+        },
+        "username": {
+          "name": "username",
+          "type": "option",
+          "char": "u",
+          "description": "Username of the scratch org to be deleted",
+          "required": false
         }
       },
       "args": []

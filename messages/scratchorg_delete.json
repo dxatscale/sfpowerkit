@@ -1,4 +1,5 @@
 {
-  "commandDescription": "Gets the active count of scratch org by users in a devhub",
-  "emailFlagDescription": "Email of the user account that has created the scratch org"
+  "commandDescription": "Deletes the active count of scratch org by given usermame/email in a devhub",
+  "emailFlagDescription": "Email of the user account that has created the scratch org",
+  "usernameFlagDescription": "Username of the scratch org to be deleted"
 }

@@ -426,11 +426,9 @@ export default class PoolCreateImpl {
             scratchOrg.orgId
           );
 
-          await ScratchOrgUtils.deleteScratchOrg(
-            this.hubOrg,
-            this.apiversion,
-            activeScratchOrgRecordId
-          );
+          await ScratchOrgUtils.deleteScratchOrg(this.hubOrg, [
+            activeScratchOrgRecordId,
+          ]);
           SFPowerkit.log(
             `Succesfully deleted scratchorg  ${scratchOrg.username}`,
             LoggerLevel.TRACE
