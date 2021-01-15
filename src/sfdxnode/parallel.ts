@@ -17,7 +17,7 @@ const createParallelCommand: CreateCommandFunc = (
 ) => (flags: Flags, opts: Opts) =>
   new Promise((resolve, reject) => {
     let child_path = __dirname.toString();
-    if (path.basename(path.dirname(child_path)) == "src") {
+    if (path.basename(path.dirname(child_path)) == "src") { //Run in linking, ts is ran using ts-node, so use the compiled child.js
       //Linked
       child_path = path.join(
         path.dirname(path.dirname(child_path)),
@@ -48,10 +48,22 @@ const createParallelCommand: CreateCommandFunc = (
 export const sfdx: SfdxApi = new SfdxApi();
 
 export function registerNamespace(sfdxNamespace: SfdxNamespace): void {
-  const { commandsDir, namespace }: SfdxNamespace = sfdxNamespace;
-  sfdx[namespace] = buildCommands(
+  const { commandsDir, namespace, additionalNameSpace }: SfdxNamespace = sfdxNamespace;
+  if(additionalNameSpace)
+  {
+  sfdx[additionalNameSpace] = buildCommands(
     createParallelCommand,
     commandsDir,
-    namespace
+    namespace,
+    additionalNameSpace
   );
+
+ 
+  }
+  else
+   sfdx[namespace] = buildCommands(
+     createParallelCommand,
+     commandsDir,
+     namespace
+   );
 }
