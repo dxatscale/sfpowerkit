@@ -1,6 +1,6 @@
 {
   "name": "sfpowerkit",
-  "version": "2.5.2",
+  "version": "2.5.3",
   "author": {
     "name": "DXatScale",
     "email": "dxatscale@accenture.com"
@@ -48,7 +48,7 @@
     "pino-pretty": "^4.3.0",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.9",
-    "salesforce-alm": "^50.7.1",
+    "salesforce-alm": "50.7.1",
     "simple-git": "2.21.0",
     "ts-node": "^9.0.0",
     "tslib": "2.0.3",
