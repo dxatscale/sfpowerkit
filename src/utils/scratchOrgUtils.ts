@@ -318,9 +318,13 @@ export default class ScratchOrgUtils {
             query + ` AND createdby.username = '${hubOrg.getUsername()}' `;
         }
         if (unAssigned && this.isNewVersionCompatible) {
-          query = query + `AND Allocation_status__c ='Available'`;
+          // if new version compatible get Available / In progress
+          query =
+            query +
+            `AND ( Allocation_status__c ='Available' OR Allocation_status__c = 'In Progress' ) `;
         } else if (unAssigned && !this.isNewVersionCompatible) {
-          query = query + `AND Allocation_status__c !='Assigned'`;
+          // if new version not compatible get not Assigned
+          query = query + `AND Allocation_status__c !='Assigned' `;
         }
         query = query + ORDER_BY_FILTER;
         SFPowerkit.log("QUERY:" + query, LoggerLevel.TRACE);
