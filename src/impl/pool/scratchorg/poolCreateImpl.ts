@@ -541,7 +541,7 @@ export default class PoolCreateImpl {
 
       if (leftOver > 0) {
         //Allocate LeftOver in a round robin model
-        while (leftOver >= 0) {
+        while (leftOver > 0) {
           poolUsers.forEach((pooluser) => {
             if (leftOver == 0) return;
             if (
