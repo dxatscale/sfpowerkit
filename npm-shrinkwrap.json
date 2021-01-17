@@ -1,6 +1,6 @@
 {
   "name": "sfpowerkit",
-  "version": "2.5.4",
+  "version": "2.5.5",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -856,6 +856,24 @@
           "version": "1.10.0",
           "resolved": "https://registry.npmjs.org/tslib/-/tslib-1.10.0.tgz",
           "integrity": "sha512-qOebF53frne81cf0S9B41ByenJ3/IuH8yJKngAX35CmiZySA0khhkovshKK+jGCaMnVomla7gVlIcc3EvKPbTQ=="
+        }
+      }
+    },
+    "@salesforce/plugin-user": {
+      "version": "1.0.7",
+      "resolved": "https://registry.npmjs.org/@salesforce/plugin-user/-/plugin-user-1.0.7.tgz",
+      "integrity": "sha512-UHVG/Z4a6pXws05XNYRctkvnwBoIg3d0Clpo30H8sBEG5Z/vYlDLKRli0X5qlH/tOZfxqbIh8C5I3sSyf/lOrA==",
+      "requires": {
+        "@oclif/config": "^1.17.0",
+        "@salesforce/command": "^3.0.4",
+        "@salesforce/core": "^2.15.2",
+        "tslib": "^1"
+      },
+      "dependencies": {
+        "tslib": {
+          "version": "1.14.1",
+          "resolved": "https://registry.npmjs.org/tslib/-/tslib-1.14.1.tgz",
+          "integrity": "sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg=="
         }
       }
     },

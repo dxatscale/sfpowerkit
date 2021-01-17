@@ -60,13 +60,19 @@ function processBaseCommand(
 export function buildCommands(
   createCommand: CreateCommandFunc,
   moduleDir: string,
-  namespace: string
+  namespace: string,
+  additionalNameSpace?: string
 ): NsApi {
+
+
+
   const base = processBaseCommand(moduleDir, namespace);
   const nsApi: NsApi = base
     ? createCommand(base.commandId, base.commandName, base.commandFile)
     : {};
-  preprocessCommandsDir(path.join(moduleDir, namespace), namespace, []).forEach(
+
+    
+  preprocessCommandsDir(path.join(moduleDir, namespace), additionalNameSpace?additionalNameSpace:namespace, []).forEach(
     ({ commandId, commandName, commandFile }: SfdxCommandDefinition) => {
       const parts = commandId.split(":").slice(1);
       parts.reduce((api: any, part: string) => {
