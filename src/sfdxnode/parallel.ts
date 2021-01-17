@@ -7,7 +7,7 @@ import {
   Opts,
   SfdxApi,
   SfdxNamespace,
-  SfdxNodeMessage
+  SfdxNodeMessage,
 } from "./types";
 
 const createParallelCommand: CreateCommandFunc = (
@@ -17,7 +17,8 @@ const createParallelCommand: CreateCommandFunc = (
 ) => (flags: Flags, opts: Opts) =>
   new Promise((resolve, reject) => {
     let child_path = __dirname.toString();
-    if (path.basename(path.dirname(child_path)) == "src") { //Run in linking, ts is ran using ts-node, so use the compiled child.js
+    if (path.basename(path.dirname(child_path)) == "src") {
+      //Run in linking, ts is ran using ts-node, so use the compiled child.js
       //Linked
       child_path = path.join(
         path.dirname(path.dirname(child_path)),
@@ -26,7 +27,7 @@ const createParallelCommand: CreateCommandFunc = (
       );
     }
     const child = fork(path.join(child_path, "./child.js"), ["--colors"], {
-      cwd: flags.cwd ? flags.cwd.toString() : null
+      cwd: flags.cwd ? flags.cwd.toString() : null,
     });
     child.on("message", (message: any) => {
       if (message.type === "resolved") {
@@ -40,7 +41,7 @@ const createParallelCommand: CreateCommandFunc = (
       commandId,
       commandName,
       flags,
-      opts
+      opts,
     };
     child.send(childMsg);
   });
@@ -48,22 +49,10 @@ const createParallelCommand: CreateCommandFunc = (
 export const sfdx: SfdxApi = new SfdxApi();
 
 export function registerNamespace(sfdxNamespace: SfdxNamespace): void {
-  const { commandsDir, namespace, additionalNameSpace }: SfdxNamespace = sfdxNamespace;
-  if(additionalNameSpace)
-  {
-  sfdx[additionalNameSpace] = buildCommands(
+  const { commandsDir, namespace }: SfdxNamespace = sfdxNamespace;
+  sfdx[namespace] = buildCommands(
     createParallelCommand,
     commandsDir,
-    namespace,
-    additionalNameSpace
+    namespace
   );
-
- 
-  }
-  else
-   sfdx[namespace] = buildCommands(
-     createParallelCommand,
-     commandsDir,
-     namespace
-   );
 }

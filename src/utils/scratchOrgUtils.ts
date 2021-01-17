@@ -4,6 +4,7 @@ import { SFPowerkit } from "../sfpowerkit";
 import { SfdxApi } from "../sfdxnode/types";
 let retry = require("async-retry");
 import { isNullOrUndefined } from "util";
+import child_process = require("child_process");
 
 const ORDER_BY_FILTER = " ORDER BY CreatedDate ASC";
 export default class ScratchOrgUtils {
@@ -181,16 +182,42 @@ export default class ScratchOrgUtils {
     );
 
     //Generate Password
-
-    let passwordResult = await sfdx.userplugin.user.password.generate({
-      quiet: true,
-      targetusername: scratchOrg.username,
-      targetdevhubusername: hubOrg.getUsername(),
-    });
-    scratchOrg.password = passwordResult.password;
+    scratchOrg.password = await this.generatePassword(
+      scratchOrg.username,
+      hubOrg.getUsername()
+    );
 
     SFPowerkit.log(JSON.stringify(scratchOrg), LoggerLevel.TRACE);
     return scratchOrg;
+  }
+
+  public static async generatePassword(
+    targetusername: string,
+    targetdevhubusername: string
+  ): Promise<string> {
+    let result;
+    try {
+      result = child_process.execSync(
+        `npx sfdx force:user:password:generate -u ${targetusername} -v ${targetdevhubusername} --json`,
+        { encoding: "utf8" }
+      );
+    } catch (err) {
+      SFPowerkit.log(JSON.stringify(err), LoggerLevel.ERROR);
+      return "";
+    }
+
+    let passwordResult = "";
+    let resultAsJSON = JSON.parse(result);
+    if (resultAsJSON["status"] == 0) {
+      passwordResult = resultAsJSON["result"]["password"];
+    } else {
+      SFPowerkit.log(
+        `Cannot generate password for SO : ${targetusername}`,
+        LoggerLevel.ERROR
+      );
+    }
+
+    return passwordResult;
   }
 
   public static async shareScratchOrgThroughEmail(

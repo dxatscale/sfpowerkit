@@ -9,7 +9,6 @@ export class NsApi {
 export interface SfdxNamespace {
   commandsDir: string;
   namespace: string;
-  additionalNameSpace?:string
 }
 
 export type Flags = {
