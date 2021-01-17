@@ -3,7 +3,9 @@ import * as path from "path";
 import { CreateCommandFunc, NsApi, SfdxCommandDefinition } from "./types";
 
 const pascalCase = (it: string[]) =>
-  it.map(word => word[0].toUpperCase() + word.slice(1).toLowerCase()).join("");
+  it
+    .map((word) => word[0].toUpperCase() + word.slice(1).toLowerCase())
+    .join("");
 
 function preprocessCommandsDir(
   commandsDir: string,
@@ -22,7 +24,7 @@ function preprocessCommandsDir(
         ? 1
         : -1;
     })
-    .forEach(fileOrDir => {
+    .forEach((fileOrDir) => {
       const commandFile = path.join(dir, fileOrDir);
       const fileNameWithoutExt = fileOrDir.replace(".js", "");
       const newParts = [...parts, fileNameWithoutExt];
@@ -32,7 +34,7 @@ function preprocessCommandsDir(
           cmdArray.push({
             commandFile,
             commandId: [namespace, ...newParts].join(":"),
-            commandName: pascalCase([...newParts, "command"])
+            commandName: pascalCase([...newParts, "command"]),
           });
         }
       } else if (stat.isDirectory()) {
@@ -52,7 +54,7 @@ function processBaseCommand(
     return {
       commandFile: path.join(moduleDir, `${namespace}.js`),
       commandId: namespace,
-      commandName: pascalCase([namespace, "command"])
+      commandName: pascalCase([namespace, "command"]),
     };
   }
 }
@@ -60,19 +62,13 @@ function processBaseCommand(
 export function buildCommands(
   createCommand: CreateCommandFunc,
   moduleDir: string,
-  namespace: string,
-  additionalNameSpace?: string
+  namespace: string
 ): NsApi {
-
-
-
   const base = processBaseCommand(moduleDir, namespace);
   const nsApi: NsApi = base
     ? createCommand(base.commandId, base.commandName, base.commandFile)
     : {};
-
-    
-  preprocessCommandsDir(path.join(moduleDir, namespace), additionalNameSpace?additionalNameSpace:namespace, []).forEach(
+  preprocessCommandsDir(path.join(moduleDir, namespace), namespace, []).forEach(
     ({ commandId, commandName, commandFile }: SfdxCommandDefinition) => {
       const parts = commandId.split(":").slice(1);
       parts.reduce((api: any, part: string) => {
