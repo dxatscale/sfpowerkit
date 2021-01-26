@@ -53,7 +53,7 @@ export default class DiffUtil {
       let revisionSha = fields[0].split(/\s/)[2];
       let oneFIle = {
         revision: revisionSha,
-        path: path.join(".", pathStr)
+        path: path.join(".", pathStr),
       };
       DiffUtil.gitTreeRevisionTo.push(oneFIle);
     }
@@ -93,8 +93,9 @@ export default class DiffUtil {
       let objectTranslation =
         parentFolder + METADATA_INFO.CustomObjectTranslation.sourceExtension;
 
-      DiffUtil.gitTreeRevisionTo.forEach(file => {
-        if (file.path === filePath || file.path === objectTranslation) {
+      DiffUtil.gitTreeRevisionTo.forEach((file) => {
+        //copy objectTranslation if fieldTranslation changes
+        if (file.path === filePath || file.path.endsWith(objectTranslation)) {
           relativeFiles.push(file);
         }
       });
@@ -128,7 +129,7 @@ export default class DiffUtil {
         }
       }
 
-      DiffUtil.gitTreeRevisionTo.forEach(file => {
+      DiffUtil.gitTreeRevisionTo.forEach((file) => {
         let fileToCompare = file.path;
         if (fileToCompare.startsWith(baseFile)) {
           relativeFiles.push(file);
@@ -142,7 +143,7 @@ export default class DiffUtil {
         let extension = path.parse(filePath).ext;
         baseFile = filePath.replace(extension, "");
       }
-      DiffUtil.gitTreeRevisionTo.forEach(file => {
+      DiffUtil.gitTreeRevisionTo.forEach((file) => {
         let fileToCompare = file.path;
         if (SOURCE_EXTENSION_REGEX.test(fileToCompare)) {
           fileToCompare = fileToCompare.replace(SOURCE_EXTENSION_REGEX, "");
@@ -214,7 +215,7 @@ export default class DiffUtil {
 
     var diffFile: DiffFile = {
       deleted: [],
-      addedEdited: []
+      addedEdited: [],
     };
 
     for (var i = 0; i < fileContents.length; i++) {
@@ -243,14 +244,14 @@ export default class DiffUtil {
           diffFile.deleted.push({
             revisionFrom: revisionPart[2].substring(0, 9),
             revisionTo: revisionPart[3].substring(0, 9),
-            path: finalPath
+            path: finalPath,
           });
         } else {
           // Added or edited
           diffFile.addedEdited.push({
             revisionFrom: revisionPart[2].substring(0, 9),
             revisionTo: revisionPart[3].substring(0, 9),
-            path: finalPath
+            path: finalPath,
           });
         }
       } else if (renamedRegEx.test(fileContents[i])) {
@@ -274,14 +275,14 @@ export default class DiffUtil {
           revisionFrom: "0000000",
           revisionTo: revisionPart[3],
           renamedPath: path.join(".", paths[0].trim()),
-          path: finalPath
+          path: finalPath,
         });
 
         //allow deletion of renamed components
         diffFile.deleted.push({
           revisionFrom: revisionPart[2],
           revisionTo: "0000000",
-          path: paths[0].trim()
+          path: paths[0].trim(),
         });
       }
     }
@@ -291,7 +292,7 @@ export default class DiffUtil {
   public static getChangedOrAdded(list1: any[], list2: any[], key: string) {
     let result: any = {
       addedEdited: [],
-      deleted: []
+      deleted: [],
     };
 
     //Ensure array
@@ -311,7 +312,7 @@ export default class DiffUtil {
     }
 
     if (!_.isNil(list1) && !_.isNil(list2)) {
-      list1.forEach(elem1 => {
+      list1.forEach((elem1) => {
         let found = false;
         for (let i = 0; i < list2.length; i++) {
           let elem2 = list2[i];
@@ -331,7 +332,7 @@ export default class DiffUtil {
 
       //Check for added elements
 
-      let addedElement = _.differenceWith(list2, list1, function(
+      let addedElement = _.differenceWith(list2, list1, function (
         element1: any,
         element2: any
       ) {
@@ -360,7 +361,7 @@ export default class DiffUtil {
     if (typeIsPresent === false) {
       typeNode = {
         name: name,
-        members: [member]
+        members: [member],
       };
       packageObj.push(typeNode);
     }
