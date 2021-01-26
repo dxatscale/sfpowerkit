@@ -6,6 +6,7 @@ import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import { extract } from "../../../utils/extract";
 import { isNullOrUndefined } from "util";
 import * as xml2js from "xml2js";
+import { SfdxError } from "@salesforce/core";
 
 const request = require("request");
 const fs = require("fs");
@@ -59,7 +60,7 @@ export default class Pmd extends SfdxCommand {
     }),
     version: flags.string({
       required: false,
-      default: "6.29.0",
+      default: "6.30.0",
       description: messages.getMessage("versionFlagDescription"),
     }),
     loglevel: flags.enum({
@@ -136,17 +137,23 @@ export default class Pmd extends SfdxCommand {
       : this.flags.directory;
 
     //Default Ruleset
-    let ruleset = isNullOrUndefined(this.flags.ruleset)
-      ? path.join(
-          __dirname,
-          "..",
-          "..",
-          "..",
-          "..",
-          "resources",
-          "pmd-ruleset.xml"
-        )
-      : this.flags.ruleset;
+    let ruleset =
+      isNullOrUndefined(this.flags.ruleset) ||
+      this.flags.ruleset.toLowerCase() === "sfpowerkit"
+        ? path.join(
+            __dirname,
+            "..",
+            "..",
+            "..",
+            "..",
+            "resources",
+            "pmd-ruleset.xml"
+          )
+        : this.flags.ruleset;
+
+    if (!fs.existsSync(path.resolve(ruleset))) {
+      throw new SfdxError(`The given rulesheet cannot be found ${ruleset}`);
+    }
 
     SFPowerkit.log(`PMD release ${this.flags.version}`, LoggerLevel.INFO);
     SFPowerkit.log(`Now analyzing ${packageDirectory}`, LoggerLevel.INFO);
