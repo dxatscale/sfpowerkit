@@ -1,6 +1,6 @@
 {
   "name": "sfpowerkit",
-  "version": "2.6.2",
+  "version": "2.6.3",
   "author": {
     "name": "DXatScale",
     "email": "dxatscale@accenture.com"
@@ -57,7 +57,8 @@
     "unzip-stream": "0.3.1",
     "unzipper": "0.10.11",
     "xml-formatter": "^2.4.0",
-    "xml2js": "^0.4.23"
+    "xml2js": "^0.4.23",
+    "axios": "0.21.1"
   },
   "devDependencies": {
     "@oclif/dev-cli": "^1.22.2",

@@ -1,10 +1,10 @@
-import { Connection, LoggerLevel, Org } from "@salesforce/core";
+import { Connection, LoggerLevel, Org, AuthInfo } from "@salesforce/core";
 let request = require("request-promise-native");
 import { SFPowerkit } from "../sfpowerkit";
 import { SfdxApi } from "../sfdxnode/types";
 let retry = require("async-retry");
 import { isNullOrUndefined } from "util";
-import child_process = require("child_process");
+import Passwordgenerateimpl from "../impl/user/passwordgenerateimpl";
 
 const ORDER_BY_FILTER = " ORDER BY CreatedDate ASC";
 export default class ScratchOrgUtils {
@@ -182,42 +182,24 @@ export default class ScratchOrgUtils {
     );
 
     //Generate Password
-    scratchOrg.password = await this.generatePassword(
-      scratchOrg.username,
-      hubOrg.getUsername()
-    );
+    const soConn = await Connection.create({
+      authInfo: await AuthInfo.create({ username: scratchOrg.username }),
+    });
+    let passwordData = await Passwordgenerateimpl.run(soConn);
+
+    scratchOrg.password = passwordData.password;
+
+    if (!passwordData.password) {
+      throw new Error("Unable to setup password to scratch org");
+    } else {
+      SFPowerkit.log(
+        `Password successfully set for ${passwordData.username} : ${passwordData.password}`,
+        LoggerLevel.INFO
+      );
+    }
 
     SFPowerkit.log(JSON.stringify(scratchOrg), LoggerLevel.TRACE);
     return scratchOrg;
-  }
-
-  public static async generatePassword(
-    targetusername: string,
-    targetdevhubusername: string
-  ): Promise<string> {
-    let result;
-    try {
-      result = child_process.execSync(
-        `npx sfdx force:user:password:generate -u ${targetusername} -v ${targetdevhubusername} --json`,
-        { encoding: "utf8" }
-      );
-    } catch (err) {
-      SFPowerkit.log(JSON.stringify(err), LoggerLevel.ERROR);
-      return "";
-    }
-
-    let passwordResult = "";
-    let resultAsJSON = JSON.parse(result);
-    if (resultAsJSON["status"] == 0) {
-      passwordResult = resultAsJSON["result"]["password"];
-    } else {
-      SFPowerkit.log(
-        `Cannot generate password for SO : ${targetusername}`,
-        LoggerLevel.ERROR
-      );
-    }
-
-    return passwordResult;
   }
 
   public static async shareScratchOrgThroughEmail(
