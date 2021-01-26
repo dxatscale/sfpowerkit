@@ -122,7 +122,7 @@ OPTIONS
   --json                                                                            format output as json
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
   --supressoutput                                                                   [default: false] Supress the ouptut of the analysis to be displayed in the console
-  --version=version                                                                 [default: 6.26.0] [default: 6.21.0] The version of the pmd to be utilized for the analysis,
+  --version=version                                                                 [default: 6.30.0] The version of the pmd to be utilized for the analysis,
                                                                                     this version will be downloaded to sfpowerkit's cache directory
 EXAMPLE
   $ sfdx sfpowerkit:source:pmd
