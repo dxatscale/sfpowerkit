@@ -193,7 +193,7 @@ export default class ScratchOrgUtils {
       throw new Error("Unable to setup password to scratch org");
     } else {
       SFPowerkit.log(
-        `Password successfully set for ${result.username} : ${result.password}`,
+        `Password successfully set for ${passwordData.username} : ${passwordData.password}`,
         LoggerLevel.INFO
       );
     }
