@@ -45,7 +45,7 @@ export default class Generate extends SfdxCommand {
 
     let result = await Passwordgenerateimpl.run(conn);
 
-    if (!result.password || result.password === undefined) {
+    if (!result.password) {
       throw new SfdxError(
         `Error occured unable to set password at the moment, please try later.`
       );

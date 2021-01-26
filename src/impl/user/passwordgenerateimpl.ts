@@ -42,7 +42,7 @@ export default class Passwordgenerateimpl {
     var endpoint = `${conn.instanceUrl}/services/data/v${apiversion}/sobjects/User/${userRecord[0].Id}/password`;
     let data = JSON.stringify({ NewPassword: pwd });
 
-    const setPassword = await axios
+    await axios
       .post(endpoint, data, {
         headers: {
           Authorization: `Bearer ${conn.accessToken}`,

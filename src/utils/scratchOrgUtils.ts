@@ -189,7 +189,7 @@ export default class ScratchOrgUtils {
 
     scratchOrg.password = passwordData.password;
 
-    if (!passwordData.password || passwordData.password === undefined) {
+    if (!passwordData.password) {
       throw new Error("Unable to setup password to scratch org");
     } else {
       SFPowerkit.log(
