@@ -75,6 +75,7 @@ steps:
     inputs:
       script: |
         set -euo pipefail
+        sfdx sfpowerkit:pool:delete -t sfpowerkit -v HubOrg
         sfdx sfpowerkit:pool:create -f scratchorg-poolconfig.json -v HubOrg
         sfdx sfpowerkit:pool:list -a -m -v HubOrg
         sfdx sfpowerkit:pool:list -a -m -v HubOrg --json | jq -r .result
