@@ -25,12 +25,8 @@ stages:
         dependsOn: BuildAndPublishExtension
         strategy:
           matrix:
-            windows:
-              image: "windows-latest"
             ubuntu:
               image: "ubuntu-latest"
-            macos:
-              image: "macOS-latest"
         pool:
           vmImage: $(image)
 
@@ -82,12 +78,8 @@ stages:
         dependsOn: BuildAndPublishExtension
         strategy:
           matrix:
-            windows:
-              image: "windows-latest"
             ubuntu:
               image: "ubuntu-latest"
-            macos:
-              image: "macOS-latest"
         pool:
           vmImage: $(image)
 
