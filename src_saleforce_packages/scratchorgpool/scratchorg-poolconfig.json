@@ -1,8 +1,18 @@
 {
   "pool": {
-    "expiry": 1,
-    "config_file_path": "config/project-scratch-def.json",
-    "tag": "TEST_POOL",
-    "max_allocation": 1
-  }
+        "expiry": 1,
+        "tag":"sfpowerkit",
+        "max_allocation": 2,
+        "config_file_path": "config/project-scratch-def.json",
+        "relax_all_ip_ranges": true
+    },
+  "poolUsers": [
+    {
+      "max_allocation": 2,
+      "min_allocation": 2,  
+      "username": "azlam.abdulsalam@ma.com",
+      "expiry": 1,
+      "priority": 1
+    }
+  ]
 }

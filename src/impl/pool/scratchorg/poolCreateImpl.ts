@@ -174,8 +174,13 @@ export default class PoolCreateImpl {
         if (
           this.poolConfig.pool.relax_all_ip_ranges ||
           this.poolConfig.pool.relax_ip_ranges
-        )
+        ) {
           this.ipRangeExecResults = await Promise.all(ipRangeExecPromises);
+          this.ipRangeExecResultsAsObject = this.arrayToObject(
+            this.ipRangeExecResults,
+            "username"
+          );
+        }
 
         if (this.scriptFileExists) {
           let result = this.scriptExecutorWrappedForBottleneck(
@@ -201,16 +206,6 @@ export default class PoolCreateImpl {
         }
       }
     }
-
-    //Get IP Range results
-    if (
-      this.poolConfig.pool.relax_ip_ranges ||
-      !isNullOrUndefined(this.poolConfig.pool.relax_ip_ranges)
-    )
-      this.ipRangeExecResultsAsObject = this.arrayToObject(
-        this.ipRangeExecResults,
-        "username"
-      );
 
     let scriptExecResults = await Promise.all(scriptExecPromises);
 

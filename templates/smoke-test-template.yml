@@ -46,6 +46,7 @@ steps:
     displayName: Smoke Test Org Commands
     inputs:
       script: |
+        set -euo pipefail
         sfdx sfpowerkit:org:manifest:build -o manifest.xml -u HubOrg
         sfdx sfpowerkit:org:manifest:build -o manifest.xml -u HubOrg --json | jq -r .result.result[0].fileName
         sfdx sfpowerkit:org:orgcoverage -u HubOrg
@@ -62,6 +63,7 @@ steps:
     displayName: Smoke Test Package Commands
     inputs:
       script: |
+        set -euo pipefail
         sfdx sfpowerkit:package:version:info  -u HubOrg
         sfdx sfpowerkit:package:version:info  -u HubOrg --json | jq -r .result[0].packageVersionId
 
@@ -73,9 +75,11 @@ steps:
     displayName: Smoke Test Pool Commands
     inputs:
       script: |
-        sfdx sfpowerkit:pool:delete -t TEST_POOL -v HubOrg
+        set -euo pipefail
+        sfdx sfpowerkit:pool:delete -t sfpowerkit -v HubOrg
         sfdx sfpowerkit:pool:create -f scratchorg-poolconfig.json -v HubOrg
         sfdx sfpowerkit:pool:list -a -m -v HubOrg
         sfdx sfpowerkit:pool:list -a -m -v HubOrg --json | jq -r .result
-        sfdx sfpowerkit:pool:delete -t TEST_POOL -v HubOrg
+        sfdx sfpowerkit:pool:fetch -t sfpowerkit -v HubOrg 
+        sfdx sfpowerkit:pool:delete -t sfpowerkit -v HubOrg
       workingDirectory: "src_saleforce_packages/scratchorgpool"
