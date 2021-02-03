@@ -19,7 +19,8 @@ import Profile, {
   FlowAccess,
   CustomMetadataTypeAccess,
   CustomSettingAccess,
-  PermissionSetExternalDataSourceAccess
+  PermissionSetExternalDataSourceAccess,
+  ProfileLoginFlows,
 } from "../../../impl/metadata/schema";
 import * as util from "util";
 import ProfileActions from "./profileActions";
@@ -177,7 +178,7 @@ export default class ProfileMerge extends ProfileActions {
       let layoutAssignment = layoutAssignments[i];
       let objName = layoutAssignment.layout.split("-")[0];
       profileObj.layoutAssignments = profileObj.layoutAssignments.filter(
-        layoutAss => {
+        (layoutAss) => {
           const otherObjName = layoutAss.layout.split("-")[0];
           return objName !== otherObjName;
         }
@@ -493,7 +494,7 @@ export default class ProfileMerge extends ProfileActions {
       profileObj.customMetadataTypeAccesses = [];
     } else if (!Array.isArray(profileObj.customMetadataTypeAccesses)) {
       profileObj.customMetadataTypeAccesses = [
-        profileObj.customMetadataTypeAccesses
+        profileObj.customMetadataTypeAccesses,
       ];
     }
     for (let i = 0; i < custonMetadataAccesses.length; i++) {
@@ -605,6 +606,67 @@ export default class ProfileMerge extends ProfileActions {
 
     return profileObj;
   }
+
+  private mergeLoginFlows(
+    profileObj: Profile,
+    loginFlows: ProfileLoginFlows[]
+  ): Profile {
+    if (!Array.isArray(loginFlows)) {
+      loginFlows = [loginFlows];
+    }
+    if (profileObj.loginFlows === null || profileObj.loginFlows === undefined) {
+      profileObj.loginFlows = [];
+    } else if (!Array.isArray(profileObj.loginFlows)) {
+      profileObj.loginFlows = [profileObj.loginFlows];
+    }
+    for (let i = 0; i < loginFlows.length; i++) {
+      let loginFlow = loginFlows[i];
+      let found = false;
+      for (let j = 0; j < profileObj.loginFlows.length; j++) {
+        if (
+          loginFlow.flow === profileObj.loginFlows[j].flow &&
+          loginFlow.flow !== undefined
+        ) {
+          profileObj.loginFlows[j].flowType = loginFlow.flowType;
+          profileObj.loginFlows[j].friendlyName = loginFlow.friendlyName;
+          profileObj.loginFlows[j].uiLoginFlowType = loginFlow.uiLoginFlowType;
+          profileObj.loginFlows[j].useLightningRuntime =
+            loginFlow.useLightningRuntime;
+          delete profileObj.loginFlows[j].vfFlowPageTitle;
+          delete profileObj.loginFlows[j].vfFlowPage;
+          found = true;
+          break;
+        } else if (
+          loginFlow.vfFlowPage === profileObj.loginFlows[j].vfFlowPage &&
+          loginFlow.vfFlowPage !== undefined
+        ) {
+          profileObj.loginFlows[j].flowType = loginFlow.flowType;
+          profileObj.loginFlows[j].friendlyName = loginFlow.friendlyName;
+          profileObj.loginFlows[j].uiLoginFlowType = loginFlow.uiLoginFlowType;
+          profileObj.loginFlows[j].useLightningRuntime =
+            loginFlow.useLightningRuntime;
+          profileObj.loginFlows[j].vfFlowPageTitle = loginFlow.vfFlowPageTitle;
+          delete profileObj.loginFlows[j].flow;
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        profileObj.loginFlows.push(loginFlow);
+      }
+    }
+    profileObj.loginFlows.sort((flow1, flow2) => {
+      let order = 0;
+      if (flow1.flow < flow2.flow) {
+        order = -1;
+      } else if (flow1.flow > flow2.flow) {
+        order = 1;
+      }
+      return order;
+    });
+    return profileObj;
+  }
+
   private mergeExternalDatasourceAccesses(
     profileObj: Profile,
     externalDatasources: PermissionSetExternalDataSourceAccess[]
@@ -616,7 +678,7 @@ export default class ProfileMerge extends ProfileActions {
       profileObj.externalDataSourceAccesses = [];
     } else if (!Array.isArray(profileObj.externalDataSourceAccesses)) {
       profileObj.externalDataSourceAccesses = [
-        profileObj.externalDataSourceAccesses
+        profileObj.externalDataSourceAccesses,
       ];
     }
     for (let i = 0; i < externalDatasources.length; i++) {
@@ -688,6 +750,9 @@ export default class ProfileMerge extends ProfileActions {
     }
     if (profile2.flowAccesses !== undefined) {
       this.mergeFlowAccesses(profile1, profile2.flowAccesses);
+    }
+    if (profile2.loginFlows !== undefined) {
+      this.mergeLoginFlows(profile1, profile2.loginFlows);
     }
     if (profile2.layoutAssignments !== undefined) {
       this.mergeLayouts(profile1, profile2.layoutAssignments);
@@ -841,7 +906,7 @@ export default class ProfileMerge extends ProfileActions {
     }
 
     if (profileStatus.deleted && isdelete) {
-      profileStatus.deleted.forEach(file => {
+      profileStatus.deleted.forEach((file) => {
         if (fs.existsSync(file)) {
           fs.unlinkSync(file);
         }
@@ -855,7 +920,7 @@ export default class ProfileMerge extends ProfileActions {
     metadatas: any
   ) {
     profileObjFromServer.applicationVisibilities = profileObjFromServer.applicationVisibilities.filter(
-      elem => {
+      (elem) => {
         return (
           metadatas["CustomApplication"].includes(elem.application) ||
           metadatas["CustomApplication"].includes("*")
@@ -863,7 +928,7 @@ export default class ProfileMerge extends ProfileActions {
       }
     );
     profileObjFromServer.classAccesses = profileObjFromServer.classAccesses.filter(
-      elem => {
+      (elem) => {
         return (
           metadatas["ApexClass"].includes(elem.apexClass) ||
           metadatas["ApexClass"].includes("*")
@@ -871,7 +936,7 @@ export default class ProfileMerge extends ProfileActions {
       }
     );
     profileObjFromServer.layoutAssignments = profileObjFromServer.layoutAssignments.filter(
-      elem => {
+      (elem) => {
         return (
           metadatas["Layout"].includes(elem.layout) ||
           metadatas["Layout"].includes("*")
@@ -879,7 +944,7 @@ export default class ProfileMerge extends ProfileActions {
       }
     );
     profileObjFromServer.objectPermissions = profileObjFromServer.objectPermissions.filter(
-      elem => {
+      (elem) => {
         return (
           metadatas["CustomObject"].includes(elem.object) ||
           metadatas["CustomObject"].includes("*")
@@ -887,7 +952,7 @@ export default class ProfileMerge extends ProfileActions {
       }
     );
     profileObjFromServer.pageAccesses = profileObjFromServer.pageAccesses.filter(
-      elem => {
+      (elem) => {
         return (
           metadatas["ApexPage"].includes(elem.apexPage) ||
           metadatas["ApexPage"].includes("*")
@@ -895,17 +960,17 @@ export default class ProfileMerge extends ProfileActions {
       }
     );
     profileObjFromServer.fieldPermissions = profileObjFromServer.fieldPermissions.filter(
-      elem => {
+      (elem) => {
         return metadatas["CustomField"].includes(elem.field);
       }
     );
     profileObjFromServer.recordTypeVisibilities = profileObjFromServer.recordTypeVisibilities.filter(
-      elem => {
+      (elem) => {
         return metadatas["RecordType"].includes(elem.recordType);
       }
     );
     profileObjFromServer.tabVisibilities = profileObjFromServer.tabVisibilities.filter(
-      elem => {
+      (elem) => {
         return (
           metadatas["CustomTab"].includes(elem.tab) ||
           metadatas["CustomTab"].includes("*")

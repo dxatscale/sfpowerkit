@@ -148,6 +148,7 @@ export default interface Profile {
   flowAccesses?: FlowAccess[];
   fullName?: string;
   layoutAssignments?: ProfileLayoutAssignments[];
+  loginFlows?: ProfileLoginFlows[];
   loginHours?: ProfileLoginHours[];
   loginIpRanges?: ProfileLoginIpRange[];
   objectPermissions?: ProfileObjectPermissions[];
@@ -208,6 +209,15 @@ export interface ProfileLoginHours {
   weekdayStart: string;
   weekdayEnd: string;
 }
+export interface ProfileLoginFlows {
+  flow: string;
+  flowType: string;
+  friendlyName: string;
+  uiLoginFlowType: string;
+  useLightningRuntime: string;
+  vfFlowPage: string;
+  vfFlowPageTitle: string;
+}
 export interface ProfileLoginIpRange {
   description: string;
   endAddress: string;
@@ -235,7 +245,7 @@ export interface ProfileActionOverride {
 export enum FormFactor {
   Large = "Large",
   Small = "Small",
-  Medium = "Medium"
+  Medium = "Medium",
 }
 export enum ActionOverrideType {
   default = "default",
@@ -243,7 +253,7 @@ export enum ActionOverrideType {
   lightningcomponent = "lightningcomponent",
   scontrol = "scontrol",
   standard = "standard",
-  visualforce = "visualforce"
+  visualforce = "visualforce",
 }
 
 export interface ProfileApexPageAccess {
@@ -266,7 +276,7 @@ export interface ProfileTabVisibility {
 export enum TabVisibility {
   DefaultOff = "DefaultOff",
   DefaultOn = "DefaultOn",
-  Hidden = "Hidden"
+  Hidden = "Hidden",
 }
 
 export interface ProfileUserPermission {
@@ -329,7 +339,7 @@ export interface PermissionSetTabSetting {
 export enum PermissionSetTabVisibility {
   Available = "Available",
   None = "None",
-  Visible = "Visible"
+  Visible = "Visible",
 }
 
 export interface PermissionSetUserPermission {

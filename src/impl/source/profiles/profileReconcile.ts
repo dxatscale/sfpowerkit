@@ -30,7 +30,7 @@ const nonArayProperties = [
   "description",
   "fullName",
   "userLicense",
-  "$"
+  "$",
 ];
 
 export default class ProfileReconcile extends ProfileActions {
@@ -51,12 +51,12 @@ export default class ProfileReconcile extends ProfileActions {
 
     let result: string[] = [];
     this.metadataFiles = new MetadataFiles();
-    srcFolders.forEach(srcFolder => {
+    srcFolders.forEach((srcFolder) => {
       let normalizedPath = path.join(process.cwd(), srcFolder);
       this.metadataFiles.loadComponents(normalizedPath);
     });
 
-    profileList = profileList.map(element => {
+    profileList = profileList.map((element) => {
       return element + METADATA_INFO.Profile.sourceExtension;
     });
 
@@ -104,7 +104,7 @@ export default class ProfileReconcile extends ProfileActions {
           profileObj.userPermissions.length > 0
         ) {
           profileObj.userPermissions = profileObj.userPermissions.filter(
-            permission => {
+            (permission) => {
               let supported = !unsupportedLicencePermissions.includes(
                 permission.name
               );
@@ -122,7 +122,7 @@ export default class ProfileReconcile extends ProfileActions {
             profileObj.userPermissions.length > 0
           ) {
             profileObj.userPermissions = profileObj.userPermissions.filter(
-              permission => {
+              (permission) => {
                 let supported = !ignorePermissions.includes(permission.name);
                 return supported;
               }
@@ -135,7 +135,7 @@ export default class ProfileReconcile extends ProfileActions {
           ) {
             //Remove permission that are not present in the target org
             profileObj.userPermissions = profileObj.userPermissions.filter(
-              permission => {
+              (permission) => {
                 let supported = this.profileRetriever.supportedPermissions.includes(
                   permission.name
                 );
@@ -319,7 +319,7 @@ export default class ProfileReconcile extends ProfileActions {
     if (profileObj.customMetadataTypeAccesses !== undefined) {
       if (!Array.isArray(profileObj.customMetadataTypeAccesses)) {
         profileObj.customMetadataTypeAccesses = [
-          profileObj.customMetadataTypeAccesses
+          profileObj.customMetadataTypeAccesses,
         ];
       }
       let validArray = [];
@@ -371,7 +371,7 @@ export default class ProfileReconcile extends ProfileActions {
     if (profileObj.externalDataSourceAccesses !== undefined) {
       if (!Array.isArray(profileObj.externalDataSourceAccesses)) {
         profileObj.externalDataSourceAccesses = [
-          profileObj.externalDataSourceAccesses
+          profileObj.externalDataSourceAccesses,
         ];
       }
       let validArray = [];
@@ -413,6 +413,38 @@ export default class ProfileReconcile extends ProfileActions {
         LoggerLevel.DEBUG
       );
       profileObj.flowAccesses = validArray;
+    }
+    return profileObj;
+  }
+
+  private async reconcileLoginFlow(profileObj: Profile): Promise<Profile> {
+    let flowutils = FlowRetriever.getInstance(this.org);
+    let vfutils = ApexPageRetriever.getInstance(this.org);
+
+    if (profileObj.loginFlows !== undefined) {
+      if (!Array.isArray(profileObj.loginFlows)) {
+        profileObj.loginFlows = [profileObj.loginFlows];
+      }
+      let validArray = [];
+      for (let i = 0; i < profileObj.loginFlows.length; i++) {
+        let loginFlow = profileObj.loginFlows[i];
+        if (loginFlow.flow !== undefined) {
+          let exist = await flowutils.flowExists(loginFlow.flow);
+          if (exist) {
+            validArray.push(loginFlow);
+          }
+        } else if (loginFlow.vfFlowPage !== undefined) {
+          let exist = await vfutils.pageExists(loginFlow.vfFlowPage);
+          if (exist) {
+            validArray.push(loginFlow);
+          }
+        }
+      }
+      SFPowerkit.log(
+        `LoginFlows reduced from ${profileObj.loginFlows.length}  to  ${validArray.length}`,
+        LoggerLevel.DEBUG
+      );
+      profileObj.loginFlows = validArray;
     }
     return profileObj;
   }
@@ -541,6 +573,8 @@ export default class ProfileReconcile extends ProfileActions {
     profileObj = await this.reconcileCustomSettins(profileObj);
     SFPowerkit.log("Reconciling  Flow", LoggerLevel.DEBUG);
     profileObj = await this.reconcileFlow(profileObj);
+    SFPowerkit.log("Reconciling  Login Flows", LoggerLevel.DEBUG);
+    profileObj = await this.reconcileLoginFlow(profileObj);
     return profileObj;
   }
 }
