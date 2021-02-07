@@ -34,6 +34,7 @@ export default abstract class ProfileDiff {
       fieldPermissions: [],
       flowAccesses: [],
       layoutAssignments: [],
+      loginFlows: [],
       loginHours: [],
       loginIpRanges: [],
       objectPermissions: [],
@@ -41,7 +42,7 @@ export default abstract class ProfileDiff {
       profileActionOverrides: [],
       recordTypeVisibilities: [],
       tabVisibilities: [],
-      userPermissions: []
+      userPermissions: [],
     } as Profile;
 
     if (!_.isNil(profileObj2.description)) {
@@ -78,6 +79,26 @@ export default abstract class ProfileDiff {
       profileObj2.fieldPermissions,
       "field"
     ).addedEdited;
+    newProObj.loginFlows = DiffUtil.getChangedOrAdded(
+      profileObj1.loginFlows?.filter(
+        (loginFlow) => loginFlow.flow !== undefined
+      ),
+      profileObj2.loginFlows?.filter(
+        (loginFlow) => loginFlow.flow !== undefined
+      ),
+      "flow"
+    ).addedEdited;
+    newProObj.loginFlows.push(
+      ...DiffUtil.getChangedOrAdded(
+        profileObj1.loginFlows?.filter(
+          (loginFlow) => loginFlow.vfFlowPage !== undefined
+        ),
+        profileObj2.loginFlows?.filter(
+          (loginFlow) => loginFlow.vfFlowPage !== undefined
+        ),
+        "vfFlowPage"
+      ).addedEdited
+    );
     newProObj.loginHours = !_.isEqual(
       profileObj1.loginHours,
       profileObj2.loginHours
@@ -156,7 +177,7 @@ export default abstract class ProfileDiff {
       result.push(...list2);
     }
     if (!_.isNil(list1) && !_.isNil(list2)) {
-      list2.forEach(layoutAss2 => {
+      list2.forEach((layoutAss2) => {
         let found = false;
         for (let i = 0; i < list1.length; i++) {
           let layoutAss1 = list1[i];

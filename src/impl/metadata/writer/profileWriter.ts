@@ -9,7 +9,7 @@ const nonArayProperties = [
   "description",
   "fullName",
   "userLicense",
-  "$"
+  "$",
 ];
 const PROFILE_NAMESPACE = "http://soap.sforce.com/2006/04/metadata";
 
@@ -27,18 +27,18 @@ export default class ProfileWriter {
 
     let builder = new xml2js.Builder({
       rootName: "Profile",
-      xmldec: { version: "1.0", encoding: "UTF-8" }
+      xmldec: { version: "1.0", encoding: "UTF-8" },
     });
     profileObj["$"] = {
-      xmlns: PROFILE_NAMESPACE
+      xmlns: PROFILE_NAMESPACE,
     };
     let xml = builder.buildObject(profileObj);
 
     let formattedXml = format(xml, {
       indentation: "    ",
-      filter: node => node.type !== "Comment",
+      filter: (node) => node.type !== "Comment",
       collapseContent: true,
-      lineSeparator: "\n"
+      lineSeparator: "\n",
     });
 
     //console.log(formattedXml);
@@ -58,17 +58,17 @@ export default class ProfileWriter {
     }
     let builder = new xml2js.Builder({
       rootName: "Profile",
-      xmldec: { version: "1.0", encoding: "UTF-8" }
+      xmldec: { version: "1.0", encoding: "UTF-8" },
     });
     profileObj["$"] = {
-      xmlns: PROFILE_NAMESPACE
+      xmlns: PROFILE_NAMESPACE,
     };
     let xml = builder.buildObject(profileObj);
     let formattedXml = format(xml, {
       indentation: "    ",
-      filter: node => node.type !== "Comment",
+      filter: (node) => node.type !== "Comment",
       collapseContent: true,
-      lineSeparator: "\n"
+      lineSeparator: "\n",
     });
     return formattedXml;
   }
@@ -97,6 +97,8 @@ export default class ProfileWriter {
         }
       } else if (nonArayProperties.includes(key)) {
         convertedObject[key] = profileObj[key];
+      } else {
+        convertedObject[key] = [profileObj[key]];
       }
     }
     return convertedObject as Profile;
