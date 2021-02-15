@@ -1,20 +1,15 @@
 import { Org } from "@salesforce/core";
 import * as _ from "lodash";
 import { METADATA_INFO } from "../metadataInfo";
-import BaseMetadataRetriever from "./baseMetadataRetriever";
-import { CustomApplication } from "../schema";
+import { FileProperties } from "../schema";
 import MetadataFiles from "../metadataFiles";
+import { SFPowerkit } from "./../../../sfpowerkit";
 
-const QUERY =
-  "Select Id, NamespacePrefix, DeveloperName, Label From CustomApplication ";
-
-export default class CustomApplicationRetriever extends BaseMetadataRetriever<
-  CustomApplication
-> {
+export default class CustomApplicationRetriever {
   private static instance: CustomApplicationRetriever;
+  private static data: FileProperties[];
   private constructor(public org: Org) {
-    super(org, true);
-    super.setQuery(QUERY);
+    this.org = org;
   }
 
   public static getInstance(org: Org): CustomApplicationRetriever {
@@ -24,30 +19,24 @@ export default class CustomApplicationRetriever extends BaseMetadataRetriever<
     return CustomApplicationRetriever.instance;
   }
 
-  public async getObjects(): Promise<CustomApplication[]> {
+  public async getApps(): Promise<FileProperties[]> {
     if (
-      (this.data === undefined || this.data.length == 0) &&
-      !this.dataLoaded
+      CustomApplicationRetriever.data === undefined ||
+      CustomApplicationRetriever.data.length == 0
     ) {
-      super.setQuery(QUERY);
-      let apps = await super.getObjects();
-      if (apps != undefined && apps.length > 0) {
-        for (let i = 0; i < apps.length; i++) {
-          let app = apps[i];
-          if (!_.isNil(app.NamespacePrefix)) {
-            app.FullName = `${app.NamespacePrefix}__${app.DeveloperName}`;
-          } else {
-            app.FullName = app.DeveloperName;
-          }
-        }
+      const apiversion: string = await SFPowerkit.getApiVersion();
+      let items = await this.org.getConnection().metadata.list(
+        {
+          type: METADATA_INFO.CustomApplication.xmlName,
+        },
+        apiversion
+      );
+      if (items === undefined || items === null) {
+        items = [];
       }
-      this.data = apps;
-      this.dataLoaded = true;
+      CustomApplicationRetriever.data = items;
     }
-    return this.data;
-  }
-  public async getApps(): Promise<CustomApplication[]> {
-    return await this.getObjects();
+    return CustomApplicationRetriever.data;
   }
 
   public async appExists(application: string): Promise<boolean> {
@@ -60,7 +49,7 @@ export default class CustomApplicationRetriever extends BaseMetadataRetriever<
       //not found, check on the org
       let apps = await this.getApps();
       let foundApp = apps.find((app) => {
-        return app.FullName === application;
+        return app.fullName === application;
       });
       found = !_.isNil(foundApp);
     }

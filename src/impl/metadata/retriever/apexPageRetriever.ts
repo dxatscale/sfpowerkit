@@ -1,16 +1,16 @@
-import { ApexPage } from "../schema";
+import { FileProperties } from "../schema";
 import { Org } from "@salesforce/core";
 import * as _ from "lodash";
 import { METADATA_INFO } from "../metadataInfo";
-import BaseMetadataRetriever from "./baseMetadataRetriever";
+import { SFPowerkit } from "./../../../sfpowerkit";
 import MetadataFiles from "../metadataFiles";
 
 const QUERY = "Select Id, Name, NameSpacePrefix From ApexPage";
-export default class ApexPageRetriever extends BaseMetadataRetriever<ApexPage> {
+export default class ApexPageRetriever {
   private static instance: ApexPageRetriever;
+  private static data: FileProperties[];
   private constructor(public org: Org) {
-    super(org, true);
-    super.setQuery(QUERY);
+    this.org = org;
   }
 
   public static getInstance(org: Org): ApexPageRetriever {
@@ -20,30 +20,24 @@ export default class ApexPageRetriever extends BaseMetadataRetriever<ApexPage> {
     return ApexPageRetriever.instance;
   }
 
-  public async getObjects(): Promise<ApexPage[]> {
+  public async getPages(): Promise<FileProperties[]> {
     if (
-      (this.data === undefined || this.data.length == 0) &&
-      !this.dataLoaded
+      ApexPageRetriever.data === undefined ||
+      ApexPageRetriever.data.length == 0
     ) {
-      super.setQuery(QUERY);
-      let pages = await super.getObjects();
-      if (pages != undefined && pages.length > 0) {
-        for (let i = 0; i < pages.length; i++) {
-          let page = pages[i];
-          if (!_.isNil(page.NamespacePrefix)) {
-            page.FullName = `${page.NamespacePrefix}__${page.Name}`;
-          } else {
-            page.FullName = page.Name;
-          }
-        }
+      const apiversion: string = await SFPowerkit.getApiVersion();
+      let items = await this.org.getConnection().metadata.list(
+        {
+          type: METADATA_INFO.ApexPage.xmlName,
+        },
+        apiversion
+      );
+      if (items === undefined || items === null) {
+        items = [];
       }
-      this.data = pages;
-      this.dataLoaded = true;
+      ApexPageRetriever.data = items;
     }
-    return this.data;
-  }
-  public async getPages(): Promise<ApexPage[]> {
-    return await this.getObjects();
+    return ApexPageRetriever.data;
   }
 
   public async pageExists(page: string): Promise<boolean> {
@@ -56,7 +50,7 @@ export default class ApexPageRetriever extends BaseMetadataRetriever<ApexPage> {
       //not found, check on the org
       let pages = await this.getPages();
       let foundPage = pages.find((p) => {
-        return p.FullName === page;
+        return p.fullName === page;
       });
       found = !_.isNil(foundPage);
     }

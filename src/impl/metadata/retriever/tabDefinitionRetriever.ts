@@ -1,19 +1,17 @@
 import { Org } from "@salesforce/core";
 import { METADATA_INFO } from "../metadataInfo";
 import * as _ from "lodash";
-import BaseMetadataRetriever from "./baseMetadataRetriever";
-import { TabDefinition } from "../schema";
+import { FileProperties } from "../schema";
 import MetadataFiles from "../metadataFiles";
+import { SFPowerkit } from "./../../../sfpowerkit";
 
 const QUERY =
   "SELECT Id,  Name, SobjectName, DurableId, IsCustom, Label FROM TabDefinition ";
-export default class TabDefinitionRetriever extends BaseMetadataRetriever<
-  TabDefinition
-> {
+export default class TabDefinitionRetriever {
   private static instance: TabDefinitionRetriever;
+  private static data: FileProperties[];
   private constructor(public org: Org) {
-    super(org, true);
-    super.setQuery(QUERY);
+    this.org = org;
   }
 
   public static getInstance(org: Org): TabDefinitionRetriever {
@@ -23,21 +21,28 @@ export default class TabDefinitionRetriever extends BaseMetadataRetriever<
     return TabDefinitionRetriever.instance;
   }
 
-  public async getObjects(): Promise<TabDefinition[]> {
+  public async getTabs(): Promise<FileProperties[]> {
     if (
-      (this.data === undefined || this.data.length == 0) &&
-      !this.dataLoaded
+      TabDefinitionRetriever.data === undefined ||
+      TabDefinitionRetriever.data.length == 0
     ) {
-      super.setQuery(QUERY);
-      let tabs = await super.getObjects();
-      this.data = tabs;
-      this.dataLoaded = true;
+      const apiversion: string = await SFPowerkit.getApiVersion();
+      let items = await this.org.getConnection().metadata.list(
+        {
+          type: METADATA_INFO.CustomTab.xmlName,
+        },
+        apiversion
+      );
+      if (items === undefined || items === null) {
+        items = [];
+      }
+      TabDefinitionRetriever.data = items;
+    } else {
+      TabDefinitionRetriever.data = [];
     }
-    return this.data;
+    return TabDefinitionRetriever.data;
   }
-  public async getTabs(): Promise<TabDefinition[]> {
-    return await this.getObjects();
-  }
+
   public async tabExists(tab: string): Promise<boolean> {
     let found = false;
     //Look first in project files
@@ -47,8 +52,8 @@ export default class TabDefinitionRetriever extends BaseMetadataRetriever<
     if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let tabs = await this.getTabs();
-      let foundTab = tabs.find(t => {
-        return t.Name === tab;
+      let foundTab = tabs.find((t) => {
+        return t.fullName === tab;
       });
       found = !_.isNil(foundTab);
     }

@@ -1,17 +1,15 @@
-import { Flow } from "../schema";
+import { FileProperties } from "../schema";
 import { Org } from "@salesforce/core";
 import * as _ from "lodash";
 import { METADATA_INFO } from "../metadataInfo";
-import BaseMetadataRetriever from "./baseMetadataRetriever";
 import MetadataFiles from "../metadataFiles";
-import { retrieveMetadata } from "../../../utils/retrieveMetadata";
+import { SFPowerkit } from "./../../../sfpowerkit";
 
-const QUERY = "SELECT Id, MasterLabel, FullName  From Flow";
-export default class FlowRetriever extends BaseMetadataRetriever<Flow> {
+export default class FlowRetriever {
   private static instance: FlowRetriever;
+  private static data: FileProperties[];
   private constructor(public org: Org) {
-    super(org, true);
-    super.setQuery(QUERY);
+    this.org = org;
   }
 
   public static getInstance(org: Org): FlowRetriever {
@@ -21,56 +19,21 @@ export default class FlowRetriever extends BaseMetadataRetriever<Flow> {
     return FlowRetriever.instance;
   }
 
-  public async getObjects(): Promise<Flow[]> {
-    if (
-      (this.data === undefined || this.data.length == 0) &&
-      !this.dataLoaded
-    ) {
-      let flows = await this.retrieveFlows();
-      this.data = flows;
-      this.dataLoaded = true;
+  public async getFlows(): Promise<FileProperties[]> {
+    if (FlowRetriever.data === undefined || FlowRetriever.data.length == 0) {
+      const apiversion: string = await SFPowerkit.getApiVersion();
+      let items = await this.org.getConnection().metadata.list(
+        {
+          type: METADATA_INFO.Flow.xmlName,
+        },
+        apiversion
+      );
+      if (items === undefined || items === null) {
+        items = [];
+      }
+      FlowRetriever.data = items;
     }
-    return this.data;
-  }
-
-  async retrieveFlows(): Promise<Flow[]> {
-    const apiversion = await this.org.retrieveMaxApiVersion();
-    let toReturn: Promise<Flow[]> = new Promise<Flow[]>((resolve, reject) => {
-      this.org
-        .getConnection()
-        .metadata.list([{ type: "Flow", folder: null }], apiversion, function (
-          err,
-          metadata
-        ) {
-          if (err) {
-            return reject(err);
-          }
-          let flowsObjList: Flow[] = [];
-          if (metadata != undefined && metadata.length > 0) {
-            for (let i = 0; i < metadata.length; i++) {
-              let flow: Flow = {
-                FullName: metadata[i].fullName,
-                NamespacePrefix: metadata[i].namespacePrefix,
-                Id: "",
-              };
-              if (
-                metadata[i].namespacePrefix !== "" &&
-                metadata[i].namespacePrefix !== undefined
-              ) {
-                flow.FullName = `${metadata[i].namespacePrefix}__${metadata[i].fullName}`;
-              }
-              flowsObjList.push(flow);
-            }
-          }
-          resolve(flowsObjList);
-        });
-    });
-
-    return toReturn;
-  }
-
-  public async getFlows(): Promise<Flow[]> {
-    return await this.getObjects();
+    return FlowRetriever.data;
   }
 
   public async flowExists(flowStr: string): Promise<boolean> {
@@ -83,7 +46,7 @@ export default class FlowRetriever extends BaseMetadataRetriever<Flow> {
       //not found, check on the org
       let flows = await this.getFlows();
       let foundFlow = flows.find((flow) => {
-        return flow.FullName === flowStr;
+        return flow.fullName === flowStr;
       });
       found = !_.isNil(foundFlow);
     }

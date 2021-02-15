@@ -346,3 +346,18 @@ export interface PermissionSetUserPermission {
   name: string;
   enabled: boolean;
 }
+
+export interface FileProperties {
+  type: string;
+  createdById: string;
+  createdByName: string;
+  createdDate: string;
+  fileName: string;
+  fullName: string;
+  id: string;
+  lastModifiedById: string;
+  lastModifiedByName: string;
+  lastModifiedDate: string;
+  manageableState?: string;
+  namespacePrefix?: string;
+}

@@ -547,13 +547,13 @@ export default class ProfileReconcile extends ProfileActions {
   }
 
   private async removePermissions(profileObj: Profile): Promise<Profile> {
-    SFPowerkit.log("Reconciling App", LoggerLevel.DEBUG);
+    /*SFPowerkit.log("Reconciling App", LoggerLevel.DEBUG);
     profileObj = await this.reconcileApp(profileObj);
     SFPowerkit.log("Reconciling Classes", LoggerLevel.DEBUG);
-    profileObj = await this.reconcileClasses(profileObj);
+    profileObj = await this.reconcileClasses(profileObj);*/
     SFPowerkit.log("Reconciling Fields", LoggerLevel.DEBUG);
     profileObj = await this.reconcileFields(profileObj);
-    SFPowerkit.log("Reconciling Objects", LoggerLevel.DEBUG);
+    /*SFPowerkit.log("Reconciling Objects", LoggerLevel.DEBUG);
     profileObj = await this.reconcileObjects(profileObj);
     SFPowerkit.log("Reconciling Pages", LoggerLevel.DEBUG);
     profileObj = await this.reconcilePages(profileObj);
@@ -574,7 +574,7 @@ export default class ProfileReconcile extends ProfileActions {
     SFPowerkit.log("Reconciling  Flow", LoggerLevel.DEBUG);
     profileObj = await this.reconcileFlow(profileObj);
     SFPowerkit.log("Reconciling  Login Flows", LoggerLevel.DEBUG);
-    profileObj = await this.reconcileLoginFlow(profileObj);
+    profileObj = await this.reconcileLoginFlow(profileObj);*/
     return profileObj;
   }
 }

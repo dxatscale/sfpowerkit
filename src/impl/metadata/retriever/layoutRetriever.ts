@@ -1,18 +1,15 @@
-import { Layout } from "../schema";
+import { FileProperties } from "../schema";
 import { Org } from "@salesforce/core";
 import { METADATA_INFO } from "../metadataInfo";
 import * as _ from "lodash";
-import BaseMetadataRetriever from "./baseMetadataRetriever";
+import { SFPowerkit } from "./../../../sfpowerkit";
 import MetadataFiles from "../metadataFiles";
 
-const QUERY =
-  "SELECT Id, Name, EntityDefinition.QualifiedApiName, EntityDefinitionId, NamespacePrefix From Layout  ";
-
-export default class LayoutRetriever extends BaseMetadataRetriever<Layout> {
+export default class LayoutRetriever {
   private static instance: LayoutRetriever;
+  private static data: FileProperties[];
   private constructor(public org: Org) {
-    super(org, true);
-    super.setQuery(QUERY);
+    this.org = org;
   }
 
   public static getInstance(org: Org): LayoutRetriever {
@@ -22,81 +19,57 @@ export default class LayoutRetriever extends BaseMetadataRetriever<Layout> {
     return LayoutRetriever.instance;
   }
 
-  public async getObjects(): Promise<Layout[]> {
+  public async getLayouts(): Promise<FileProperties[]> {
     if (
-      (this.data === undefined || this.data.length == 0) &&
-      !this.dataLoaded
+      LayoutRetriever.data === undefined ||
+      LayoutRetriever.data.length == 0
     ) {
-      super.setQuery(QUERY);
-      let layouts = await super.getObjects();
+      let apiversion: string = await SFPowerkit.getApiVersion();
+      let layouts = await this.org.getConnection().metadata.list(
+        {
+          type: METADATA_INFO.Layout.xmlName,
+        },
+        apiversion
+      );
       if (layouts != undefined && layouts.length > 0) {
         for (let i = 0; i < layouts.length; i++) {
-          let namespace = "";
           if (
-            layouts[i].NamespacePrefix !== undefined &&
-            layouts[i].NamespacePrefix !== "" &&
-            layouts[i].NamespacePrefix !== null &&
-            layouts[i].NamespacePrefix !== "null"
+            layouts[i].namespacePrefix !== undefined &&
+            layouts[i].namespacePrefix !== "" &&
+            layouts[i].namespacePrefix !== null &&
+            layouts[i].namespacePrefix !== "null"
           ) {
-            namespace = layouts[i].NamespacePrefix + "__";
+            //apend namespacePrefix in layout
+            layouts[i].fullName = layouts[i].fullName.replace(
+              "-",
+              `-${layouts[i].namespacePrefix}__`
+            );
           }
-          if (
-            layouts[i].EntityDefinition !== null &&
-            layouts[i].EntityDefinition !== undefined
-          ) {
-            layouts[i].FullName =
-              layouts[i].EntityDefinition.QualifiedApiName +
-              "-" +
-              namespace +
-              layouts[i].Name.replace(/%/g, "%25")
-                .replace(/\//g, "%2F")
-                .replace(new RegExp(/\\/, "g"), "%5C")
-                .replace(/\(/g, "%28")
-                .replace(/\)/g, "%29")
-                .replace(/#/g, "%23")
-                .replace(/\$/g, "%24")
-                .replace(/&/g, "%26")
-                .replace(/~/g, "%7E")
-                .replace(/\[/g, "%5B")
-                .replace(/\]/g, "%5D")
-                .replace(/\^/g, "%5E")
-                .replace(/\{/g, "%7B")
-                .replace(/\}/g, "%7D")
-                .replace(/\|/g, "%7C")
-                .replace(/@/g, "%40")
-                .replace(/'/g, "%27");
-          } else {
-            layouts[i].FullName =
-              layouts[i].EntityDefinitionId +
-              "-" +
-              namespace +
-              layouts[i].Name.replace(/%/g, "%25")
-                .replace(/\//g, "%2F")
-                .replace(new RegExp(/\\/, "g"), "%5C")
-                .replace(/\(/g, "%28")
-                .replace(/\)/g, "%29")
-                .replace(/#/g, "%23")
-                .replace(/\$/g, "%24")
-                .replace(/&/g, "%26")
-                .replace(/~/g, "%7E")
-                .replace(/\[/g, "%5B")
-                .replace(/\]/g, "%5D")
-                .replace(/\^/g, "%5E")
-                .replace(/\{/g, "%7B")
-                .replace(/\}/g, "%7D")
-                .replace(/\|/g, "%7C")
-                .replace(/@/g, "%40")
-                .replace(/'/g, "%27");
-          }
+          //Describe result is already encoded
+          /*layouts[i].fullName = layouts[i].fullName.replace(/%/g, "%25")
+          layouts[i].fullName = layouts[i].fullName.replace(/\//g, "%2F")
+              .replace(new RegExp(/\\/, "g"), "%5C")
+              .replace(/\(/g, "%28")
+              .replace(/\)/g, "%29")
+              .replace(/#/g, "%23")
+              .replace(/\$/g, "%24")
+              .replace(/&/g, "%26")
+              .replace(/~/g, "%7E")
+              .replace(/\[/g, "%5B")
+              .replace(/\]/g, "%5D")
+              .replace(/\^/g, "%5E")
+              .replace(/\{/g, "%7B")
+              .replace(/\}/g, "%7D")
+              .replace(/\|/g, "%7C")
+              .replace(/@/g, "%40")
+              .replace(/'/g, "%27");*/
         }
+      } else {
+        layouts = [];
       }
-      this.data = layouts;
-      this.dataLoaded = true;
+      LayoutRetriever.data = layouts;
     }
-    return this.data;
-  }
-  public async getLayouts(): Promise<Layout[]> {
-    return await this.getObjects();
+    return LayoutRetriever.data;
   }
 
   public async layoutExists(layout: string): Promise<boolean> {
@@ -109,7 +82,7 @@ export default class LayoutRetriever extends BaseMetadataRetriever<Layout> {
       //not found, check on the org
       let layouts = await this.getLayouts();
       let foundLayout = layouts.find((l) => {
-        return l.FullName === layout;
+        return l.fullName === layout;
       });
       found = !_.isNil(foundLayout);
     }

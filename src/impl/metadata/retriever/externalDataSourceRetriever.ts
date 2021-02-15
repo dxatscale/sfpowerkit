@@ -1,19 +1,14 @@
-import { ExternalDataSource } from "../schema";
+import { FileProperties } from "../schema";
 import { Org } from "@salesforce/core";
 import * as _ from "lodash";
 import { METADATA_INFO } from "../metadataInfo";
-import BaseMetadataRetriever from "./baseMetadataRetriever";
 import MetadataFiles from "../metadataFiles";
-
-const QUERY =
-  "SELECT Id, DeveloperName, NamespacePrefix From ExternalDataSource";
-export default class ExternalDataSourceRetriever extends BaseMetadataRetriever<
-  ExternalDataSource
-> {
+import { SFPowerkit } from "./../../../sfpowerkit";
+export default class ExternalDataSourceRetriever {
   private static instance: ExternalDataSourceRetriever;
+  private static data: FileProperties[];
   private constructor(public org: Org) {
-    super(org, false);
-    super.setQuery(QUERY);
+    this.org = org;
   }
 
   public static getInstance(org: Org): ExternalDataSourceRetriever {
@@ -25,30 +20,24 @@ export default class ExternalDataSourceRetriever extends BaseMetadataRetriever<
     return ExternalDataSourceRetriever.instance;
   }
 
-  public async getObjects(): Promise<ExternalDataSource[]> {
+  public async getExternalDataSources(): Promise<FileProperties[]> {
     if (
-      (this.data === undefined || this.data.length == 0) &&
-      !this.dataLoaded
+      ExternalDataSourceRetriever.data === undefined ||
+      ExternalDataSourceRetriever.data.length == 0
     ) {
-      super.setQuery(QUERY);
-      let dataSources = await super.getObjects();
-      if (dataSources != undefined && dataSources.length > 0) {
-        for (let i = 0; i < dataSources.length; i++) {
-          let dts = dataSources[i];
-          if (!_.isNil(dts.NamespacePrefix)) {
-            dts.FullName = `${dts.NamespacePrefix}__${dts.DeveloperName}`;
-          } else {
-            dts.FullName = dts.DeveloperName;
-          }
-        }
+      const apiversion: string = await SFPowerkit.getApiVersion();
+      let items = await this.org.getConnection().metadata.list(
+        {
+          type: METADATA_INFO.ExternalDataSource.xmlName,
+        },
+        apiversion
+      );
+      if (items === undefined || items === null) {
+        items = [];
       }
-      this.data = dataSources;
-      this.dataLoaded = true;
+      ExternalDataSourceRetriever.data = items;
     }
-    return this.data;
-  }
-  public async getExternalDataSources(): Promise<ExternalDataSource[]> {
-    return await this.getObjects();
+    return ExternalDataSourceRetriever.data;
   }
 
   public async externalDataSourceExists(dataSource: string): Promise<boolean> {
@@ -61,7 +50,7 @@ export default class ExternalDataSourceRetriever extends BaseMetadataRetriever<
       //not found, check on the org
       let dataSources = await this.getExternalDataSources();
       let foundDts = dataSources.find((dts) => {
-        return dts.FullName === dataSource;
+        return dts.fullName === dataSource;
       });
       found = !_.isNil(foundDts);
     }

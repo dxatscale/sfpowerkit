@@ -1,18 +1,15 @@
-import { ApexClass } from "../schema";
+import { FileProperties } from "../schema";
 import { Org } from "@salesforce/core";
 import * as _ from "lodash";
 import { METADATA_INFO } from "../metadataInfo";
-import BaseMetadataRetriever from "./baseMetadataRetriever";
 import MetadataFiles from "../metadataFiles";
+import { SFPowerkit } from "./../../../sfpowerkit";
 
-const QUERY = "Select Id, Name, NameSpacePrefix From ApexClass ";
-export default class ApexClassRetriever extends BaseMetadataRetriever<
-  ApexClass
-> {
+export default class ApexClassRetriever {
   private static instance: ApexClassRetriever;
+  private static data: FileProperties[];
   private constructor(public org: Org) {
-    super(org, true);
-    super.setQuery(QUERY);
+    this.org = org;
   }
 
   public static getInstance(org: Org): ApexClassRetriever {
@@ -22,30 +19,24 @@ export default class ApexClassRetriever extends BaseMetadataRetriever<
     return ApexClassRetriever.instance;
   }
 
-  public async getObjects(): Promise<ApexClass[]> {
+  public async getClasses(): Promise<FileProperties[]> {
     if (
-      (this.data === undefined || this.data.length == 0) &&
-      !this.dataLoaded
+      ApexClassRetriever.data === undefined ||
+      ApexClassRetriever.data.length == 0
     ) {
-      super.setQuery(QUERY);
-      let classes = await super.getObjects();
-      if (classes != undefined && classes.length > 0) {
-        for (let i = 0; i < classes.length; i++) {
-          let cls = classes[i];
-          if (!_.isNil(cls.NamespacePrefix)) {
-            cls.FullName = `${cls.NamespacePrefix}__${cls.Name}`;
-          } else {
-            cls.FullName = cls.Name;
-          }
-        }
+      const apiversion: string = await SFPowerkit.getApiVersion();
+      let items = await this.org.getConnection().metadata.list(
+        {
+          type: METADATA_INFO.ApexClass.xmlName,
+        },
+        apiversion
+      );
+      if (items === undefined || items === null) {
+        items = [];
       }
-      this.data = classes;
-      this.dataLoaded = true;
+      ApexClassRetriever.data = items;
     }
-    return this.data;
-  }
-  public async getClasses(): Promise<ApexClass[]> {
-    return await this.getObjects();
+    return ApexClassRetriever.data;
   }
 
   public async classExists(cls: string): Promise<boolean> {
@@ -58,7 +49,7 @@ export default class ApexClassRetriever extends BaseMetadataRetriever<
       //not found, check on the org
       let classes = await this.getClasses();
       let foundCls = classes.find((aCls) => {
-        return aCls.FullName === cls;
+        return aCls.fullName === cls;
       });
       found = !_.isNil(foundCls);
     }

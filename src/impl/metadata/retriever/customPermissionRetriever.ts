@@ -1,18 +1,16 @@
-import { CustomPermission } from "../schema";
+import { FileProperties } from "../schema";
 import { Org } from "@salesforce/core";
 import * as _ from "lodash";
 import { METADATA_INFO } from "../metadataInfo";
-import BaseMetadataRetriever from "./baseMetadataRetriever";
 import MetadataFiles from "../metadataFiles";
+import { SFPowerkit } from "./../../../sfpowerkit";
 
 const QUERY = "SELECT Id, DeveloperName, NamespacePrefix From CustomPermission";
-export default class CustomPermissionRetriever extends BaseMetadataRetriever<
-  CustomPermission
-> {
+export default class CustomPermissionRetriever {
   private static instance: CustomPermissionRetriever;
+  private static data: FileProperties[];
   private constructor(public org: Org) {
-    super(org, false);
-    super.setQuery(QUERY);
+    this.org = org;
   }
 
   public static getInstance(org: Org): CustomPermissionRetriever {
@@ -22,32 +20,24 @@ export default class CustomPermissionRetriever extends BaseMetadataRetriever<
     return CustomPermissionRetriever.instance;
   }
 
-  public async getObjects(): Promise<CustomPermission[]> {
+  public async getCustomPermissions(): Promise<FileProperties[]> {
     if (
-      (this.data === undefined || this.data.length == 0) &&
-      !this.dataLoaded
+      CustomPermissionRetriever.data === undefined ||
+      CustomPermissionRetriever.data.length == 0
     ) {
-      super.setQuery(QUERY);
-      let customPermissions = await super.getObjects();
-      if (customPermissions != undefined && customPermissions.length > 0) {
-        for (let i = 0; i < customPermissions.length; i++) {
-          let cp = customPermissions[i];
-          if (!_.isNil(cp.NamespacePrefix)) {
-            cp.FullName = `${cp.NamespacePrefix}__${cp.DeveloperName}`;
-          } else {
-            cp.FullName = cp.DeveloperName;
-          }
-        }
+      const apiversion: string = await SFPowerkit.getApiVersion();
+      let items = await this.org.getConnection().metadata.list(
+        {
+          type: METADATA_INFO.CustomPermission.xmlName,
+        },
+        apiversion
+      );
+      if (items === undefined || items === null) {
+        items = [];
       }
-
-      this.data = customPermissions;
-      this.dataLoaded = true;
+      CustomPermissionRetriever.data = items;
     }
-    return this.data;
-  }
-
-  public async getCustomPermissions(): Promise<CustomPermission[]> {
-    return await this.getObjects();
+    return CustomPermissionRetriever.data;
   }
 
   public async customPermissionExists(
@@ -64,7 +54,7 @@ export default class CustomPermissionRetriever extends BaseMetadataRetriever<
       //not found, check on the org
       let custumPermissions = await this.getCustomPermissions();
       let foundCp = custumPermissions.find((customPermission) => {
-        return customPermission.FullName === customPermissionStr;
+        return customPermission.fullName === customPermissionStr;
       });
       found = !_.isNil(foundCp);
     }
