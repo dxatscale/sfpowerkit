@@ -33,10 +33,10 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
       return this.describePromise;
     }
     this.describePromise = new Promise<any[]>((resolve, reject) => {
-      this.org.getConnection().describeGlobal(function(err, res) {
+      this.org.getConnection().describeGlobal(function (err, res) {
         if (err) {
           SFPowerkit.log(
-            `Error when running gllobal describe `,
+            `Error when running global describe `,
             LoggerLevel.ERROR
           );
           SFPowerkit.log(err, LoggerLevel.ERROR);
@@ -46,9 +46,9 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
             `Org describe completed successfully. ${res.sobjects.length} object found! `,
             LoggerLevel.INFO
           );
-          let entities = res.sobjects.map(sObject => {
+          let entities = res.sobjects.map((sObject) => {
             return {
-              QualifiedApiName: sObject.name
+              QualifiedApiName: sObject.name,
             };
           });
           resolve(entities);
@@ -74,7 +74,7 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
       );
 
     if (res !== undefined) {
-      this.objectForPermission = res.records.map(elem => {
+      this.objectForPermission = res.records.map((elem) => {
         return elem["SobjectType"];
       });
     }
@@ -106,7 +106,7 @@ export default class EntityDefinitionRetriever extends BaseMetadataRetriever<
     if (!found && !MetadataFiles.sourceOnly) {
       //not found, check on the org
       let objects = await this.getObjects();
-      let foundObj = objects.find(obj => {
+      let foundObj = objects.find((obj) => {
         return obj.QualifiedApiName === custonObjectStr;
       });
       found = foundObj !== undefined;
