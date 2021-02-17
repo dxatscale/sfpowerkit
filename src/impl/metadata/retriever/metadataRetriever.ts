@@ -5,7 +5,6 @@ import { MetadataInfo, METADATA_INFO } from "../metadataInfo";
 
 export default class MetadataRetriever {
   protected _componentType;
-  private _items;
   protected _conn;
   private _metadataInProjectDirectory: MetadataInfo;
 
@@ -24,25 +23,29 @@ export default class MetadataRetriever {
   }
 
   public async getComponents(parent?: string) {
-    if (!this._items) {
+    let key = parent ? this._componentType : this._componentType + "_" + parent;
+    if (!SFPowerkit.getCache().get<any>(key)) {
+      let items;
       if (this._componentType === METADATA_INFO.CustomField.xmlName) {
-        this._items = await this.getFieldsByObjectName(parent);
+        items = await this.getFieldsByObjectName(parent);
       } else if (this._componentType === METADATA_INFO.Layout.xmlName) {
-        this._items = await this.getLayouts();
+        items = await this.getLayouts();
       } else {
         const apiversion: string = await SFPowerkit.getApiVersion();
-        this._items = await this._conn.metadata.list(
+        items = await this._conn.metadata.list(
           {
             type: this._componentType,
           },
           apiversion
         );
-        if (this._items === undefined || this._items === null) {
-          this._items = [];
+        if (items === undefined || items === null) {
+          items = [];
         }
       }
+      SFPowerkit.getCache().set<any>(key, items);
     }
-    return this._items;
+
+    return SFPowerkit.getCache().get<any>(key);
   }
 
   public async isComponentExistsInTheOrg(

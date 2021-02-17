@@ -1041,6 +1041,56 @@
         "signature": "98d2e4470d454a6e6294f6a9eef5b76504262965a0093d0d7b095625fbc190f4",
         "affectsGlobalScope": false
       },
+      "./node_modules/node-cache/index.d.ts": {
+        "version": "6f4e4e5a046171e70dfb4b1f3e6212de786bf2c1e2c4383ae0e61c4726fdd168",
+        "signature": "6f4e4e5a046171e70dfb4b1f3e6212de786bf2c1e2c4383ae0e61c4726fdd168",
+        "affectsGlobalScope": false
+      },
+      "./src/sfpowerkit.ts": {
+        "version": "2ef3cccef5b907aaa586677a9901f18a11b996b254430451c07dadefcc8e996a",
+        "signature": "b5e94bd97ae79e65de7023469637a6da651c4eca04c021f91fe169210c5899fc",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/@types/minimatch/index.d.ts": {
+        "version": "1d1e6bd176eee5970968423d7e215bfd66828b6db8d54d17afec05a831322633",
+        "signature": "1d1e6bd176eee5970968423d7e215bfd66828b6db8d54d17afec05a831322633",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/@types/glob/index.d.ts": {
+        "version": "393137c76bd922ba70a2f8bf1ade4f59a16171a02fb25918c168d48875b0cfb0",
+        "signature": "393137c76bd922ba70a2f8bf1ade4f59a16171a02fb25918c168d48875b0cfb0",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/@types/rimraf/index.d.ts": {
+        "version": "ad23ef9834b5b8819ca9da91e9d534514d47d31d33fa384d82697c7b9502572c",
+        "signature": "ad23ef9834b5b8819ca9da91e9d534514d47d31d33fa384d82697c7b9502572c",
+        "affectsGlobalScope": false
+      },
+      "./src/commands/sfpowerkit/auth/login.ts": {
+        "version": "6d019655bbb33ec33be38767240966f12333c1cd1dd1c34112de435f7eb601a0",
+        "signature": "8327d13c8770d0ba473ee96945f5e3600b573205dc10ad33a8a46a49f918065d",
+        "affectsGlobalScope": false
+      },
+      "./src/utils/queryexecutor.ts": {
+        "version": "5663bcd0d1ab35b77fa2d6af75082c811f8440d1c5b1902556ce8bd7ee65bfd4",
+        "signature": "1d70488ba2bbf4b8a99333d780a7f023da5915158c84007272697d55359134d1",
+        "affectsGlobalScope": false
+      },
+      "./src/utils/chunkarray.ts": {
+        "version": "337a8ba6329bf5a39c40e556c8d6a440afd05596befa60482b2a68ef10e5aee8",
+        "signature": "d1679261748c012a600217c4455297ec1c44c6075eb4cf6e49161ec04facd82d",
+        "affectsGlobalScope": false
+      },
+      "./node_modules/@types/fs-extra/index.d.ts": {
+        "version": "501e038d89f1203bf63078154827d19b42b29597168fc20674096c4dd9a70f8d",
+        "signature": "501e038d89f1203bf63078154827d19b42b29597168fc20674096c4dd9a70f8d",
+        "affectsGlobalScope": false
+      },
+      "./src/utils/getdefaults.ts": {
+        "version": "2195c49b0d865db02539d6bdc0ed918eac9df77b9865ff9f921e6f0d8c759e36",
+        "signature": "2fab5864525a23781e9f14828e6aff2424057d038427d6d84175659feb9ba9a3",
+        "affectsGlobalScope": false
+      },
       "./node_modules/cli-ux/lib/action/base.d.ts": {
         "version": "0cbd2414d7f4ff0e02986d86037defc33d112b8dd22001b27889f062a3e3e4a7",
         "signature": "0cbd2414d7f4ff0e02986d86037defc33d112b8dd22001b27889f062a3e3e4a7",
@@ -1094,51 +1144,6 @@
       "./node_modules/cli-ux/lib/index.d.ts": {
         "version": "879932caaf4a58faf2519a504639b6ace1cf9145505341731cc01e9282e32c1f",
         "signature": "879932caaf4a58faf2519a504639b6ace1cf9145505341731cc01e9282e32c1f",
-        "affectsGlobalScope": false
-      },
-      "./src/sfpowerkit.ts": {
-        "version": "9e43b5ea1d31042a5a4c76887f40f153d4abd6b21324327cb3b740deb7a49dfc",
-        "signature": "fd7d4b272d75f16823a6b627b814e143a8ff5a7ccfc99fc3814265db1b1a4ff9",
-        "affectsGlobalScope": false
-      },
-      "./node_modules/@types/minimatch/index.d.ts": {
-        "version": "1d1e6bd176eee5970968423d7e215bfd66828b6db8d54d17afec05a831322633",
-        "signature": "1d1e6bd176eee5970968423d7e215bfd66828b6db8d54d17afec05a831322633",
-        "affectsGlobalScope": false
-      },
-      "./node_modules/@types/glob/index.d.ts": {
-        "version": "393137c76bd922ba70a2f8bf1ade4f59a16171a02fb25918c168d48875b0cfb0",
-        "signature": "393137c76bd922ba70a2f8bf1ade4f59a16171a02fb25918c168d48875b0cfb0",
-        "affectsGlobalScope": false
-      },
-      "./node_modules/@types/rimraf/index.d.ts": {
-        "version": "ad23ef9834b5b8819ca9da91e9d534514d47d31d33fa384d82697c7b9502572c",
-        "signature": "ad23ef9834b5b8819ca9da91e9d534514d47d31d33fa384d82697c7b9502572c",
-        "affectsGlobalScope": false
-      },
-      "./src/commands/sfpowerkit/auth/login.ts": {
-        "version": "6d019655bbb33ec33be38767240966f12333c1cd1dd1c34112de435f7eb601a0",
-        "signature": "8327d13c8770d0ba473ee96945f5e3600b573205dc10ad33a8a46a49f918065d",
-        "affectsGlobalScope": false
-      },
-      "./src/utils/queryexecutor.ts": {
-        "version": "5663bcd0d1ab35b77fa2d6af75082c811f8440d1c5b1902556ce8bd7ee65bfd4",
-        "signature": "1d70488ba2bbf4b8a99333d780a7f023da5915158c84007272697d55359134d1",
-        "affectsGlobalScope": false
-      },
-      "./src/utils/chunkarray.ts": {
-        "version": "337a8ba6329bf5a39c40e556c8d6a440afd05596befa60482b2a68ef10e5aee8",
-        "signature": "d1679261748c012a600217c4455297ec1c44c6075eb4cf6e49161ec04facd82d",
-        "affectsGlobalScope": false
-      },
-      "./node_modules/@types/fs-extra/index.d.ts": {
-        "version": "501e038d89f1203bf63078154827d19b42b29597168fc20674096c4dd9a70f8d",
-        "signature": "501e038d89f1203bf63078154827d19b42b29597168fc20674096c4dd9a70f8d",
-        "affectsGlobalScope": false
-      },
-      "./src/utils/getdefaults.ts": {
-        "version": "2195c49b0d865db02539d6bdc0ed918eac9df77b9865ff9f921e6f0d8c759e36",
-        "signature": "2fab5864525a23781e9f14828e6aff2424057d038427d6d84175659feb9ba9a3",
         "affectsGlobalScope": false
       },
       "./src/ui/progressbar.ts": {
@@ -1382,7 +1387,7 @@
         "affectsGlobalScope": false
       },
       "./src/impl/metadata/retriever/entitydefinitionretriever.ts": {
-        "version": "23ab7ab68ccedc8a902404b3da4a57b3d4319c9cd8731692da4b0f4ba0ec1fec",
+        "version": "01be6407fec2cc1ea1058b90a193862d4db8ca5160fe9aab72b984db7e6fe989",
         "signature": "d9f8096365a927dd05bb8f3ca87646dacb4990133680d758ba2ea2992e4e4841",
         "affectsGlobalScope": false
       },
@@ -2417,13 +2422,13 @@
         "affectsGlobalScope": false
       },
       "./src/impl/metadata/retriever/metadataretriever.ts": {
-        "version": "daaf6cf90a6c87962da48d22b02e894747f77587c72135429c777b67fea39926",
-        "signature": "5ede7e3e2dc30f6731c89836fe836a1835d5219e95baaab04cd17032d2620608",
+        "version": "9211369a96c5a65400ca51d063b312fa05717a0e6b422d2593425fdd80c611bb",
+        "signature": "fdc00f2b64aedf4efe2d7b3b849ae78c8e959ad674208c7d588bc77a2a80ed5b",
         "affectsGlobalScope": false
       },
       "./src/impl/source/profiles/profilereconcile.ts": {
-        "version": "9499586893ab73f41da168fa5acfbee18daf4960b052a126089eb467ee5ff7e0",
-        "signature": "0b387485039f4b7c757c1ae52af35fe799c999a686093b8ba9227cf02f11e0f4",
+        "version": "409b72ac944c84c672cd4c2108472fa67a4ea310d5e41134e4310094106c57c7",
+        "signature": "292081a11ee1f4f1398b416ec78cf25e3fcff5088c07bf33bd66ff872f2cf39a",
         "affectsGlobalScope": false
       },
       "./src/commands/sfpowerkit/source/profile/reconcile.ts": {
@@ -4213,6 +4218,10 @@
       "./node_modules/diff-match-patch-line-and-word/index.d.ts": [
         "./node_modules/@types/diff-match-patch/index.d.ts"
       ],
+      "./node_modules/node-cache/index.d.ts": [
+        "./node_modules/@types/node/events.d.ts",
+        "./node_modules/@types/node/index.d.ts"
+      ],
       "./node_modules/simple-git/promise.d.ts": [
         "./node_modules/simple-git/typings/errors.d.ts",
         "./node_modules/simple-git/typings/response.d.ts",
@@ -5099,7 +5108,7 @@
         "./node_modules/@salesforce/command/lib/exported.d.ts",
         "./node_modules/@salesforce/core/lib/exported.d.ts",
         "./node_modules/@types/node/util.d.ts",
-        "./node_modules/cli-ux/lib/index.d.ts"
+        "./node_modules/node-cache/index.d.ts"
       ],
       "./src/ui/progressbar.ts": [
         "./node_modules/@types/node/util.d.ts",
@@ -6814,6 +6823,10 @@
       "./node_modules/diff-match-patch-line-and-word/index.d.ts": [
         "./node_modules/@types/diff-match-patch/index.d.ts"
       ],
+      "./node_modules/node-cache/index.d.ts": [
+        "./node_modules/@types/node/events.d.ts",
+        "./node_modules/@types/node/index.d.ts"
+      ],
       "./node_modules/simple-git/promise.d.ts": [
         "./node_modules/simple-git/typings/errors.d.ts",
         "./node_modules/simple-git/typings/response.d.ts",
@@ -7202,7 +7215,8 @@
         "./src/sfdxnode/types.ts"
       ],
       "./src/sfpowerkit.ts": [
-        "./packages/sfpowerkit-cli/node_modules/@salesforce/command/lib/exported.d.ts"
+        "./node_modules/@salesforce/command/lib/exported.d.ts",
+        "./node_modules/node-cache/index.d.ts"
       ],
       "./src/utils/checkdeploymentstatus.ts": [
         "./packages/sfpowerkit-cli/node_modules/@types/jsforce/index.d.ts"
@@ -7576,6 +7590,7 @@
       "./node_modules/diff-match-patch-line-and-word/index.d.ts",
       "./node_modules/find-java-home/dist/index.d.ts",
       "./node_modules/ignore/index.d.ts",
+      "./node_modules/node-cache/index.d.ts",
       "./node_modules/simple-git/promise.d.ts",
       "./node_modules/simple-git/src/lib/errors/git-construct-error.d.ts",
       "./node_modules/simple-git/src/lib/errors/git-error.d.ts",

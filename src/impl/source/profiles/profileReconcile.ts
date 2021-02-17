@@ -16,21 +16,8 @@ import UserPermissionBuilder from "../../metadata/builder/userPermissionBuilder"
 import MetadataRetriever from "../../metadata/retriever/metadataRetriever";
 import EntityDefinitionRetriever from "../../metadata/retriever/entityDefinitionRetriever";
 
-const nonArayProperties = [
-  "custom",
-  "description",
-  "fullName",
-  "userLicense",
-  "$",
-];
-
 export default class ProfileReconcile extends ProfileActions {
   metadataFiles: MetadataFiles;
-  private _flowRetreiver: MetadataRetriever;
-  private _recordTypeRetriever: MetadataRetriever;
-  private _apexPageRetriver: MetadataRetriever;
-  private _tabRetriever: MetadataRetriever;
-  private _customPermissionsRetriever: MetadataRetriever;
 
   public async reconcile(
     srcFolders: string[],
@@ -291,7 +278,7 @@ export default class ProfileReconcile extends ProfileActions {
       METADATA_INFO.Layout.xmlName,
       METADATA_INFO
     );
-    this._recordTypeRetriever = new MetadataRetriever(
+    let recordTypeRetriever = new MetadataRetriever(
       this.org.getConnection(),
       METADATA_INFO.RecordType.xmlName,
       METADATA_INFO
@@ -310,7 +297,7 @@ export default class ProfileReconcile extends ProfileActions {
             cmpObj.layout
           )) &&
           (_.isNil(cmpObj.recordType) ||
-            (await this._recordTypeRetriever.isComponentExistsInProjectDirectoryOrInOrg(
+            (await recordTypeRetriever.isComponentExistsInProjectDirectoryOrInOrg(
               cmpObj.recordType
             )));
         if (exist) {
@@ -435,7 +422,7 @@ export default class ProfileReconcile extends ProfileActions {
   }
 
   private async reconcileFlow(profileObj: Profile): Promise<Profile> {
-    this._flowRetreiver = new MetadataRetriever(
+    let flowRetreiver = new MetadataRetriever(
       this.org.getConnection(),
       METADATA_INFO.Flow.xmlName,
       METADATA_INFO
@@ -448,7 +435,7 @@ export default class ProfileReconcile extends ProfileActions {
       let validArray = [];
       for (let i = 0; i < profileObj.flowAccesses.length; i++) {
         let flow = profileObj.flowAccesses[i];
-        let exist = await this._flowRetreiver.isComponentExistsInProjectDirectoryOrInOrg(
+        let exist = await flowRetreiver.isComponentExistsInProjectDirectoryOrInOrg(
           flow.flow
         );
         if (exist) {
@@ -465,9 +452,15 @@ export default class ProfileReconcile extends ProfileActions {
   }
 
   private async reconcileLoginFlow(profileObj: Profile): Promise<Profile> {
-    this._apexPageRetriver = new MetadataRetriever(
+    let apexPageRetriver = new MetadataRetriever(
       this.org.getConnection(),
       METADATA_INFO.ApexPage.xmlName,
+      METADATA_INFO
+    );
+
+    let flowRetreiver = new MetadataRetriever(
+      this.org.getConnection(),
+      METADATA_INFO.Flow.xmlName,
       METADATA_INFO
     );
 
@@ -479,14 +472,14 @@ export default class ProfileReconcile extends ProfileActions {
       for (let i = 0; i < profileObj.loginFlows.length; i++) {
         let loginFlow = profileObj.loginFlows[i];
         if (loginFlow.flow !== undefined) {
-          let exist = await this._flowRetreiver.isComponentExistsInProjectDirectoryOrInOrg(
+          let exist = await flowRetreiver.isComponentExistsInProjectDirectoryOrInOrg(
             loginFlow.flow
           );
           if (exist) {
             validArray.push(loginFlow);
           }
         } else if (loginFlow.vfFlowPage !== undefined) {
-          let exist = await this._apexPageRetriver.isComponentExistsInProjectDirectoryOrInOrg(
+          let exist = await apexPageRetriver.isComponentExistsInProjectDirectoryOrInOrg(
             loginFlow.vfFlowPage
           );
           if (exist) {
@@ -506,7 +499,7 @@ export default class ProfileReconcile extends ProfileActions {
   private async reconcileCustomPermission(
     profileObj: Profile
   ): Promise<Profile> {
-    this._customPermissionsRetriever = new MetadataRetriever(
+    let customPermissionsRetriever = new MetadataRetriever(
       this.org.getConnection(),
       METADATA_INFO.CustomPermission.xmlName,
       METADATA_INFO
@@ -519,7 +512,7 @@ export default class ProfileReconcile extends ProfileActions {
       let validArray = [];
       for (let i = 0; i < profileObj.customPermissions.length; i++) {
         let customPermission = profileObj.customPermissions[i];
-        let exist = await this._customPermissionsRetriever.isComponentExistsInProjectDirectoryOrInOrg(
+        let exist = await customPermissionsRetriever.isComponentExistsInProjectDirectoryOrInOrg(
           customPermission.name
         );
         if (exist) {
@@ -536,6 +529,12 @@ export default class ProfileReconcile extends ProfileActions {
   }
 
   private async reconcilePages(profileObj: Profile): Promise<Profile> {
+    let apexPageRetriver = new MetadataRetriever(
+      this.org.getConnection(),
+      METADATA_INFO.ApexPage.xmlName,
+      METADATA_INFO
+    );
+
     if (profileObj.pageAccesses !== undefined) {
       if (!Array.isArray(profileObj.pageAccesses)) {
         profileObj.pageAccesses = [profileObj.pageAccesses];
@@ -543,7 +542,7 @@ export default class ProfileReconcile extends ProfileActions {
       let validArray = [];
       for (let i = 0; i < profileObj.pageAccesses.length; i++) {
         let cmpObj = profileObj.pageAccesses[i];
-        let exist = await this._apexPageRetriver.isComponentExistsInProjectDirectoryOrInOrg(
+        let exist = await apexPageRetriver.isComponentExistsInProjectDirectoryOrInOrg(
           cmpObj.apexPage
         );
         if (exist) {
@@ -560,6 +559,12 @@ export default class ProfileReconcile extends ProfileActions {
   }
 
   private async reconcileRecordTypes(profileObj: Profile): Promise<Profile> {
+    let recordTypeRetriever = new MetadataRetriever(
+      this.org.getConnection(),
+      METADATA_INFO.RecordType.xmlName,
+      METADATA_INFO
+    );
+
     if (profileObj.recordTypeVisibilities !== undefined) {
       if (!Array.isArray(profileObj.recordTypeVisibilities)) {
         profileObj.recordTypeVisibilities = [profileObj.recordTypeVisibilities];
@@ -567,7 +572,7 @@ export default class ProfileReconcile extends ProfileActions {
       let validArray = [];
       for (let i = 0; i < profileObj.recordTypeVisibilities.length; i++) {
         let cmpObj = profileObj.recordTypeVisibilities[i];
-        let exist = await this._recordTypeRetriever.isComponentExistsInProjectDirectoryOrInOrg(
+        let exist = await recordTypeRetriever.isComponentExistsInProjectDirectoryOrInOrg(
           cmpObj.recordType
         );
         if (exist) {
@@ -584,7 +589,7 @@ export default class ProfileReconcile extends ProfileActions {
   }
 
   private async reconcileTabs(profileObj: Profile): Promise<Profile> {
-    this._tabRetriever = new MetadataRetriever(
+    let tabRetriever = new MetadataRetriever(
       this.org.getConnection(),
       METADATA_INFO.CustomTab.xmlName,
       METADATA_INFO
@@ -597,7 +602,7 @@ export default class ProfileReconcile extends ProfileActions {
       let validArray = [];
       for (let i = 0; i < profileObj.tabVisibilities.length; i++) {
         let cmpObj = profileObj.tabVisibilities[i];
-        let exist = await this._tabRetriever.isComponentExistsInProjectDirectoryOrInOrg(
+        let exist = await tabRetriever.isComponentExistsInProjectDirectoryOrInOrg(
           cmpObj.tab
         );
         if (exist) {

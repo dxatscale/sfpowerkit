@@ -48,6 +48,7 @@
     "hook-std": "^2.0.0",
     "ignore": "^5.1.8",
     "nested-object-diff": "^1.1.0",
+    "node-cache": "^5.1.2",
     "pino": "^6.11.0",
     "pino-pretty": "^4.3.0",
     "request": "^2.88.2",
