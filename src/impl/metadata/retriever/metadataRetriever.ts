@@ -28,11 +28,7 @@ export default class MetadataRetriever {
     if (!SFPowerkit.getCache().get<any>(key)) {
       let items;
       if (this._componentType === "UserLicense") {
-        let query = `Select Id, Name, LicenseDefinitionKey From UserLicense`;
-        items = await this.getComponentsFromOrgUsingSOQLQuery(
-          query,
-          "UserLicense"
-        );
+        items = await this.getUserLicense();
       } else if (this._componentType === METADATA_INFO.CustomObject.xmlName) {
         items = await this.getCustomObjects();
       } else if (this._componentType === "ObjectPermissions") {
@@ -48,6 +44,15 @@ export default class MetadataRetriever {
     }
 
     return SFPowerkit.getCache().get<any>(key);
+  }
+
+  private async getUserLicense() {
+    let query = `Select Id, Name, LicenseDefinitionKey From UserLicense`;
+    let items = await this.getComponentsFromOrgUsingSOQLQuery(
+      query,
+      "UserLicense"
+    );
+    return items;
   }
 
   private async getComponentsFromOrgUsingListMetadata() {
