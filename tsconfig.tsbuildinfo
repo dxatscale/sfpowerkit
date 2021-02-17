@@ -1047,7 +1047,7 @@
         "affectsGlobalScope": false
       },
       "./src/sfpowerkit.ts": {
-        "version": "2ef3cccef5b907aaa586677a9901f18a11b996b254430451c07dadefcc8e996a",
+        "version": "7c38fe50ce2a091eb87d21e484e0ad4fb6769e8505d10f128863211268263538",
         "signature": "b5e94bd97ae79e65de7023469637a6da651c4eca04c021f91fe169210c5899fc",
         "affectsGlobalScope": false
       },
@@ -1381,19 +1381,14 @@
         "signature": "6ccd27efce38267b83164b20138a1b68b0f95ad6ff22ca3c3271185ee3a6543e",
         "affectsGlobalScope": false
       },
-      "./src/impl/metadata/retriever/basemetadataretriever.ts": {
-        "version": "3849c9864f778a2ff211c0d02ebe6d2c21f3be438affa7e8aa23a508e70d4891",
-        "signature": "285463b385e7b624b2065907cdb089e8805442920429a086f9a7624a25194f48",
-        "affectsGlobalScope": false
-      },
-      "./src/impl/metadata/retriever/entitydefinitionretriever.ts": {
-        "version": "01be6407fec2cc1ea1058b90a193862d4db8ca5160fe9aab72b984db7e6fe989",
-        "signature": "d9f8096365a927dd05bb8f3ca87646dacb4990133680d758ba2ea2992e4e4841",
+      "./src/impl/metadata/retriever/metadataretriever.ts": {
+        "version": "74aedf69f56eabe3c6c37e44de2a115774ae69c9c6c0f1da570a76d370f26d0a",
+        "signature": "21f617b1212ceb9c954904f16c5bfa22be81e69ff8dd78d1fd18fce297390e12",
         "affectsGlobalScope": false
       },
       "./src/impl/metadata/retriever/profileretriever.ts": {
-        "version": "50330de4764e9a52da4dbeba7c6f6ebf24c5c10792e2871a16e725fdb1342bc5",
-        "signature": "1fa0d034cb5fa730e4db8d74ffe3a58348cb6040e5a62ae4e8adec97ecd199c3",
+        "version": "b7ed250ae6f4cbda2aaf6e371d4f2fc150618590532bb5c3b9ce7aac2ffa58b9",
+        "signature": "e2cc8e6cce78dac178c605e97c84e29182aa1a40fecaf63e10fe67d4f2df3e34",
         "affectsGlobalScope": false
       },
       "./src/impl/metadata/writer/profilewriter.ts": {
@@ -2416,18 +2411,8 @@
         "signature": "9b0edb4b04db8b2c2f99e2bc6803b37770bae40f0b1811fe5b33cbc9c2390cd6",
         "affectsGlobalScope": false
       },
-      "./src/impl/metadata/retriever/userlicenseretriever.ts": {
-        "version": "55032955acfb41b8c66159f05210a63526b6d45df2b1d3c6835c179c5808b042",
-        "signature": "b8d0e37775fe92a8406d7535bdcd31a176cea4d2bbd52e4f3c70d4426a753e12",
-        "affectsGlobalScope": false
-      },
-      "./src/impl/metadata/retriever/metadataretriever.ts": {
-        "version": "9211369a96c5a65400ca51d063b312fa05717a0e6b422d2593425fdd80c611bb",
-        "signature": "fdc00f2b64aedf4efe2d7b3b849ae78c8e959ad674208c7d588bc77a2a80ed5b",
-        "affectsGlobalScope": false
-      },
       "./src/impl/source/profiles/profilereconcile.ts": {
-        "version": "409b72ac944c84c672cd4c2108472fa67a4ea310d5e41134e4310094106c57c7",
+        "version": "96cfee8cd4a3b3af6499a47e87bfa49dd67f0e8ec1e5c6f8b1c1f89117e0d76e",
         "signature": "292081a11ee1f4f1398b416ec78cf25e3fcff5088c07bf33bd66ff872f2cf39a",
         "affectsGlobalScope": false
       },
@@ -4803,20 +4788,6 @@
         "./src/sfpowerkit.ts",
         "./src/utils/fileutils.ts"
       ],
-      "./src/impl/metadata/retriever/basemetadataretriever.ts": [
-        "./node_modules/@salesforce/core/lib/exported.d.ts",
-        "./src/sfpowerkit.ts",
-        "./src/ui/progressbar.ts"
-      ],
-      "./src/impl/metadata/retriever/entitydefinitionretriever.ts": [
-        "./node_modules/@salesforce/core/lib/exported.d.ts",
-        "./node_modules/@types/lodash/index.d.ts",
-        "./src/impl/metadata/metadatafiles.ts",
-        "./src/impl/metadata/metadatainfo.ts",
-        "./src/impl/metadata/retriever/basemetadataretriever.ts",
-        "./src/impl/metadata/schema.ts",
-        "./src/sfpowerkit.ts"
-      ],
       "./src/impl/metadata/retriever/metadataretriever.ts": [
         "./node_modules/@types/jsforce/index.d.ts",
         "./node_modules/@types/lodash/index.d.ts",
@@ -4834,19 +4805,12 @@
       ],
       "./src/impl/metadata/retriever/profileretriever.ts": [
         "./node_modules/@salesforce/core/lib/exported.d.ts",
-        "./node_modules/@types/fs-extra/index.d.ts",
         "./node_modules/@types/jsforce/index.d.ts",
         "./node_modules/@types/lodash/index.d.ts",
         "./src/impl/metadata/builder/userpermissionbuilder.ts",
         "./src/impl/metadata/metadatafiles.ts",
-        "./src/impl/metadata/retriever/basemetadataretriever.ts",
-        "./src/impl/metadata/retriever/entitydefinitionretriever.ts",
-        "./src/impl/metadata/schema.ts"
-      ],
-      "./src/impl/metadata/retriever/userlicenseretriever.ts": [
-        "./node_modules/@salesforce/core/lib/exported.d.ts",
-        "./node_modules/@types/lodash/index.d.ts",
-        "./src/impl/metadata/retriever/basemetadataretriever.ts",
+        "./src/impl/metadata/metadatainfo.ts",
+        "./src/impl/metadata/retriever/metadataretriever.ts",
         "./src/impl/metadata/schema.ts"
       ],
       "./src/impl/metadata/writer/profilewriter.ts": [
@@ -5046,9 +5010,7 @@
         "./src/impl/metadata/builder/userpermissionbuilder.ts",
         "./src/impl/metadata/metadatafiles.ts",
         "./src/impl/metadata/metadatainfo.ts",
-        "./src/impl/metadata/retriever/entitydefinitionretriever.ts",
         "./src/impl/metadata/retriever/metadataretriever.ts",
-        "./src/impl/metadata/retriever/userlicenseretriever.ts",
         "./src/impl/metadata/schema.ts",
         "./src/impl/metadata/writer/profilewriter.ts",
         "./src/impl/source/profiles/profileactions.ts",
@@ -7116,14 +7078,6 @@
       "./src/impl/metadata/packagebuilder.ts": [
         "./packages/sfpowerkit-cli/node_modules/@types/jsforce/index.d.ts"
       ],
-      "./src/impl/metadata/retriever/basemetadataretriever.ts": [
-        "./node_modules/@salesforce/core/lib/exported.d.ts"
-      ],
-      "./src/impl/metadata/retriever/entitydefinitionretriever.ts": [
-        "./node_modules/@salesforce/core/lib/exported.d.ts",
-        "./src/impl/metadata/retriever/basemetadataretriever.ts",
-        "./src/impl/metadata/schema.ts"
-      ],
       "./src/impl/metadata/retriever/metadataretriever.ts": [
         "./node_modules/@types/jsforce/index.d.ts",
         "./src/impl/metadata/metadatainfo.ts"
@@ -7133,14 +7087,8 @@
       ],
       "./src/impl/metadata/retriever/profileretriever.ts": [
         "./node_modules/@salesforce/core/lib/exported.d.ts",
-        "./packages/sfpowerkit-cli/node_modules/@types/jsforce/index.d.ts",
+        "./node_modules/@types/jsforce/index.d.ts",
         "./src/impl/metadata/metadatafiles.ts",
-        "./src/impl/metadata/retriever/basemetadataretriever.ts",
-        "./src/impl/metadata/schema.ts"
-      ],
-      "./src/impl/metadata/retriever/userlicenseretriever.ts": [
-        "./node_modules/@salesforce/core/lib/exported.d.ts",
-        "./src/impl/metadata/retriever/basemetadataretriever.ts",
         "./src/impl/metadata/schema.ts"
       ],
       "./src/impl/metadata/writer/profilewriter.ts": [
@@ -7694,12 +7642,9 @@
       "./src/impl/metadata/metadatafiles.ts",
       "./src/impl/metadata/metadatainfo.ts",
       "./src/impl/metadata/packagebuilder.ts",
-      "./src/impl/metadata/retriever/basemetadataretriever.ts",
-      "./src/impl/metadata/retriever/entitydefinitionretriever.ts",
       "./src/impl/metadata/retriever/metadataretriever.ts",
       "./src/impl/metadata/retriever/metadatasummaryinfofetcher.ts",
       "./src/impl/metadata/retriever/profileretriever.ts",
-      "./src/impl/metadata/retriever/userlicenseretriever.ts",
       "./src/impl/metadata/schema.ts",
       "./src/impl/metadata/writer/profilewriter.ts",
       "./src/impl/org/relaxiprangeimpl.ts",

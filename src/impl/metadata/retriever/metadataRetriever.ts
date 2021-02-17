@@ -1,8 +1,9 @@
-import { SFPowerkit } from "../../../sfpowerkit";
+import { LoggerLevel, SFPowerkit } from "../../../sfpowerkit";
 import * as _ from "lodash";
 import { Connection } from "jsforce";
 import { MetadataInfo, METADATA_INFO } from "../metadataInfo";
 
+const BULK_THRESHOLD = 2000;
 export default class MetadataRetriever {
   protected _componentType;
   protected _conn;
@@ -26,26 +27,56 @@ export default class MetadataRetriever {
     let key = parent ? this._componentType + "_" + parent : this._componentType;
     if (!SFPowerkit.getCache().get<any>(key)) {
       let items;
-      if (this._componentType === METADATA_INFO.CustomField.xmlName) {
+      if (this._componentType === "UserLicense") {
+        let query = `Select Id, Name, LicenseDefinitionKey From UserLicense`;
+        items = await this.getComponentsFromOrgUsingSOQLQuery(
+          query,
+          "UserLicense"
+        );
+      } else if (this._componentType === METADATA_INFO.CustomObject.xmlName) {
+        items = await this.getCustomObjects();
+      } else if (this._componentType === "ObjectPermissions") {
+        items = await this.getObjectPermissions();
+      } else if (this._componentType === METADATA_INFO.CustomField.xmlName) {
         items = await this.getFieldsByObjectName(parent);
       } else if (this._componentType === METADATA_INFO.Layout.xmlName) {
         items = await this.getLayouts();
       } else {
-        const apiversion: string = await SFPowerkit.getApiVersion();
-        items = await this._conn.metadata.list(
-          {
-            type: this._componentType,
-          },
-          apiversion
-        );
-        if (items === undefined || items === null) {
-          items = [];
-        }
+        items = await this.getComponentsFromOrgUsingListMetadata();
       }
       SFPowerkit.getCache().set<any>(key, items);
     }
 
     return SFPowerkit.getCache().get<any>(key);
+  }
+
+  private async getComponentsFromOrgUsingListMetadata() {
+    const apiversion: string = await SFPowerkit.getApiVersion();
+    let items = await this._conn.metadata.list(
+      {
+        type: this._componentType,
+      },
+      apiversion
+    );
+    if (items === undefined || items === null) {
+      items = [];
+    }
+    return items;
+  }
+
+  private async getComponentsFromOrgUsingSOQLQuery(
+    query: string,
+    type: string
+  ) {
+    let items;
+    let recordsCount = await this.getCount(query);
+    if (recordsCount > BULK_THRESHOLD) {
+      items = await this.executeBulkQueryAsync(query, this._conn);
+    } else {
+      items = await this.executeQueryAsync(query, this._conn);
+    }
+
+    return items;
   }
 
   public async isComponentExistsInTheOrg(
@@ -85,6 +116,33 @@ export default class MetadataRetriever {
     if (found === false)
       found = await this.isComponentExistsInTheOrg(item, parent);
     return found;
+  }
+
+  private async getCustomObjects(): Promise<any> {
+    let results = await this._conn.describeGlobal();
+    let entities = results.sobjects.map((sObject) => {
+      return {
+        QualifiedApiName: sObject.name,
+      };
+    });
+
+    return entities;
+  }
+
+  private async getObjectPermissions(): Promise<any[]> {
+    let objectForPermission = [];
+    let res = await this._conn.query(
+      "SELECT SobjectType, count(Id) From ObjectPermissions Group By sObjectType"
+    );
+    if (res !== undefined) {
+      objectForPermission = res.records.map((elem) => {
+        return elem["SobjectType"];
+      });
+    }
+    if (!objectForPermission.includes("PersonAccount")) {
+      objectForPermission.push("PersonAccount");
+    }
+    return objectForPermission;
   }
 
   private async getFieldsByObjectName(objectName: string): Promise<string[]> {
@@ -127,5 +185,74 @@ export default class MetadataRetriever {
     }
 
     return layouts;
+  }
+
+  private generateCountQuery(query: string) {
+    let queryParts = query.toUpperCase().split("FROM");
+    let objectParts = queryParts[1].trim().split(" ");
+    let objectName = objectParts[0].trim();
+    let countQuery = `SELECT COUNT() FROM ${objectName}`;
+    return countQuery;
+  }
+
+  private async getCount(query: string) {
+    let countQuery = this.generateCountQuery(query);
+    SFPowerkit.log(
+      `Count Query: ${this.generateCountQuery(query)}`,
+      LoggerLevel.TRACE
+    );
+    let result = await this._conn.query(countQuery);
+    SFPowerkit.log(`Retrieved count ${result.totalSize}`, LoggerLevel.TRACE);
+    return result.totalSize;
+  }
+
+  private async executeBulkQueryAsync(query, conn): Promise<any[]> {
+    let promiseQuery = new Promise<any[]>((resolve, reject) => {
+      let records = [];
+      let hasInitProgress = false;
+      SFPowerkit.log(`Using Bulk API`, LoggerLevel.DEBUG);
+      conn.bulk
+        .query(query)
+        .on("record", function (record) {
+          if (!hasInitProgress) {
+            hasInitProgress = true;
+          }
+          records.push(record);
+        })
+        .on("end", function () {
+          resolve(records);
+        })
+        .on("error", function (error) {
+          SFPowerkit.log(`Error when using bulk api `, LoggerLevel.ERROR);
+          SFPowerkit.log(error, LoggerLevel.ERROR);
+          reject(error);
+        });
+    });
+    return promiseQuery;
+  }
+  private async executeQueryAsync(query, conn): Promise<any[]> {
+    let promiseQuery = new Promise<any[]>((resolve, reject) => {
+      let records = [];
+      let hasInitProgress = false;
+      let queryRun = conn
+        .query(query)
+        .on("record", function (record) {
+          if (!hasInitProgress) {
+            hasInitProgress = true;
+          }
+          records.push(record);
+        })
+        .on("end", function () {
+          resolve(records);
+        })
+        .on("error", function (error) {
+          reject(error);
+        })
+        .run({
+          autoFetch: true,
+          maxFetch: 1000000,
+        });
+    });
+    return promiseQuery;
   }
 }

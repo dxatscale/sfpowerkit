@@ -10,11 +10,9 @@ import * as _ from "lodash";
 import ProfileActions from "./profileActions";
 import FileUtils from "../../../utils/fileutils";
 import ProfileWriter from "../../../impl/metadata/writer/profileWriter";
-import { LoggerLevel } from "@salesforce/core";
-import UserLicenseRetriever from "../../metadata/retriever/userLicenseRetriever";
+import { LoggerLevel, User } from "@salesforce/core";
 import UserPermissionBuilder from "../../metadata/builder/userPermissionBuilder";
 import MetadataRetriever from "../../metadata/retriever/metadataRetriever";
-import EntityDefinitionRetriever from "../../metadata/retriever/entityDefinitionRetriever";
 
 export default class ProfileReconcile extends ProfileActions {
   metadataFiles: MetadataFiles;
@@ -69,8 +67,12 @@ export default class ProfileReconcile extends ProfileActions {
 
         if (!MetadataFiles.sourceOnly) {
           //Manage licences
-          let licenceUtils = UserLicenseRetriever.getInstance(this.org);
-          const isSupportedLicence = await licenceUtils.userLicenseExists(
+          let userLicenseRetriever = new MetadataRetriever(
+            this.org.getConnection(),
+            "UserLicense",
+            METADATA_INFO
+          );
+          const isSupportedLicence = await userLicenseRetriever.isComponentExistsInTheOrg(
             profileObj.userLicense
           );
           if (!isSupportedLicence) {
@@ -314,7 +316,16 @@ export default class ProfileReconcile extends ProfileActions {
   }
 
   private async reconcileObjects(profileObj: Profile): Promise<Profile> {
-    let utils = EntityDefinitionRetriever.getInstance(this.org);
+    let objectPermissionRetriever = new MetadataRetriever(
+      this.org.getConnection(),
+      "ObjectPermissions",
+      METADATA_INFO
+    );
+    let objectRetriever = new MetadataRetriever(
+      this.org.getConnection(),
+      METADATA_INFO.CustomObject.xmlName,
+      METADATA_INFO
+    );
 
     if (profileObj.objectPermissions !== undefined) {
       if (!Array.isArray(profileObj.objectPermissions)) {
@@ -323,7 +334,16 @@ export default class ProfileReconcile extends ProfileActions {
       let validArray = [];
       for (let i = 0; i < profileObj.objectPermissions.length; i++) {
         let cmpObj = profileObj.objectPermissions[i];
-        let exist = await utils.existObjectPermission(cmpObj.object);
+
+        //Check Object exist in Source Directory
+        let exist = await objectRetriever.isComponentExistsInProjectDirectory(
+          cmpObj.object
+        );
+        if (!exist)
+          exist = await objectPermissionRetriever.isComponentExistsInTheOrg(
+            cmpObj.object
+          );
+
         if (exist) {
           validArray.push(cmpObj);
         }
@@ -338,7 +358,11 @@ export default class ProfileReconcile extends ProfileActions {
   }
 
   private async reconcileCustomMetadata(profileObj: Profile): Promise<Profile> {
-    let utils = EntityDefinitionRetriever.getInstance(this.org);
+    let objectRetriever = new MetadataRetriever(
+      this.org.getConnection(),
+      METADATA_INFO.CustomObject.xmlName,
+      METADATA_INFO
+    );
 
     if (profileObj.customMetadataTypeAccesses !== undefined) {
       if (!Array.isArray(profileObj.customMetadataTypeAccesses)) {
@@ -349,7 +373,9 @@ export default class ProfileReconcile extends ProfileActions {
       let validArray = [];
       for (let i = 0; i < profileObj.customMetadataTypeAccesses.length; i++) {
         let cmpCM = profileObj.customMetadataTypeAccesses[i];
-        let exist = await utils.existCustomMetadata(cmpCM.name);
+        let exist = await objectRetriever.isComponentExistsInProjectDirectoryOrInOrg(
+          cmpCM.name
+        );
         if (exist) {
           validArray.push(cmpCM);
         }
@@ -364,7 +390,11 @@ export default class ProfileReconcile extends ProfileActions {
   }
 
   private async reconcileCustomSettins(profileObj: Profile): Promise<Profile> {
-    let utils = EntityDefinitionRetriever.getInstance(this.org);
+    let objectRetriever = new MetadataRetriever(
+      this.org.getConnection(),
+      METADATA_INFO.CustomObject.xmlName,
+      METADATA_INFO
+    );
 
     if (profileObj.customSettingAccesses !== undefined) {
       if (!Array.isArray(profileObj.customSettingAccesses)) {
@@ -373,7 +403,9 @@ export default class ProfileReconcile extends ProfileActions {
       let validArray = [];
       for (let i = 0; i < profileObj.customSettingAccesses.length; i++) {
         let cmpCS = profileObj.customSettingAccesses[i];
-        let exist = await utils.existCustomMetadata(cmpCS.name);
+        let exist = await objectRetriever.isComponentExistsInProjectDirectoryOrInOrg(
+          cmpCS.name
+        );
         if (exist) {
           validArray.push(cmpCS);
         }
