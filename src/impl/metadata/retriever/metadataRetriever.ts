@@ -23,7 +23,7 @@ export default class MetadataRetriever {
   }
 
   public async getComponents(parent?: string) {
-    let key = parent ? this._componentType : this._componentType + "_" + parent;
+    let key = parent ? this._componentType + "_" + parent : this._componentType;
     if (!SFPowerkit.getCache().get<any>(key)) {
       let items;
       if (this._componentType === METADATA_INFO.CustomField.xmlName) {
