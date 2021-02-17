@@ -25,7 +25,7 @@ export default class MetadataRetriever {
 
   public async getComponents(parent?: string) {
     let key = parent ? this._componentType + "_" + parent : this._componentType;
-    if (!SFPowerkit.getCache().get<any>(key)) {
+    if (!SFPowerkit.getCache().get(key)) {
       let items;
       if (this._componentType === "UserLicense") {
         items = await this.getUserLicense();
@@ -40,10 +40,9 @@ export default class MetadataRetriever {
       } else {
         items = await this.getComponentsFromOrgUsingListMetadata();
       }
-      SFPowerkit.getCache().set<any>(key, items);
+      SFPowerkit.getCache().set(key, items);
     }
-
-    return SFPowerkit.getCache().get<any>(key);
+    return SFPowerkit.getCache().get(key);
   }
 
   private async getUserLicense() {
@@ -152,13 +151,20 @@ export default class MetadataRetriever {
 
   private async getFieldsByObjectName(objectName: string): Promise<string[]> {
     let fields = [];
-    await this._conn.describe(objectName).then((meta) => {
-      if (meta.fields && meta.fields.length > 0) {
-        fields = meta.fields.map((field) => {
-          return field.name;
-        });
-      }
-    });
+    try {
+      await this._conn.describe(objectName).then((meta) => {
+        if (meta.fields && meta.fields.length > 0) {
+          fields = meta.fields.map((field) => {
+            return field.name;
+          });
+        }
+      });
+    } catch (error) {
+      SFPowerkit.log(
+        `Object not found ${objectName}..skipping`,
+        LoggerLevel.TRACE
+      );
+    }
     return fields;
   }
 

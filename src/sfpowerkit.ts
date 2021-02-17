@@ -2,7 +2,7 @@ import { SfdxProject } from "@salesforce/core";
 import { isNullOrUndefined } from "util";
 import { UX } from "@salesforce/command";
 const Logger = require("pino");
-import NodeCache from "node-cache";
+const NodeCache = require("node-cache");
 
 export enum LoggerLevel {
   TRACE = 10,
@@ -21,7 +21,7 @@ export class SFPowerkit {
   private static sourceApiVersion: any;
   private static logger;
   public static logLevel;
-  private static cache: NodeCache;
+  private static cache;
 
   public static getCache() {
     if (SFPowerkit.cache == null) {

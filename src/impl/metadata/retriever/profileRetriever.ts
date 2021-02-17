@@ -3,7 +3,7 @@ import Profile, {
   ProfileUserPermission,
 } from "../schema";
 import MetadataFiles from "../metadataFiles";
-import { Connection, Org } from "@salesforce/core";
+import { Connection } from "jsforce";
 import { MetadataInfo } from "jsforce";
 import UserPermissionBuilder from "../builder/userPermissionBuilder";
 import * as _ from "lodash";
@@ -23,7 +23,6 @@ const userLicenceMap = [
   },
 ];
 
-const QUERY = "SELECT Id, Name, UserType, Description From Profile";
 export default class ProfileRetriever {
   static supportedMetadataTypes = [
     "ApexClass",
@@ -38,11 +37,9 @@ export default class ProfileRetriever {
   ];
 
   supportedPermissions: string[] = [];
-  conn: Connection;
-
   metadataFiles: MetadataFiles;
 
-  public constructor(private org: Org, private debugFlag?: boolean) {}
+  public constructor(private conn: Connection, private debugFlag?: boolean) {}
 
   public async loadSupportedPermissions() {
     if (this.supportedPermissions.length === 0) {

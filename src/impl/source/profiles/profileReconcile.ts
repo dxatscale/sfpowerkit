@@ -26,6 +26,8 @@ export default class ProfileReconcile extends ProfileActions {
       FileUtils.mkDirByPathSync(destFolder);
     }
 
+    console.log("profileList", JSON.stringify(profileList));
+
     if (_.isNil(srcFolders) || srcFolders.length === 0) {
       srcFolders = await SFPowerkit.getProjectDirectories();
     }
@@ -37,123 +39,136 @@ export default class ProfileReconcile extends ProfileActions {
       this.metadataFiles.loadComponents(normalizedPath);
     });
 
+    console.log("srcFolders", JSON.stringify(srcFolders));
+
     profileList = profileList.map((element) => {
       return element + METADATA_INFO.Profile.sourceExtension;
     });
 
-    if (!MetadataFiles.sourceOnly) {
+    console.log("profileList", JSON.stringify(profileList));
+    console.log("profileList", METADATA_INFO.Profile.files.length);
+
+    if (!MetadataFiles.sourceOnly)
       await this.profileRetriever.loadSupportedPermissions();
-    }
-    for (let count = 0; count < METADATA_INFO.Profile.files.length; count++) {
-      let profileComponent = METADATA_INFO.Profile.files[count];
-      if (
-        profileList.length == 0 ||
-        profileList.includes(path.basename(profileComponent))
-      ) {
-        SFPowerkit.log(
-          "Reconciling profile " + path.basename(profileComponent),
-          LoggerLevel.INFO
-        );
 
-        let profileXmlString = fs.readFileSync(profileComponent);
-        const parser = new xml2js.Parser({ explicitArray: true });
-        const parseString = util.promisify(parser.parseString);
-        let parseResult = await parseString(profileXmlString);
-        let profileWriter = new ProfileWriter();
-
-        let profileObj: Profile = profileWriter.toProfile(parseResult.Profile); // as Profile
-
-        profileObj = await this.removePermissions(profileObj);
-
-        if (!MetadataFiles.sourceOnly) {
-          //Manage licences
-          let userLicenseRetriever = new MetadataRetriever(
-            this.org.getConnection(),
-            "UserLicense",
-            METADATA_INFO
-          );
-          const isSupportedLicence = await userLicenseRetriever.isComponentExistsInTheOrg(
-            profileObj.userLicense
-          );
-          if (!isSupportedLicence) {
-            delete profileObj.userLicense;
+    let profilesToReconcile;
+    if (profileList.length > 0) {
+      profilesToReconcile = [];
+      profileList.forEach((profile) => {
+        METADATA_INFO.Profile.files.forEach((file) => {
+          if (path.basename(file) === profile) {
+            profilesToReconcile.push(file);
           }
-        }
+        });
+      });
+    } else {
+      profilesToReconcile = METADATA_INFO.Profile.files;
+    }
+    for (let count = 0; count < profilesToReconcile.length; count++) {
+      let profileComponent = profilesToReconcile[count];
+      SFPowerkit.log(
+        "Reconciling profile " + profileComponent,
+        LoggerLevel.INFO
+      );
 
-        // remove unsupported userPermission
-        let unsupportedLicencePermissions = this.profileRetriever.getUnsupportedLicencePermissions(
+      let profileXmlString = fs.readFileSync(profileComponent);
+      const parser = new xml2js.Parser({ explicitArray: true });
+      const parseString = util.promisify(parser.parseString);
+      let parseResult = await parseString(profileXmlString);
+      let profileWriter = new ProfileWriter();
+
+      let profileObj: Profile = profileWriter.toProfile(parseResult.Profile); // as Profile
+
+      profileObj = await this.removePermissions(profileObj);
+
+      if (!MetadataFiles.sourceOnly) {
+        //Manage licences
+        let userLicenseRetriever = new MetadataRetriever(
+          this.org.getConnection(),
+          "UserLicense",
+          METADATA_INFO
+        );
+        const isSupportedLicence = await userLicenseRetriever.isComponentExistsInTheOrg(
           profileObj.userLicense
         );
+        if (!isSupportedLicence) {
+          delete profileObj.userLicense;
+        }
+      }
+
+      // remove unsupported userPermission
+      let unsupportedLicencePermissions = this.profileRetriever.getUnsupportedLicencePermissions(
+        profileObj.userLicense
+      );
+      if (
+        profileObj.userPermissions != null &&
+        profileObj.userPermissions.length > 0
+      ) {
+        profileObj.userPermissions = profileObj.userPermissions.filter(
+          (permission) => {
+            let supported = !unsupportedLicencePermissions.includes(
+              permission.name
+            );
+            return supported;
+          }
+        );
+      }
+
+      //IS sourceonly, use ignorePermission set in sfdxProject.json file
+      if (MetadataFiles.sourceOnly) {
+        let pluginConfig = await SFPowerkit.getConfig();
+        let ignorePermissions = pluginConfig.ignoredPermissions || [];
         if (
-          profileObj.userPermissions != null &&
+          profileObj.userPermissions !== undefined &&
           profileObj.userPermissions.length > 0
         ) {
           profileObj.userPermissions = profileObj.userPermissions.filter(
             (permission) => {
-              let supported = !unsupportedLicencePermissions.includes(
+              let supported = !ignorePermissions.includes(permission.name);
+              return supported;
+            }
+          );
+        }
+      } else {
+        if (
+          profileObj.userPermissions !== undefined &&
+          profileObj.userPermissions.length > 0
+        ) {
+          //Remove permission that are not present in the target org
+          profileObj.userPermissions = profileObj.userPermissions.filter(
+            (permission) => {
+              let supported = this.profileRetriever.supportedPermissions.includes(
                 permission.name
               );
               return supported;
             }
           );
         }
-
-        //IS sourceonly, use ignorePermission set in sfdxProject.json file
-        if (MetadataFiles.sourceOnly) {
-          let pluginConfig = await SFPowerkit.getConfig();
-          let ignorePermissions = pluginConfig.ignoredPermissions || [];
-          if (
-            profileObj.userPermissions !== undefined &&
-            profileObj.userPermissions.length > 0
-          ) {
-            profileObj.userPermissions = profileObj.userPermissions.filter(
-              (permission) => {
-                let supported = !ignorePermissions.includes(permission.name);
-                return supported;
-              }
-            );
-          }
-        } else {
-          if (
-            profileObj.userPermissions !== undefined &&
-            profileObj.userPermissions.length > 0
-          ) {
-            //Remove permission that are not present in the target org
-            profileObj.userPermissions = profileObj.userPermissions.filter(
-              (permission) => {
-                let supported = this.profileRetriever.supportedPermissions.includes(
-                  permission.name
-                );
-                return supported;
-              }
-            );
-          }
-        }
-
-        //UserPermissionUtils.addPermissionDependencies(profileObj);
-
-        let isCustom = "" + profileObj.custom;
-        if (isCustom == "false") {
-          delete profileObj.userPermissions;
-        }
-
-        //this.handleViewAllDataPermission(profileObj);
-        //this.handleInstallPackagingPermission(profileObj);
-        //this.handleQueryAllFilesPermission(profileObj);
-
-        UserPermissionBuilder.handlePermissionDependency(
-          profileObj,
-          this.profileRetriever.supportedPermissions
-        );
-
-        let outputFile = profileComponent;
-        if (!_.isNil(destFolder)) {
-          outputFile = path.join(destFolder, path.basename(profileComponent));
-        }
-        profileWriter.writeProfile(profileObj, outputFile);
-
-        result.push(outputFile);
       }
+
+      //UserPermissionUtils.addPermissionDependencies(profileObj);
+
+      let isCustom = "" + profileObj.custom;
+      if (isCustom == "false") {
+        delete profileObj.userPermissions;
+      }
+
+      //this.handleViewAllDataPermission(profileObj);
+      //this.handleInstallPackagingPermission(profileObj);
+      //this.handleQueryAllFilesPermission(profileObj);
+
+      UserPermissionBuilder.handlePermissionDependency(
+        profileObj,
+        this.profileRetriever.supportedPermissions
+      );
+
+      let outputFile = profileComponent;
+      if (!_.isNil(destFolder)) {
+        outputFile = path.join(destFolder, path.basename(profileComponent));
+      }
+      profileWriter.writeProfile(profileObj, outputFile);
+
+      result.push(outputFile);
     }
     return result;
   }
@@ -218,7 +233,7 @@ export default class ProfileReconcile extends ProfileActions {
   }
 
   private async reconcileFields(profileObj: Profile): Promise<Profile> {
-    if (profileObj.fieldLevelSecurities !== undefined) {
+    if (profileObj.fieldLevelSecurities) {
       if (!Array.isArray(profileObj.fieldLevelSecurities)) {
         profileObj.fieldLevelSecurities = [profileObj.fieldLevelSecurities];
       }
@@ -246,8 +261,7 @@ export default class ProfileReconcile extends ProfileActions {
       );
       profileObj.fieldLevelSecurities = validArray;
     }
-
-    if (profileObj.fieldPermissions !== undefined) {
+    if (profileObj.fieldPermissions) {
       if (!Array.isArray(profileObj.fieldPermissions)) {
         profileObj.fieldPermissions = [profileObj.fieldPermissions];
       }

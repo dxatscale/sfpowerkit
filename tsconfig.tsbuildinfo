@@ -1041,14 +1041,9 @@
         "signature": "98d2e4470d454a6e6294f6a9eef5b76504262965a0093d0d7b095625fbc190f4",
         "affectsGlobalScope": false
       },
-      "./node_modules/node-cache/index.d.ts": {
-        "version": "6f4e4e5a046171e70dfb4b1f3e6212de786bf2c1e2c4383ae0e61c4726fdd168",
-        "signature": "6f4e4e5a046171e70dfb4b1f3e6212de786bf2c1e2c4383ae0e61c4726fdd168",
-        "affectsGlobalScope": false
-      },
       "./src/sfpowerkit.ts": {
-        "version": "7c38fe50ce2a091eb87d21e484e0ad4fb6769e8505d10f128863211268263538",
-        "signature": "b5e94bd97ae79e65de7023469637a6da651c4eca04c021f91fe169210c5899fc",
+        "version": "0dbe285f5651a687c4d1f1345be8bccfb52428019c342474115a0f0ab295c1df",
+        "signature": "7f13db51eeb28a0bf714bce6da8f5fb543d76d610103035e06e80cfad40e367f",
         "affectsGlobalScope": false
       },
       "./node_modules/@types/minimatch/index.d.ts": {
@@ -1377,18 +1372,18 @@
         "affectsGlobalScope": false
       },
       "./src/impl/metadata/builder/userpermissionbuilder.ts": {
-        "version": "234ce58a97e01c54323e34e843be53dbe081198f9d7ed552052f79db15f987ad",
-        "signature": "6ccd27efce38267b83164b20138a1b68b0f95ad6ff22ca3c3271185ee3a6543e",
+        "version": "be26a09cb8ab794df9823c61b222791f456692e217fb061a7e9170ccdd273775",
+        "signature": "ce9df2a1dcb69011144ef868dfcb70a24b6494852b5b893eb5de8275da15b027",
         "affectsGlobalScope": false
       },
       "./src/impl/metadata/retriever/metadataretriever.ts": {
-        "version": "74aedf69f56eabe3c6c37e44de2a115774ae69c9c6c0f1da570a76d370f26d0a",
-        "signature": "21f617b1212ceb9c954904f16c5bfa22be81e69ff8dd78d1fd18fce297390e12",
+        "version": "6e55d095a446710f1a0022d3338868c8c136113f84f37048d5645681ed521c29",
+        "signature": "fbdf49b4fc46713ef3dfe55d740a0015d69aabf96439c62cb751fe6af68a450f",
         "affectsGlobalScope": false
       },
       "./src/impl/metadata/retriever/profileretriever.ts": {
-        "version": "b7ed250ae6f4cbda2aaf6e371d4f2fc150618590532bb5c3b9ce7aac2ffa58b9",
-        "signature": "e2cc8e6cce78dac178c605e97c84e29182aa1a40fecaf63e10fe67d4f2df3e34",
+        "version": "0a37278f145a9e211eb96e29139e074b0a84ae103d8c3eb0268f7332585a3930",
+        "signature": "e0c67353aa18a156fe4ba9644b670026c3b87c8515e12a8d645a4f7501d5e6cb",
         "affectsGlobalScope": false
       },
       "./src/impl/metadata/writer/profilewriter.ts": {
@@ -2397,7 +2392,7 @@
         "affectsGlobalScope": false
       },
       "./src/impl/source/profiles/profileactions.ts": {
-        "version": "25cd54a6a88982d1a9f1c1aff20ac434ac0e767a8358aa1482e06469191d850a",
+        "version": "d6c2a4d0a28a3c5027770a864185b6a13c85ae8fbd20c8fe4c266cd879ba01e6",
         "signature": "5a3668d47c763f31cfe68f0d99e8568f9f53f5e725fad29d652c913423e4e423",
         "affectsGlobalScope": false
       },
@@ -2412,7 +2407,7 @@
         "affectsGlobalScope": false
       },
       "./src/impl/source/profiles/profilereconcile.ts": {
-        "version": "96cfee8cd4a3b3af6499a47e87bfa49dd67f0e8ec1e5c6f8b1c1f89117e0d76e",
+        "version": "0e92ea41c68731fb77507137f7d023c21c32d505fb74fa16c2db16001e252853",
         "signature": "292081a11ee1f4f1398b416ec78cf25e3fcff5088c07bf33bd66ff872f2cf39a",
         "affectsGlobalScope": false
       },
@@ -4203,10 +4198,6 @@
       "./node_modules/diff-match-patch-line-and-word/index.d.ts": [
         "./node_modules/@types/diff-match-patch/index.d.ts"
       ],
-      "./node_modules/node-cache/index.d.ts": [
-        "./node_modules/@types/node/events.d.ts",
-        "./node_modules/@types/node/index.d.ts"
-      ],
       "./node_modules/simple-git/promise.d.ts": [
         "./node_modules/simple-git/typings/errors.d.ts",
         "./node_modules/simple-git/typings/response.d.ts",
@@ -4759,8 +4750,8 @@
         "./src/utils/queryexecutor.ts"
       ],
       "./src/impl/metadata/builder/userpermissionbuilder.ts": [
-        "./node_modules/@salesforce/core/lib/exported.d.ts",
         "./node_modules/@types/jsforce/describe-result.d.ts",
+        "./node_modules/@types/jsforce/index.d.ts",
         "./node_modules/@types/lodash/index.d.ts",
         "./src/impl/metadata/schema.ts"
       ],
@@ -4804,7 +4795,6 @@
         "./src/utils/getdefaults.ts"
       ],
       "./src/impl/metadata/retriever/profileretriever.ts": [
-        "./node_modules/@salesforce/core/lib/exported.d.ts",
         "./node_modules/@types/jsforce/index.d.ts",
         "./node_modules/@types/lodash/index.d.ts",
         "./src/impl/metadata/builder/userpermissionbuilder.ts",
@@ -5069,8 +5059,7 @@
       "./src/sfpowerkit.ts": [
         "./node_modules/@salesforce/command/lib/exported.d.ts",
         "./node_modules/@salesforce/core/lib/exported.d.ts",
-        "./node_modules/@types/node/util.d.ts",
-        "./node_modules/node-cache/index.d.ts"
+        "./node_modules/@types/node/util.d.ts"
       ],
       "./src/ui/progressbar.ts": [
         "./node_modules/@types/node/util.d.ts",
@@ -6785,10 +6774,6 @@
       "./node_modules/diff-match-patch-line-and-word/index.d.ts": [
         "./node_modules/@types/diff-match-patch/index.d.ts"
       ],
-      "./node_modules/node-cache/index.d.ts": [
-        "./node_modules/@types/node/events.d.ts",
-        "./node_modules/@types/node/index.d.ts"
-      ],
       "./node_modules/simple-git/promise.d.ts": [
         "./node_modules/simple-git/typings/errors.d.ts",
         "./node_modules/simple-git/typings/response.d.ts",
@@ -7071,8 +7056,8 @@
         "./src/impl/metadata/retriever/metadatasummaryinfofetcher.ts"
       ],
       "./src/impl/metadata/builder/userpermissionbuilder.ts": [
-        "./node_modules/@salesforce/core/lib/exported.d.ts",
-        "./packages/sfpowerkit-cli/node_modules/@types/jsforce/describe-result.d.ts",
+        "./node_modules/@types/jsforce/describe-result.d.ts",
+        "./node_modules/@types/jsforce/index.d.ts",
         "./src/impl/metadata/schema.ts"
       ],
       "./src/impl/metadata/packagebuilder.ts": [
@@ -7086,7 +7071,6 @@
         "./node_modules/@salesforce/core/lib/exported.d.ts"
       ],
       "./src/impl/metadata/retriever/profileretriever.ts": [
-        "./node_modules/@salesforce/core/lib/exported.d.ts",
         "./node_modules/@types/jsforce/index.d.ts",
         "./src/impl/metadata/metadatafiles.ts",
         "./src/impl/metadata/schema.ts"
@@ -7163,8 +7147,7 @@
         "./src/sfdxnode/types.ts"
       ],
       "./src/sfpowerkit.ts": [
-        "./node_modules/@salesforce/command/lib/exported.d.ts",
-        "./node_modules/node-cache/index.d.ts"
+        "./node_modules/@salesforce/command/lib/exported.d.ts"
       ],
       "./src/utils/checkdeploymentstatus.ts": [
         "./packages/sfpowerkit-cli/node_modules/@types/jsforce/index.d.ts"
@@ -7538,7 +7521,6 @@
       "./node_modules/diff-match-patch-line-and-word/index.d.ts",
       "./node_modules/find-java-home/dist/index.d.ts",
       "./node_modules/ignore/index.d.ts",
-      "./node_modules/node-cache/index.d.ts",
       "./node_modules/simple-git/promise.d.ts",
       "./node_modules/simple-git/src/lib/errors/git-construct-error.d.ts",
       "./node_modules/simple-git/src/lib/errors/git-error.d.ts",
