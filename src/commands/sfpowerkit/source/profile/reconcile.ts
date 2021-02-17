@@ -129,58 +129,36 @@ export default class Reconcile extends SfdxCommand {
     }
 
     let result = [];
-    let retryCount = 0;
-    let success = false;
-    while (!success && retryCount < 2) {
-      try {
-        let profileUtils = new ProfileReconcile(
-          this.org,
-          this.flags.loglevel == "debug"
-        );
-        let reconcileProfiles = await profileUtils.reconcile(
-          argFolder,
-          argProfileList || [],
-          this.flags.destfolder
-        );
 
-        // Return an object to be displayed with --json
+    try {
+      let profileUtils = new ProfileReconcile(
+        this.org,
+        this.flags.loglevel == "debug"
+      );
+      let reconcileProfiles = await profileUtils.reconcile(
+        argFolder,
+        argProfileList || [],
+        this.flags.destfolder
+      );
 
-        reconcileProfiles.forEach((file) => {
-          result.push({
-            state: "Cleaned",
-            fullName: path.basename(
-              file,
-              METADATA_INFO.Profile.sourceExtension
-            ),
-            type: "Profile",
-            path: path.relative(process.cwd(), file),
-          });
+      // Return an object to be displayed with --json
+
+      reconcileProfiles.forEach((file) => {
+        result.push({
+          state: "Cleaned",
+          fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
+          type: "Profile",
+          path: path.relative(process.cwd(), file),
         });
+      });
+    } catch (err) {
+      SFPowerkit.log(err, LoggerLevel.ERROR);
 
-        success = true;
-      } catch (err) {
-        SFPowerkit.log(err, LoggerLevel.ERROR);
-        retryCount++;
-        if (retryCount < 2) {
-          SFPowerkit.log(
-            "An error occured during profile reconcile. Retry in 10 seconds",
-            LoggerLevel.INFO
-          );
-          //Wait 5 seconds
-          await this.sleep(10000);
-        } else {
-          SFPowerkit.log(
-            "An error occured during profile reconcile. You can rerun the command after a moment.",
-            LoggerLevel.ERROR
-          );
-        }
-      }
+      SFPowerkit.log(
+        "An error occured during profile reconcile. You can rerun the command after a moment.",
+        LoggerLevel.ERROR
+      );
     }
     return result;
-  }
-  private async sleep(ms) {
-    return new Promise((resolve) => {
-      setTimeout(resolve, ms);
-    });
   }
 }

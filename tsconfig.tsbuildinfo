@@ -1042,7 +1042,7 @@
         "affectsGlobalScope": false
       },
       "./src/sfpowerkit.ts": {
-        "version": "0dbe285f5651a687c4d1f1345be8bccfb52428019c342474115a0f0ab295c1df",
+        "version": "c78096d7f36c406fa0f155565c8875cca978f88b720155029d2e6fe1f7ea2400",
         "signature": "7f13db51eeb28a0bf714bce6da8f5fb543d76d610103035e06e80cfad40e367f",
         "affectsGlobalScope": false
       },
@@ -1372,17 +1372,17 @@
         "affectsGlobalScope": false
       },
       "./src/impl/metadata/builder/userpermissionbuilder.ts": {
-        "version": "be26a09cb8ab794df9823c61b222791f456692e217fb061a7e9170ccdd273775",
+        "version": "7abd80feb9557f12c1d309778bf05f0aa0dee07f563396ab30e6a9cc01d4e851",
         "signature": "ce9df2a1dcb69011144ef868dfcb70a24b6494852b5b893eb5de8275da15b027",
         "affectsGlobalScope": false
       },
       "./src/impl/metadata/retriever/metadataretriever.ts": {
-        "version": "6e55d095a446710f1a0022d3338868c8c136113f84f37048d5645681ed521c29",
+        "version": "ec6380c8961c4ea57562bc0ac71dbb914a3a2762c642bc708c6710a6fdee97a6",
         "signature": "fbdf49b4fc46713ef3dfe55d740a0015d69aabf96439c62cb751fe6af68a450f",
         "affectsGlobalScope": false
       },
       "./src/impl/metadata/retriever/profileretriever.ts": {
-        "version": "0a37278f145a9e211eb96e29139e074b0a84ae103d8c3eb0268f7332585a3930",
+        "version": "c5df989f569f1e340474c660fbc0ffa05300856b06affe21456b6078c26dc7de",
         "signature": "e0c67353aa18a156fe4ba9644b670026c3b87c8515e12a8d645a4f7501d5e6cb",
         "affectsGlobalScope": false
       },
@@ -2392,7 +2392,7 @@
         "affectsGlobalScope": false
       },
       "./src/impl/source/profiles/profileactions.ts": {
-        "version": "d6c2a4d0a28a3c5027770a864185b6a13c85ae8fbd20c8fe4c266cd879ba01e6",
+        "version": "30a481485b43b038704af16f58d0c268765f6ec0ad2d638c17e0b5cdb3952b18",
         "signature": "5a3668d47c763f31cfe68f0d99e8568f9f53f5e725fad29d652c913423e4e423",
         "affectsGlobalScope": false
       },
@@ -2407,13 +2407,13 @@
         "affectsGlobalScope": false
       },
       "./src/impl/source/profiles/profilereconcile.ts": {
-        "version": "0e92ea41c68731fb77507137f7d023c21c32d505fb74fa16c2db16001e252853",
+        "version": "3b1b0366d8d8dd667759f11fbd2b9a195add3337558eca71de2c176eb1490022",
         "signature": "292081a11ee1f4f1398b416ec78cf25e3fcff5088c07bf33bd66ff872f2cf39a",
         "affectsGlobalScope": false
       },
       "./src/commands/sfpowerkit/source/profile/reconcile.ts": {
-        "version": "8bd90a06412a2c55a4abed4d4cddde37a94976c8c4855fbcc1961292834978be",
-        "signature": "b71cc6ae5aee6875df67b489e38699dbf4abd3addc439fa1f90b63f462f2285f",
+        "version": "77ff48954a6c68b512e14b4b52220777ea9955fbdbc4b3552c90be0efdc76b99",
+        "signature": "b6cf6784304d70224ac3b9996a421ca9ab0257a5e9d1f96f1fb0445f9feaffb0",
         "affectsGlobalScope": false
       },
       "./src/impl/source/profiles/profilesync.ts": {
@@ -7042,7 +7042,7 @@
         "./packages/sfpowerkit-cli/node_modules/@salesforce/command/lib/exported.d.ts"
       ],
       "./src/commands/sfpowerkit/source/profile/reconcile.ts": [
-        "./packages/sfpowerkit-cli/node_modules/@salesforce/command/lib/exported.d.ts"
+        "./node_modules/@salesforce/command/lib/exported.d.ts"
       ],
       "./src/commands/sfpowerkit/source/profile/retrieve.ts": [
         "./packages/sfpowerkit-cli/node_modules/@salesforce/command/lib/exported.d.ts"
