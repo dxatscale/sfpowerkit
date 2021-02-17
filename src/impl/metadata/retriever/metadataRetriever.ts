@@ -117,8 +117,11 @@ export default class MetadataRetriever {
     let found: boolean = false;
     //First check in directory
     found = await this.isComponentExistsInProjectDirectory(item);
+    SFPowerkit.log(`Found in Directory? ${item} ${found}`, LoggerLevel.TRACE);
     if (found === false)
       found = await this.isComponentExistsInTheOrg(item, parent);
+
+    SFPowerkit.log(`Found in Org? ${item} ${found}`, LoggerLevel.TRACE);
     return found;
   }
 
@@ -152,6 +155,10 @@ export default class MetadataRetriever {
   private async getFieldsByObjectName(objectName: string): Promise<string[]> {
     let fields = [];
     try {
+      SFPowerkit.log(
+        `Fetching Field of Object ${objectName}`,
+        LoggerLevel.TRACE
+      );
       await this._conn.describe(objectName).then((meta) => {
         if (meta.fields && meta.fields.length > 0) {
           fields = meta.fields.map((field) => {
@@ -169,6 +176,7 @@ export default class MetadataRetriever {
   }
 
   private async getLayouts(): Promise<any[]> {
+    SFPowerkit.log(`Fetching Layouts`, LoggerLevel.TRACE);
     let apiversion: string = await SFPowerkit.getApiVersion();
     let layouts = await this._conn.metadata.list(
       {

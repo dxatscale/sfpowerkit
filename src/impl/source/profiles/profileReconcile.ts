@@ -26,7 +26,10 @@ export default class ProfileReconcile extends ProfileActions {
       FileUtils.mkDirByPathSync(destFolder);
     }
 
-    console.log("profileList", JSON.stringify(profileList));
+    SFPowerkit.log(
+      `ProfileList ${JSON.stringify(profileList)}`,
+      LoggerLevel.TRACE
+    );
 
     if (_.isNil(srcFolders) || srcFolders.length === 0) {
       srcFolders = await SFPowerkit.getProjectDirectories();
@@ -39,14 +42,19 @@ export default class ProfileReconcile extends ProfileActions {
       this.metadataFiles.loadComponents(normalizedPath);
     });
 
-    console.log("srcFolders", JSON.stringify(srcFolders));
+    SFPowerkit.log(
+      `Project Directories ${JSON.stringify(srcFolders)}`,
+      LoggerLevel.TRACE
+    );
 
     profileList = profileList.map((element) => {
       return element + METADATA_INFO.Profile.sourceExtension;
     });
 
-    console.log("profileList", JSON.stringify(profileList));
-    console.log("profileList", METADATA_INFO.Profile.files.length);
+    SFPowerkit.log(
+      `Profiles Found in Entire Drirectory ${METADATA_INFO.Profile.files.length}`,
+      LoggerLevel.TRACE
+    );
 
     if (!MetadataFiles.sourceOnly)
       await this.profileRetriever.loadSupportedPermissions();
@@ -282,6 +290,10 @@ export default class ProfileReconcile extends ProfileActions {
           validArray.push(cmpObj);
         }
       }
+      SFPowerkit.log(
+        `Fields Level Permissions reduced from ${profileObj.fieldPermissions.length}  to  ${validArray.length}`,
+        LoggerLevel.DEBUG
+      );
       profileObj.fieldPermissions = validArray;
     }
 
