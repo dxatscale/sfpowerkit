@@ -57,9 +57,8 @@ export default class ProfileRetriever {
     if (Array.isArray(metadata)) {
       for (let i = 0; i < metadata.length; i++) {
         await this.handlePermissions(metadata[i]);
-        metadata[i] = this.completeObjects(metadata[i], false);
+        metadata[i] = await this.completeObjects(metadata[i], false);
       }
-      await Promise.all(metadata);
       return metadata;
     } else if (metadata !== null) {
       await this.handlePermissions(metadata);
