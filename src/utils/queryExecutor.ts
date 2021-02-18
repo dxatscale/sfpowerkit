@@ -1,15 +1,16 @@
-import { core } from "@salesforce/command";
+import { Connection } from "jsforce/connection";
+
 const retry = require("async-retry");
 
 export default class QueryExecutor {
-  constructor(private conn: core.Connection) {}
+  constructor(private conn: Connection) {}
 
   public async executeQuery(query: string, tooling: boolean) {
     let results;
 
     if (tooling) {
       results = await retry(
-        async bail => {
+        async (bail) => {
           try {
             return (await this.conn.tooling.query(query)) as any;
           } catch (error) {
@@ -20,7 +21,7 @@ export default class QueryExecutor {
       );
     } else {
       results = await retry(
-        async bail => {
+        async (bail) => {
           try {
             return (await this.conn.query(query)) as any;
           } catch (error) {
@@ -46,7 +47,7 @@ export default class QueryExecutor {
     let result;
     if (tooling) {
       result = await retry(
-        async bail => {
+        async (bail) => {
           try {
             return (await this.conn.tooling.queryMore(url)) as any;
           } catch (error) {
@@ -57,7 +58,7 @@ export default class QueryExecutor {
       );
     } else {
       result = await retry(
-        async bail => {
+        async (bail) => {
           try {
             return (await this.conn.tooling.query(url)) as any;
           } catch (error) {

@@ -2,8 +2,8 @@ import { LoggerLevel, SFPowerkit } from "../../../sfpowerkit";
 import * as _ from "lodash";
 import { Connection } from "jsforce";
 import { MetadataInfo, METADATA_INFO } from "../metadataInfo";
+import QueryExecutor from "../../../utils/queryExecutor";
 
-const BULK_THRESHOLD = 2000;
 export default class MetadataRetriever {
   protected _componentType;
   protected _conn;
@@ -37,6 +37,8 @@ export default class MetadataRetriever {
         items = await this.getFieldsByObjectName(parent);
       } else if (this._componentType === METADATA_INFO.Layout.xmlName) {
         items = await this.getLayouts();
+      } else if (this._componentType === METADATA_INFO.CustomTab.xmlName) {
+        items = await this.getTabs();
       } else {
         items = await this.getComponentsFromOrgUsingListMetadata();
       }
@@ -47,11 +49,25 @@ export default class MetadataRetriever {
 
   private async getUserLicense() {
     let query = `Select Id, Name, LicenseDefinitionKey From UserLicense`;
-    let items = await this.getComponentsFromOrgUsingSOQLQuery(
-      query,
-      "UserLicense"
-    );
-    return items;
+
+    let queryUtil = new QueryExecutor(this._conn);
+    let items = await queryUtil.executeQuery(query, false);
+
+    return items.map((lic) => {
+      lic.fullName = lic.Name;
+      return lic;
+    });
+  }
+  private async getTabs() {
+    let query = `SELECT Id,  Name, SobjectName, DurableId, IsCustom, Label FROM TabDefinition`;
+
+    let queryUtil = new QueryExecutor(this._conn);
+    let items = await queryUtil.executeQuery(query, false);
+
+    return items.map((tab) => {
+      tab.fullName = tab.Name;
+      return tab;
+    });
   }
 
   private async getComponentsFromOrgUsingListMetadata() {
@@ -65,21 +81,6 @@ export default class MetadataRetriever {
     if (items === undefined || items === null) {
       items = [];
     }
-    return items;
-  }
-
-  private async getComponentsFromOrgUsingSOQLQuery(
-    query: string,
-    type: string
-  ) {
-    let items;
-    let recordsCount = await this.getCount(query);
-    if (recordsCount > BULK_THRESHOLD) {
-      items = await this.executeBulkQueryAsync(query, this._conn);
-    } else {
-      items = await this.executeQueryAsync(query, this._conn);
-    }
-
     return items;
   }
 
@@ -205,74 +206,5 @@ export default class MetadataRetriever {
     }
 
     return layouts;
-  }
-
-  private generateCountQuery(query: string) {
-    let queryParts = query.toUpperCase().split("FROM");
-    let objectParts = queryParts[1].trim().split(" ");
-    let objectName = objectParts[0].trim();
-    let countQuery = `SELECT COUNT() FROM ${objectName}`;
-    return countQuery;
-  }
-
-  private async getCount(query: string) {
-    let countQuery = this.generateCountQuery(query);
-    SFPowerkit.log(
-      `Count Query: ${this.generateCountQuery(query)}`,
-      LoggerLevel.TRACE
-    );
-    let result = await this._conn.query(countQuery);
-    SFPowerkit.log(`Retrieved count ${result.totalSize}`, LoggerLevel.TRACE);
-    return result.totalSize;
-  }
-
-  private async executeBulkQueryAsync(query, conn): Promise<any[]> {
-    let promiseQuery = new Promise<any[]>((resolve, reject) => {
-      let records = [];
-      let hasInitProgress = false;
-      SFPowerkit.log(`Using Bulk API`, LoggerLevel.DEBUG);
-      conn.bulk
-        .query(query)
-        .on("record", function (record) {
-          if (!hasInitProgress) {
-            hasInitProgress = true;
-          }
-          records.push(record);
-        })
-        .on("end", function () {
-          resolve(records);
-        })
-        .on("error", function (error) {
-          SFPowerkit.log(`Error when using bulk api `, LoggerLevel.ERROR);
-          SFPowerkit.log(error, LoggerLevel.ERROR);
-          reject(error);
-        });
-    });
-    return promiseQuery;
-  }
-  private async executeQueryAsync(query, conn): Promise<any[]> {
-    let promiseQuery = new Promise<any[]>((resolve, reject) => {
-      let records = [];
-      let hasInitProgress = false;
-      let queryRun = conn
-        .query(query)
-        .on("record", function (record) {
-          if (!hasInitProgress) {
-            hasInitProgress = true;
-          }
-          records.push(record);
-        })
-        .on("end", function () {
-          resolve(records);
-        })
-        .on("error", function (error) {
-          reject(error);
-        })
-        .run({
-          autoFetch: true,
-          maxFetch: 1000000,
-        });
-    });
-    return promiseQuery;
   }
 }
