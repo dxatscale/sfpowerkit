@@ -241,34 +241,6 @@ export default class ProfileReconcile extends ProfileActions {
   }
 
   private async reconcileFields(profileObj: Profile): Promise<Profile> {
-    if (profileObj.fieldLevelSecurities) {
-      if (!Array.isArray(profileObj.fieldLevelSecurities)) {
-        profileObj.fieldLevelSecurities = [profileObj.fieldLevelSecurities];
-      }
-      let validArray: ProfileFieldLevelSecurity[] = [];
-      for (let i = 0; i < profileObj.fieldLevelSecurities.length; i++) {
-        let fieldRetriever = new MetadataRetriever(
-          this.org.getConnection(),
-          METADATA_INFO.CustomField.xmlName,
-          METADATA_INFO
-        );
-        let cmpObj = profileObj.fieldLevelSecurities[i];
-        let parent = cmpObj.field.split(".")[0];
-        let exists = await fieldRetriever.isComponentExistsInProjectDirectoryOrInOrg(
-          cmpObj.field,
-          parent
-        );
-        if (exists) {
-          validArray.push(cmpObj);
-        }
-      }
-
-      SFPowerkit.log(
-        `Fields Level Security reduced from ${profileObj.fieldLevelSecurities.length}  to  ${validArray.length}`,
-        LoggerLevel.DEBUG
-      );
-      profileObj.fieldLevelSecurities = validArray;
-    }
     if (profileObj.fieldPermissions) {
       if (!Array.isArray(profileObj.fieldPermissions)) {
         profileObj.fieldPermissions = [profileObj.fieldPermissions];

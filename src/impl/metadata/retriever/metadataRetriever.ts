@@ -130,6 +130,7 @@ export default class MetadataRetriever {
     let entities = results.sobjects.map((sObject) => {
       return {
         QualifiedApiName: sObject.name,
+        fullName: sObject.name,
       };
     });
 
@@ -143,16 +144,16 @@ export default class MetadataRetriever {
     );
     if (res !== undefined) {
       objectForPermission = res.records.map((elem) => {
-        return elem["SobjectType"];
+        return { fullName: elem["SobjectType"] };
       });
     }
     if (!objectForPermission.includes("PersonAccount")) {
-      objectForPermission.push("PersonAccount");
+      objectForPermission.push({ fullName: "PersonAccount" });
     }
     return objectForPermission;
   }
 
-  private async getFieldsByObjectName(objectName: string): Promise<string[]> {
+  private async getFieldsByObjectName(objectName: string): Promise<any[]> {
     let fields = [];
     try {
       SFPowerkit.log(
@@ -162,7 +163,7 @@ export default class MetadataRetriever {
       await this._conn.describe(objectName).then((meta) => {
         if (meta.fields && meta.fields.length > 0) {
           fields = meta.fields.map((field) => {
-            return field.name;
+            return { fullName: `${objectName}.${field.name}` };
           });
         }
       });

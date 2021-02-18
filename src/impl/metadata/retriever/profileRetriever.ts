@@ -188,7 +188,8 @@ export default class ProfileRetriever {
     );
     let objectPermissions = await objectPermissionsRetriever.getComponents();
 
-    objectPermissions.forEach((name) => {
+    objectPermissions.forEach((obj) => {
+      let name = obj.fullName;
       if (unsuportedObjects.includes(name)) {
         return;
       }
