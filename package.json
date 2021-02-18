@@ -154,7 +154,7 @@
   "repository": "accenture/sfpowerkit",
   "scripts": {
     "posttest": "tslint -p test -t stylish",
-    "prepare": "rimraf lib && tsc -b && oclif-dev manifest && npm shrinkwrap",
+    "prepare": "rm -rf tsconfig.tsbuildinfo && rimraf lib && tsc -b && oclif-dev manifest && npm shrinkwrap",
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
     "version": "git add README.md"
   },
