@@ -9,3 +9,4 @@ node_modules
 .sfdx
 test/commands/package/version/*
 test/*
+tsconfig.tsbuildinfo
