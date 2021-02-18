@@ -10,3 +10,4 @@ node_modules
 test/commands/package/version/*
 test/*
 tsconfig.tsbuildinfo
+.DS_Store
