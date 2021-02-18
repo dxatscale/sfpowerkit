@@ -1,37 +1,37 @@
-import { Connection } from "@salesforce/core";
 import { DescribeSObjectResult } from "jsforce/describe-result";
 import { ProfileObjectPermissions, ProfileUserPermission } from "../schema";
 import * as _ from "lodash";
+import { Connection } from "jsforce";
 
 const userPermissionDependencies = [
   {
     name: "ViewAllData",
     permissionsRequired: ["ViewPlatformEvents", "ViewDataLeakageEvents"],
-    hasAccessOnData: true
+    hasAccessOnData: true,
   },
   {
     name: "QueryAllFiles",
-    hasAccessOnData: true
+    hasAccessOnData: true,
   },
   {
     name: "InstallPackaging",
-    permissionsRequired: ["ViewDataLeakageEvents", "EditPublicReports"]
+    permissionsRequired: ["ViewDataLeakageEvents", "EditPublicReports"],
   },
   {
     name: "CanUseNewDashboardBuilder",
-    permissionsRequired: ["ManageDashboards"]
+    permissionsRequired: ["ManageDashboards"],
   },
   {
     name: "ScheduleReports",
-    permissionsRequired: ["EditReports", "RunReports"]
+    permissionsRequired: ["EditReports", "RunReports"],
   },
   {
     name: "EditReports",
-    permissionsRequired: ["RunReports"]
+    permissionsRequired: ["RunReports"],
   },
   {
     name: "ModifyAllData",
-    permissionsRequired: ["EditPublicReports", "ManageDashboards"]
+    permissionsRequired: ["EditPublicReports", "ManageDashboards"],
   },
   {
     name: "BulkMacrosAllowed",
@@ -43,9 +43,9 @@ const userPermissionDependencies = [
         allowEdit: "false",
         allowRead: "true",
         modifyAllRecords: "false",
-        viewAllRecords: "false"
-      }
-    ]
+        viewAllRecords: "false",
+      },
+    ],
   },
   {
     name: "ManageSolutions",
@@ -57,9 +57,9 @@ const userPermissionDependencies = [
         allowEdit: "true",
         allowRead: "true",
         modifyAllRecords: "false",
-        viewAllRecords: "false"
-      }
-    ]
+        viewAllRecords: "false",
+      },
+    ],
   },
   {
     name: "ManageCssUsers",
@@ -71,9 +71,9 @@ const userPermissionDependencies = [
         allowEdit: "true",
         allowRead: "true",
         modifyAllRecords: "false",
-        viewAllRecords: "false"
-      }
-    ]
+        viewAllRecords: "false",
+      },
+    ],
   },
   {
     name: "TransferAnyCase",
@@ -85,10 +85,10 @@ const userPermissionDependencies = [
         allowEdit: "false",
         allowRead: "true",
         modifyAllRecords: "false",
-        viewAllRecords: "false"
-      }
-    ]
-  }
+        viewAllRecords: "false",
+      },
+    ],
+  },
 ];
 
 export default class UserPermissionBuilder {
@@ -177,7 +177,7 @@ export default class UserPermissionBuilder {
     ) {
       profileOrPermissionSet.objectPermissions = objectAccessRequired;
     } else {
-      let objectAccesses = objectAccessRequired.filter(objectAccess => {
+      let objectAccesses = objectAccessRequired.filter((objectAccess) => {
         let exist = false;
         for (
           let i = 0;
@@ -203,20 +203,12 @@ export default class UserPermissionBuilder {
     conn: Connection,
     sObjectName: string
   ): Promise<DescribeSObjectResult> {
-    var toReturn: Promise<DescribeSObjectResult> = new Promise<
-      DescribeSObjectResult
-    >((resolve, reject) => {
-      conn
-        .sobject(sObjectName)
-        .describe(function(err, meta: DescribeSObjectResult) {
-          if (err) {
-            console.error(err);
-            reject(err);
-          }
-          resolve(meta);
-        });
-    });
-    return toReturn;
+    try {
+      let result = await conn.sobject(sObjectName).describe();
+      return result;
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   public static async getSupportedPermissions(
@@ -228,7 +220,7 @@ export default class UserPermissionBuilder {
         "PermissionSet"
       );
       UserPermissionBuilder.supportedPermissions = [];
-      describeResult.fields.forEach(field => {
+      describeResult.fields.forEach((field) => {
         let fieldName = field["name"] as string;
         if (fieldName.startsWith("Permissions")) {
           UserPermissionBuilder.supportedPermissions.push(
@@ -257,7 +249,7 @@ export default class UserPermissionBuilder {
     },
     supportedPermissions: string[]
   ): any {
-    userPermissionDependencies.forEach(userPermission => {
+    userPermissionDependencies.forEach((userPermission) => {
       let hasPermission = UserPermissionBuilder.hasPermission(
         profileOrPermissionSet,
         userPermission.name
@@ -324,7 +316,7 @@ export default class UserPermissionBuilder {
       if (supportedPermission.includes(permissionName)) {
         let permission = {
           name: permissionName,
-          enabled: true
+          enabled: true,
         } as ProfileUserPermission;
         profileObj.userPermissions.push(permission);
       }

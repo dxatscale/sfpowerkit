@@ -1,14 +1,22 @@
 {
-  "extends": "./node_modules/@salesforce/dev-config/tsconfig",
+  "compileOnSave": true,
   "compilerOptions": {
     "baseUrl": ".",
+    "composite": true,
     "paths": { "*": ["types/*"] },
     "outDir": "./lib",
     "rootDir": "./src",
-    "noUnusedLocals": false,
-    "resolveJsonModule": true,
+    "inlineSourceMap": true,
+    "declaration": true,
+    "noImplicitAny": false,
     "esModuleInterop": true,
-    "allowJs": true
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "es6",
+    "allowJs": true,
+    "lib": ["es6"],
+    "resolveJsonModule": true
   },
+  "exclude": ["node_modules", "lib"],
   "include": ["./src/**/*"]
 }

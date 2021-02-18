@@ -1,6 +1,6 @@
 {
   "name": "sfpowerkit",
-  "version": "2.7.1",
+  "version": "2.7.2",
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
@@ -1069,45 +1069,14 @@
       }
     },
     "@salesforce/telemetry": {
-      "version": "2.0.4",
-      "resolved": "https://registry.npmjs.org/@salesforce/telemetry/-/telemetry-2.0.4.tgz",
-      "integrity": "sha512-tX0V5zNDaXVgKBYPhWd8OiQA6YPN3KQGhKDZLIAsrb/7Tfrqqce+sr0h/TMtp6pDHte5wMN6jCrFR54lCT6NfQ==",
+      "version": "2.0.5",
+      "resolved": "https://registry.npmjs.org/@salesforce/telemetry/-/telemetry-2.0.5.tgz",
+      "integrity": "sha512-5bTY299mo4c3sWWlrarEAPjUgDa0ez5x67Pg3pDL7goNeoE22F4pwGDn/BcxL2lUHj1h5yZfLPorwudxfiRhTA==",
       "requires": {
         "@salesforce/core": "^2.15.2",
         "@salesforce/ts-types": "^1.2.1",
         "applicationinsights": "^1.4.0",
-        "axios": "^0.19.2"
-      },
-      "dependencies": {
-        "axios": {
-          "version": "0.19.2",
-          "resolved": "https://registry.npmjs.org/axios/-/axios-0.19.2.tgz",
-          "integrity": "sha512-fjgm5MvRHLhx+osE2xoekY70AhARk3a6hkN+3Io1jc00jtquGvxYlKlsFUhmUET0V5te6CcZI7lcv2Ym61mjHA==",
-          "requires": {
-            "follow-redirects": "1.5.10"
-          }
-        },
-        "debug": {
-          "version": "3.1.0",
-          "resolved": "https://registry.npmjs.org/debug/-/debug-3.1.0.tgz",
-          "integrity": "sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==",
-          "requires": {
-            "ms": "2.0.0"
-          }
-        },
-        "follow-redirects": {
-          "version": "1.5.10",
-          "resolved": "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.5.10.tgz",
-          "integrity": "sha512-0V5l4Cizzvqt5D44aTXbFZz+FtyXV1vrDN6qrelxtfYQKW0KO0W2T/hkE8xvGa/540LkZlkaUjO4ailYTFtHVQ==",
-          "requires": {
-            "debug": "=3.1.0"
-          }
-        },
-        "ms": {
-          "version": "2.0.0",
-          "resolved": "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz",
-          "integrity": "sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g="
-        }
+        "axios": "^0.21.1"
       }
     },
     "@salesforce/ts-types": {
@@ -2182,6 +2151,11 @@
           }
         }
       }
+    },
+    "clone": {
+      "version": "2.1.2",
+      "resolved": "https://registry.npmjs.org/clone/-/clone-2.1.2.tgz",
+      "integrity": "sha1-G39Ln1kfHo+DZwQBYANFoCiHQ18="
     },
     "clone-response": {
       "version": "1.0.2",
@@ -4476,6 +4450,14 @@
         "@sinonjs/text-encoding": "^0.7.1",
         "just-extend": "^4.0.2",
         "path-to-regexp": "^1.7.0"
+      }
+    },
+    "node-cache": {
+      "version": "5.1.2",
+      "resolved": "https://registry.npmjs.org/node-cache/-/node-cache-5.1.2.tgz",
+      "integrity": "sha512-t1QzWwnk4sjLWaQAS8CHgOJ+RAfmHpxFWmc36IWTiWHQfs0w5JDMBS1b1ZxQteo0vVVuWJvIUKHDkkeK7vIGCg==",
+      "requires": {
+        "clone": "2.x"
       }
     },
     "node-dir": {
