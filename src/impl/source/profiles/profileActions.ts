@@ -13,7 +13,7 @@ export default abstract class ProfileActions {
   protected profileRetriever: ProfileRetriever;
 
   public constructor(public org: Org, debugFlag?: boolean) {
-    if (this.org !== undefined) {
+    if (this.org !== undefined && this.org != null) {
       this.conn = this.org.getConnection();
     }
     this.debugFlag = debugFlag;

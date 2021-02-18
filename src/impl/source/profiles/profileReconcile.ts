@@ -3,14 +3,14 @@ import MetadataFiles from "../../metadata/metadataFiles";
 import * as fs from "fs-extra";
 import * as path from "path";
 import * as xml2js from "xml2js";
-import { MetadataInfo, METADATA_INFO } from "../../metadata/metadataInfo";
+import { METADATA_INFO } from "../../metadata/metadataInfo";
 import Profile, { ProfileFieldLevelSecurity } from "../../metadata/schema";
 import * as util from "util";
 import * as _ from "lodash";
 import ProfileActions from "./profileActions";
 import FileUtils from "../../../utils/fileutils";
 import ProfileWriter from "../../../impl/metadata/writer/profileWriter";
-import { LoggerLevel, User } from "@salesforce/core";
+import { LoggerLevel } from "@salesforce/core";
 import UserPermissionBuilder from "../../metadata/builder/userPermissionBuilder";
 import MetadataRetriever from "../../metadata/retriever/metadataRetriever";
 
