@@ -2,10 +2,8 @@ import Profile, {
   ProfileObjectPermissions,
   ProfileUserPermission,
 } from "../schema";
-import MetadataFiles from "../metadataFiles";
 import { Connection } from "jsforce";
 import { MetadataInfo } from "jsforce";
-import UserPermissionBuilder from "../builder/userPermissionBuilder";
 import * as _ from "lodash";
 import MetadataRetriever from "./metadataRetriever";
 import { METADATA_INFO } from "../metadataInfo";
@@ -36,24 +34,13 @@ export default class ProfileRetriever {
     "SystemPermissions",
   ];
 
-  supportedPermissions: string[] = [];
-  metadataFiles: MetadataFiles;
-
   public constructor(private conn: Connection, private debugFlag?: boolean) {}
 
-  public async loadSupportedPermissions() {
-    if (this.supportedPermissions.length === 0) {
-      this.supportedPermissions = await UserPermissionBuilder.getSupportedPermissions(
-        this.conn
-      );
-    }
-  }
-
-  public async loadProfiles(
-    profileNames: string[],
-    conn
-  ): Promise<MetadataInfo[]> {
-    var metadata = await conn.metadata.readSync("Profile", profileNames);
+  public async loadProfiles(profileNames: string[]): Promise<MetadataInfo[]> {
+    let metadata = (await this.conn.metadata.readSync(
+      "Profile",
+      profileNames
+    )) as any;
     if (Array.isArray(metadata)) {
       for (let i = 0; i < metadata.length; i++) {
         await this.handlePermissions(metadata[i]);
@@ -70,8 +57,9 @@ export default class ProfileRetriever {
   }
 
   public async handlePermissions(profileObj: Profile): Promise<Profile> {
-    this.handleViewAllDataPermission(profileObj);
-    this.handleInstallPackagingPermission(profileObj);
+    await this.handleViewAllDataPermission(profileObj);
+    await this.handleInstallPackagingPermission(profileObj);
+
     this.handleQueryAllFilesPermission(profileObj);
     //Check if the permission QueryAllFiles is true and give read access to objects
     profileObj = await this.completeUserPermissions(profileObj);
@@ -80,8 +68,7 @@ export default class ProfileRetriever {
   }
 
   private async completeUserPermissions(profileObj: Profile): Promise<Profile> {
-    await this.loadSupportedPermissions();
-
+    let supportedPermissions = await this.fetchPermissions();
     // remove unsupported userLicence
     var unsupportedLicencePermissions = this.getUnsupportedLicencePermissions(
       profileObj.userLicense
@@ -100,23 +87,21 @@ export default class ProfileRetriever {
       );
     }
 
-    let notRetrievedPermissions = this.supportedPermissions.filter(
-      (permission) => {
-        let found = null;
-        if (
-          profileObj.userPermissions != null &&
-          profileObj.userPermissions.length > 0
-        ) {
-          found = profileObj.userPermissions.find((element) => {
-            return element.name === permission;
-          });
-        }
-        return found === null || found === undefined;
+    let notRetrievedPermissions = supportedPermissions.filter((permission) => {
+      let found = null;
+      if (
+        profileObj.userPermissions != null &&
+        profileObj.userPermissions.length > 0
+      ) {
+        found = profileObj.userPermissions.find((element) => {
+          return element.name === permission;
+        });
       }
-    );
+      return found === null || found === undefined;
+    });
 
     var isCustom = "" + profileObj.custom;
-    //SfPowerKit.ux.log("Is Custom: " + isCustom);
+
     if (isCustom == "false") {
       //Remove System permission for standard profile as Salesforce does not support edition on those profile
       delete profileObj.userPermissions;
@@ -204,9 +189,7 @@ export default class ProfileRetriever {
       }
 
       if (objectIsPresent === false) {
-        //SfPowerKit.ux.log("\n Inserting this object");
         let objToInsert = ProfileRetriever.buildObjPermArray(name, access);
-        //SfPowerKit.ux.log(objToInsert);
         if (profileObj.objectPermissions === undefined) {
           profileObj.objectPermissions = new Array();
         } else if (!Array.isArray(profileObj.objectPermissions)) {
@@ -245,13 +228,14 @@ export default class ProfileRetriever {
     };
     return newObjPerm;
   }
+
   private static filterObjects(
     profileObj: Profile
   ): ProfileObjectPermissions[] {
     return profileObj.objectPermissions;
   }
 
-  private enablePermission(profileObj: Profile, permissionName: string) {
+  private async enablePermission(profileObj: Profile, permissionName: string) {
     let found = false;
     if (
       profileObj.userPermissions !== null &&
@@ -274,7 +258,9 @@ export default class ProfileRetriever {
       ) {
         profileObj.userPermissions = [];
       }
-      if (this.supportedPermissions.includes(permissionName)) {
+
+      let supportedPermissions = await this.fetchPermissions();
+      if (supportedPermissions.includes(permissionName)) {
         let permission = {
           name: permissionName,
           enabled: true,
@@ -284,7 +270,7 @@ export default class ProfileRetriever {
     }
   }
 
-  private handleQueryAllFilesPermission(profileObj: Profile): any {
+  private handleQueryAllFilesPermission(profileObj: Profile) {
     let isQueryAllFilesPermission = this.hasPermission(
       profileObj,
       "QueryAllFiles"
@@ -301,7 +287,9 @@ export default class ProfileRetriever {
     }
   }
 
-  private handleViewAllDataPermission(profileObj: Profile): any {
+  private async handleViewAllDataPermission(
+    profileObj: Profile
+  ): Promise<void> {
     let isViewAllData = this.hasPermission(profileObj, "ViewAllData");
     if (
       isViewAllData &&
@@ -314,15 +302,17 @@ export default class ProfileRetriever {
       }
     }
     if (isViewAllData) {
-      this.enablePermission(profileObj, "ViewPlatformEvents");
-      this.enablePermission(profileObj, "ViewDataLeakageEvents");
+      await this.enablePermission(profileObj, "ViewPlatformEvents");
+      await this.enablePermission(profileObj, "ViewDataLeakageEvents");
     }
   }
 
-  private handleInstallPackagingPermission(profileObj: Profile): any {
+  private async handleInstallPackagingPermission(
+    profileObj: Profile
+  ): Promise<void> {
     let hasPermission = this.hasPermission(profileObj, "InstallPackaging");
     if (hasPermission) {
-      this.enablePermission(profileObj, "ViewDataLeakageEvents");
+      await this.enablePermission(profileObj, "ViewDataLeakageEvents");
     }
   }
 
@@ -338,5 +328,18 @@ export default class ProfileRetriever {
       }
     }
     return [];
+  }
+
+  private async fetchPermissions() {
+    let permissionRetriever = new MetadataRetriever(
+      this.conn,
+      METADATA_INFO.PermissionSet.xmlName,
+      METADATA_INFO
+    );
+    let permissionSets = await permissionRetriever.getComponents();
+    let supportedPermissions = permissionSets.map((elem) => {
+      return elem.fullName;
+    });
+    return supportedPermissions;
   }
 }
