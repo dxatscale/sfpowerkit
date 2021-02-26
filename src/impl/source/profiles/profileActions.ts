@@ -9,15 +9,18 @@ import ProfileRetriever from "../../metadata/retriever/profileRetriever";
 
 export default abstract class ProfileActions {
   protected conn: Connection;
-  protected debugFlag: boolean;
+  private debugFlag: boolean;
   protected profileRetriever: ProfileRetriever;
 
   public constructor(public org: Org, debugFlag?: boolean) {
-    if (this.org !== undefined) {
+    if (this.org !== undefined && this.org != null) {
       this.conn = this.org.getConnection();
+      this.debugFlag = debugFlag;
+      this.profileRetriever = new ProfileRetriever(
+        org.getConnection(),
+        debugFlag
+      );
     }
-    this.debugFlag = debugFlag;
-    this.profileRetriever = new ProfileRetriever(org, debugFlag);
   }
 
   protected async getProfileFullNamesWithLocalStatus(
@@ -30,7 +33,7 @@ export default abstract class ProfileActions {
     let profilesStatus = {
       added: [],
       deleted: [],
-      updated: []
+      updated: [],
     };
     let metadataFiles = METADATA_INFO.Profile.files || [];
 
@@ -96,14 +99,14 @@ export default abstract class ProfileActions {
         LoggerLevel.DEBUG
       );
 
-      profilesStatus.deleted = metadataFiles.filter(file => {
+      profilesStatus.deleted = metadataFiles.filter((file) => {
         let oneName = path.basename(
           file,
           METADATA_INFO.Profile.sourceExtension
         );
         return !profiles.includes(oneName);
       });
-      profilesStatus.updated = metadataFiles.filter(file => {
+      profilesStatus.updated = metadataFiles.filter((file) => {
         let oneName = path.basename(
           file,
           METADATA_INFO.Profile.sourceExtension
@@ -112,7 +115,7 @@ export default abstract class ProfileActions {
       });
 
       if (profiles && profiles.length > 0) {
-        let newProfiles = profiles.filter(profileObj => {
+        let newProfiles = profiles.filter((profileObj) => {
           let found = false;
           for (let i = 0; i < profilesStatus.updated.length; i++) {
             let profileComponent = profilesStatus.updated[i];

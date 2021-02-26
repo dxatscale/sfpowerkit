@@ -1,15 +1,16 @@
 import { SfdxProject } from "@salesforce/core";
 import { isNullOrUndefined } from "util";
 import { UX } from "@salesforce/command";
-import cli from "cli-ux";
 const Logger = require("pino");
+const NodeCache = require("node-cache");
+
 export enum LoggerLevel {
   TRACE = 10,
   DEBUG = 20,
   INFO = 30,
   WARN = 40,
   ERROR = 50,
-  FATAL = 60
+  FATAL = 60,
 }
 export class SFPowerkit {
   private static defaultFolder: string;
@@ -20,6 +21,14 @@ export class SFPowerkit {
   private static sourceApiVersion: any;
   private static logger;
   public static logLevel;
+  private static cache;
+
+  public static getCache() {
+    if (SFPowerkit.cache == null) {
+      SFPowerkit.cache = new NodeCache();
+    }
+    return SFPowerkit.cache;
+  }
 
   public static setLogLevel(logLevel: string, isJsonFormatEnabled: boolean) {
     logLevel = logLevel.toLowerCase();
@@ -32,8 +41,8 @@ export class SFPowerkit {
           levelFirst: true, // --levelFirst
           colorize: true,
           translateTime: true,
-          ignore: "pid,hostname" // --ignore
-        }
+          ignore: "pid,hostname", // --ignore
+        },
       });
     } else {
       //do nothing for now, need to put pino to move to file
@@ -70,7 +79,7 @@ export class SFPowerkit {
       const dxProject = await SfdxProject.resolve();
       const project = await dxProject.retrieveSfdxProjectJson();
       let packages = (project.get("packageDirectories") as any[]) || [];
-      packages.forEach(element => {
+      packages.forEach((element) => {
         SFPowerkit.projectDirectories.push(element.path);
         if (element.default) {
           SFPowerkit.defaultFolder = element.path;

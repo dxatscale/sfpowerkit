@@ -4,16 +4,6 @@ import * as fs from "fs-extra";
 import * as path from "path";
 import * as xml2js from "xml2js";
 import { METADATA_INFO } from "../../metadata/metadataInfo";
-import CustomApplicationRetriever from "../../../impl/metadata/retriever/customApplicationRetriever";
-import ApexClassRetriever from "../../../impl/metadata/retriever/apexClassRetriever";
-import FieldRetriever from "../../../impl/metadata/retriever/fieldRetriever";
-import LayoutRetriever from "../../../impl/metadata/retriever/layoutRetriever";
-import RecordTypeRetriever from "../../../impl/metadata/retriever/recordTypeRetriever";
-import EntityDefinitionRetriever from "../../../impl/metadata/retriever/entityDefinitionRetriever";
-import ApexPageRetriever from "../../../impl/metadata/retriever/apexPageRetriever";
-import TabDefinitionRetriever from "../../../impl/metadata/retriever/tabDefinitionRetriever";
-import UserLicenseRetriever from "../../../impl/metadata/retriever/userLicenseRetriever";
-import UserPermissionBuilder from "../../../impl/metadata/builder/userPermissionBuilder";
 import Profile, { ProfileFieldLevelSecurity } from "../../metadata/schema";
 import * as util from "util";
 import * as _ from "lodash";
@@ -21,17 +11,8 @@ import ProfileActions from "./profileActions";
 import FileUtils from "../../../utils/fileutils";
 import ProfileWriter from "../../../impl/metadata/writer/profileWriter";
 import { LoggerLevel } from "@salesforce/core";
-import ExternalDataSourceRetriever from "../../../impl/metadata/retriever/externalDataSourceRetriever";
-import FlowRetriever from "../../../impl/metadata/retriever/flowRetriever";
-import CustomPermissionRetriever from "../../../impl/metadata/retriever/customPermissionRetriever";
-
-const nonArayProperties = [
-  "custom",
-  "description",
-  "fullName",
-  "userLicense",
-  "$",
-];
+import UserPermissionBuilder from "../../metadata/builder/userPermissionBuilder";
+import MetadataRetriever from "../../metadata/retriever/metadataRetriever";
 
 export default class ProfileReconcile extends ProfileActions {
   metadataFiles: MetadataFiles;
@@ -41,145 +22,185 @@ export default class ProfileReconcile extends ProfileActions {
     profileList: string[],
     destFolder: string
   ): Promise<string[]> {
-    if (!_.isNil(destFolder)) {
-      FileUtils.mkDirByPathSync(destFolder);
-    }
+    //Get supported permissions from the org
+
+    let result: string[] = []; // Handle result of command execution
+
+    this.createDestinationFolder(destFolder);
+    SFPowerkit.log(
+      `ProfileList ${JSON.stringify(profileList)}`,
+      LoggerLevel.TRACE
+    );
 
     if (_.isNil(srcFolders) || srcFolders.length === 0) {
       srcFolders = await SFPowerkit.getProjectDirectories();
     }
 
-    let result: string[] = [];
-    this.metadataFiles = new MetadataFiles();
-    srcFolders.forEach((srcFolder) => {
-      let normalizedPath = path.join(process.cwd(), srcFolder);
-      this.metadataFiles.loadComponents(normalizedPath);
-    });
+    //Fetch all the metadata in the project directory
+    this.metadataFiles = this.fetchMetadataFilesFromAllPackageDirectories(
+      srcFolders
+    );
+    SFPowerkit.log(
+      `Project Directories ${JSON.stringify(srcFolders)}`,
+      LoggerLevel.TRACE
+    );
 
+    //Translate the provided profileList if any with proper extension
     profileList = profileList.map((element) => {
       return element + METADATA_INFO.Profile.sourceExtension;
     });
 
-    if (!MetadataFiles.sourceOnly) {
-      await this.profileRetriever.loadSupportedPermissions();
-    }
-    for (let count = 0; count < METADATA_INFO.Profile.files.length; count++) {
-      let profileComponent = METADATA_INFO.Profile.files[count];
-      if (
-        profileList.length == 0 ||
-        profileList.includes(path.basename(profileComponent))
-      ) {
-        SFPowerkit.log(
-          "Reconciling profile " + path.basename(profileComponent),
-          LoggerLevel.INFO
-        );
+    SFPowerkit.log(
+      `Profiles Found in Entire Drirectory ${METADATA_INFO.Profile.files.length}`,
+      LoggerLevel.TRACE
+    );
 
-        let profileXmlString = fs.readFileSync(profileComponent);
-        const parser = new xml2js.Parser({ explicitArray: true });
-        const parseString = util.promisify(parser.parseString);
-        let parseResult = await parseString(profileXmlString);
-        let profileWriter = new ProfileWriter();
+    //Find Profiles to Reconcile
+    let profilesToReconcile = this.findProfilesToReconcile(profileList);
 
-        let profileObj: Profile = profileWriter.toProfile(parseResult.Profile); // as Profile
+    for (let count = 0; count < profilesToReconcile.length; count++) {
+      let profileComponent = profilesToReconcile[count];
+      SFPowerkit.log(
+        "Reconciling profile " + profileComponent,
+        LoggerLevel.INFO
+      );
+      let profileXmlString = fs.readFileSync(profileComponent);
+      const parser = new xml2js.Parser({ explicitArray: true });
+      const parseString = util.promisify(parser.parseString);
+      let parseResult = await parseString(profileXmlString);
+      let profileWriter = new ProfileWriter();
 
-        profileObj = await this.removePermissions(profileObj);
+      let profileObj: Profile = profileWriter.toProfile(parseResult.Profile); // as Profile
 
-        if (!MetadataFiles.sourceOnly) {
-          //Manage licences
-          let licenceUtils = UserLicenseRetriever.getInstance(this.org);
-          const isSupportedLicence = await licenceUtils.userLicenseExists(
-            profileObj.userLicense
-          );
-          if (!isSupportedLicence) {
-            delete profileObj.userLicense;
-          }
-        }
+      await this.reconcileProfile(profileObj);
 
-        // remove unsupported userPermission
-        let unsupportedLicencePermissions = this.profileRetriever.getUnsupportedLicencePermissions(
-          profileObj.userLicense
-        );
-        if (
-          profileObj.userPermissions != null &&
-          profileObj.userPermissions.length > 0
-        ) {
-          profileObj.userPermissions = profileObj.userPermissions.filter(
-            (permission) => {
-              let supported = !unsupportedLicencePermissions.includes(
-                permission.name
-              );
-              return supported;
-            }
-          );
-        }
-
-        //IS sourceonly, use ignorePermission set in sfdxProject.json file
-        if (MetadataFiles.sourceOnly) {
-          let pluginConfig = await SFPowerkit.getConfig();
-          let ignorePermissions = pluginConfig.ignoredPermissions || [];
-          if (
-            profileObj.userPermissions !== undefined &&
-            profileObj.userPermissions.length > 0
-          ) {
-            profileObj.userPermissions = profileObj.userPermissions.filter(
-              (permission) => {
-                let supported = !ignorePermissions.includes(permission.name);
-                return supported;
-              }
-            );
-          }
-        } else {
-          if (
-            profileObj.userPermissions !== undefined &&
-            profileObj.userPermissions.length > 0
-          ) {
-            //Remove permission that are not present in the target org
-            profileObj.userPermissions = profileObj.userPermissions.filter(
-              (permission) => {
-                let supported = this.profileRetriever.supportedPermissions.includes(
-                  permission.name
-                );
-                return supported;
-              }
-            );
-          }
-        }
-
-        //UserPermissionUtils.addPermissionDependencies(profileObj);
-
-        let isCustom = "" + profileObj.custom;
-        if (isCustom == "false") {
-          delete profileObj.userPermissions;
-        }
-
-        //this.handleViewAllDataPermission(profileObj);
-        //this.handleInstallPackagingPermission(profileObj);
-        //this.handleQueryAllFilesPermission(profileObj);
-
-        UserPermissionBuilder.handlePermissionDependency(
-          profileObj,
-          this.profileRetriever.supportedPermissions
-        );
-
-        let outputFile = profileComponent;
-        if (!_.isNil(destFolder)) {
-          outputFile = path.join(destFolder, path.basename(profileComponent));
-        }
-        profileWriter.writeProfile(profileObj, outputFile);
-
-        result.push(outputFile);
+      //write profile back
+      let outputFile = profileComponent;
+      if (!_.isNil(destFolder)) {
+        outputFile = path.join(destFolder, path.basename(profileComponent));
       }
+      profileWriter.writeProfile(profileObj, outputFile);
+
+      result.push(outputFile);
     }
     return result;
   }
 
-  private async reconcileApp(profileObj: Profile): Promise<Profile> {
-    let utils = CustomApplicationRetriever.getInstance(this.org);
+  private findProfilesToReconcile(profileList: string[]) {
+    let profilesToReconcile;
+    if (profileList.length > 0) {
+      profilesToReconcile = [];
+      profileList.forEach((profile) => {
+        METADATA_INFO.Profile.files.forEach((file) => {
+          if (path.basename(file) === profile) {
+            profilesToReconcile.push(file);
+          }
+        });
+      });
+    } else {
+      profilesToReconcile = METADATA_INFO.Profile.files;
+    }
+    return profilesToReconcile;
+  }
+
+  private fetchMetadataFilesFromAllPackageDirectories(srcFolders: string[]) {
+    let metadataFiles = new MetadataFiles();
+    srcFolders.forEach((srcFolder) => {
+      let normalizedPath = path.join(process.cwd(), srcFolder);
+      metadataFiles.loadComponents(normalizedPath);
+    });
+    return metadataFiles;
+  }
+
+  private createDestinationFolder(destFolder: string) {
+    if (!_.isNil(destFolder)) {
+      FileUtils.mkDirByPathSync(destFolder);
+    }
+  }
+
+  private async removeUserPermissionNotAvailableInOrg(profileObj: Profile) {
+    if (
+      profileObj.userPermissions !== undefined &&
+      profileObj.userPermissions.length > 0
+    ) {
+      //Fetch all user permissions from the org.
+      let supportedPermissions = await this.fetchPermissions();
+
+      //Remove permission that are not present in the target org
+      profileObj.userPermissions = profileObj.userPermissions.filter(
+        (permission) => {
+          let supported = supportedPermissions.includes(permission.name);
+          return supported;
+        }
+      );
+    }
+  }
+
+  private async removePermissionsBasedOnProjectConfig(profileObj: Profile) {
+    let pluginConfig = await SFPowerkit.getConfig();
+    let ignorePermissions = pluginConfig.ignoredPermissions || [];
+    if (
+      profileObj.userPermissions !== undefined &&
+      profileObj.userPermissions.length > 0
+    ) {
+      profileObj.userPermissions = profileObj.userPermissions.filter(
+        (permission) => {
+          let supported = !ignorePermissions.includes(permission.name);
+          return supported;
+        }
+      );
+    }
+  }
+
+  private removeUnsupportedUserPermissions(profileObj: Profile) {
+    let unsupportedLicencePermissions = this.profileRetriever.getUnsupportedLicencePermissions(
+      profileObj.userLicense
+    );
+    if (
+      profileObj.userPermissions != null &&
+      profileObj.userPermissions.length > 0
+    ) {
+      profileObj.userPermissions = profileObj.userPermissions.filter(
+        (permission) => {
+          let supported = !unsupportedLicencePermissions.includes(
+            permission.name
+          );
+          return supported;
+        }
+      );
+    }
+  }
+
+  private async cleanupUserLicenses(profileObj: Profile) {
+    if (!MetadataFiles.sourceOnly) {
+      //Manage licences
+      let userLicenseRetriever = new MetadataRetriever(
+        this.org.getConnection(),
+        "UserLicense",
+        METADATA_INFO
+      );
+      const isSupportedLicence = await userLicenseRetriever.isComponentExistsInTheOrg(
+        profileObj.userLicense
+      );
+      if (!isSupportedLicence) {
+        delete profileObj.userLicense;
+      }
+    }
+  }
+
+  private async reconcileApp(profileObj: Profile): Promise<void> {
+    let customApplications = new MetadataRetriever(
+      this.org.getConnection(),
+      METADATA_INFO.CustomApplication.xmlName,
+      METADATA_INFO
+    );
     if (profileObj.applicationVisibilities !== undefined) {
       let validArray = [];
       for (let i = 0; i < profileObj.applicationVisibilities.length; i++) {
         let cmpObj = profileObj.applicationVisibilities[i];
-        let exist = await utils.appExists(cmpObj.application);
+        let exist = await customApplications.isComponentExistsInProjectDirectoryOrInOrg(
+          cmpObj.application
+        );
         if (exist) {
           validArray.push(cmpObj);
         }
@@ -190,12 +211,14 @@ export default class ProfileReconcile extends ProfileActions {
       );
       profileObj.applicationVisibilities = validArray;
     }
-
-    return profileObj;
   }
 
-  private async reconcileClasses(profileObj: Profile): Promise<Profile> {
-    let utils = ApexClassRetriever.getInstance(this.org);
+  private async reconcileClasses(profileObj: Profile): Promise<void> {
+    let apexClasses = new MetadataRetriever(
+      this.org.getConnection(),
+      METADATA_INFO.ApexClass.xmlName,
+      METADATA_INFO
+    );
 
     if (profileObj.classAccesses !== undefined) {
       if (!Array.isArray(profileObj.classAccesses)) {
@@ -204,7 +227,9 @@ export default class ProfileReconcile extends ProfileActions {
       let validArray = [];
       for (let i = 0; i < profileObj.classAccesses.length; i++) {
         let cmpObj = profileObj.classAccesses[i];
-        let exists = await utils.classExists(cmpObj.apexClass);
+        let exists = await apexClasses.isComponentExistsInProjectDirectoryOrInOrg(
+          cmpObj.apexClass
+        );
         if (exists) {
           validArray.push(cmpObj);
         }
@@ -216,53 +241,49 @@ export default class ProfileReconcile extends ProfileActions {
       );
       profileObj.classAccesses = validArray;
     }
-
-    return profileObj;
   }
 
-  private async reconcileFields(profileObj: Profile): Promise<Profile> {
-    let utils = FieldRetriever.getInstance(this.org);
-    if (profileObj.fieldLevelSecurities !== undefined) {
-      if (!Array.isArray(profileObj.fieldLevelSecurities)) {
-        profileObj.fieldLevelSecurities = [profileObj.fieldLevelSecurities];
-      }
-      let validArray: ProfileFieldLevelSecurity[] = [];
-      for (let i = 0; i < profileObj.fieldLevelSecurities.length; i++) {
-        let cmpObj = profileObj.fieldLevelSecurities[i];
-        let exists = await utils.fieldExist(cmpObj.field);
-        if (exists) {
-          validArray.push(cmpObj);
-        }
-      }
-
-      SFPowerkit.log(
-        `Fields Level Security reduced from ${profileObj.fieldLevelSecurities.length}  to  ${validArray.length}`,
-        LoggerLevel.DEBUG
-      );
-      profileObj.fieldLevelSecurities = validArray;
-    }
-
-    if (profileObj.fieldPermissions !== undefined) {
+  private async reconcileFields(profileObj: Profile): Promise<void> {
+    if (profileObj.fieldPermissions) {
       if (!Array.isArray(profileObj.fieldPermissions)) {
         profileObj.fieldPermissions = [profileObj.fieldPermissions];
       }
       let validArray: ProfileFieldLevelSecurity[] = [];
       for (let i = 0; i < profileObj.fieldPermissions.length; i++) {
+        let fieldRetriever = new MetadataRetriever(
+          this.org.getConnection(),
+          METADATA_INFO.CustomField.xmlName,
+          METADATA_INFO
+        );
         let cmpObj = profileObj.fieldPermissions[i];
-        let exists = await utils.fieldExist(cmpObj.field);
+        let parent = cmpObj.field.split(".")[0];
+        let exists = await fieldRetriever.isComponentExistsInProjectDirectoryOrInOrg(
+          cmpObj.field,
+          parent
+        );
         if (exists) {
           validArray.push(cmpObj);
         }
       }
+      SFPowerkit.log(
+        `Fields Level Permissions reduced from ${profileObj.fieldPermissions.length}  to  ${validArray.length}`,
+        LoggerLevel.DEBUG
+      );
       profileObj.fieldPermissions = validArray;
     }
-
-    return profileObj;
   }
 
-  private async reconcileLayouts(profileObj: Profile): Promise<Profile> {
-    let utils = LayoutRetriever.getInstance(this.org);
-    let rtUtils = RecordTypeRetriever.getInstance(this.org);
+  private async reconcileLayouts(profileObj: Profile): Promise<void> {
+    let layoutRetreiver = new MetadataRetriever(
+      this.org.getConnection(),
+      METADATA_INFO.Layout.xmlName,
+      METADATA_INFO
+    );
+    let recordTypeRetriever = new MetadataRetriever(
+      this.org.getConnection(),
+      METADATA_INFO.RecordType.xmlName,
+      METADATA_INFO
+    );
 
     if (profileObj.layoutAssignments !== undefined) {
       var validArray = [];
@@ -273,9 +294,13 @@ export default class ProfileReconcile extends ProfileActions {
       ) {
         let cmpObj = profileObj.layoutAssignments[count];
         let exist =
-          (await utils.layoutExists(cmpObj.layout)) &&
+          (await layoutRetreiver.isComponentExistsInProjectDirectoryOrInOrg(
+            cmpObj.layout
+          )) &&
           (_.isNil(cmpObj.recordType) ||
-            (await rtUtils.recordTypeExists(cmpObj.recordType)));
+            (await recordTypeRetriever.isComponentExistsInProjectDirectoryOrInOrg(
+              cmpObj.recordType
+            )));
         if (exist) {
           validArray.push(cmpObj);
         }
@@ -286,11 +311,19 @@ export default class ProfileReconcile extends ProfileActions {
       );
       profileObj.layoutAssignments = validArray;
     }
-    return profileObj;
   }
 
-  private async reconcileObjects(profileObj: Profile): Promise<Profile> {
-    let utils = EntityDefinitionRetriever.getInstance(this.org);
+  private async reconcileObjects(profileObj: Profile): Promise<void> {
+    let objectPermissionRetriever = new MetadataRetriever(
+      this.org.getConnection(),
+      "ObjectPermissions",
+      METADATA_INFO
+    );
+    let objectRetriever = new MetadataRetriever(
+      this.org.getConnection(),
+      METADATA_INFO.CustomObject.xmlName,
+      METADATA_INFO
+    );
 
     if (profileObj.objectPermissions !== undefined) {
       if (!Array.isArray(profileObj.objectPermissions)) {
@@ -299,7 +332,16 @@ export default class ProfileReconcile extends ProfileActions {
       let validArray = [];
       for (let i = 0; i < profileObj.objectPermissions.length; i++) {
         let cmpObj = profileObj.objectPermissions[i];
-        let exist = await utils.existObjectPermission(cmpObj.object);
+
+        //Check Object exist in Source Directory
+        let exist = await objectRetriever.isComponentExistsInProjectDirectory(
+          cmpObj.object
+        );
+        if (!exist)
+          exist = await objectPermissionRetriever.isComponentExistsInTheOrg(
+            cmpObj.object
+          );
+
         if (exist) {
           validArray.push(cmpObj);
         }
@@ -310,11 +352,14 @@ export default class ProfileReconcile extends ProfileActions {
       );
       profileObj.objectPermissions = validArray;
     }
-    return profileObj;
   }
 
-  private async reconcileCustomMetadata(profileObj: Profile): Promise<Profile> {
-    let utils = EntityDefinitionRetriever.getInstance(this.org);
+  private async reconcileCustomMetadata(profileObj: Profile): Promise<void> {
+    let objectRetriever = new MetadataRetriever(
+      this.org.getConnection(),
+      METADATA_INFO.CustomObject.xmlName,
+      METADATA_INFO
+    );
 
     if (profileObj.customMetadataTypeAccesses !== undefined) {
       if (!Array.isArray(profileObj.customMetadataTypeAccesses)) {
@@ -325,7 +370,9 @@ export default class ProfileReconcile extends ProfileActions {
       let validArray = [];
       for (let i = 0; i < profileObj.customMetadataTypeAccesses.length; i++) {
         let cmpCM = profileObj.customMetadataTypeAccesses[i];
-        let exist = await utils.existCustomMetadata(cmpCM.name);
+        let exist = await objectRetriever.isComponentExistsInProjectDirectoryOrInOrg(
+          cmpCM.name
+        );
         if (exist) {
           validArray.push(cmpCM);
         }
@@ -336,11 +383,14 @@ export default class ProfileReconcile extends ProfileActions {
       );
       profileObj.customMetadataTypeAccesses = validArray;
     }
-    return profileObj;
   }
 
-  private async reconcileCustomSettins(profileObj: Profile): Promise<Profile> {
-    let utils = EntityDefinitionRetriever.getInstance(this.org);
+  private async reconcileCustomSettings(profileObj: Profile): Promise<void> {
+    let objectRetriever = new MetadataRetriever(
+      this.org.getConnection(),
+      METADATA_INFO.CustomObject.xmlName,
+      METADATA_INFO
+    );
 
     if (profileObj.customSettingAccesses !== undefined) {
       if (!Array.isArray(profileObj.customSettingAccesses)) {
@@ -349,7 +399,9 @@ export default class ProfileReconcile extends ProfileActions {
       let validArray = [];
       for (let i = 0; i < profileObj.customSettingAccesses.length; i++) {
         let cmpCS = profileObj.customSettingAccesses[i];
-        let exist = await utils.existCustomMetadata(cmpCS.name);
+        let exist = await objectRetriever.isComponentExistsInProjectDirectoryOrInOrg(
+          cmpCS.name
+        );
         if (exist) {
           validArray.push(cmpCS);
         }
@@ -360,13 +412,16 @@ export default class ProfileReconcile extends ProfileActions {
       );
       profileObj.customSettingAccesses = validArray;
     }
-    return profileObj;
   }
 
   private async reconcileExternalDataSource(
     profileObj: Profile
-  ): Promise<Profile> {
-    let utils = ExternalDataSourceRetriever.getInstance(this.org);
+  ): Promise<void> {
+    let externalDataSourceRetriever = new MetadataRetriever(
+      this.org.getConnection(),
+      METADATA_INFO.ExternalDataSource.xmlName,
+      METADATA_INFO
+    );
 
     if (profileObj.externalDataSourceAccesses !== undefined) {
       if (!Array.isArray(profileObj.externalDataSourceAccesses)) {
@@ -377,7 +432,7 @@ export default class ProfileReconcile extends ProfileActions {
       let validArray = [];
       for (let i = 0; i < profileObj.externalDataSourceAccesses.length; i++) {
         let dts = profileObj.externalDataSourceAccesses[i];
-        let exist = await utils.externalDataSourceExists(
+        let exist = await externalDataSourceRetriever.isComponentExistsInProjectDirectoryOrInOrg(
           dts.externalDataSource
         );
         if (exist) {
@@ -390,11 +445,14 @@ export default class ProfileReconcile extends ProfileActions {
       );
       profileObj.externalDataSourceAccesses = validArray;
     }
-    return profileObj;
   }
 
-  private async reconcileFlow(profileObj: Profile): Promise<Profile> {
-    let utils = FlowRetriever.getInstance(this.org);
+  private async reconcileFlow(profileObj: Profile): Promise<void> {
+    let flowRetreiver = new MetadataRetriever(
+      this.org.getConnection(),
+      METADATA_INFO.Flow.xmlName,
+      METADATA_INFO
+    );
 
     if (profileObj.flowAccesses !== undefined) {
       if (!Array.isArray(profileObj.flowAccesses)) {
@@ -403,7 +461,9 @@ export default class ProfileReconcile extends ProfileActions {
       let validArray = [];
       for (let i = 0; i < profileObj.flowAccesses.length; i++) {
         let flow = profileObj.flowAccesses[i];
-        let exist = await utils.flowExists(flow.flow);
+        let exist = await flowRetreiver.isComponentExistsInProjectDirectoryOrInOrg(
+          flow.flow
+        );
         if (exist) {
           validArray.push(flow);
         }
@@ -414,12 +474,20 @@ export default class ProfileReconcile extends ProfileActions {
       );
       profileObj.flowAccesses = validArray;
     }
-    return profileObj;
   }
 
-  private async reconcileLoginFlow(profileObj: Profile): Promise<Profile> {
-    let flowutils = FlowRetriever.getInstance(this.org);
-    let vfutils = ApexPageRetriever.getInstance(this.org);
+  private async reconcileLoginFlow(profileObj: Profile): Promise<void> {
+    let apexPageRetriver = new MetadataRetriever(
+      this.org.getConnection(),
+      METADATA_INFO.ApexPage.xmlName,
+      METADATA_INFO
+    );
+
+    let flowRetreiver = new MetadataRetriever(
+      this.org.getConnection(),
+      METADATA_INFO.Flow.xmlName,
+      METADATA_INFO
+    );
 
     if (profileObj.loginFlows !== undefined) {
       if (!Array.isArray(profileObj.loginFlows)) {
@@ -429,12 +497,16 @@ export default class ProfileReconcile extends ProfileActions {
       for (let i = 0; i < profileObj.loginFlows.length; i++) {
         let loginFlow = profileObj.loginFlows[i];
         if (loginFlow.flow !== undefined) {
-          let exist = await flowutils.flowExists(loginFlow.flow);
+          let exist = await flowRetreiver.isComponentExistsInProjectDirectoryOrInOrg(
+            loginFlow.flow
+          );
           if (exist) {
             validArray.push(loginFlow);
           }
         } else if (loginFlow.vfFlowPage !== undefined) {
-          let exist = await vfutils.pageExists(loginFlow.vfFlowPage);
+          let exist = await apexPageRetriver.isComponentExistsInProjectDirectoryOrInOrg(
+            loginFlow.vfFlowPage
+          );
           if (exist) {
             validArray.push(loginFlow);
           }
@@ -446,13 +518,14 @@ export default class ProfileReconcile extends ProfileActions {
       );
       profileObj.loginFlows = validArray;
     }
-    return profileObj;
   }
 
-  private async reconcileCustomPermission(
-    profileObj: Profile
-  ): Promise<Profile> {
-    let utils = CustomPermissionRetriever.getInstance(this.org);
+  private async reconcileCustomPermission(profileObj: Profile): Promise<void> {
+    let customPermissionsRetriever = new MetadataRetriever(
+      this.org.getConnection(),
+      METADATA_INFO.CustomPermission.xmlName,
+      METADATA_INFO
+    );
 
     if (profileObj.customPermissions !== undefined) {
       if (!Array.isArray(profileObj.customPermissions)) {
@@ -461,7 +534,9 @@ export default class ProfileReconcile extends ProfileActions {
       let validArray = [];
       for (let i = 0; i < profileObj.customPermissions.length; i++) {
         let customPermission = profileObj.customPermissions[i];
-        let exist = await utils.customPermissionExists(customPermission.name);
+        let exist = await customPermissionsRetriever.isComponentExistsInProjectDirectoryOrInOrg(
+          customPermission.name
+        );
         if (exist) {
           validArray.push(customPermission);
         }
@@ -472,11 +547,15 @@ export default class ProfileReconcile extends ProfileActions {
       );
       profileObj.customPermissions = validArray;
     }
-    return profileObj;
   }
 
-  private async reconcilePages(profileObj: Profile): Promise<Profile> {
-    let utils = ApexPageRetriever.getInstance(this.org);
+  private async reconcilePages(profileObj: Profile): Promise<void> {
+    let apexPageRetriver = new MetadataRetriever(
+      this.org.getConnection(),
+      METADATA_INFO.ApexPage.xmlName,
+      METADATA_INFO
+    );
+
     if (profileObj.pageAccesses !== undefined) {
       if (!Array.isArray(profileObj.pageAccesses)) {
         profileObj.pageAccesses = [profileObj.pageAccesses];
@@ -484,7 +563,9 @@ export default class ProfileReconcile extends ProfileActions {
       let validArray = [];
       for (let i = 0; i < profileObj.pageAccesses.length; i++) {
         let cmpObj = profileObj.pageAccesses[i];
-        let exist = await utils.pageExists(cmpObj.apexPage);
+        let exist = await apexPageRetriver.isComponentExistsInProjectDirectoryOrInOrg(
+          cmpObj.apexPage
+        );
         if (exist) {
           validArray.push(cmpObj);
         }
@@ -495,11 +576,14 @@ export default class ProfileReconcile extends ProfileActions {
       );
       profileObj.pageAccesses = validArray;
     }
-    return profileObj;
   }
 
-  private async reconcileRecordTypes(profileObj: Profile): Promise<Profile> {
-    let utils = RecordTypeRetriever.getInstance(this.org);
+  private async reconcileRecordTypes(profileObj: Profile): Promise<void> {
+    let recordTypeRetriever = new MetadataRetriever(
+      this.org.getConnection(),
+      METADATA_INFO.RecordType.xmlName,
+      METADATA_INFO
+    );
 
     if (profileObj.recordTypeVisibilities !== undefined) {
       if (!Array.isArray(profileObj.recordTypeVisibilities)) {
@@ -508,7 +592,9 @@ export default class ProfileReconcile extends ProfileActions {
       let validArray = [];
       for (let i = 0; i < profileObj.recordTypeVisibilities.length; i++) {
         let cmpObj = profileObj.recordTypeVisibilities[i];
-        let exist = await utils.recordTypeExists(cmpObj.recordType);
+        let exist = await recordTypeRetriever.isComponentExistsInProjectDirectoryOrInOrg(
+          cmpObj.recordType
+        );
         if (exist) {
           validArray.push(cmpObj);
         }
@@ -519,11 +605,14 @@ export default class ProfileReconcile extends ProfileActions {
       );
       profileObj.recordTypeVisibilities = validArray;
     }
-    return profileObj;
   }
 
-  private async reconcileTabs(profileObj: Profile): Promise<Profile> {
-    let utils = TabDefinitionRetriever.getInstance(this.org);
+  private async reconcileTabs(profileObj: Profile): Promise<void> {
+    let tabRetriever = new MetadataRetriever(
+      this.org.getConnection(),
+      METADATA_INFO.CustomTab.xmlName,
+      METADATA_INFO
+    );
 
     if (profileObj.tabVisibilities !== undefined) {
       if (!Array.isArray(profileObj.tabVisibilities)) {
@@ -532,7 +621,9 @@ export default class ProfileReconcile extends ProfileActions {
       let validArray = [];
       for (let i = 0; i < profileObj.tabVisibilities.length; i++) {
         let cmpObj = profileObj.tabVisibilities[i];
-        let exist = await utils.tabExists(cmpObj.tab);
+        let exist = await tabRetriever.isComponentExistsInProjectDirectoryOrInOrg(
+          cmpObj.tab
+        );
         if (exist) {
           validArray.push(cmpObj);
         }
@@ -543,38 +634,83 @@ export default class ProfileReconcile extends ProfileActions {
       );
       profileObj.tabVisibilities = validArray;
     }
-    return profileObj;
   }
 
-  private async removePermissions(profileObj: Profile): Promise<Profile> {
+  private async fetchPermissions() {
+    let permissionRetriever = new MetadataRetriever(
+      this.conn,
+      METADATA_INFO.PermissionSet.xmlName,
+      METADATA_INFO
+    );
+    let permissionSets = await permissionRetriever.getComponents();
+    let supportedPermissions = permissionSets.map((elem) => {
+      return elem.fullName;
+    });
+    return supportedPermissions;
+  }
+
+  private async reconcileUserPermissions(profileObj: Profile) {
+    //Delete all user Permissions if the profile is standard one
+    let isCustom = profileObj.custom;
+    if (!isCustom) {
+      delete profileObj.userPermissions;
+      return;
+    }
+
+    //Remove unsupported userPermission
+    this.removeUnsupportedUserPermissions(profileObj);
+
+    let userPermissionBuilder: UserPermissionBuilder = new UserPermissionBuilder();
+    //IS sourceonly, use ignorePermission set in sfdxProject.json file
+    if (MetadataFiles.sourceOnly) {
+      await this.removePermissionsBasedOnProjectConfig(profileObj);
+    } else {
+      await this.removeUserPermissionNotAvailableInOrg(profileObj);
+    }
+
+    if (MetadataFiles.sourceOnly) {
+      await userPermissionBuilder.handlePermissionDependency(profileObj, []);
+    } else {
+      let supportedPermissions = await this.fetchPermissions();
+      await userPermissionBuilder.handlePermissionDependency(
+        profileObj,
+        supportedPermissions
+      );
+    }
+  }
+
+  private async reconcileProfile(profileObj: Profile): Promise<void> {
     SFPowerkit.log("Reconciling App", LoggerLevel.DEBUG);
-    profileObj = await this.reconcileApp(profileObj);
+    await this.reconcileApp(profileObj);
     SFPowerkit.log("Reconciling Classes", LoggerLevel.DEBUG);
-    profileObj = await this.reconcileClasses(profileObj);
+    await this.reconcileClasses(profileObj);
     SFPowerkit.log("Reconciling Fields", LoggerLevel.DEBUG);
-    profileObj = await this.reconcileFields(profileObj);
+    await this.reconcileFields(profileObj);
     SFPowerkit.log("Reconciling Objects", LoggerLevel.DEBUG);
-    profileObj = await this.reconcileObjects(profileObj);
+    await this.reconcileObjects(profileObj);
     SFPowerkit.log("Reconciling Pages", LoggerLevel.DEBUG);
-    profileObj = await this.reconcilePages(profileObj);
+    await this.reconcilePages(profileObj);
     SFPowerkit.log("Reconciling Layouts", LoggerLevel.DEBUG);
-    profileObj = await this.reconcileLayouts(profileObj);
+    await this.reconcileLayouts(profileObj);
     SFPowerkit.log("Reconciling Record Types", LoggerLevel.DEBUG);
-    profileObj = await this.reconcileRecordTypes(profileObj);
+    await this.reconcileRecordTypes(profileObj);
     SFPowerkit.log("Reconciling  Tabs", LoggerLevel.DEBUG);
-    profileObj = await this.reconcileTabs(profileObj);
+    await this.reconcileTabs(profileObj);
     SFPowerkit.log("Reconciling  ExternalDataSources", LoggerLevel.DEBUG);
-    profileObj = await this.reconcileExternalDataSource(profileObj);
+    await this.reconcileExternalDataSource(profileObj);
     SFPowerkit.log("Reconciling  CustomPermissions", LoggerLevel.DEBUG);
-    profileObj = await this.reconcileCustomPermission(profileObj);
+    await this.reconcileCustomPermission(profileObj);
     SFPowerkit.log("Reconciling  CustomMetadata", LoggerLevel.DEBUG);
-    profileObj = await this.reconcileCustomMetadata(profileObj);
+    await this.reconcileCustomMetadata(profileObj);
     SFPowerkit.log("Reconciling  CustomSettings", LoggerLevel.DEBUG);
-    profileObj = await this.reconcileCustomSettins(profileObj);
+    await this.reconcileCustomSettings(profileObj);
     SFPowerkit.log("Reconciling  Flow", LoggerLevel.DEBUG);
-    profileObj = await this.reconcileFlow(profileObj);
+    await this.reconcileFlow(profileObj);
     SFPowerkit.log("Reconciling  Login Flows", LoggerLevel.DEBUG);
-    profileObj = await this.reconcileLoginFlow(profileObj);
-    return profileObj;
+    await this.reconcileLoginFlow(profileObj);
+    SFPowerkit.log("Reconciling  User Licenses", LoggerLevel.DEBUG);
+    await this.cleanupUserLicenses(profileObj);
+    SFPowerkit.log("Reconciling  User Permissions", LoggerLevel.DEBUG);
+    await this.reconcileUserPermissions(profileObj);
   }
 }

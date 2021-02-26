@@ -1,5 +1,5 @@
+import { Connection } from "@salesforce/core/lib/connection";
 import _ = require("lodash");
-import { Connection } from "@salesforce/core";
 import queryApi from "../../utils/queryExecutor";
 const axios = require("axios");
 // tslint:disable-next-line:ordered-imports

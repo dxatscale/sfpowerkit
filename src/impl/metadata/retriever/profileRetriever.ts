@@ -1,18 +1,12 @@
 import Profile, {
   ProfileObjectPermissions,
-  ProfileUserPermission
+  ProfileUserPermission,
 } from "../schema";
-import MetadataFiles from "../metadataFiles";
-import { Connection, Org } from "@salesforce/core";
+import { Connection } from "jsforce";
 import { MetadataInfo } from "jsforce";
-import UserPermissionBuilder from "../builder/userPermissionBuilder";
-
-import * as fs from "fs-extra";
-import * as xml2js from "xml2js";
-import { ProfileTooling } from "../schema";
-import BaseMetadataRetriever from "./baseMetadataRetriever";
-import EntityDefinitionRetriever from "./entityDefinitionRetriever";
 import * as _ from "lodash";
+import MetadataRetriever from "./metadataRetriever";
+import { METADATA_INFO } from "../metadataInfo";
 
 const unsuportedObjects = ["PersonAccount"];
 /**
@@ -23,14 +17,11 @@ const unsuportedObjects = ["PersonAccount"];
 const userLicenceMap = [
   {
     name: "Guest User License",
-    unsupportedPermissions: ["PasswordNeverExpires"]
-  }
+    unsupportedPermissions: ["PasswordNeverExpires"],
+  },
 ];
 
-const QUERY = "SELECT Id, Name, UserType, Description From Profile";
-export default class ProfileRetriever extends BaseMetadataRetriever<
-  ProfileTooling
-> {
+export default class ProfileRetriever {
   static supportedMetadataTypes = [
     "ApexClass",
     "CustomApplication",
@@ -40,57 +31,35 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
     "ApexPage",
     "CustomTab",
     "RecordType",
-    "SystemPermissions"
+    "SystemPermissions",
   ];
 
-  supportedPermissions: string[] = [];
-  conn: Connection;
+  public constructor(private conn: Connection, private debugFlag?: boolean) {}
 
-  metadataFiles: MetadataFiles;
-
-  public constructor(public org: Org, private debugFlag?: boolean) {
-    super(org);
-    super.setQuery(QUERY);
-    if (this.org !== undefined) {
-      this.conn = this.org.getConnection();
-    }
-  }
-
-  public async loadSupportedPermissions() {
-    if (this.supportedPermissions.length === 0) {
-      this.supportedPermissions = await UserPermissionBuilder.getSupportedPermissions(
-        this.conn
-      );
-    }
-  }
-
-  public async loadProfiles(
-    profileNames: string[],
-    conn
-  ): Promise<MetadataInfo[]> {
-    var toReturn: Promise<MetadataInfo[]> = null;
-    var metadata = await conn.metadata.readSync("Profile", profileNames);
-
+  public async loadProfiles(profileNames: string[]): Promise<MetadataInfo[]> {
+    let metadata = (await this.conn.metadata.readSync(
+      "Profile",
+      profileNames
+    )) as any;
     if (Array.isArray(metadata)) {
       for (let i = 0; i < metadata.length; i++) {
         await this.handlePermissions(metadata[i]);
         metadata[i] = await this.completeObjects(metadata[i], false);
       }
-      toReturn = Promise.resolve(metadata);
+      return metadata;
     } else if (metadata !== null) {
       await this.handlePermissions(metadata);
       metadata = await this.completeObjects(metadata, false);
-      toReturn = Promise.resolve([metadata]);
+      return [metadata];
     } else {
-      toReturn = Promise.resolve([]);
+      return [];
     }
-
-    return toReturn;
   }
 
   public async handlePermissions(profileObj: Profile): Promise<Profile> {
-    this.handleViewAllDataPermission(profileObj);
-    this.handleInstallPackagingPermission(profileObj);
+    await this.handleViewAllDataPermission(profileObj);
+    await this.handleInstallPackagingPermission(profileObj);
+
     this.handleQueryAllFilesPermission(profileObj);
     //Check if the permission QueryAllFiles is true and give read access to objects
     profileObj = await this.completeUserPermissions(profileObj);
@@ -99,8 +68,7 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
   }
 
   private async completeUserPermissions(profileObj: Profile): Promise<Profile> {
-    await this.loadSupportedPermissions();
-
+    let supportedPermissions = await this.fetchPermissions();
     // remove unsupported userLicence
     var unsupportedLicencePermissions = this.getUnsupportedLicencePermissions(
       profileObj.userLicense
@@ -110,7 +78,7 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
       profileObj.userPermissions.length > 0
     ) {
       profileObj.userPermissions = profileObj.userPermissions.filter(
-        permission => {
+        (permission) => {
           var supported = !unsupportedLicencePermissions.includes(
             permission.name
           );
@@ -119,23 +87,21 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
       );
     }
 
-    let notRetrievedPermissions = this.supportedPermissions.filter(
-      permission => {
-        let found = null;
-        if (
-          profileObj.userPermissions != null &&
-          profileObj.userPermissions.length > 0
-        ) {
-          found = profileObj.userPermissions.find(element => {
-            return element.name === permission;
-          });
-        }
-        return found === null || found === undefined;
+    let notRetrievedPermissions = supportedPermissions.filter((permission) => {
+      let found = null;
+      if (
+        profileObj.userPermissions != null &&
+        profileObj.userPermissions.length > 0
+      ) {
+        found = profileObj.userPermissions.find((element) => {
+          return element.name === permission;
+        });
       }
-    );
+      return found === null || found === undefined;
+    });
 
     var isCustom = "" + profileObj.custom;
-    //SfPowerKit.ux.log("Is Custom: " + isCustom);
+
     if (isCustom == "false") {
       //Remove System permission for standard profile as Salesforce does not support edition on those profile
       delete profileObj.userPermissions;
@@ -143,7 +109,7 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
       for (var i = 0; i < notRetrievedPermissions.length; i++) {
         var newPermission: ProfileUserPermission = {
           enabled: false,
-          name: notRetrievedPermissions[i]
+          name: notRetrievedPermissions[i],
         };
         if (profileObj.userPermissions === undefined) {
           profileObj.userPermissions = new Array();
@@ -199,11 +165,15 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
       objPerm = [objPerm];
     }
 
-    let utils = EntityDefinitionRetriever.getInstance(this.org);
+    let objectPermissionsRetriever = new MetadataRetriever(
+      this.conn,
+      "ObjectPermissions",
+      METADATA_INFO
+    );
+    let objectPermissions = await objectPermissionsRetriever.getComponents();
 
-    let objects = await utils.getObjectForPermission();
-
-    objects.forEach(name => {
+    objectPermissions.forEach((obj) => {
+      let name = obj.fullName;
       if (unsuportedObjects.includes(name)) {
         return;
       }
@@ -219,9 +189,7 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
       }
 
       if (objectIsPresent === false) {
-        //SfPowerKit.ux.log("\n Inserting this object");
         let objToInsert = ProfileRetriever.buildObjPermArray(name, access);
-        //SfPowerKit.ux.log(objToInsert);
         if (profileObj.objectPermissions === undefined) {
           profileObj.objectPermissions = new Array();
         } else if (!Array.isArray(profileObj.objectPermissions)) {
@@ -256,32 +224,18 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
       allowRead: access,
       modifyAllRecords: access,
       object: objectName,
-      viewAllRecords: access
+      viewAllRecords: access,
     };
     return newObjPerm;
   }
+
   private static filterObjects(
     profileObj: Profile
   ): ProfileObjectPermissions[] {
     return profileObj.objectPermissions;
   }
 
-  private togglePermission(profileObj: Profile, permissionName: string) {
-    if (
-      profileObj.userPermissions !== null &&
-      profileObj.userPermissions.length > 0
-    ) {
-      for (var i = 0; i < profileObj.userPermissions.length; i++) {
-        let element = profileObj.userPermissions[i];
-        if (element.name === permissionName) {
-          element.enabled = !element.enabled;
-          break;
-        }
-      }
-    }
-  }
-
-  private enablePermission(profileObj: Profile, permissionName: string) {
+  private async enablePermission(profileObj: Profile, permissionName: string) {
     let found = false;
     if (
       profileObj.userPermissions !== null &&
@@ -304,17 +258,19 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
       ) {
         profileObj.userPermissions = [];
       }
-      if (this.supportedPermissions.includes(permissionName)) {
+
+      let supportedPermissions = await this.fetchPermissions();
+      if (supportedPermissions.includes(permissionName)) {
         let permission = {
           name: permissionName,
-          enabled: true
+          enabled: true,
         } as ProfileUserPermission;
         profileObj.userPermissions.push(permission);
       }
     }
   }
 
-  private handleQueryAllFilesPermission(profileObj: Profile): any {
+  private handleQueryAllFilesPermission(profileObj: Profile) {
     let isQueryAllFilesPermission = this.hasPermission(
       profileObj,
       "QueryAllFiles"
@@ -331,7 +287,9 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
     }
   }
 
-  private handleViewAllDataPermission(profileObj: Profile): any {
+  private async handleViewAllDataPermission(
+    profileObj: Profile
+  ): Promise<void> {
     let isViewAllData = this.hasPermission(profileObj, "ViewAllData");
     if (
       isViewAllData &&
@@ -344,15 +302,17 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
       }
     }
     if (isViewAllData) {
-      this.enablePermission(profileObj, "ViewPlatformEvents");
-      this.enablePermission(profileObj, "ViewDataLeakageEvents");
+      await this.enablePermission(profileObj, "ViewPlatformEvents");
+      await this.enablePermission(profileObj, "ViewDataLeakageEvents");
     }
   }
 
-  private handleInstallPackagingPermission(profileObj: Profile): any {
+  private async handleInstallPackagingPermission(
+    profileObj: Profile
+  ): Promise<void> {
     let hasPermission = this.hasPermission(profileObj, "InstallPackaging");
     if (hasPermission) {
-      this.enablePermission(profileObj, "ViewDataLeakageEvents");
+      await this.enablePermission(profileObj, "ViewDataLeakageEvents");
     }
   }
 
@@ -370,23 +330,16 @@ export default class ProfileRetriever extends BaseMetadataRetriever<
     return [];
   }
 
-  /**
-   * Return All profile object from the connected Org
-   */
-  public async getProfiles(): Promise<ProfileTooling[]> {
-    super.setQuery(QUERY);
-    return await super.getObjects();
-  }
-  /**
-   * Get a profile by Profile Name
-   * @param name The name of the profile to return
-   */
-  public async getProfileByName(name: string): Promise<ProfileTooling> {
-    super.setQuery(QUERY + " WHERE Name='" + name + "'");
-    let profiles = await super.getObjects();
-    if (profiles.length > 0) {
-      return profiles[0];
-    }
-    return undefined;
+  private async fetchPermissions() {
+    let permissionRetriever = new MetadataRetriever(
+      this.conn,
+      METADATA_INFO.PermissionSet.xmlName,
+      METADATA_INFO
+    );
+    let permissionSets = await permissionRetriever.getComponents();
+    let supportedPermissions = permissionSets.map((elem) => {
+      return elem.fullName;
+    });
+    return supportedPermissions;
   }
 }

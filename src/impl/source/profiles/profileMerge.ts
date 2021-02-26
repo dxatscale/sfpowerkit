@@ -851,10 +851,7 @@ export default class ProfileMerge extends ProfileActions {
         LoggerLevel.INFO
       );
       let profileList: string[] = [];
-      var metadataList = await this.profileRetriever.loadProfiles(
-        temparray,
-        this.conn
-      );
+      var metadataList = await this.profileRetriever.loadProfiles(temparray);
 
       for (var count = 0; count < metadataList.length; count++) {
         //handle profile merge here
