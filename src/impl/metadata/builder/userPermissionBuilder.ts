@@ -1,7 +1,5 @@
-import { DescribeSObjectResult } from "jsforce/describe-result";
 import { ProfileObjectPermissions, ProfileUserPermission } from "../schema";
 import * as _ from "lodash";
-import { Connection } from "jsforce";
 
 const userPermissionDependencies = [
   {
@@ -92,8 +90,9 @@ const userPermissionDependencies = [
 ];
 
 export default class UserPermissionBuilder {
-  static supportedPermissions: string[];
-  public static addPermissionDependencies(profileOrPermissionSet: any) {
+  constructor() {}
+
+  public addPermissionDependencies(profileOrPermissionSet: any) {
     let objectAccessRequired = [];
     for (let i = 0; i < userPermissionDependencies.length; i++) {
       let dependedPermission = userPermissionDependencies[i];
@@ -116,23 +115,20 @@ export default class UserPermissionBuilder {
       }
     }
     if (objectAccessRequired.length > 0) {
-      UserPermissionBuilder.addRequiredObjectAccess(
+      this.addRequiredObjectAccess(
         profileOrPermissionSet,
-        UserPermissionBuilder.mergeObjectAccess(objectAccessRequired)
+        this.mergeObjectAccess(objectAccessRequired)
       );
     }
   }
 
-  private static mergeObjectAccess(objectAccessRequired: any[]) {
+  private mergeObjectAccess(objectAccessRequired: any[]) {
     var objectMapping = {};
     for (var i = 0; i < objectAccessRequired.length; i++) {
       var objectAccess = objectAccessRequired[i];
       if (objectMapping[objectAccess.object] != undefined) {
         //console.log('Adding access');
-        UserPermissionBuilder.addAccess(
-          objectMapping[objectAccess.object],
-          objectAccess
-        );
+        this.addAccess(objectMapping[objectAccess.object], objectAccess);
       } else {
         //console.log('object access does not exists ');
         objectMapping[objectAccess.object] = objectAccess;
@@ -140,7 +136,7 @@ export default class UserPermissionBuilder {
     }
     return Object.values(objectMapping);
   }
-  private static addAccess(objectAccess1, ObjectAccess2) {
+  private addAccess(objectAccess1, ObjectAccess2) {
     objectAccess1.allowCreate =
       objectAccess1.allowCreate.toString() === "true"
         ? true
@@ -166,7 +162,7 @@ export default class UserPermissionBuilder {
         ? true
         : ObjectAccess2.viewAllRecords;
   }
-  private static addRequiredObjectAccess(
+  private addRequiredObjectAccess(
     profileOrPermissionSet: any,
     objectAccessRequired: any
   ) {
@@ -187,7 +183,7 @@ export default class UserPermissionBuilder {
           let profileObjectAccess = profileOrPermissionSet.objectPermissions[i];
           exist = profileObjectAccess.object == objectAccess.object;
           if (exist) {
-            UserPermissionBuilder.addAccess(profileObjectAccess, objectAccess);
+            this.addAccess(profileObjectAccess, objectAccess);
             break;
           }
         }
@@ -199,50 +195,7 @@ export default class UserPermissionBuilder {
     }
   }
 
-  public static async describeSObject(
-    conn: Connection,
-    sObjectName: string
-  ): Promise<DescribeSObjectResult> {
-    try {
-      let result = await conn.sobject(sObjectName).describe();
-      return result;
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  public static async getSupportedPermissions(
-    conn: Connection
-  ): Promise<string[]> {
-    if (_.isNil(UserPermissionBuilder.supportedPermissions)) {
-      let describeResult = await UserPermissionBuilder.describeSObject(
-        conn,
-        "PermissionSet"
-      );
-      UserPermissionBuilder.supportedPermissions = [];
-      describeResult.fields.forEach((field) => {
-        let fieldName = field["name"] as string;
-        if (fieldName.startsWith("Permissions")) {
-          UserPermissionBuilder.supportedPermissions.push(
-            fieldName.replace("Permissions", "").trim()
-          );
-        }
-      });
-    }
-    return UserPermissionBuilder.supportedPermissions;
-  }
-
-  public static async isSupportedPermission(
-    permission: string
-  ): Promise<boolean> {
-    let found = false;
-    if (!_.isNil(UserPermissionBuilder.supportedPermissions)) {
-      found = UserPermissionBuilder.supportedPermissions.includes(permission);
-    }
-    return found;
-  }
-
-  public static handlePermissionDependency(
+  public handlePermissionDependency(
     profileOrPermissionSet: {
       objectPermissions?: ProfileObjectPermissions[];
       userPermissions?: ProfileUserPermission[];
@@ -250,7 +203,7 @@ export default class UserPermissionBuilder {
     supportedPermissions: string[]
   ): any {
     userPermissionDependencies.forEach((userPermission) => {
-      let hasPermission = UserPermissionBuilder.hasPermission(
+      let hasPermission = this.hasPermission(
         profileOrPermissionSet,
         userPermission.name
       );
@@ -276,7 +229,7 @@ export default class UserPermissionBuilder {
         userPermission.permissionsRequired.length > 0
       ) {
         for (let i = 0; i < userPermission.permissionsRequired.length; i++) {
-          UserPermissionBuilder.enablePermission(
+          this.enablePermission(
             profileOrPermissionSet,
             userPermission.permissionsRequired[i],
             supportedPermissions
@@ -286,7 +239,7 @@ export default class UserPermissionBuilder {
     });
   }
 
-  static enablePermission(
+  private enablePermission(
     profileObj: {
       objectPermissions?: ProfileObjectPermissions[];
       userPermissions?: ProfileUserPermission[];
@@ -313,7 +266,10 @@ export default class UserPermissionBuilder {
       if (_.isNil(profileObj.userPermissions)) {
         profileObj.userPermissions = [];
       }
-      if (supportedPermission.includes(permissionName)) {
+      if (
+        !_.isNil(supportedPermission) &&
+        supportedPermission.includes(permissionName)
+      ) {
         let permission = {
           name: permissionName,
           enabled: true,
@@ -323,7 +279,7 @@ export default class UserPermissionBuilder {
     }
   }
 
-  static hasPermission(
+  private hasPermission(
     profileOrPermissionSet: {
       objectPermissions?: ProfileObjectPermissions[];
       userPermissions?: ProfileUserPermission[];

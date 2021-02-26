@@ -9,7 +9,7 @@ import ProfileRetriever from "../../metadata/retriever/profileRetriever";
 
 export default abstract class ProfileActions {
   protected conn: Connection;
-  protected debugFlag: boolean;
+  private debugFlag: boolean;
   protected profileRetriever: ProfileRetriever;
 
   public constructor(public org: Org, debugFlag?: boolean) {

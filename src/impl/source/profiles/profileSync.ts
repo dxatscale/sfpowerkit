@@ -8,6 +8,7 @@ import * as _ from "lodash";
 import ProfileActions from "./profileActions";
 import ProfileWriter from "../../../impl/metadata/writer/profileWriter";
 import { ProgressBar } from "../../../ui/progressBar";
+import MetadataRetriever from "../../metadata/retriever/metadataRetriever";
 
 const unsupportedprofiles = [];
 
@@ -47,7 +48,7 @@ export default class ProfileSync extends ProfileActions {
 
     //get local profiles when profile path is provided
     if (!fetchNewProfiles && profiles.length < 1) {
-      METADATA_INFO.Profile.files.forEach(element => {
+      METADATA_INFO.Profile.files.forEach((element) => {
         let oneName = path.basename(
           element,
           METADATA_INFO.Profile.sourceExtension
@@ -108,15 +109,13 @@ export default class ProfileSync extends ProfileActions {
       for (i = 0, j = profileNames.length; i < j; i += chunk) {
         temparray = profileNames.slice(i, i + chunk);
 
-        var metadataList = await this.profileRetriever.loadProfiles(
-          temparray,
-          this.conn
-        );
+        var metadataList = await this.profileRetriever.loadProfiles(temparray);
 
         let profileWriter = new ProfileWriter();
         for (var count = 0; count < metadataList.length; count++) {
           var profileObj = metadataList[count] as Profile;
-
+          SFPowerkit.log("Reconciling  Tabs", LoggerLevel.DEBUG);
+          await this.reconcileTabs(profileObj);
           profileWriter.writeProfile(
             profileObj,
             profilePathAssoc[profileObj.fullName]
@@ -131,12 +130,41 @@ export default class ProfileSync extends ProfileActions {
     }
 
     if (profileStatus.deleted && isdelete) {
-      profileStatus.deleted.forEach(file => {
+      profileStatus.deleted.forEach((file) => {
         if (fs.existsSync(file)) {
           fs.unlinkSync(file);
         }
       });
     }
     return Promise.resolve(profileStatus);
+  }
+
+  private async reconcileTabs(profileObj: Profile): Promise<void> {
+    let tabRetriever = new MetadataRetriever(
+      this.org.getConnection(),
+      METADATA_INFO.CustomTab.xmlName,
+      METADATA_INFO
+    );
+
+    if (profileObj.tabVisibilities !== undefined) {
+      if (!Array.isArray(profileObj.tabVisibilities)) {
+        profileObj.tabVisibilities = [profileObj.tabVisibilities];
+      }
+      let validArray = [];
+      for (let i = 0; i < profileObj.tabVisibilities.length; i++) {
+        let cmpObj = profileObj.tabVisibilities[i];
+        let exist = await tabRetriever.isComponentExistsInProjectDirectoryOrInOrg(
+          cmpObj.tab
+        );
+        if (exist) {
+          validArray.push(cmpObj);
+        }
+      }
+      SFPowerkit.log(
+        `Tab Visibilities reduced from ${profileObj.tabVisibilities.length}  to  ${validArray.length}`,
+        LoggerLevel.DEBUG
+      );
+      profileObj.tabVisibilities = validArray;
+    }
   }
 }

@@ -35,6 +35,8 @@ export default class MetadataRetriever {
         items = await this.getObjectPermissions();
       } else if (this._componentType === METADATA_INFO.CustomField.xmlName) {
         items = await this.getFieldsByObjectName(parent);
+      } else if (this._componentType === METADATA_INFO.PermissionSet.xmlName) {
+        items = await this.getPermissionSets();
       } else if (this._componentType === METADATA_INFO.Layout.xmlName) {
         items = await this.getLayouts();
       } else if (this._componentType === METADATA_INFO.CustomTab.xmlName) {
@@ -136,6 +138,20 @@ export default class MetadataRetriever {
     });
 
     return entities;
+  }
+
+  public async getPermissionSets(): Promise<any[]> {
+    let describeResult = await this._conn.sobject("PermissionSet").describe();
+    let supportedPermissions = [];
+    describeResult.fields.forEach((field) => {
+      let fieldName = field["name"] as string;
+      if (fieldName.startsWith("Permissions")) {
+        supportedPermissions.push({
+          fullName: fieldName.replace("Permissions", "").trim(),
+        });
+      }
+    });
+    return supportedPermissions;
   }
 
   private async getObjectPermissions(): Promise<any[]> {
