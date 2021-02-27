@@ -21,13 +21,24 @@ export default class PoolFetchImpl {
   }
 
   public async execute(): Promise<ScratchOrg> {
-    await ScratchOrgUtils.checkForNewVersionCompatible(this.hubOrg);
+    let isNewVersionCompatible = await ScratchOrgUtils.checkForNewVersionCompatible(
+      this.hubOrg
+    );
     const results = (await ScratchOrgUtils.getScratchOrgsByTag(
       this.tag,
       this.hubOrg,
       this.mypool,
       true
     )) as any;
+
+    let availableSo = [];
+    if (results.records.length > 0) {
+      availableSo = !isNewVersionCompatible
+        ? results.records
+        : results.records.filter(
+            (soInfo) => soInfo.Allocation_status__c === "Available"
+          );
+    }
 
     let emaiId;
 
@@ -45,13 +56,13 @@ export default class PoolFetchImpl {
 
     let soDetail: ScratchOrg;
 
-    if (results.records.length > 0) {
+    if (availableSo.length > 0) {
       SFPowerkit.log(
-        `${this.tag} pool has ${results.records.length} Scratch orgs available`,
+        `${this.tag} pool has ${availableSo.length} Scratch orgs available`,
         LoggerLevel.TRACE
       );
 
-      for (let element of results.records) {
+      for (let element of availableSo) {
         let allocateSO = await ScratchOrgUtils.setScratchOrgInfo(
           { Id: element.Id, Allocation_status__c: "Allocate" },
           this.hubOrg
@@ -80,7 +91,7 @@ export default class PoolFetchImpl {
       }
     }
 
-    if (results.records.length == 0 || !soDetail) {
+    if (availableSo.length == 0 || !soDetail) {
       throw new SfdxError(
         `No scratch org available at the moment for ${this.tag}, try again in sometime.`
       );

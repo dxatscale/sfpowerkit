@@ -85,7 +85,7 @@ $ sfdx plugins:link
     - [`sfpowerkit:auth:login`](#sfpowerkitauthlogin)
   - [Dependency Functionalities](#dependency-functionalities)
     - [`sfpowerkit:dependency:tree:package [BETA]`](#sfpowerkitdependencytreepackage-beta)
-  - [ScratchOrg Pooling Related Functionalities [BETA]](#scratchorg-pooling-related-functionalities-beta)
+  - [ScratchOrg Pooling Related Functionalities](#scratchorg-pooling-related-functionalities)
     - [`sfpowerkit:pool:create`](#sfpowerkitpoolcreate)
     - [`sfpowerkit:pool:fetch`](#sfpowerkitpoolfetch)
     - [`sfpowerkit:pool:list`](#sfpowerkitpoollist)
@@ -1342,7 +1342,7 @@ EXAMPLES
 
 _See code: [src\commands\sfpowerkit\dependency\tree\package.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/dependency/tree/package.ts)_
 
-## ScratchOrg Pooling Related Functionalities [BETA]
+## ScratchOrg Pooling Related Functionalities
 
 Commands to create and maintain a pool of scratchorgs. Details on getting started are available [here](https://github.com/Accenture/sfpowerkit/wiki/Getting-started-with-ScratchOrg-Pooling)
 
