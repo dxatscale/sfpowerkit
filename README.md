@@ -115,7 +115,7 @@ OPTIONS
                                                                                     should be written
   -r, --ruleset=ruleset                                                             [default:
                                                                                     [sfpowerkit](https://github.com/Accenture/sfpowerkit/blob/main/resources/pmd-ruleset.xml)]
-                                                                                    The pmd ruleset that will be utilzied for analyzing the apex classes,  Checkout
+                                                                                    The comma separated pmd ruleset that will be utilzied for analyzing the apex classes,  Checkout
                                                                                     https://pmd.github.io/latest/pmd_userdocs_making_rulesets.html to create your own ruleset
   --javahome=javahome                                                               The command will try to locate the javahome path to execute PMD automatically, set this flag
                                                                                     to override it to another javahome path
