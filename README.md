@@ -111,11 +111,11 @@ OPTIONS
                                                                                     different directory in the project folder
   -f, --format=format                                                               [default: text] [default: text] The format for the pmd output, Possible values are available
                                                                                     at https://pmd.github.io/latest/pmd_userdocs_cli_reference.html#available-report-formats
-  -o, --report=report                                                               [default: pmd-output] [default: pmd-output] The comma separated pmd path to where the output of the analysis
+  -o, --report=report                                                               [default: pmd-output] [default: pmd-output] The pmd path to where the output of the analysis
                                                                                     should be written
   -r, --ruleset=ruleset                                                             [default:
                                                                                     [sfpowerkit](https://github.com/Accenture/sfpowerkit/blob/main/resources/pmd-ruleset.xml)]
-                                                                                    The pmd ruleset that will be utilzied for analyzing the apex classes,  Checkout
+                                                                                    The comma separated pmd ruleset that will be utilzied for analyzing the apex classes,  Checkout
                                                                                     https://pmd.github.io/latest/pmd_userdocs_making_rulesets.html to create your own ruleset
   --javahome=javahome                                                               The command will try to locate the javahome path to execute PMD automatically, set this flag
                                                                                     to override it to another javahome path
