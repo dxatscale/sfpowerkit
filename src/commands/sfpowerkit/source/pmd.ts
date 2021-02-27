@@ -136,24 +136,7 @@ export default class Pmd extends SfdxCommand {
       ? await SFPowerkit.getDefaultFolder()
       : this.flags.directory;
 
-    //Default Ruleset
-    let ruleset =
-      isNullOrUndefined(this.flags.ruleset) ||
-      this.flags.ruleset.toLowerCase() === "sfpowerkit"
-        ? path.join(
-            __dirname,
-            "..",
-            "..",
-            "..",
-            "..",
-            "resources",
-            "pmd-ruleset.xml"
-          )
-        : this.flags.ruleset;
-
-    if (!fs.existsSync(path.resolve(ruleset))) {
-      throw new SfdxError(`The given rulesheet cannot be found ${ruleset}`);
-    }
+    let ruleset = this.getvalidatedRuleSet(this.flags.ruleset);
 
     SFPowerkit.log(`PMD release ${this.flags.version}`, LoggerLevel.INFO);
     SFPowerkit.log(`Now analyzing ${packageDirectory}`, LoggerLevel.INFO);
@@ -221,6 +204,37 @@ export default class Pmd extends SfdxCommand {
         SFPowerkit.log(pmd_error.toString(), LoggerLevel.ERROR);
       }
     });
+  }
+  private getvalidatedRuleSet(ruleset) {
+    //Default Ruleset
+    const sfpowerkitRuleSet = path.join(
+      __dirname,
+      "..",
+      "..",
+      "..",
+      "..",
+      "resources",
+      "pmd-ruleset.xml"
+    );
+
+    if (!ruleset || ruleset.toLowerCase() === "sfpowerkit") {
+      return sfpowerkitRuleSet;
+    } else {
+      let ruleArray = [];
+      for (let rulePath of ruleset.split(",")) {
+        if (rulePath.toLowerCase() === "sfpowerkit") {
+          ruleArray.push(sfpowerkitRuleSet);
+        } else {
+          if (!fs.existsSync(path.resolve(rulePath))) {
+            throw new SfdxError(
+              `The given rulesheet ${rulePath} cannot be found`
+            );
+          }
+          ruleArray.push(rulePath);
+        }
+      }
+      return ruleArray.join(",");
+    }
   }
 
   private async findJavaHomeAsync(): Promise<string> {

@@ -111,7 +111,7 @@ OPTIONS
                                                                                     different directory in the project folder
   -f, --format=format                                                               [default: text] [default: text] The format for the pmd output, Possible values are available
                                                                                     at https://pmd.github.io/latest/pmd_userdocs_cli_reference.html#available-report-formats
-  -o, --report=report                                                               [default: pmd-output] [default: pmd-output] The path to where the output of the analysis
+  -o, --report=report                                                               [default: pmd-output] [default: pmd-output] The comma separated pmd path to where the output of the analysis
                                                                                     should be written
   -r, --ruleset=ruleset                                                             [default:
                                                                                     [sfpowerkit](https://github.com/Accenture/sfpowerkit/blob/main/resources/pmd-ruleset.xml)]
