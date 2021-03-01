@@ -206,7 +206,6 @@ export default class MetadataRetriever {
       recordTypes = await queryUtil.executeQuery(query, false);
 
       recordTypes = recordTypes.map((recordType) => {
-        console.log(recordType);
         let namespace = "";
         if (
           recordType.NamespacePrefix !== undefined &&
@@ -224,7 +223,6 @@ export default class MetadataRetriever {
             fullName: `PersonAccount.${namespace}${recordType.DeveloperName}`,
           };
         }
-        console.log(rtObj);
         return rtObj;
       });
     } catch (error) {
