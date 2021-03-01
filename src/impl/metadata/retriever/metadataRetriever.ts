@@ -41,6 +41,8 @@ export default class MetadataRetriever {
         items = await this.getLayouts();
       } else if (this._componentType === METADATA_INFO.CustomTab.xmlName) {
         items = await this.getTabs();
+      } else if (this._componentType === METADATA_INFO.RecordType.xmlName) {
+        items = await this.getRecordTypes();
       } else {
         items = await this.getComponentsFromOrgUsingListMetadata();
       }
@@ -177,12 +179,13 @@ export default class MetadataRetriever {
         `Fetching Field of Object ${objectName}`,
         LoggerLevel.TRACE
       );
-      await this._conn.describe(objectName).then((meta) => {
-        if (meta.fields && meta.fields.length > 0) {
-          fields = meta.fields.map((field) => {
-            return { fullName: `${objectName}.${field.name}` };
-          });
-        }
+
+      let query = `SELECT Id, QualifiedApiName, EntityDefinitionId, DeveloperName, NameSpacePrefix FROM FieldDefinition WHERE EntityDefinition.QualifiedApiName='${objectName}'`;
+      let queryUtil = new QueryExecutor(this._conn);
+      fields = await queryUtil.executeQuery(query, true);
+
+      fields = fields.map((field) => {
+        return { fullName: `${objectName}.${field.QualifiedApiName}` };
       });
     } catch (error) {
       SFPowerkit.log(
@@ -191,6 +194,41 @@ export default class MetadataRetriever {
       );
     }
     return fields;
+  }
+
+  private async getRecordTypes(): Promise<any[]> {
+    let recordTypes = [];
+    try {
+      SFPowerkit.log(`Fetching RecordTypes`, LoggerLevel.TRACE);
+
+      let query = `SELECT Name, DeveloperName, SobjectType, NameSpacePrefix, IsPersonType FROM RecordType`;
+      let queryUtil = new QueryExecutor(this._conn);
+      recordTypes = await queryUtil.executeQuery(query, false);
+
+      recordTypes = recordTypes.map((recordType) => {
+        let namespace = "";
+        if (
+          recordType.NamespacePrefix !== undefined &&
+          recordType.NamespacePrefix !== "" &&
+          recordType.NamespacePrefix !== null &&
+          recordType.NamespacePrefix !== "null"
+        ) {
+          namespace = recordType.NamespacePrefix + "__";
+        }
+        let rtObj = {
+          fullName: `${recordType.SobjectType}.${namespace}${recordType.DeveloperName}`,
+        };
+        if (recordType.IsPersonType) {
+          rtObj = {
+            fullName: `PersonAccount.${namespace}${recordType.DeveloperName}`,
+          };
+        }
+        return rtObj;
+      });
+    } catch (error) {
+      SFPowerkit.log(`Error fetching record types...`, LoggerLevel.TRACE);
+    }
+    return recordTypes;
   }
 
   private async getLayouts(): Promise<any[]> {
