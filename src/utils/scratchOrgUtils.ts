@@ -163,7 +163,7 @@ export default class ScratchOrgUtils {
         });
       }
     } catch (error) {
-      throw new error(`Unable to create scratch org. ${error}`);
+      throw new error("Unable to create scratch org");
     }
 
     SFPowerkit.log(JSON.stringify(result), LoggerLevel.TRACE);
@@ -193,7 +193,7 @@ export default class ScratchOrgUtils {
       throw new Error("Unable to setup password to scratch org");
     } else {
       SFPowerkit.log(
-        `Password successfully set for ${passwordData.username}`,
+        `Password successfully set for ${passwordData.username} : ${passwordData.password}`,
         LoggerLevel.INFO
       );
     }
