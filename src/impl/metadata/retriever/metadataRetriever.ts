@@ -24,6 +24,10 @@ export default class MetadataRetriever {
   }
 
   public async getComponents(parent?: string) {
+    if (!this._conn) {
+      return [];
+    }
+
     let key = parent ? this._componentType + "_" + parent : this._componentType;
     if (!SFPowerkit.getCache().get(key)) {
       let items;

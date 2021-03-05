@@ -13,14 +13,14 @@ export default abstract class ProfileActions {
   protected profileRetriever: ProfileRetriever;
 
   public constructor(public org: Org, debugFlag?: boolean) {
-    if (this.org !== undefined && this.org != null) {
+    if (this.org) {
       this.conn = this.org.getConnection();
-      this.debugFlag = debugFlag;
       this.profileRetriever = new ProfileRetriever(
         org.getConnection(),
         debugFlag
       );
     }
+    this.debugFlag = debugFlag;
   }
 
   protected async getProfileFullNamesWithLocalStatus(
