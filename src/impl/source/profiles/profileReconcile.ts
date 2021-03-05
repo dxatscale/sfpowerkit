@@ -175,7 +175,7 @@ export default class ProfileReconcile extends ProfileActions {
     if (!MetadataFiles.sourceOnly) {
       //Manage licences
       let userLicenseRetriever = new MetadataRetriever(
-        this.org.getConnection(),
+        this.conn,
         "UserLicense",
         METADATA_INFO
       );
@@ -190,7 +190,7 @@ export default class ProfileReconcile extends ProfileActions {
 
   private async reconcileApp(profileObj: Profile): Promise<void> {
     let customApplications = new MetadataRetriever(
-      this.org.getConnection(),
+      this.conn,
       METADATA_INFO.CustomApplication.xmlName,
       METADATA_INFO
     );
@@ -215,7 +215,7 @@ export default class ProfileReconcile extends ProfileActions {
 
   private async reconcileClasses(profileObj: Profile): Promise<void> {
     let apexClasses = new MetadataRetriever(
-      this.org.getConnection(),
+      this.conn,
       METADATA_INFO.ApexClass.xmlName,
       METADATA_INFO
     );
@@ -251,7 +251,7 @@ export default class ProfileReconcile extends ProfileActions {
       let validArray: ProfileFieldLevelSecurity[] = [];
       for (let i = 0; i < profileObj.fieldPermissions.length; i++) {
         let fieldRetriever = new MetadataRetriever(
-          this.org.getConnection(),
+          this.conn,
           METADATA_INFO.CustomField.xmlName,
           METADATA_INFO
         );
@@ -275,12 +275,12 @@ export default class ProfileReconcile extends ProfileActions {
 
   private async reconcileLayouts(profileObj: Profile): Promise<void> {
     let layoutRetreiver = new MetadataRetriever(
-      this.org.getConnection(),
+      this.conn,
       METADATA_INFO.Layout.xmlName,
       METADATA_INFO
     );
     let recordTypeRetriever = new MetadataRetriever(
-      this.org.getConnection(),
+      this.conn,
       METADATA_INFO.RecordType.xmlName,
       METADATA_INFO
     );
@@ -315,12 +315,12 @@ export default class ProfileReconcile extends ProfileActions {
 
   private async reconcileObjects(profileObj: Profile): Promise<void> {
     let objectPermissionRetriever = new MetadataRetriever(
-      this.org.getConnection(),
+      this.conn,
       "ObjectPermissions",
       METADATA_INFO
     );
     let objectRetriever = new MetadataRetriever(
-      this.org.getConnection(),
+      this.conn,
       METADATA_INFO.CustomObject.xmlName,
       METADATA_INFO
     );
@@ -356,7 +356,7 @@ export default class ProfileReconcile extends ProfileActions {
 
   private async reconcileCustomMetadata(profileObj: Profile): Promise<void> {
     let objectRetriever = new MetadataRetriever(
-      this.org.getConnection(),
+      this.conn,
       METADATA_INFO.CustomObject.xmlName,
       METADATA_INFO
     );
@@ -387,7 +387,7 @@ export default class ProfileReconcile extends ProfileActions {
 
   private async reconcileCustomSettings(profileObj: Profile): Promise<void> {
     let objectRetriever = new MetadataRetriever(
-      this.org.getConnection(),
+      this.conn,
       METADATA_INFO.CustomObject.xmlName,
       METADATA_INFO
     );
@@ -418,7 +418,7 @@ export default class ProfileReconcile extends ProfileActions {
     profileObj: Profile
   ): Promise<void> {
     let externalDataSourceRetriever = new MetadataRetriever(
-      this.org.getConnection(),
+      this.conn,
       METADATA_INFO.ExternalDataSource.xmlName,
       METADATA_INFO
     );
@@ -449,7 +449,7 @@ export default class ProfileReconcile extends ProfileActions {
 
   private async reconcileFlow(profileObj: Profile): Promise<void> {
     let flowRetreiver = new MetadataRetriever(
-      this.org.getConnection(),
+      this.conn,
       METADATA_INFO.Flow.xmlName,
       METADATA_INFO
     );
@@ -478,13 +478,13 @@ export default class ProfileReconcile extends ProfileActions {
 
   private async reconcileLoginFlow(profileObj: Profile): Promise<void> {
     let apexPageRetriver = new MetadataRetriever(
-      this.org.getConnection(),
+      this.conn,
       METADATA_INFO.ApexPage.xmlName,
       METADATA_INFO
     );
 
     let flowRetreiver = new MetadataRetriever(
-      this.org.getConnection(),
+      this.conn,
       METADATA_INFO.Flow.xmlName,
       METADATA_INFO
     );
@@ -522,7 +522,7 @@ export default class ProfileReconcile extends ProfileActions {
 
   private async reconcileCustomPermission(profileObj: Profile): Promise<void> {
     let customPermissionsRetriever = new MetadataRetriever(
-      this.org.getConnection(),
+      this.conn,
       METADATA_INFO.CustomPermission.xmlName,
       METADATA_INFO
     );
@@ -551,7 +551,7 @@ export default class ProfileReconcile extends ProfileActions {
 
   private async reconcilePages(profileObj: Profile): Promise<void> {
     let apexPageRetriver = new MetadataRetriever(
-      this.org.getConnection(),
+      this.conn,
       METADATA_INFO.ApexPage.xmlName,
       METADATA_INFO
     );
@@ -580,7 +580,7 @@ export default class ProfileReconcile extends ProfileActions {
 
   private async reconcileRecordTypes(profileObj: Profile): Promise<void> {
     let recordTypeRetriever = new MetadataRetriever(
-      this.org.getConnection(),
+      this.conn,
       METADATA_INFO.RecordType.xmlName,
       METADATA_INFO
     );
@@ -609,7 +609,7 @@ export default class ProfileReconcile extends ProfileActions {
 
   private async reconcileTabs(profileObj: Profile): Promise<void> {
     let tabRetriever = new MetadataRetriever(
-      this.org.getConnection(),
+      this.conn,
       METADATA_INFO.CustomTab.xmlName,
       METADATA_INFO
     );
