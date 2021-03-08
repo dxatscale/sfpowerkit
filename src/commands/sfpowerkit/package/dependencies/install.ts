@@ -137,7 +137,7 @@ export default class Install extends SfdxCommand {
 
     // Getting a list of alias
     const packageAliases = project.get("packageAliases") || {};
-    if (packageAliases) {
+    if (typeof packageAliases !== "undefined") {
       Object.entries(packageAliases).forEach(([key, value]) => {
         packageAliasesMap[key] = value;
       });
