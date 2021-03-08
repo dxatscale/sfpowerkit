@@ -358,7 +358,7 @@ export default class PoolCreateImpl {
           this.totalAllocated++;
         } catch (error) {
           SFPowerkit.log(
-            `Unable to provision scratch org  ${count} ..   `,
+            `Unable to provision scratch org  ${count} . Due to following Error: ${error.message}`,
             LoggerLevel.INFO
           );
         }
