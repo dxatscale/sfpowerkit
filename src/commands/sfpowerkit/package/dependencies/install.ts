@@ -8,6 +8,7 @@ import { loadSFDX } from "../../../../sfdxnode/GetNodeWrapper";
 import { sfdx } from "../../../..//sfdxnode/parallel";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 import { isNullOrUndefined } from "util";
+import { get18DigitSalesforceId } from "./../../../../utils/get18DigitSalesforceId";
 let retry = require("async-retry");
 
 const packageIdPrefix = "0Ho";
@@ -26,67 +27,68 @@ export default class Install extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    '$ sfdx sfpowerkit:package:dependencies:install -u MyScratchOrg -v MyDevHub -k "MyPackage1:Key MyPackage3:Key" -b "DEV"'
+    '$ sfdx sfpowerkit:package:dependencies:install -u MyScratchOrg -v MyDevHub -k "MyPackage1:Key MyPackage3:Key" -b "DEV"',
   ];
 
   protected static flagsConfig = {
     individualpackage: flags.string({
       char: "p",
       required: false,
-      description: "Installs a specific package especially for upgrade scenario"
+      description:
+        "Installs a specific package especially for upgrade scenario",
     }),
     installationkeys: flags.string({
       char: "k",
       required: false,
       description:
-        "installation key for key-protected packages (format is packagename:key --> core:key nCino:key vlocity:key to allow some packages without installation key)"
+        "installation key for key-protected packages (format is packagename:key --> core:key nCino:key vlocity:key to allow some packages without installation key)",
     }),
     branch: flags.string({
       char: "b",
       required: false,
       description:
-        "the package version’s branch (format is packagename:branchname --> core:branchname consumer:branchname packageN:branchname)"
+        "the package version’s branch (format is packagename:branchname --> core:branchname consumer:branchname packageN:branchname)",
     }),
     tag: flags.string({
       char: "t",
       required: false,
       description:
-        "the package version’s tag (format is packagename:tag --> core:tag consumer:tag packageN:tag)"
+        "the package version’s tag (format is packagename:tag --> core:tag consumer:tag packageN:tag)",
     }),
     wait: flags.string({
       char: "w",
       required: false,
       description:
-        "number of minutes to wait for installation status (also used for publishwait). Default is 10"
+        "number of minutes to wait for installation status (also used for publishwait). Default is 10",
     }),
     noprompt: flags.boolean({
       char: "r",
       required: false,
       description:
-        "allow Remote Site Settings and Content Security Policy websites to send or receive data without confirmation"
+        "allow Remote Site Settings and Content Security Policy websites to send or receive data without confirmation",
     }),
     updateall: flags.boolean({
       char: "o",
       required: false,
       description:
-        "update all packages even if they are installed in the target org"
+        "update all packages even if they are installed in the target org",
     }),
     apexcompileonlypackage: flags.boolean({
       char: "a",
       required: false,
       description:
-        "compile the apex only in the package, by default only the compilation of the apex in the entire org is triggered"
+        "compile the apex only in the package, by default only the compilation of the apex in the entire org is triggered",
     }),
     usedependencyvalidatedpackages: flags.boolean({
       required: false,
       description:
-        "use dependency validated packages that matches the version number schema provide"
+        "use dependency validated packages that matches the version number schema provide",
     }),
     filterpaths: flags.array({
       char: "f",
       required: false,
       description:
-        "in a mono repo project, filter packageDirectories using path and install dependent packages only for the specified path"
+        "in a mono repo project, filter packageDirectories using path and install dependent packages only for the specified path",
     }),
     loglevel: flags.enum({
       description: "logging level for this command invocation",
@@ -104,9 +106,9 @@ export default class Install extends SfdxCommand {
         "INFO",
         "WARN",
         "ERROR",
-        "FATAL"
-      ]
-    })
+        "FATAL",
+      ],
+    }),
   };
 
   // Comment this out if your command does not require an org username
@@ -124,7 +126,7 @@ export default class Install extends SfdxCommand {
   public async run(): Promise<any> {
     const result = { installedPackages: {} };
 
-    SFPowerkit.setLogLevel(this.flags.loglevel, false);
+    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     // this.org is guaranteed because requiresUsername=true, as opposed to supportsUsername
     const username = this.org.getUsername();
@@ -135,19 +137,18 @@ export default class Install extends SfdxCommand {
 
     // Getting a list of alias
     const packageAliases = project.get("packageAliases") || {};
-    if (typeof packageAliases !== undefined) {
+    if (packageAliases) {
       Object.entries(packageAliases).forEach(([key, value]) => {
         packageAliasesMap[key] = value;
       });
     }
 
     //Validate Packages  installed in the target org
-
     let installedpackages = [];
     try {
       installedpackages = await this.getInstalledPackages(username);
     } catch (error) {
-      console.log(
+      SFPowerkit.log(
         "Unable to retrieve the packages installed in the org, Proceeding",
         LoggerLevel.WARN
       );
@@ -302,7 +303,7 @@ export default class Install extends SfdxCommand {
       this.ux.table(packagesToInstallArray, [
         "packageName",
         "versionNumber",
-        "packageVersionId"
+        "packageVersionId",
       ]);
 
       this.ux.log(`\n`);
@@ -399,13 +400,16 @@ export default class Install extends SfdxCommand {
 
     // TODO: Some stuff are duplicated here, some code don't need to be executed for every package
     // First look if it's an alias
-    if (typeof packageAliasesMap[packageName] !== "undefined") {
+    if (packageAliasesMap[packageName]) {
       packageName = packageAliasesMap[packageName];
     }
 
     if (packageName.startsWith(packageVersionIdPrefix)) {
       // Package2VersionId is set directly
-      packageDetail = { versionId: packageName, versionNumber: version };
+      packageDetail = {
+        versionId: get18DigitSalesforceId(packageName),
+        versionNumber: version,
+      };
     } else if (packageName.startsWith(packageIdPrefix)) {
       if (!version) {
         throw new core.SfdxError(`version number is mandatory for ${name}`);
@@ -465,7 +469,7 @@ export default class Install extends SfdxCommand {
     const conn = this.org.getConnection();
 
     return await retry(
-      async bail => {
+      async (bail) => {
         SFPowerkit.log("QUERY:" + installedPackagesQuery, LoggerLevel.TRACE);
 
         const results = (await conn.tooling.query(
@@ -476,20 +480,20 @@ export default class Install extends SfdxCommand {
         if (records && records.length > 0) {
           this.ux.log(`Installed Packages in the org ${targetOrg}`);
           const output = [];
-          records.forEach(record => {
+          records.forEach((record) => {
             packages.push(record["SubscriberPackageVersion"]["Id"]);
             output.push({
               name: record["SubscriberPackage"]["Name"],
               package_version_name: record["SubscriberPackageVersion"]["Name"],
               package_version_id: record["SubscriberPackageVersion"]["Id"],
-              versionNumber: `${record["SubscriberPackageVersion"]["MajorVersion"]}.${record["SubscriberPackageVersion"]["MinorVersion"]}.${record["SubscriberPackageVersion"]["PatchVersion"]}.${record["SubscriberPackageVersion"]["BuildNumber"]}`
+              versionNumber: `${record["SubscriberPackageVersion"]["MajorVersion"]}.${record["SubscriberPackageVersion"]["MinorVersion"]}.${record["SubscriberPackageVersion"]["PatchVersion"]}.${record["SubscriberPackageVersion"]["BuildNumber"]}`,
             });
           });
           this.ux.table(output, [
             "name",
             "package_version_name",
             "package_version_id",
-            "versionNumber"
+            "versionNumber",
           ]);
 
           return packages;
