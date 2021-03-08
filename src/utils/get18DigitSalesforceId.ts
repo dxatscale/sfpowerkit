@@ -14,6 +14,6 @@ export function get18DigitSalesforceId(recordId) {
     let convertedId = recordId + addon;
     return convertedId;
   } else {
-    throw new Error(`Invalid saleforce Id ${recordId}`);
+    throw new Error(`Invalid Salesforce Id ${recordId}`);
   }
 }
