@@ -1,82 +1,44 @@
-import { Connection } from "@salesforce/core/lib/connection";
-import _ = require("lodash");
-import queryApi from "../../utils/queryExecutor";
-const axios = require("axios");
 // tslint:disable-next-line:ordered-imports
 // eslint-disable-next-line no-useless-escape
-
-const PASSWORD_LENGTH = 10;
-const LOWER = "abcdefghijklmnopqrstuvwxyz";
-const UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-const NUMBERS = "1234567890";
-const SYMBOLS = [
-  "!",
-  "@",
-  "#",
-  "$",
-  "%",
-  "^",
-  "&",
-  "*",
-  "(",
-  ")",
-  "_",
-  "[",
-  "]",
-  "|",
-  "-",
-];
-const ALL = [LOWER, UPPER, NUMBERS, SYMBOLS.join("")];
-
-const rand = (len) => Math.floor(Math.random() * (len.length || len));
+import { Connection, User, AuthInfo } from "@salesforce/core";
+import queryApi from "../../utils/queryExecutor";
+import { SFPowerkit, LoggerLevel } from "../../sfpowerkit";
 
 export default class Passwordgenerateimpl {
-  public static async run(conn: Connection) {
-    let queryUtil = new queryApi(conn);
-    const query = `SELECT id FROM User WHERE username = '${conn.getUsername()}'`;
+  public static async run(userName: string) {
+    const query = `SELECT id FROM User WHERE username = '${userName}'`;
 
+    const authInfo = await AuthInfo.create({ username: userName });
+    const userConnection = await Connection.create({ authInfo: authInfo });
+    let queryUtil = new queryApi(userConnection);
     let userRecord = await queryUtil.executeQuery(query, false);
-    let pwd = this.generatePassword();
-    let apiversion = await conn.retrieveMaxApiVersion();
-    let passwordStatus = false;
-    var endpoint = `${conn.instanceUrl}/services/data/v${apiversion}/sobjects/User/${userRecord[0].Id}/password`;
-    let data = JSON.stringify({ NewPassword: pwd });
+    let passwordBuffer = User.generatePasswordUtf8();
+    let pwd;
 
-    await axios
-      .post(endpoint, data, {
-        headers: {
-          Authorization: `Bearer ${conn.accessToken}`,
-          "Content-Type": "application/json",
-        },
-      })
-      .then((response) => {
-        passwordStatus = response.status === 204;
-      })
-      .catch((error) => {
-        passwordStatus = false;
-      });
+    await passwordBuffer.value(async (buffer: Buffer) => {
+      try {
+        pwd = buffer.toString("utf8");
 
-    let result = {
-      username: conn.getUsername(),
-      password: passwordStatus ? pwd : undefined,
-    };
-
-    return result;
-  }
-  static generatePassword(): string {
-    // Fill an array with random characters from random requirement sets
-    const pass = Array(PASSWORD_LENGTH - ALL.length)
-      .fill(1)
-      .map(() => {
-        const set = ALL[rand(ALL)];
-        return set[rand(set)];
-      });
-
-    // Add at least one from each required set to meet minimum requirements
-    ALL.forEach((set) => {
-      pass.push(set[rand(set)]);
+        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        // @ts-ignore TODO: expose `soap` on Connection however appropriate
+        const soap = userConnection.soap;
+        await soap.setPassword(userRecord[0].Id, pwd);
+      } catch (e) {
+        pwd = undefined;
+        if (e.message === "INSUFFICIENT_ACCESS: Cannot set password for self") {
+          SFPowerkit.log(
+            `${e.message}. Incase of scratch org, Add "features": ["EnableSetPasswordInApi"] in your project-scratch-def.json then create your scratch org.`,
+            LoggerLevel.WARN
+          );
+        } else {
+          SFPowerkit.log(`${e.message}`, LoggerLevel.WARN);
+        }
+      }
     });
 
-    return _.shuffle(pass).join("");
+    return {
+      username: userName,
+      password: pwd,
+    };
   }
 }

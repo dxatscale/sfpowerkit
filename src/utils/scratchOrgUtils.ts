@@ -163,7 +163,8 @@ export default class ScratchOrgUtils {
         });
       }
     } catch (error) {
-      throw new error("Unable to create scratch org");
+      //Poolcreateimpl to handle
+      throw error;
     }
 
     SFPowerkit.log(JSON.stringify(result), LoggerLevel.TRACE);
@@ -182,10 +183,7 @@ export default class ScratchOrgUtils {
     );
 
     //Generate Password
-    const soConn = await Connection.create({
-      authInfo: await AuthInfo.create({ username: scratchOrg.username }),
-    });
-    let passwordData = await Passwordgenerateimpl.run(soConn);
+    let passwordData = await Passwordgenerateimpl.run(scratchOrg.username);
 
     scratchOrg.password = passwordData.password;
 
@@ -193,12 +191,11 @@ export default class ScratchOrgUtils {
       throw new Error("Unable to setup password to scratch org");
     } else {
       SFPowerkit.log(
-        `Password successfully set for ${passwordData.username} : ${passwordData.password}`,
+        `Password successfully set for ${passwordData.username}`,
         LoggerLevel.INFO
       );
     }
 
-    SFPowerkit.log(JSON.stringify(scratchOrg), LoggerLevel.TRACE);
     return scratchOrg;
   }
 
