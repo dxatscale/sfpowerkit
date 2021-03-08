@@ -1,4 +1,4 @@
-import { Connection, LoggerLevel, Org, AuthInfo } from "@salesforce/core";
+import { LoggerLevel, Org } from "@salesforce/core";
 let request = require("request-promise-native");
 import { SFPowerkit } from "../sfpowerkit";
 import { SfdxApi } from "../sfdxnode/types";
