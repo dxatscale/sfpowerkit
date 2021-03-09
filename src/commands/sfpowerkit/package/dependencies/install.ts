@@ -224,6 +224,14 @@ export default class Install extends SfdxCommand {
 
           packageInfo.versionNumber = versionNumber;
 
+          if (
+            !individualpackage &&
+            !this.flags.updateall &&
+            monoRepoPackages.includes(packageInfo.packageName)
+          ) {
+            continue;
+          }
+
           let packageVersionDetail: {
             versionId;
             versionNumber;
@@ -241,25 +249,19 @@ export default class Install extends SfdxCommand {
                 packageInfo.packageVersionId.toString(),
                 packageInfo
               );
-              continue;
             }
-          } else {
-            if (this.flags.updateall) {
-              packagesToInstall.set(
-                packageInfo.packageVersionId.toString(),
-                packageInfo
-              );
-            } else {
-              if (
-                !installedpackages.includes(packageInfo.packageVersionId) &&
-                !monoRepoPackages.includes(packageInfo.packageName)
-              ) {
-                packagesToInstall.set(
-                  packageInfo.packageVersionId.toString(),
-                  packageInfo
-                );
-              }
-            }
+          } else if (this.flags.updateall) {
+            packagesToInstall.set(
+              packageInfo.packageVersionId.toString(),
+              packageInfo
+            );
+          } else if (
+            !installedpackages.includes(packageInfo.packageVersionId)
+          ) {
+            packagesToInstall.set(
+              packageInfo.packageVersionId.toString(),
+              packageInfo
+            );
           }
 
           this.ux.log(
