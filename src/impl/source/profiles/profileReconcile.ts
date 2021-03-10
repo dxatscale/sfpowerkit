@@ -154,6 +154,10 @@ export default class ProfileReconcile extends ProfileActions {
   }
 
   private removeUnsupportedUserPermissions(profileObj: Profile) {
+    //if sourceonly mode load profileRetriever
+    if (MetadataFiles.sourceOnly && !this.profileRetriever) {
+      this.profileRetriever = new ProfileRetriever(null, false);
+    }
     let unsupportedLicencePermissions = this.profileRetriever.getUnsupportedLicencePermissions(
       profileObj.userLicense
     );
@@ -659,9 +663,6 @@ export default class ProfileReconcile extends ProfileActions {
     }
 
     //Remove unsupported userPermission
-    if (MetadataFiles.sourceOnly && !this.profileRetriever) {
-      this.profileRetriever = new ProfileRetriever(null, false);
-    }
     this.removeUnsupportedUserPermissions(profileObj);
 
     let userPermissionBuilder: UserPermissionBuilder = new UserPermissionBuilder();
