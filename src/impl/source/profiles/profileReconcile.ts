@@ -13,6 +13,7 @@ import ProfileWriter from "../../../impl/metadata/writer/profileWriter";
 import { LoggerLevel } from "@salesforce/core";
 import UserPermissionBuilder from "../../metadata/builder/userPermissionBuilder";
 import MetadataRetriever from "../../metadata/retriever/metadataRetriever";
+import ProfileRetriever from "../../metadata/retriever/profileRetriever";
 
 export default class ProfileReconcile extends ProfileActions {
   metadataFiles: MetadataFiles;
@@ -658,6 +659,9 @@ export default class ProfileReconcile extends ProfileActions {
     }
 
     //Remove unsupported userPermission
+    if (MetadataFiles.sourceOnly && !this.profileRetriever) {
+      this.profileRetriever = new ProfileRetriever(null, false);
+    }
     this.removeUnsupportedUserPermissions(profileObj);
 
     let userPermissionBuilder: UserPermissionBuilder = new UserPermissionBuilder();
