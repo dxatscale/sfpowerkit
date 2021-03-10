@@ -75,9 +75,7 @@ export default class List extends SfdxCommand {
             `Package dependencies for the given package directory ${packageDirectory.path}`
           );
           for (let dependency of packageDirectory.dependencies) {
-            if (
-              projectConfig.packageAliases[dependency.package] !== "undefined"
-            ) {
+            if (projectConfig.packageAliases[dependency.package]) {
               await this.getPackageVersionDetails(
                 conn,
                 dependency,
@@ -90,6 +88,10 @@ export default class List extends SfdxCommand {
                     ? ""
                     : " " + dependency.versionNumber
                 }`
+              );
+            } else {
+              this.ux.warn(
+                `Alias for Package ${dependency.package} is not found in packageAliases section in sfdx-project.json, Please check and retry`
               );
             }
           }

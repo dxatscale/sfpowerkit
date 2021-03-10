@@ -41,9 +41,9 @@ export default class Generate extends SfdxCommand {
 
     //Connect to the org
     await this.org.refreshAuth();
-    const conn = this.org.getConnection();
+    const userName = this.org.getUsername();
 
-    let result = await Passwordgenerateimpl.run(conn);
+    let result = await Passwordgenerateimpl.run(userName);
 
     if (!result.password) {
       throw new SfdxError(

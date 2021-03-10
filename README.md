@@ -85,7 +85,7 @@ $ sfdx plugins:link
     - [`sfpowerkit:auth:login`](#sfpowerkitauthlogin)
   - [Dependency Functionalities](#dependency-functionalities)
     - [`sfpowerkit:dependency:tree:package [BETA]`](#sfpowerkitdependencytreepackage-beta)
-  - [ScratchOrg Pooling Related Functionalities [BETA]](#scratchorg-pooling-related-functionalities-beta)
+  - [ScratchOrg Pooling Related Functionalities](#scratchorg-pooling-related-functionalities)
     - [`sfpowerkit:pool:create`](#sfpowerkitpoolcreate)
     - [`sfpowerkit:pool:fetch`](#sfpowerkitpoolfetch)
     - [`sfpowerkit:pool:list`](#sfpowerkitpoollist)
@@ -115,7 +115,7 @@ OPTIONS
                                                                                     should be written
   -r, --ruleset=ruleset                                                             [default:
                                                                                     [sfpowerkit](https://github.com/Accenture/sfpowerkit/blob/main/resources/pmd-ruleset.xml)]
-                                                                                    The pmd ruleset that will be utilzied for analyzing the apex classes,  Checkout
+                                                                                    The comma separated pmd ruleset that will be utilzied for analyzing the apex classes,  Checkout
                                                                                     https://pmd.github.io/latest/pmd_userdocs_making_rulesets.html to create your own ruleset
   --javahome=javahome                                                               The command will try to locate the javahome path to execute PMD automatically, set this flag
                                                                                     to override it to another javahome path
@@ -1342,7 +1342,7 @@ EXAMPLES
 
 _See code: [src\commands\sfpowerkit\dependency\tree\package.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/dependency/tree/package.ts)_
 
-## ScratchOrg Pooling Related Functionalities [BETA]
+## ScratchOrg Pooling Related Functionalities
 
 Commands to create and maintain a pool of scratchorgs. Details on getting started are available [here](https://github.com/Accenture/sfpowerkit/wiki/Getting-started-with-ScratchOrg-Pooling)
 

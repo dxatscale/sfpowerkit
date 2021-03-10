@@ -1,5 +1,5 @@
 {
-  "version": "2.7.3",
+  "version": "2.8.4",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -1040,7 +1040,7 @@
           "name": "ruleset",
           "type": "option",
           "char": "r",
-          "description": "[default: [sfpowerkit](https://github.com/Accenture/sfpowerkit/blob/main/resources/pmd-ruleset.xml)] The pmd ruleset that will be utilzied for analyzing the apex classes,  Checkout https://pmd.github.io/latest/pmd_userdocs_making_rulesets.html to create your own ruleset",
+          "description": "[default: [sfpowerkit](https://github.com/Accenture/sfpowerkit/blob/main/resources/pmd-ruleset.xml)] The comma separated pmd ruleset that will be utilzied for analyzing the apex classes,  Checkout https://pmd.github.io/latest/pmd_userdocs_making_rulesets.html to create your own ruleset",
           "required": false
         },
         "format": {
