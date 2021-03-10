@@ -18,8 +18,8 @@ export default class Build extends SfdxCommand {
 
   public static examples = [
     `$ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml`,
-    `$ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml -q 'ApexClass,CustomObject,Report'`,
-    `$ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml -q 'ApexClass:sampleclass,CustomObject:Account'`,
+    `$ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml -e 'ApexClass,CustomObject,Report'`,
+    `$ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml -i 'ApexClass:sampleclass,CustomObject:Account'`,
   ];
 
   public static args = [{ name: "file" }];
@@ -28,6 +28,14 @@ export default class Build extends SfdxCommand {
     quickfilter: flags.string({
       char: "q",
       description: messages.getMessage("quickfilterFlagDescription"),
+    }),
+    excludefilter: flags.string({
+      char: "e",
+      description: messages.getMessage("excludefilterFlagDescription"),
+    }),
+    includefilter: flags.string({
+      char: "i",
+      description: messages.getMessage("includefilterFlagDescription"),
     }),
     excludemanaged: flags.boolean({
       char: "x",
