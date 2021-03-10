@@ -168,23 +168,21 @@ export class Packagexml {
     // fetch and execute installed package promise to build regex
     let ipRegexStr: string = "^(";
 
-    await this.conn.metadata
-      .list(
-        {
-          type: "InstalledPackage",
-        },
-        this.configs.apiVersion
-      )
-      .then((instPack) => {
-        instPack.forEach((pkg) => {
-          ipRegexStr += pkg.namespacePrefix + "|";
-        });
-        ipRegexStr += ")+__";
-        this.ipRegex = RegExp(ipRegexStr);
-      })
-      .catch((err) => {
-        this.ipRegex = RegExp("");
+    let instPack = await this.conn.metadata.list(
+      {
+        type: "InstalledPackage",
+      },
+      this.configs.apiVersion
+    );
+    try {
+      instPack.forEach((pkg) => {
+        ipRegexStr += pkg.namespacePrefix + "|";
       });
+      ipRegexStr += ")+__";
+      this.ipRegex = RegExp(ipRegexStr);
+    } catch (err) {
+      this.ipRegex = RegExp("");
+    }
   }
 
   private async describeMetadata() {
@@ -212,115 +210,105 @@ export class Packagexml {
   }
   private async handleFolderObject(object) {
     const folderType = object.xmlName.replace("Template", "");
-    await this.conn.metadata
-      .list(
-        {
-          type: `${folderType}Folder`,
-        },
-        this.configs.apiVersion
-      )
-      .then(async (folderdescribeRes) => {
-        //Handle Folder
-        let folderDescribeItems = this.convertToArray(folderdescribeRes);
-        folderDescribeItems.forEach(async (FolderMetadataEntries) => {
-          this.addMember(FolderMetadataEntries.type, FolderMetadataEntries);
+    let folderdescribeRes = await this.conn.metadata.list(
+      {
+        type: `${folderType}Folder`,
+      },
+      this.configs.apiVersion
+    );
+    try {
+      //Handle Folder
+      let folderDescribeItems = this.convertToArray(folderdescribeRes);
+      folderDescribeItems.forEach(async (FolderMetadataEntries) => {
+        this.addMember(FolderMetadataEntries.type, FolderMetadataEntries);
 
-          //Handle Folder Item
-          await this.conn.metadata
-            .list(
-              {
-                type: object.xmlName,
-                folder: FolderMetadataEntries.fullName,
-              },
-              this.configs.apiVersion
-            )
-            .then(async (folderItemsRes) => {
-              //Handle Folder
-              let folderItems = this.convertToArray(folderItemsRes);
-              folderItems.forEach((FolderItemMetadataEntries) => {
-                this.addMember(
-                  FolderItemMetadataEntries.type,
-                  FolderItemMetadataEntries
-                );
-              });
-            })
-            .catch((err) => {
-              SFPowerkit.log(
-                `Error in processing Type ${object.xmlName} ${err}`,
-                LoggerLevel.ERROR
-              );
-            });
-        });
-      })
-      .catch((err) => {
-        SFPowerkit.log(
-          `Error in processing Type ${folderType} ${err}`,
-          LoggerLevel.ERROR
+        //Handle Folder Item
+        let folderItemsRes = await this.conn.metadata.list(
+          {
+            type: object.xmlName,
+            folder: FolderMetadataEntries.fullName,
+          },
+          this.configs.apiVersion
         );
+        try {
+          //Handle Folder
+          let folderItems = this.convertToArray(folderItemsRes);
+          folderItems.forEach((FolderItemMetadataEntries) => {
+            this.addMember(
+              FolderItemMetadataEntries.type,
+              FolderItemMetadataEntries
+            );
+          });
+        } catch (err) {
+          SFPowerkit.log(
+            `Error in processing Type ${object.xmlName} ${err}`,
+            LoggerLevel.ERROR
+          );
+        }
       });
+    } catch (err) {
+      SFPowerkit.log(
+        `Error in processing Type ${folderType} ${err}`,
+        LoggerLevel.ERROR
+      );
+    }
   }
   private async handleNonFolderObject(object) {
-    await this.conn.metadata
-      .list(
-        {
-          type: object.xmlName,
-        },
-        this.configs.apiVersion
-      )
-      .then(async (unfolderItemsRes) => {
-        //Handle Parent
-        let unfolderItems = this.convertToArray(unfolderItemsRes);
-        let filterunfolderItems = this.filterItems(unfolderItems);
+    let unfolderItemsRes = await this.conn.metadata.list(
+      {
+        type: object.xmlName,
+      },
+      this.configs.apiVersion
+    );
+    try {
+      //Handle Parent
+      let unfolderItems = this.convertToArray(unfolderItemsRes);
+      let filterunfolderItems = this.filterItems(unfolderItems);
 
-        filterunfolderItems.forEach((metadataEntries) => {
-          this.addMember(metadataEntries.type, metadataEntries);
-        });
+      filterunfolderItems.forEach((metadataEntries) => {
+        this.addMember(metadataEntries.type, metadataEntries);
+      });
 
-        //Handle Child
-        if (
-          object.childXmlNames &&
-          object.childXmlNames.length > 0 &&
-          this.configs.includeChilds
-        ) {
-          for (let child of object.childXmlNames) {
-            if (child === "ManagedTopic") {
-              continue;
-            }
-            await this.conn.metadata
-              .list(
-                {
-                  type: child,
-                },
-                this.configs.apiVersion
-              )
-              .then(async (unfolderChildItemsRes) => {
-                let unfolderChilItems = this.convertToArray(
-                  unfolderChildItemsRes
-                );
-                let filterunfolderChildItems = this.filterChildItems(
-                  unfolderChilItems,
-                  object.xmlName
-                );
+      //Handle Child
+      if (
+        object.childXmlNames &&
+        object.childXmlNames.length > 0 &&
+        this.configs.includeChilds
+      ) {
+        for (let child of object.childXmlNames) {
+          if (child === "ManagedTopic") {
+            continue;
+          }
+          let unfolderChildItemsRes = await this.conn.metadata.list(
+            {
+              type: child,
+            },
+            this.configs.apiVersion
+          );
+          try {
+            let unfolderChilItems = this.convertToArray(unfolderChildItemsRes);
+            let filterunfolderChildItems = this.filterChildItems(
+              unfolderChilItems,
+              object.xmlName
+            );
 
-                filterunfolderChildItems.forEach((metadataEntries) => {
-                  this.addMember(metadataEntries.type, metadataEntries);
-                });
-              })
-              .catch((err) => {
-                SFPowerkit.log(
-                  `Error in processing Type ${child} ${err}`,
-                  LoggerLevel.ERROR
-                );
-              });
+            filterunfolderChildItems.forEach((metadataEntries) => {
+              this.addMember(metadataEntries.type, metadataEntries);
+            });
+          } catch (err) {
+            SFPowerkit.log(
+              `Error in processing Type ${child} ${err}`,
+              LoggerLevel.ERROR
+            );
           }
         }
-      })
-      .catch((err) => {
-        SFPowerkit.log(
-          `Error in processing Type ${object.xmlName} ${err}`,
-          LoggerLevel.ERROR
-        );
-      });
+      }
+    } catch (err) {
+      SFPowerkit.log(
+        `Error in processing Type ${object.xmlName} ${err}`,
+        LoggerLevel.ERROR
+      );
+    }
   }
 
   private isAvailableinIncludeList(type: string, member: string = "") {
@@ -414,16 +402,9 @@ export class Packagexml {
      * Regular custom objects - manageableState = unmanaged or undefined
      */
 
-    if (
-      type &&
-      !(
-        this.configs.excludeManaged &&
-        (this.ipRegex.test(member.fullName) ||
-          member.namespacePrefix ||
-          member.manageableState === "installed")
-      )
-    ) {
+    if (type && !this.isManagePackageIgnored(member)) {
       try {
+        //Handle Object Translation
         if (member.fileName.includes("ValueSetTranslation")) {
           const x =
             member.fileName.split(".")[1].substring(0, 1).toUpperCase() +
@@ -437,6 +418,8 @@ export class Packagexml {
           if (!this.packageTypes[type]) {
             this.packageTypes[type] = [];
           }
+
+          //Handle Layout
           if (
             member.type === "Layout" &&
             member.namespacePrefix &&
@@ -461,6 +444,14 @@ export class Packagexml {
         );
       }
     }
+  }
+  private isManagePackageIgnored(member: any) {
+    return (
+      this.configs.excludeManaged &&
+      (this.ipRegex.test(member.fullName) ||
+        member.namespacePrefix ||
+        member.manageableState === "installed")
+    );
   }
 }
 
