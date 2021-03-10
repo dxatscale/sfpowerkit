@@ -5,6 +5,7 @@ import {
   BuildConfig,
   Packagexml,
 } from "../../../../impl/metadata/packageBuilder";
+import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -59,17 +60,28 @@ export default class Build extends SfdxCommand {
   protected static requiresProject = false;
 
   public async run(): Promise<AnyJson> {
+    SFPowerkit.setLogLevel("Info", this.flags.json);
+
+    if (this.flags.quickfilter) {
+      SFPowerkit.log(
+        `Flag -q| --quickfilter is deprecated, consider using -e| --excludefilter`,
+        LoggerLevel.WARN
+      );
+    }
+
+    if (this.flags.quickfilter && this.flags.excludefilter) {
+      SFPowerkit.log(
+        `Both -q| --quickfilter and -e| --excludefilter serves same purpose. since both flag is passed we will merge and consider for excluding filter`,
+        LoggerLevel.WARN
+      );
+    }
+
     // this.org is guaranteed because requiresUsername=true, as opposed to supportsUsername
     const apiversion = await this.org.getConnection().retrieveMaxApiVersion();
     const conn = this.org.getConnection();
     const configs: BuildConfig = new BuildConfig(this.flags, apiversion);
     const packageXML: Packagexml = new Packagexml(conn, configs);
     const result = await packageXML.build();
-
-    //console.log(result);
-    if (!this.flags.json) {
-      this.ux.log(result.toString());
-    }
 
     return { result: packageXML.result };
   }

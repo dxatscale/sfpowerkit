@@ -48,7 +48,7 @@ steps:
       script: |
         set -euo pipefail
         sfdx sfpowerkit:org:manifest:build -o manifest.xml -u HubOrg
-        sfdx sfpowerkit:org:manifest:build -o manifest.xml -u HubOrg --json | jq -r .result.result[0].fileName
+        sfdx sfpowerkit:org:manifest:build -o manifest.xml -u HubOrg --json | jq -r .result.result
         sfdx sfpowerkit:org:orgcoverage -u HubOrg
         sfdx sfpowerkit:org:orgcoverage -u HubOrg --json | jq -r .result.classCoverage[0].id
         sfdx sfpowerkit:org:healthcheck -u HubOrg
@@ -79,5 +79,5 @@ steps:
         sfdx sfpowerkit:pool:create -f scratchorg-poolconfig.json -v HubOrg
         sfdx sfpowerkit:pool:list -a -m -v HubOrg
         sfdx sfpowerkit:pool:list -a -m -v HubOrg --json | jq -r .result
-        sfdx sfpowerkit:pool:fetch -t sfpowerkit -v HubOrg 
+        sfdx sfpowerkit:pool:fetch -t sfpowerkit -v HubOrg
       workingDirectory: "src_saleforce_packages/scratchorgpool"
