@@ -81,7 +81,7 @@ export default class Build extends SfdxCommand {
     const conn = this.org.getConnection();
     const configs: BuildConfig = new BuildConfig(this.flags, apiversion);
     const packageXML: Packagexml = new Packagexml(conn, configs);
-    const result = await packageXML.build();
+    await packageXML.build();
 
     return { result: packageXML.result };
   }
