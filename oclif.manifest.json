@@ -1,5 +1,5 @@
 {
-  "version": "2.8.4",
+  "version": "2.8.5",
   "commands": {
     "sfpowerkit:auth:login": {
       "id": "sfpowerkit:auth:login",
@@ -1435,14 +1435,14 @@
     "sfpowerkit:org:manifest:build": {
       "id": "sfpowerkit:org:manifest:build",
       "description": "Generate a complete manifest of all the metadata from the specified org. Once the manifest is generated use source:retrieve or mdapi:retrieve to retrieve the metadata.",
-      "usage": "<%= command.id %> [-q <string>] [-x] [-c] [-o <filepath>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
+      "usage": "<%= command.id %> [-q <string>] [-e <string>] [-i <string>] [-x] [-c] [-o <filepath>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]",
       "pluginName": "sfpowerkit",
       "pluginType": "core",
       "aliases": [],
       "examples": [
         "$ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml",
-        "$ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml -q 'ApexClass,CustomObject,Report'",
-        "$ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml -q 'ApexClass:sampleclass,CustomObject:Account'"
+        "$ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml -e 'ApexClass,CustomObject,Report'",
+        "$ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml -i 'ApexClass:sampleclass,CustomObject:Account'"
       ],
       "flags": {
         "json": {
@@ -1488,7 +1488,19 @@
           "name": "quickfilter",
           "type": "option",
           "char": "q",
-          "description": "comma separated values  of metadata type, member or file names to be excluded while building the manifest"
+          "description": "[deprecated] comma separated values of metadata type, member or file names to be excluded while building the manifest"
+        },
+        "excludefilter": {
+          "name": "excludefilter",
+          "type": "option",
+          "char": "e",
+          "description": "comma separated values of metadata type, member or file names to be excluded while building the manifest"
+        },
+        "includefilter": {
+          "name": "includefilter",
+          "type": "option",
+          "char": "i",
+          "description": "comma separated values of metadata type, member or file names to be included while building the manifest"
         },
         "excludemanaged": {
           "name": "excludemanaged",

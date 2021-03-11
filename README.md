@@ -1000,15 +1000,22 @@ Generate a complete manifest of all the metadata from the specified org. Once th
 
 ```
 USAGE
-  $ sfdx sfpowerkit:org:manifest:build [-q <string>] [-x] [-c] [-o <filepath>] [-u <string>] [--apiversion <string>] [--json] [--loglevel
+  $ sfdx sfpowerkit:org:manifest:build [-q <string>] [-e <string>] [-i <string>] [-x] [-c] [-o <filepath>] [-u <string>] [--apiversion <string>] [--json] [--loglevel
   trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
   -c, --includechilds                                                               Set to true to include child Metadata in the generated package.xml.
+
+  -e, --excludefilter=excludefilter                                                 comma separated values of metadata type, member or file names to be excluded while building
+                                                                                    the manifest
+
+  -i, --includefilter=includefilter                                                 comma separated values of metadata type, member or file names to be included while building
+                                                                                    the manifest
+
   -o, --outputfile=outputfile                                                       The output path where the manifest file will be created
 
-  -q, --quickfilter=quickfilter                                                     comma separated values  of metadata type, member or file names to be excluded while building the
-                                                                                    manifest
+  -q, --quickfilter=quickfilter                                                     [deprecated] comma separated values of metadata type, member or file names to be excluded
+                                                                                    while building the manifest
 
   -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
 

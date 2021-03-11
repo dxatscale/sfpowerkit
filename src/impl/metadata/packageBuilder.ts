@@ -6,6 +6,7 @@ import * as path from "path";
 import FileUtils from "../../utils/fileutils";
 import { FileProperties } from "jsforce";
 import { SFPowerkit, LoggerLevel } from "../../sfpowerkit";
+import { SfdxError } from "@salesforce/core";
 
 if (Symbol["asyncIterator"] === undefined) {
   // tslint:disable-next-line:no-any
@@ -83,7 +84,6 @@ export class Packagexml {
   private conn: Connection;
   private packageTypes = {};
   private ipRegex: RegExp;
-  private ipPromise;
 
   public result: {
     type: string;
@@ -107,18 +107,50 @@ export class Packagexml {
   }
 
   public async build() {
+    if (
+      this.configs.excludeFilters.length > 0 &&
+      this.configs.includeFilters.length > 0
+    ) {
+      let conflict = this.configs.excludeFilters.filter((element) =>
+        this.configs.includeFilters.includes(element)
+      );
+      if (conflict.length > 0) {
+        throw new SfdxError(
+          `Unable to process the request, found ${conflict} in both include and exlude list`
+        );
+      }
+    }
+
     try {
-      const folders = [];
-      const unfolderedObjects = [];
-
-      await this.describeMetadata(unfolderedObjects, folders);
-
       await this.buildInstalledPackageRegex();
 
-      await this.handleUnfolderedObjects(unfolderedObjects);
+      await this.describeMetadata();
 
-      await this.handleFolderedObjects(folders);
+      this.setStandardValueset();
 
+      let packageXml = this.generateXml();
+
+      let dir = path.parse(this.configs.outputFile).dir;
+      if (!fs.existsSync(dir)) {
+        FileUtils.mkDirByPathSync(dir);
+      }
+      fs.writeFileSync(this.configs.outputFile, packageXml);
+      SFPowerkit.log(
+        `Mainfest ${this.configs.outputFile} is created successfully `,
+        LoggerLevel.INFO
+      );
+      return packageXml;
+    } catch (err) {
+      SFPowerkit.log(err, LoggerLevel.ERROR);
+    }
+  }
+  private setStandardValueset() {
+    if (
+      (this.configs.excludeFilters.length === 0 ||
+        !this.configs.excludeFilters.includes("StandardValueSet")) &&
+      (this.configs.includeFilters.length === 0 ||
+        this.configs.includeFilters.includes("StandardValueSet"))
+    ) {
       if (!this.packageTypes["StandardValueSet"]) {
         this.packageTypes["StandardValueSet"] = [];
       }
@@ -129,90 +161,213 @@ export class Packagexml {
           fullName: member,
         });
       });
-
-      let packageXml = this.generateXml();
-
-      let dir = path.parse(this.configs.outputFile).dir;
-      if (!fs.existsSync(dir)) {
-        FileUtils.mkDirByPathSync(dir);
-      }
-      fs.writeFileSync(this.configs.outputFile, packageXml);
-      return packageXml;
-    } catch (err) {
-      console.log(err);
     }
   }
 
   private async buildInstalledPackageRegex() {
     // fetch and execute installed package promise to build regex
     let ipRegexStr: string = "^(";
-    if (this.ipPromise) {
-      this.ipPromise.then((instPack) => {
-        instPack.forEach((pkg) => {
-          ipRegexStr += pkg.namespacePrefix + "|";
-        });
-        ipRegexStr += ")+__";
-        this.ipRegex = RegExp(ipRegexStr);
+
+    let instPack = await this.conn.metadata.list(
+      {
+        type: "InstalledPackage",
+      },
+      this.configs.apiVersion
+    );
+    try {
+      instPack.forEach((pkg) => {
+        ipRegexStr += pkg.namespacePrefix + "|";
       });
-    } else {
+      ipRegexStr += ")+__";
+      this.ipRegex = RegExp(ipRegexStr);
+    } catch (err) {
       this.ipRegex = RegExp("");
     }
   }
 
-  private async describeMetadata(
-    unfolderedObjects: Promise<FileProperties[]>[],
-    folders: Promise<FileProperties[]>[]
-  ) {
+  private async describeMetadata() {
     const describe = await this.conn.metadata.describe(this.configs.apiVersion);
 
-    for await (const object of describe.metadataObjects) {
+    for (const object of describe.metadataObjects) {
       if (
-        this.configs.excludeFilters.length !== 0 &&
+        this.configs.excludeFilters.length > 0 &&
         this.configs.excludeFilters.includes(object.xmlName)
+      ) {
+        continue;
+      } else if (
+        this.configs.includeFilters.length > 0 &&
+        !this.isAvailableinIncludeList(object.xmlName)
       ) {
         continue;
       }
 
       if (object.inFolder) {
-        const objectType = object.xmlName.replace("Template", "");
-        const promise = this.conn.metadata.list(
-          {
-            type: `${objectType}Folder`,
-          },
-          this.configs.apiVersion
-        );
-        folders.push(promise);
+        await this.handleFolderObject(object);
       } else {
-        const promise = this.conn.metadata.list(
+        await this.handleNonFolderObject(object);
+      }
+    }
+  }
+  private async handleFolderObject(object) {
+    const folderType = object.xmlName.replace("Template", "");
+    let folderdescribeRes = await this.conn.metadata.list(
+      {
+        type: `${folderType}Folder`,
+      },
+      this.configs.apiVersion
+    );
+    try {
+      //Handle Folder
+      let folderDescribeItems = this.convertToArray(folderdescribeRes);
+      folderDescribeItems.forEach(async (FolderMetadataEntries) => {
+        this.addMember(FolderMetadataEntries.type, FolderMetadataEntries);
+
+        //Handle Folder Item
+        let folderItemsRes = await this.conn.metadata.list(
           {
             type: object.xmlName,
+            folder: FolderMetadataEntries.fullName,
           },
           this.configs.apiVersion
         );
-        if (object.xmlName === "InstalledPackage") {
-          this.ipPromise = promise.then(); // clone promise
-        }
-        unfolderedObjects.push(promise);
-        if (
-          object.childXmlNames &&
-          object.childXmlNames.length > 0 &&
-          this.configs.includeChilds
-        ) {
-          for (let child of object.childXmlNames) {
-            if (child === "ManagedTopic") {
-              continue;
-            }
-            const promise = this.conn.metadata.list(
-              {
-                type: child,
-              },
-              this.configs.apiVersion
+        try {
+          //Handle Folder
+          let folderItems = this.convertToArray(folderItemsRes);
+          folderItems.forEach((FolderItemMetadataEntries) => {
+            this.addMember(
+              FolderItemMetadataEntries.type,
+              FolderItemMetadataEntries
             );
-            unfolderedObjects.push(promise);
+          });
+        } catch (err) {
+          SFPowerkit.log(
+            `Error in processing Type ${object.xmlName} ${err}`,
+            LoggerLevel.ERROR
+          );
+        }
+      });
+    } catch (err) {
+      SFPowerkit.log(
+        `Error in processing Type ${folderType} ${err}`,
+        LoggerLevel.ERROR
+      );
+    }
+  }
+  private async handleNonFolderObject(object) {
+    let unfolderItemsRes = await this.conn.metadata.list(
+      {
+        type: object.xmlName,
+      },
+      this.configs.apiVersion
+    );
+    try {
+      //Handle Parent
+      let unfolderItems = this.convertToArray(unfolderItemsRes);
+      let filterunfolderItems = this.filterItems(unfolderItems);
+
+      filterunfolderItems.forEach((metadataEntries) => {
+        this.addMember(metadataEntries.type, metadataEntries);
+      });
+
+      //Handle Child
+      if (
+        object.childXmlNames &&
+        object.childXmlNames.length > 0 &&
+        this.configs.includeChilds
+      ) {
+        for (let child of object.childXmlNames) {
+          if (child === "ManagedTopic") {
+            continue;
+          }
+          let unfolderChildItemsRes = await this.conn.metadata.list(
+            {
+              type: child,
+            },
+            this.configs.apiVersion
+          );
+          try {
+            let unfolderChilItems = this.convertToArray(unfolderChildItemsRes);
+            let filterunfolderChildItems = this.filterChildItems(
+              unfolderChilItems,
+              object.xmlName
+            );
+
+            filterunfolderChildItems.forEach((metadataEntries) => {
+              this.addMember(metadataEntries.type, metadataEntries);
+            });
+          } catch (err) {
+            SFPowerkit.log(
+              `Error in processing Type ${child} ${err}`,
+              LoggerLevel.ERROR
+            );
           }
         }
       }
+    } catch (err) {
+      SFPowerkit.log(
+        `Error in processing Type ${object.xmlName} ${err}`,
+        LoggerLevel.ERROR
+      );
     }
+  }
+
+  private isAvailableinIncludeList(type: string, member: string = "") {
+    let found = false;
+
+    for (let includeFilter of this.configs.includeFilters) {
+      if (!includeFilter.includes(":") && includeFilter === type) {
+        found = true;
+        break;
+      } else if (
+        includeFilter.includes(":") &&
+        includeFilter.split(":")[0] === type &&
+        (member === "" || includeFilter.split(":")[1] === member)
+      ) {
+        found = true;
+        break;
+      }
+    }
+
+    return found;
+  }
+
+  private convertToArray(item) {
+    if (!item) {
+      return [];
+    } else if (Array.isArray(item)) {
+      return item;
+    } else {
+      return [item];
+    }
+  }
+  private filterItems(itemsArray: FileProperties[]) {
+    return itemsArray.filter(
+      (element) =>
+        (this.configs.excludeFilters.length === 0 ||
+          !this.configs.excludeFilters.includes(
+            element.type + ":" + element.fullName
+          )) &&
+        (this.configs.includeFilters.length === 0 ||
+          this.isAvailableinIncludeList(element.type, element.fullName))
+    );
+  }
+  private filterChildItems(itemsArray: FileProperties[], parentType) {
+    return itemsArray.filter(
+      (element) =>
+        ((this.configs.excludeFilters.length === 0 ||
+          !this.configs.excludeFilters.includes(
+            element.type + ":" + element.fullName
+          )) &&
+          (this.configs.includeFilters.length === 0 ||
+            this.isAvailableinIncludeList(element.type, element.fullName))) ||
+        this.isAvailableinIncludeList(
+          parentType,
+          this.getParentName(element.fullName)
+        )
+    );
+  }
+  private getParentName(fullName: string) {
+    return fullName.includes(".") ? fullName.split(".")[0] : "";
   }
 
   private generateXml() {
@@ -221,21 +376,13 @@ export class Packagexml {
       types: [],
       version: this.configs.apiVersion,
     };
-
     let mdtypes = Object.keys(this.packageTypes);
     mdtypes.sort();
     mdtypes.forEach((mdtype) => {
-      if (
-        (this.configs.excludeFilters.length === 0 ||
-        !this.configs.excludeFilters.includes(mdtype)) &&
-        (this.configs.includeFilters.length === 0 ||
-        this.configs.includeFilters.includes(mdtype))
-      ) {
-        packageJson.types.push({
-          name: mdtype,
-          members: this.packageTypes[mdtype].sort(),
-        });
-      }
+      packageJson.types.push({
+        name: mdtype,
+        members: this.packageTypes[mdtype].sort(),
+      });
     });
 
     const builder = new xml2js.Builder({
@@ -248,98 +395,6 @@ export class Packagexml {
     return packageXml;
   }
 
-  private async handleFolderedObjects(folders: Promise<FileProperties[]>[]) {
-    const folderedObjects: Promise<FileProperties[]>[] = [];
-    for await (const folder of folders) {
-      let folderItems = [];
-      if (Array.isArray(folder)) {
-        folderItems = folder;
-      } else if (folder) {
-        folderItems = [folder];
-      }
-      if (folderItems.length > 0) {
-        for await (const folderItem of folderItems) {
-          if (folderItem) {
-            this.result.push(folderItem);
-            let objectType = folderItem.type.replace("Folder", "");
-            if (objectType === "Email") {
-              objectType += "Template";
-            }
-
-            this.addMember(objectType, folderItem);
-
-            const promise = this.conn.metadata.list(
-              {
-                type: objectType,
-                folder: folderItem.fullName,
-              },
-              this.configs.apiVersion
-            );
-            folderedObjects.push(promise);
-          }
-        }
-      }
-    }
-
-    (await Promise.all(folderedObjects)).forEach((folderedObject) => {
-      try {
-        if (folderedObject) {
-          let folderedObjectItems = [];
-          if (Array.isArray(folderedObject)) {
-            folderedObjectItems = folderedObject;
-          } else {
-            folderedObjectItems = [folderedObject];
-          }
-          folderedObjectItems.forEach((metadataEntries) => {
-            if (metadataEntries) {
-              this.addMember(metadataEntries.type, metadataEntries);
-              this.result.push(metadataEntries);
-            } else {
-              console.log("No metadataEntry available");
-            }
-          });
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    });
-  }
-
-  private async handleUnfolderedObjects(
-    unfolderedObjects: Promise<FileProperties[]>[]
-  ) {
-    (await Promise.all(unfolderedObjects)).forEach((unfolderedObject) => {
-      try {
-        if (unfolderedObject) {
-          let unfolderedObjectItems = [];
-          if (Array.isArray(unfolderedObject)) {
-            unfolderedObjectItems = unfolderedObject;
-          } else {
-            unfolderedObjectItems = [unfolderedObject];
-          }
-          unfolderedObjectItems.forEach((metadataEntries) => {
-            if (metadataEntries) {
-              if (
-                this.configs.excludeFilters.length !== 0 &&
-                this.configs.excludeFilters.includes(
-                  metadataEntries.type + ":" + metadataEntries.fullName
-                )
-              ) {
-                return;
-              }
-              this.addMember(metadataEntries.type, metadataEntries);
-              this.result.push(metadataEntries);
-            } else {
-              console.log("No metadataEntry available");
-            }
-          });
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    });
-  }
-
   private addMember(type: string, member: FileProperties) {
     /**
      * Managed package - fullName starts with 'namespacePrefix__' || namespacePrefix is not null || manageableState = installed
@@ -347,17 +402,9 @@ export class Packagexml {
      * Regular custom objects - manageableState = unmanaged or undefined
      */
 
-    if (
-      type &&
-      !(typeof type === "object") &&
-      !(
-        this.configs.excludeManaged &&
-        (this.ipRegex.test(member.fullName) ||
-          member.namespacePrefix ||
-          member.manageableState === "installed")
-      )
-    ) {
+    if (type && !this.isManagePackageIgnored(member)) {
       try {
+        //Handle Object Translation
         if (member.fileName.includes("ValueSetTranslation")) {
           const x =
             member.fileName.split(".")[1].substring(0, 1).toUpperCase() +
@@ -366,10 +413,13 @@ export class Packagexml {
             this.packageTypes[x] = [];
           }
           this.packageTypes[x].push(member.fullName);
+          this.result.push(member);
         } else {
           if (!this.packageTypes[type]) {
             this.packageTypes[type] = [];
           }
+
+          //Handle Layout
           if (
             member.type === "Layout" &&
             member.namespacePrefix &&
@@ -381,14 +431,27 @@ export class Packagexml {
             this.packageTypes[type].push(
               objectName + "-" + namespacePrefix + "__" + layoutName
             );
+            this.result.push(member);
           } else {
             this.packageTypes[type].push(member.fullName);
+            this.result.push(member);
           }
         }
       } catch (ex) {
-        SFPowerkit.log("Type " + JSON.stringify(type), LoggerLevel.DEBUG);
+        SFPowerkit.log(
+          `Error in adding Type ${type} ${ex.message}`,
+          LoggerLevel.ERROR
+        );
       }
     }
+  }
+  private isManagePackageIgnored(member: any) {
+    return (
+      this.configs.excludeManaged &&
+      (this.ipRegex.test(member.fullName) ||
+        member.namespacePrefix ||
+        member.manageableState === "installed")
+    );
   }
 }
 
@@ -411,24 +474,21 @@ export class BuildConfig {
           return elem.trim();
         })
       : [];
-    this.excludeFilters = flags["quickfilter"]
-      ? this.excludeFilters.concat(flags["quickfilter"].split(",").map((elem) => {
-          return elem.trim();
-        }))
-      : this.excludeFilters;
-    this.excludeFilters = flags["excludefilter"]
-      ? flags["excludefilter"].split(",").map((elem) => {
-          return elem.trim();
-        })
-      : [];
+
+    if (flags["quickfilter"]) {
+      flags["quickfilter"].split(",").map((elem) => {
+        if (!this.excludeFilters.includes(elem.trim())) {
+          this.excludeFilters.push(elem.trim());
+        }
+      });
+    }
+
     this.includeFilters = flags["includefilter"]
       ? flags["includefilter"].split(",").map((elem) => {
           return elem.trim();
         })
       : [];
-    if (this.includeFilters.length) {
-      this.excludeFilters = [];
-    }
+
     this.outputFile = flags["outputfile"] || "package.xml";
   }
 }
