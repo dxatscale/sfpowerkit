@@ -2,6 +2,10 @@
 
 [![NPM](https://img.shields.io/npm/v/sfpowerkit.svg)](https://www.npmjs.com/package/sfpowerkit) ![npm (tag)](https://img.shields.io/npm/v/sfpowerkit/beta) [![Build Status](https://dev.azure.com/dxatscale/sfpowerkit/_apis/build/status/Release?branchName=main)](https://dev.azure.com/dxatscale/sfpowerkit/_build/latest?definitionId=48&branchName=main) ![npm](https://img.shields.io/npm/dw/sfpowerkit)[![CodeFactor](https://www.codefactor.io/repository/github/accenture/sfpowerkit/badge)](https://www.codefactor.io/repository/github/accenture/sfpowerkit)
 
+<p align="center">
+  <img alt="sfpowerkit" src="https://github.com/Accenture/sfpowerkit/blob/main/docs/sfpowerkit-logo.JPG" width="480" height="400">
+</p>
+
 A Salesforce DX Plugin with multiple functionalities aimed at improving development and operational workflows
 Read the blog here https://accenture.github.io/blog/2019/06/27/sfpowerkit.html
 

@@ -11,11 +11,7 @@ Deploy the following additions to standard object "ScratchOrgInfo" such as a cus
 ## Installing the Unlocked package to your DevHub from CLI
 
 ```
-git clone https://github.com/Accenture/sfpowerkit
-
-cd sfpowerkit/src_salesforce_packages/scratchorgpool
-
-sfdx force:package:install -p sfpower-scratchorg-pool@1.0.0-1 -u Devhub -r -a package -s AdminsOnly -w 30
+sfdx force:package:install -p 04t1P000000gOkXQAU -u Devhub -r -a package -s AdminsOnly -w 30
 ```
 
 ## Deploy the app to your DevHub from CLI
