@@ -119,14 +119,14 @@ export default class ProfileReconcile extends ProfileActions {
     }
   }
 
-  private async removeUserPermissionNotAvailableInOrg(profileObj: Profile) {
+  private async removeUserPermissionNotAvailableInOrg(
+    profileObj: Profile,
+    supportedPermissions: string[]
+  ) {
     if (
       profileObj.userPermissions !== undefined &&
       profileObj.userPermissions.length > 0
     ) {
-      //Fetch all user permissions from the org.
-      let supportedPermissions = await this.fetchPermissions();
-
       //Remove permission that are not present in the target org
       profileObj.userPermissions = profileObj.userPermissions.filter(
         (permission) => {
@@ -644,7 +644,7 @@ export default class ProfileReconcile extends ProfileActions {
   private async fetchPermissions() {
     let permissionRetriever = new MetadataRetriever(
       this.conn,
-      METADATA_INFO.PermissionSet.xmlName,
+      "UserPermissions",
       METADATA_INFO
     );
     let permissionSets = await permissionRetriever.getComponents();
@@ -655,6 +655,13 @@ export default class ProfileReconcile extends ProfileActions {
   }
 
   private async reconcileUserPermissions(profileObj: Profile) {
+    if (
+      profileObj.userPermissions === undefined ||
+      profileObj.userPermissions.length === 0
+    ) {
+      return;
+    }
+
     //Delete all user Permissions if the profile is standard one
     let isCustom = profileObj.custom;
     if (!isCustom) {
@@ -669,14 +676,15 @@ export default class ProfileReconcile extends ProfileActions {
     //IS sourceonly, use ignorePermission set in sfdxProject.json file
     if (MetadataFiles.sourceOnly) {
       await this.removePermissionsBasedOnProjectConfig(profileObj);
-    } else {
-      await this.removeUserPermissionNotAvailableInOrg(profileObj);
-    }
 
-    if (MetadataFiles.sourceOnly) {
       await userPermissionBuilder.handlePermissionDependency(profileObj, []);
     } else {
       let supportedPermissions = await this.fetchPermissions();
+      await this.removeUserPermissionNotAvailableInOrg(
+        profileObj,
+        supportedPermissions
+      );
+
       await userPermissionBuilder.handlePermissionDependency(
         profileObj,
         supportedPermissions

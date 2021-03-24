@@ -39,8 +39,8 @@ export default class MetadataRetriever {
         items = await this.getObjectPermissions();
       } else if (this._componentType === METADATA_INFO.CustomField.xmlName) {
         items = await this.getFieldsByObjectName(parent);
-      } else if (this._componentType === METADATA_INFO.PermissionSet.xmlName) {
-        items = await this.getPermissionSets();
+      } else if (this._componentType === "UserPermissions") {
+        items = await this.getUserPermissions();
       } else if (this._componentType === METADATA_INFO.Layout.xmlName) {
         items = await this.getLayouts();
       } else if (this._componentType === METADATA_INFO.CustomTab.xmlName) {
@@ -72,10 +72,17 @@ export default class MetadataRetriever {
     let queryUtil = new QueryExecutor(this._conn);
     let items = await queryUtil.executeQuery(query, false);
 
-    return items.map((tab) => {
+    items.map((tab) => {
       tab.fullName = tab.Name;
       return tab;
     });
+
+    let listMetadataItems = await this.getComponentsFromOrgUsingListMetadata();
+    if (listMetadataItems.length > 0) {
+      items.concat(listMetadataItems);
+    }
+
+    return items;
   }
 
   private async getComponentsFromOrgUsingListMetadata() {
@@ -146,7 +153,7 @@ export default class MetadataRetriever {
     return entities;
   }
 
-  public async getPermissionSets(): Promise<any[]> {
+  public async getUserPermissions(): Promise<any[]> {
     let describeResult = await this._conn.sobject("PermissionSet").describe();
     let supportedPermissions = [];
     describeResult.fields.forEach((field) => {
