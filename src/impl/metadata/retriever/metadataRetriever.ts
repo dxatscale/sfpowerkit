@@ -79,7 +79,7 @@ export default class MetadataRetriever {
 
     let listMetadataItems = await this.getComponentsFromOrgUsingListMetadata();
     if (listMetadataItems.length > 0) {
-      items.concat(listMetadataItems);
+      items = items.concat(listMetadataItems);
     }
 
     return items;
