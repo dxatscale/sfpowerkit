@@ -333,7 +333,7 @@ export default class ProfileRetriever {
   private async fetchPermissions() {
     let permissionRetriever = new MetadataRetriever(
       this.conn,
-      METADATA_INFO.PermissionSet.xmlName,
+      "UserPermissions",
       METADATA_INFO
     );
     let permissionSets = await permissionRetriever.getComponents();
