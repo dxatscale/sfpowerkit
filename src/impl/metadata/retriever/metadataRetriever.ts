@@ -212,9 +212,21 @@ export default class MetadataRetriever {
     try {
       SFPowerkit.log(`Fetching RecordTypes`, LoggerLevel.TRACE);
 
-      let query = `SELECT Name, DeveloperName, SobjectType, NameSpacePrefix, IsPersonType FROM RecordType`;
       let queryUtil = new QueryExecutor(this._conn);
-      recordTypes = await queryUtil.executeQuery(query, false);
+
+      let isPersonAccountFieldDefinitionQuery = `SELECT QualifiedApiName FROM FieldDefinition WHERE EntityDefinition.QualifiedApiName='Account' AND QualifiedApiName='IsPersonAccount'`;
+      let isPersonAccountFieldDefinitionRecords = await queryUtil.executeQuery(
+        isPersonAccountFieldDefinitionQuery,
+        true
+      );
+
+      let recordTypeQuery: string;
+      if (isPersonAccountFieldDefinitionRecords.length > 0)
+        recordTypeQuery = `SELECT Name, DeveloperName, SobjectType, NameSpacePrefix, IsPersonType FROM RecordType`;
+      else
+        recordTypeQuery = `SELECT Name, DeveloperName, SobjectType, NameSpacePrefix FROM RecordType`;
+
+      recordTypes = await queryUtil.executeQuery(recordTypeQuery, false);
 
       recordTypes = recordTypes.map((recordType) => {
         let namespace = "";
@@ -237,7 +249,8 @@ export default class MetadataRetriever {
         return rtObj;
       });
     } catch (error) {
-      SFPowerkit.log(`Error fetching record types...`, LoggerLevel.TRACE);
+      SFPowerkit.log(`Error fetching record types...`, LoggerLevel.DEBUG);
+      SFPowerkit.log(error.message, LoggerLevel.DEBUG);
     }
     return recordTypes;
   }
