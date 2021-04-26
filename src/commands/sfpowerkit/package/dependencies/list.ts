@@ -138,13 +138,14 @@ export default class List extends SfdxCommand {
 
       // Get Package version id from package + versionNumber
       const vers = dependency.versionNumber.split(".");
+      this.validateVersionNumber(dependency.package,vers)
       let query =
         "Select SubscriberPackageVersionId, IsPasswordProtected, IsReleased, MajorVersion, MinorVersion, PatchVersion,BuildNumber ";
       query += "from Package2Version ";
       query += `where Package2Id='${packageId}' and MajorVersion=${vers[0]} and MinorVersion=${vers[1]} and PatchVersion=${vers[2]} `;
 
       // If Build Number isn't set to LATEST, look for the exact Package Version
-      if (vers[3] !== "LATEST") {
+      if (vers.length === 4 && vers[3] !== "LATEST" && typeof(vers[3]) === 'number') {
         query += `and BuildNumber=${vers[3]} `;
       } else if (this.flags.usedependencyvalidatedpackages) {
         query += `and ValidationSkipped = false `;
@@ -169,6 +170,14 @@ export default class List extends SfdxCommand {
         dependency["versionId"] = versionId;
         dependency["versionNumber"] = versionNumber;
       }
+    }
+  }
+  private validateVersionNumber(packageName,versionParts){
+    if(!(versionParts.length > 1)){
+      throw new core.SfdxError(`Invalid dependency version number ${versionParts.join('.')} for package ${packageName}. Valid format is 1.0.0.1 (or) 1.0.0.LATEST`);
+    }
+    else if((versionParts.length === 4 && versionParts[3] === 'NEXT')){
+      throw new core.SfdxError(`Invalid dependency version number ${versionParts.join('.')} for package ${packageName}, NEXT is not allowed. Valid format is 1.0.0.1 (or) 1.0.0.LATEST`);
     }
   }
 }
