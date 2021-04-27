@@ -63,14 +63,19 @@
             <property name="strictMode" value="true" />
         </properties>
     </rule>
-    <rule ref="category/apex/codestyle.xml/VariableNamingConventions">
+    <rule ref="category/apex/codestyle.xml/FieldNamingConventions">
         <priority>3</priority>
-        <properties>
-            <property name="checkMembers" value="true" />
-            <property name="checkLocals" value="true" />
-            <property name="checkParameters" value="true" />
-        </properties>
     </rule>
+    <rule ref="category/apex/codestyle.xml/FormalParameterNamingConventions">
+        <priority>3</priority>
+    </rule>
+    <rule ref="category/apex/codestyle.xml/LocalVariableNamingConventions">
+        <priority>3</priority>
+    </rule>
+    <rule ref="category/apex/codestyle.xml/PropertyNamingConventions">
+        <priority>3</priority>
+    </rule>
+
     <rule ref="category/apex/codestyle.xml/WhileLoopsMustUseBraces">
         <priority>1</priority>
     </rule>
@@ -122,6 +127,12 @@
     </rule>
 
     <!-- error prone -->
+    <rule ref="category/apex/errorprone.xml/ApexCSRF">
+        <priority>1</priority>
+    </rule>
+    <rule ref="category/apex/errorprone.xml/OverrideBothEqualsAndHashcode">
+        <priority>1</priority>
+    </rule>
     <rule ref="category/apex/errorprone.xml/AvoidDirectAccessTriggerMap">
         <priority>1</priority>
     </rule>
@@ -147,13 +158,7 @@
         <priority>1</priority>
     </rule>
 
-    <rule ref="category/apex/performance.xml/AvoidDmlStatementsInLoops">
-        <priority>2</priority>
-    </rule>
-    <rule ref="category/apex/performance.xml/AvoidSoqlInLoops">
-        <priority>2</priority>
-    </rule>
-    <rule ref="category/apex/performance.xml/AvoidSoslInLoops">
+    <rule ref="category/apex/performance.xml/OperationWithLimitsInLoop">
         <priority>2</priority>
     </rule>
 
@@ -163,7 +168,7 @@
     <rule ref="category/apex/security.xml/ApexCRUDViolation">
         <priority>5</priority>
     </rule>
-    <rule ref="category/apex/security.xml/ApexCSRF">
+    <rule ref="category/vf/security.xml/VfHtmlStyleTagXss">
         <priority>1</priority>
     </rule>
     <rule ref="category/apex/security.xml/ApexDangerousMethods">
