@@ -60,7 +60,7 @@ export default class Pmd extends SfdxCommand {
     }),
     version: flags.string({
       required: false,
-      default: "6.30.0",
+      default: "6.34.0",
       description: messages.getMessage("versionFlagDescription"),
     }),
     loglevel: flags.enum({
