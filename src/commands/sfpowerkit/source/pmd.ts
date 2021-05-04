@@ -1,12 +1,11 @@
 import { core, SfdxCommand, FlagsConfig, flags } from "@salesforce/command";
 import findJavaHome from "find-java-home";
-import { spawn } from "child_process";
+import { spawnSync } from "child_process";
 import FileUtils from "../../../utils/fileutils";
-import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
+import { SFPowerkit } from "../../../sfpowerkit";
 import { extract } from "../../../utils/extract";
 import { isNullOrUndefined } from "util";
-import * as xml2js from "xml2js";
-import { SfdxError } from "@salesforce/core";
+import { SfdxError, Logger, SfdxProject } from "@salesforce/core";
 
 const request = require("request");
 const fs = require("fs");
@@ -23,12 +22,12 @@ export default class Pmd extends SfdxCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [`$ sfdx sfpowerkit:source:pmd`];
-
   protected static flagsConfig: FlagsConfig = {
-    directory: flags.string({
+    directory: flags.directory({
       required: false,
       char: "d",
       description: messages.getMessage("directoryFlagDescription"),
+      exclusive: ['filelist'],
     }),
 
     ruleset: flags.string({
@@ -43,93 +42,122 @@ export default class Pmd extends SfdxCommand {
       default: "text",
       description: messages.getMessage("formatFlagDescription"),
     }),
+
+    filelist: flags.filepath({
+      required: false,
+      description: messages.getMessage("filelistFlagDescription"),
+      exclusive: ['directory'],
+    }),
+
     report: flags.filepath({
       required: false,
-      char: "o",
-      default: "pmd-output",
       description: messages.getMessage("reportFlagDescription"),
+      exclusive: ["reportfile"],
     }),
+
+    reportfile: flags.filepath({
+      required: false,
+      char: "o",
+      description: messages.getMessage("reportfileFlagDescription"),
+      exclusive: ["report"],
+    }),
+
     javahome: flags.string({
       required: false,
       description: messages.getMessage("javaHomeFlagDescription"),
     }),
-    supressoutput: flags.boolean({
+
+    failonviolation: flags.boolean({
       required: false,
-      default: false,
-      description: messages.getMessage("supressoutputFlagDescription"),
+      description: messages.getMessage("failonviolationFlagDescription"),
+      default: true,
+      allowNo: true,
     }),
+
+    minimumpriority: flags.integer({
+      required: false,
+      description: messages.getMessage("minimumpriorityFlagDescription"),
+    }),
+
+    shortnames: flags.boolean({
+      required: false,
+      description: messages.getMessage("shortnamesFlagDescription"),
+      default: false,
+      allowNo: true,
+    }),
+
+    showsuppressed: flags.boolean({
+      required: false,
+      description: messages.getMessage("showsuppressedFlagDescription"),
+      default: false,
+      allowNo: true,
+    }),
+
+    suppressmarker: flags.string({
+      required: false,
+      description: messages.getMessage("suppressmarkerFlagDescription"),
+    }),
+
     version: flags.string({
       required: false,
       default: "6.34.0",
       description: messages.getMessage("versionFlagDescription"),
-    }),
-    loglevel: flags.enum({
-      description: "logging level for this command invocation",
-      default: "info",
-      required: false,
-      options: [
-        "trace",
-        "debug",
-        "info",
-        "warn",
-        "error",
-        "fatal",
-        "TRACE",
-        "DEBUG",
-        "INFO",
-        "WARN",
-        "ERROR",
-        "FATAL",
-      ],
     }),
   };
 
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   // protected static requiresProject = true;
 
-  private javahome;
+  private javahome: string;
+
+  protected initLoggerAndUx(): Promise<void> {
+    this.logger = new Logger({
+      name: this.statics.name,
+      streams: [
+        {
+          stream: process.stderr,
+          level: Logger.getRoot().getLevel(),
+        }
+      ]
+    });
+    return super.initLoggerAndUx();
+  }
 
   public async run(): Promise<any> {
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
+    // setup result display
+    this.result.display = function() {
+      if (typeof this.data === "string") {
+        process.stdout.write(this.data);
+      } else {
+        process.stdout.write(JSON.stringify(this.data, null, 2));
+      }
+    }
 
     if (isNullOrUndefined(this.flags.javahome)) {
       this.javahome = await this.findJavaHomeAsync();
-      SFPowerkit.log(`Found Java Home at ${this.javahome}`, LoggerLevel.INFO);
     }
+
+    this.logger.info(`Java Home set to "${this.javahome}"`);
 
     //Download PMD
-    let cache_directory = FileUtils.getGlobalCacheDir();
-    let pmd_cache_directory = path.join(cache_directory, "pmd");
+    const cacheDirectory = FileUtils.getGlobalCacheDir();
+    const pmdCacheDirectory = path.join(cacheDirectory, "pmd");
+    const pmdHome = path.join(pmdCacheDirectory, `pmd-bin-${this.flags.version}`)
 
-    if (
-      !fs.existsSync(
-        path.join(pmd_cache_directory, `pmd-bin-${this.flags.version}`)
-      )
-    ) {
-      SFPowerkit.log("Initiating Download of  PMD", LoggerLevel.INFO);
-      if (!fs.existsSync(pmd_cache_directory))
-        fs.mkdirSync(pmd_cache_directory);
-      await this.downloadPMD(this.flags.version, pmd_cache_directory);
-      SFPowerkit.log(`Downloaded PMD ${this.flags.version}`, LoggerLevel.INFO);
+    if (!fs.existsSync(pmdHome)) {
+      this.logger.info(`Initiating Download of PMD version ${this.flags.version}`);
+      if (!fs.existsSync(pmdCacheDirectory))
+        fs.mkdirSync(pmdCacheDirectory);
+      await this.downloadPMD(this.flags.version, pmdCacheDirectory);
+      this.logger.info(`Downloaded PMD ${this.flags.version}`);
       await extract(
-        path.join(pmd_cache_directory, "pmd.zip"),
-        pmd_cache_directory
+        path.join(pmdCacheDirectory, "pmd.zip"),
+        pmdCacheDirectory
       );
-      SFPowerkit.log(`Extracted PMD ${this.flags.version}`, LoggerLevel.INFO);
+      this.logger.info(`Extracted PMD ${this.flags.version}`);
     }
 
-    const pmdClassPath = path.join(
-      pmd_cache_directory,
-      `pmd-bin-${this.flags.version}`,
-      "lib",
-      "*"
-    );
-
-    const pmdOutputPath = path.join(
-      pmd_cache_directory,
-      `pmd-bin-${this.flags.version}`,
-      "sf-pmd-output.xml"
-    );
+    const pmdClassPath = path.join(pmdHome, "lib", "*");
 
     //Directory to be scanned
     let packageDirectory = isNullOrUndefined(this.flags.directory)
@@ -138,74 +166,99 @@ export default class Pmd extends SfdxCommand {
 
     let ruleset = this.getvalidatedRuleSet(this.flags.ruleset);
 
-    SFPowerkit.log(`PMD release ${this.flags.version}`, LoggerLevel.INFO);
-    SFPowerkit.log(`Now analyzing ${packageDirectory}`, LoggerLevel.INFO);
+    this.logger.info(`PMD release ${this.flags.version}`);
+    this.logger.info(`Now analyzing ${packageDirectory}`);
 
-    let dir = path.parse(this.flags.report).dir;
-    if (!fs.existsSync(dir)) {
-      FileUtils.mkDirByPathSync(dir);
-    }
-
-    const pmdCmd = spawn(path.join(this.javahome, "bin", "java"), [
-      "-cp",
+    const pmdOptions = [
+      "-classpath",
       pmdClassPath,
       "net.sourceforge.pmd.PMD",
-      "-l",
+      "-language",
       "apex",
-      "-d",
-      packageDirectory,
-      "-R",
+      "-rulesets",
       ruleset,
-      "-f",
-      "xml",
-      "-r",
-      pmdOutputPath,
-    ]);
+      "-format",
+      this.flags.format,
+      "-failOnViolation",
+      this.flags.failonviolation ? "true" : "false",
+    ];
 
-    const pmdCmdForConsoleLogging = spawn(
+    if (this.flags.reportfile) {
+      pmdOptions.push("-reportfile");
+      pmdOptions.push(this.flags.reportfile);
+    } else if (this.flags.report) {
+      pmdOptions.push("-reportfile");
+      pmdOptions.push(this.flags.report);
+    }
+
+    if (!this.flags.filelist && !this.flags.directory) {
+      // use default package dir
+      pmdOptions.push("-dir");
+      pmdOptions.push(await this.getDefaultPackagePath());
+    } else if (this.flags.filelist) {
+      pmdOptions.push("-filelist");
+      pmdOptions.push(this.flags.filelist);
+    } else if (this.flags.directory) {
+      pmdOptions.push("-dir");
+      pmdOptions.push(this.flags.directory);
+    }
+
+    if (this.flags.minimumpriority) {
+      pmdOptions.push("-minimumpriority");
+      pmdOptions.push(this.flags.minimumpriority);
+    }
+
+    if (this.flags.shortnames) {
+      pmdOptions.push("-shortnames");
+    }
+
+    if (this.flags.showsuppressed) {
+      pmdOptions.push("-showsuppressed");
+    }
+
+    if (this.flags.suppressmarker) {
+      pmdOptions.push("-suppressmarker");
+      pmdOptions.push(this.flags.suppressmarker);
+    }
+
+    this.logger.debug(`PMD command line: ${pmdOptions.join(" ")}`);
+
+    const pmdCmd = spawnSync(
       path.join(this.javahome, "bin", "java"),
-      [
-        "-cp",
-        pmdClassPath,
-        "net.sourceforge.pmd.PMD",
-        "-l",
-        "apex",
-        "-d",
-        packageDirectory,
-        "-R",
-        ruleset,
-        "-f",
-        this.flags.format,
-        "-r",
-        this.flags.report,
-      ]
+      pmdOptions,
     );
 
-    //capture pmd errors
-    let pmd_error;
-    let pmd_output;
-    pmdCmd.stderr.on("data", (data) => {
-      pmd_error = data;
-    });
-    pmdCmd.stdout.on("data", (data) => {
-      pmd_output = data;
-    });
+    if (pmdCmd.status === null) {
+      // PMD was interrupted by a signal
+      process.exitCode = 255;
+      const err = new SfdxError(`PMD was interrupted by signal "${pmdCmd.signal}"`);
+      err.exitCode = 255;
+      return err;
+    }
 
-    pmdCmd.on("close", (code) => {
-      if (code == 4 || code == 0) {
-        this.parseXmlReport(pmdOutputPath, packageDirectory);
 
-        if (!this.flags.supressoutput) {
-          let violations = fs.readFileSync(this.flags.report).toString();
-          SFPowerkit.log(violations, LoggerLevel.INFO);
-        }
-      } else if (code == 1) {
-        SFPowerkit.log("PMD Exited with some exceptions ", LoggerLevel.INFO);
-        SFPowerkit.log(pmd_error.toString(), LoggerLevel.ERROR);
+    if (pmdCmd.status === 1) {
+      const err = new SfdxError(pmdCmd.stderr.toString());
+      err.exitCode = 1;
+      throw err;
+    }
+
+    process.exitCode = pmdCmd.status;
+
+    if (this.flags.format === "json"
+        || this.flags.format === "sarif") {
+      // try to return an object instead of a plain string
+      try {
+        return JSON.parse(pmdCmd.stdout.toString());
+      } catch (_) {
+        return pmdCmd.stdout.toString();
       }
-    });
+    }
+
+    return pmdCmd.stdout.toString();
   }
-  private getvalidatedRuleSet(ruleset) {
+
+  private getvalidatedRuleSet(ruleset: string) {
     //Default Ruleset
     const sfpowerkitRuleSet = path.join(
       __dirname,
@@ -237,80 +290,43 @@ export default class Pmd extends SfdxCommand {
     }
   }
 
-  private async findJavaHomeAsync(): Promise<string> {
+  private findJavaHomeAsync(): Promise<string> {
     return new Promise<string>((resolve, reject): void => {
       findJavaHome({ allowJre: true }, (err, res) => {
         if (err) {
           return reject(err);
         }
-        return resolve(res);
+        resolve(res);
       });
     });
   }
 
-  private async downloadPMD(
-    npm_package_pmd_version: string,
-    pmd_chache_directory: any
-  ) {
-    let file = fs.createWriteStream(path.join(pmd_chache_directory, "pmd.zip"));
+  private downloadPMD(pmdVersion: string, cacheDirectory: any): Promise<void> {
+    let file = fs.createWriteStream(path.join(cacheDirectory, "pmd.zip"));
 
-    await new Promise((resolve, reject) => {
-      let stream = request({
-        /* Here you should specify the exact link to the file you are trying to download */
-        uri: `https://github.com/pmd/pmd/releases/download/pmd_releases%2F${npm_package_pmd_version}/pmd-bin-${npm_package_pmd_version}.zip`,
+    return new Promise((resolve, reject) => {
+      request({
+        uri: `https://github.com/pmd/pmd/releases/download/pmd_releases%2F${pmdVersion}/pmd-bin-${pmdVersion}.zip`,
       })
         .pipe(file)
         .on("finish", () => {
           resolve();
         })
-        .on("error", (error) => {
+        .on("error", error => {
           reject(error);
         });
-    }).catch((error) => {
-      SFPowerkit.log(`Unable to download: ${error}`, LoggerLevel.ERROR);
     });
   }
 
-  protected parseXmlReport(
-    xmlReport: string,
-    moduleName: string
-  ): [number, number] {
-    let fileCount = 0;
-    let violationCount = 0;
-
-    let reportContent: string = fs.readFileSync(xmlReport, "utf-8");
-    xml2js.parseString(reportContent, (err, data) => {
-      // If the file is not XML, or is not from PMD, return immediately
-      if (!data || !data.pmd) {
-        SFPowerkit.log(
-          `Empty or unrecognized PMD xml report ${xmlReport}`,
-          LoggerLevel.ERROR
-        );
-        return null;
-      }
-
-      if (!data.pmd.file || data.pmd.file.length === 0) {
-        // No files with violations, return now that it has been marked for upload
-        SFPowerkit.log(
-          `A PMD report was found for module '${moduleName}' but it contains no violations`,
-          LoggerLevel.INFO
-        );
-        return null;
-      }
-
-      data.pmd.file.forEach((file: any) => {
-        if (file.violation) {
-          fileCount++;
-          violationCount += file.violation.length;
-        }
-      });
-
-      SFPowerkit.log(
-        `PMD analyzation complete  for module '${moduleName}' containing ${violationCount} issues, Report available at ${this.flags.report}`,
-        LoggerLevel.INFO
-      );
-    });
-
-    return [violationCount, fileCount];
+  /**
+   * returns the full path of the default package.
+   *
+   * @returns the full path of the default package
+   */
+  private async getDefaultPackagePath():Promise<string> {
+    if (!this.project) {
+      this.project = await SfdxProject.resolve();
+    }
+    return this.project.getDefaultPackage().fullPath;
   }
 }
