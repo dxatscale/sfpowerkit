@@ -2,9 +2,7 @@ import { core, SfdxCommand, FlagsConfig, flags } from "@salesforce/command";
 import findJavaHome from "find-java-home";
 import { spawnSync } from "child_process";
 import FileUtils from "../../../utils/fileutils";
-import { SFPowerkit } from "../../../sfpowerkit";
 import { extract } from "../../../utils/extract";
-import { isNullOrUndefined } from "util";
 import { SfdxError, Logger, SfdxProject } from "@salesforce/core";
 
 const request = require("request");
