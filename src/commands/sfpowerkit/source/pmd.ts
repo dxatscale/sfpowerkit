@@ -34,6 +34,14 @@ export default class Pmd extends SfdxCommand {
       required: false,
       char: "r",
       description: messages.getMessage("rulesetFlagDescription"),
+      exclusive: ['rulesets'],
+    }),
+
+    rulesets: flags.string({
+      required: false,
+      char: "R",
+      description: messages.getMessage("rulesetsFlagDescription"),
+      exclusive: ['ruleset'],
     }),
 
     format: flags.string({
@@ -108,8 +116,6 @@ export default class Pmd extends SfdxCommand {
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   // protected static requiresProject = true;
 
-  private javahome: string;
-
   protected initLoggerAndUx(): Promise<void> {
     this.logger = new Logger({
       name: this.statics.name,
@@ -133,12 +139,6 @@ export default class Pmd extends SfdxCommand {
       }
     }
 
-    if (isNullOrUndefined(this.flags.javahome)) {
-      this.javahome = await this.findJavaHomeAsync();
-    }
-
-    this.logger.info(`Java Home set to "${this.javahome}"`);
-
     //Download PMD
     const cacheDirectory = FileUtils.getGlobalCacheDir();
     const pmdCacheDirectory = path.join(cacheDirectory, "pmd");
@@ -157,85 +157,31 @@ export default class Pmd extends SfdxCommand {
       this.logger.info(`Extracted PMD ${this.flags.version}`);
     }
 
-    const pmdClassPath = path.join(pmdHome, "lib", "*");
+    this.logger.info(`Using PMD release ${this.flags.version}`);
 
-    //Directory to be scanned
-    let packageDirectory = isNullOrUndefined(this.flags.directory)
-      ? await SFPowerkit.getDefaultFolder()
-      : this.flags.directory;
+    const javaHome = await this.getJavaHome();
+    this.logger.info(`Java Home set to "${javaHome}"`);
 
-    let ruleset = this.getvalidatedRuleSet(this.flags.ruleset);
-
-    this.logger.info(`PMD release ${this.flags.version}`);
-    this.logger.info(`Now analyzing ${packageDirectory}`);
-
-    const pmdOptions = [
-      "-classpath",
-      pmdClassPath,
-      "net.sourceforge.pmd.PMD",
-      "-language",
-      "apex",
-      "-rulesets",
-      ruleset,
-      "-format",
-      this.flags.format,
-      "-failOnViolation",
-      this.flags.failonviolation ? "true" : "false",
-    ];
-
-    if (this.flags.reportfile) {
-      pmdOptions.push("-reportfile");
-      pmdOptions.push(this.flags.reportfile);
-    } else if (this.flags.report) {
-      pmdOptions.push("-reportfile");
-      pmdOptions.push(this.flags.report);
-    }
-
-    if (!this.flags.filelist && !this.flags.directory) {
-      // use default package dir
-      pmdOptions.push("-dir");
-      pmdOptions.push(await this.getDefaultPackagePath());
-    } else if (this.flags.filelist) {
-      pmdOptions.push("-filelist");
-      pmdOptions.push(this.flags.filelist);
-    } else if (this.flags.directory) {
-      pmdOptions.push("-dir");
-      pmdOptions.push(this.flags.directory);
-    }
-
-    if (this.flags.minimumpriority) {
-      pmdOptions.push("-minimumpriority");
-      pmdOptions.push(this.flags.minimumpriority);
-    }
-
-    if (this.flags.shortnames) {
-      pmdOptions.push("-shortnames");
-    }
-
-    if (this.flags.showsuppressed) {
-      pmdOptions.push("-showsuppressed");
-    }
-
-    if (this.flags.suppressmarker) {
-      pmdOptions.push("-suppressmarker");
-      pmdOptions.push(this.flags.suppressmarker);
-    }
-
+    const pmdOptions = await this.commandOptions(pmdHome);
     this.logger.debug(`PMD command line: ${pmdOptions.join(" ")}`);
 
     const pmdCmd = spawnSync(
-      path.join(this.javahome, "bin", "java"),
+      path.join(javaHome, "bin", "java"),
       pmdOptions,
     );
 
     if (pmdCmd.status === null) {
-      // PMD was interrupted by a signal
-      process.exitCode = 255;
-      const err = new SfdxError(`PMD was interrupted by signal "${pmdCmd.signal}"`);
-      err.exitCode = 255;
-      return err;
-    }
+      if (pmdCmd.signal) {
+        // PMD was interrupted by a signal
+        const err = new SfdxError(`PMD was interrupted by signal "${pmdCmd.signal}"`);
+        err.exitCode = 255;
+        throw err;
+      }
 
+      const err = new SfdxError(`Could not run PMD: "${pmdCmd.error}"`);
+      err.exitCode = 1;
+      throw err;
+    }
 
     if (pmdCmd.status === 1) {
       const err = new SfdxError(pmdCmd.stderr.toString());
@@ -247,8 +193,8 @@ export default class Pmd extends SfdxCommand {
 
     if (this.flags.format === "json"
         || this.flags.format === "sarif") {
-      // try to return an object instead of a plain string
       try {
+        // try to return an object instead of a plain string
         return JSON.parse(pmdCmd.stdout.toString());
       } catch (_) {
         return pmdCmd.stdout.toString();
@@ -258,7 +204,27 @@ export default class Pmd extends SfdxCommand {
     return pmdCmd.stdout.toString();
   }
 
-  private getvalidatedRuleSet(ruleset: string) {
+  /**
+   * Return the rulests to be used by PMD.
+   * Substitute the "sfpowerkit" ruleset with the path
+   * to the ruleset file. The other rulesets are unchanged.
+   * If the given rulesets param is empty, return the sfpowerkit
+   * ruleset path.
+   *
+   * Since rulesets can also be found in PMD's classpath,
+   * we let PMD validate the ruleset.
+   *
+   * @param rulesets the selected rulesets
+   * @return the updated ruleset string
+   *
+   */
+  private rulesets():string {
+    // handle ruleset flag deprecation
+    if (this.flags.ruleset && !this.flags.rulesets) {
+      this.ux.warn("--ruleset has been deprecated and will be removed in a future version. Use --rulesets instead.");
+      this.flags.rulesets = this.flags.ruleset;
+    } // end: handle ruleset flag deprecation
+
     //Default Ruleset
     const sfpowerkitRuleSet = path.join(
       __dirname,
@@ -270,27 +236,33 @@ export default class Pmd extends SfdxCommand {
       "pmd-ruleset.xml"
     );
 
-    if (!ruleset || ruleset.toLowerCase() === "sfpowerkit") {
+    if (!this.flags.rulesets) {
       return sfpowerkitRuleSet;
-    } else {
-      let ruleArray = [];
-      for (let rulePath of ruleset.split(",")) {
-        if (rulePath.toLowerCase() === "sfpowerkit") {
-          ruleArray.push(sfpowerkitRuleSet);
-        } else {
-          if (!fs.existsSync(path.resolve(rulePath))) {
-            throw new SfdxError(
-              `The given rulesheet ${rulePath} cannot be found`
-            );
-          }
-          ruleArray.push(rulePath);
-        }
-      }
-      return ruleArray.join(",");
     }
+
+    const rules = this.flags.rulesets.split(',');
+    for (let i = 0; i < rules.length; i++) {
+      const rule = rules[i];
+      if (rule.toLowerCase() === "sfpowerkit") {
+        rules[i] = sfpowerkitRuleSet;
+      }
+    }
+    return rules.join(",");
   }
 
-  private findJavaHomeAsync(): Promise<string> {
+  /**
+   * Returns the java home path.
+   * If the flag `--javahome` was provided,
+   * its value is returned. Otherwise this method
+   * call "findJavaHome"
+   *
+   * @return the Java home path
+   */
+  private getJavaHome(): Promise<string> {
+    if (this.flags.javahome) {
+      return Promise.resolve(this.flags.javahome);
+    }
+
     return new Promise<string>((resolve, reject): void => {
       findJavaHome({ allowJre: true }, (err, res) => {
         if (err) {
@@ -328,5 +300,71 @@ export default class Pmd extends SfdxCommand {
       this.project = await SfdxProject.resolve();
     }
     return this.project.getDefaultPackage().fullPath;
+  }
+
+  /**
+   * Returns the PMD command line options which matches this
+   * command flags.
+   *
+   * @param pmdHome PMD install dir path
+   * @return the PMD command line options
+   */
+  private async commandOptions(pmdHome:string):Promise<string[]> {
+    const pmdClassPath = path.join(pmdHome, "lib", "*");
+
+    const pmdOptions = [
+      "-classpath",
+      pmdClassPath,
+      "net.sourceforge.pmd.PMD",
+      "-language",
+      "apex",
+      "-rulesets",
+      this.rulesets(),
+      "-format",
+      this.flags.format,
+      "-failOnViolation",
+      this.flags.failonviolation ? "true" : "false",
+    ];
+
+    if (this.flags.reportfile) {
+      pmdOptions.push("-reportfile");
+      pmdOptions.push(this.flags.reportfile);
+    } else if (this.flags.report) {
+      this.ux.warn("--report is deprecated and will be removed in a future version. User --reportfile instead");
+      pmdOptions.push("-reportfile");
+      pmdOptions.push(this.flags.report);
+    }
+
+    if (!this.flags.filelist && !this.flags.directory) {
+      // use default package dir
+      pmdOptions.push("-dir");
+      pmdOptions.push(await this.getDefaultPackagePath());
+    } else if (this.flags.filelist) {
+      pmdOptions.push("-filelist");
+      pmdOptions.push(this.flags.filelist);
+    } else if (this.flags.directory) {
+      pmdOptions.push("-dir");
+      pmdOptions.push(this.flags.directory);
+    }
+
+    if (this.flags.minimumpriority) {
+      pmdOptions.push("-minimumpriority");
+      pmdOptions.push(this.flags.minimumpriority);
+    }
+
+    if (this.flags.shortnames) {
+      pmdOptions.push("-shortnames");
+    }
+
+    if (this.flags.showsuppressed) {
+      pmdOptions.push("-showsuppressed");
+    }
+
+    if (this.flags.suppressmarker) {
+      pmdOptions.push("-suppressmarker");
+      pmdOptions.push(this.flags.suppressmarker);
+    }
+
+    return pmdOptions;
   }
 }
