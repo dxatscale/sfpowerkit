@@ -3,7 +3,7 @@ import {
   MetadataInfo,
   METADATA_INFO,
   MetadataDescribe,
-  SOURCE_EXTENSION_REGEX
+  SOURCE_EXTENSION_REGEX,
 } from "./metadataInfo";
 import FileUtils from "../../utils/fileutils";
 import * as _ from "lodash";
@@ -137,7 +137,7 @@ export default class MetadataFiles {
     var metadataFiles: string[] = FileUtils.getAllFilesSync(srcFolder);
     let keys = Object.keys(METADATA_INFO);
     if (Array.isArray(metadataFiles) && metadataFiles.length > 0) {
-      metadataFiles.forEach(metadataFile => {
+      metadataFiles.forEach((metadataFile) => {
         let found = false;
 
         for (let i = 0; i < keys.length; i++) {
@@ -166,6 +166,11 @@ export default class MetadataFiles {
               if (METADATA_INFO[keys[i]].isChildComponent) {
                 let fileParts = metadataFile.split(SEP);
                 let parentName = fileParts[fileParts.length - 3];
+                if (keys[i] === "CustomField" && parentName === "Activity") {
+                  //Add Activity fiels on Task and Event for reconcile
+                  METADATA_INFO[keys[i]].components.push("Task." + name);
+                  METADATA_INFO[keys[i]].components.push("Event." + name);
+                }
                 name = parentName + "." + name;
               }
 
@@ -196,7 +201,7 @@ export default class MetadataFiles {
         }
       });
     } else {
-      keys.forEach(key => {
+      keys.forEach((key) => {
         if (_.isNil(METADATA_INFO[key].files)) {
           METADATA_INFO[key].files = [];
           METADATA_INFO[key].components = [];
@@ -214,7 +219,7 @@ export default class MetadataFiles {
     if (!packageDirectories || packageDirectories.length == 0) {
       return false;
     }
-    const moduleFolder = packageDirectories.find(packageFolder => {
+    const moduleFolder = packageDirectories.find((packageFolder) => {
       let packageFolderNormalized = path.relative("", packageFolder);
       return filePath.startsWith(packageFolderNormalized);
     });
