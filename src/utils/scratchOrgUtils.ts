@@ -1,4 +1,4 @@
-import { LoggerLevel, Org } from "@salesforce/core";
+import { LoggerLevel, Org, AuthInfo } from "@salesforce/core";
 let request = require("request-promise-native");
 import { SFPowerkit } from "../sfpowerkit";
 import { SfdxApi } from "../sfdxnode/types";
@@ -186,6 +186,11 @@ export default class ScratchOrgUtils {
     let passwordData = await Passwordgenerateimpl.run(scratchOrg.username);
 
     scratchOrg.password = passwordData.password;
+    
+    //Get Sfdx Auth URL
+    const authInfo = await AuthInfo.create({ username: scratchOrg.username });
+
+    scratchOrg.sfdxAuthUrl = authInfo.getSfdxAuthUrl();
 
     if (!passwordData.password) {
       throw new Error("Unable to setup password to scratch org");
@@ -281,6 +286,21 @@ export default class ScratchOrgUtils {
     hubOrg: Org
   ): Promise<boolean> {
     let hubConn = hubOrg.getConnection();
+    
+    //Check that SfdxAuthUrl__c field exists to avoid a breaking change
+    const soDescribe = await hubConn.describe("ScratchOrgInfo");
+    let sfdxAuthUrlFieldExists = false;
+    for (const field of soDescribe.fields) {
+      if (field.name === 'SfdxAuthUrl__c') {
+        sfdxAuthUrlFieldExists = true;
+        break;
+      }
+    }
+    if (!sfdxAuthUrlFieldExists) {
+      delete soInfo.SfdxAuthUrl__c;
+      SFPowerkit.log("Removed sfdxAuthUrl info as SfdxAuthUrl__c field is not found on Org", LoggerLevel.TRACE);
+    }
+
     SFPowerkit.log(JSON.stringify(soInfo), LoggerLevel.TRACE);
     return await retry(
       async (bail) => {
@@ -479,4 +499,5 @@ export interface ScratchOrg {
   accessToken?: string;
   instanceURL?: string;
   status?: string;
+  sfdxAuthUrl?: string;
 }
