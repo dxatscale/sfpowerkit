@@ -36,6 +36,11 @@ export default class Fetch extends SfdxCommand {
       description: messages.getMessage("mypoolDescription"),
       required: false,
     }),
+    alias: flags.string({
+      char: "a",
+      description: messages.getMessage("aliasDescription"),
+      required: false,
+    }),
     sendtouser: flags.string({
       char: "s",
       description: messages.getMessage("sendToUserDescription"),
@@ -75,7 +80,8 @@ export default class Fetch extends SfdxCommand {
       this.hubOrg,
       this.flags.tag,
       this.flags.mypool,
-      this.flags.sendtouser
+      this.flags.sendtouser,
+      this.flags.alias
     );
 
     let result = await fetchImpl.execute();
@@ -89,6 +95,8 @@ export default class Fetch extends SfdxCommand {
         }
       }
       this.ux.table(list, ["key", "value"]);
+
+      fetchImpl.loginToScratchOrgIfSfdxAuthURLExits(result);
     }
 
     if (!this.flags.sendtouser) return result as AnyJson;

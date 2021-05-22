@@ -10,6 +10,8 @@ const ORDER_BY_FILTER = " ORDER BY CreatedDate ASC";
 export default class ScratchOrgUtils {
   public static isNewVersionCompatible: boolean = false;
   private static isVersionCompatibilityChecked: boolean = false;
+  private static sfdxAuthUrlFieldExists: boolean = false;
+  
 
   public static async checkForNewVersionCompatible(hubOrg: Org) {
     let conn = hubOrg.getConnection();
@@ -23,6 +25,11 @@ export default class ScratchOrgUtils {
             .describe();
           if (describeResult) {
             for (const field of describeResult.fields) {
+              if(field.name === "SfdxAuthUrl__c")
+              {
+                this.sfdxAuthUrlFieldExists=true;
+              }
+
               if (
                 field.name === "Allocation_status__c" &&
                 field.picklistValues.length === 4
@@ -192,6 +199,7 @@ export default class ScratchOrgUtils {
 
     scratchOrg.sfdxAuthUrl = authInfo.getSfdxAuthUrl();
 
+
     if (!passwordData.password) {
       throw new Error("Unable to setup password to scratch org");
     } else {
@@ -287,16 +295,8 @@ export default class ScratchOrgUtils {
   ): Promise<boolean> {
     let hubConn = hubOrg.getConnection();
     
-    //Check that SfdxAuthUrl__c field exists to avoid a breaking change
-    const soDescribe = await hubConn.describe("ScratchOrgInfo");
-    let sfdxAuthUrlFieldExists = false;
-    for (const field of soDescribe.fields) {
-      if (field.name === 'SfdxAuthUrl__c') {
-        sfdxAuthUrlFieldExists = true;
-        break;
-      }
-    }
-    if (!sfdxAuthUrlFieldExists) {
+    
+    if (!this.sfdxAuthUrlFieldExists) {
       delete soInfo.SfdxAuthUrl__c;
       SFPowerkit.log("Removed sfdxAuthUrl info as SfdxAuthUrl__c field is not found on Org", LoggerLevel.TRACE);
     }
@@ -335,11 +335,21 @@ export default class ScratchOrgUtils {
       async (bail) => {
         let query;
 
+        if(this.sfdxAuthUrlFieldExists)
+        {
+          if (!isNullOrUndefined(tag))
+          query = `SELECT Pooltag__c, Id,  CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl,SfdxAuthUrl__c FROM ScratchOrgInfo WHERE Pooltag__c = '${tag}'  AND Status = 'Active' `;
+        else
+          query = `SELECT Pooltag__c, Id,  CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl,SfdxAuthUrl__c FROM ScratchOrgInfo WHERE Pooltag__c != null  AND Status = 'Active' `;
+
+        }
+        else
+        {
         if (!isNullOrUndefined(tag))
           query = `SELECT Pooltag__c, Id,  CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE Pooltag__c = '${tag}'  AND Status = 'Active' `;
         else
           query = `SELECT Pooltag__c, Id,  CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE Pooltag__c != null  AND Status = 'Active' `;
-
+        }
         if (isMyPool) {
           query =
             query + ` AND createdby.username = '${hubOrg.getUsername()}' `;
