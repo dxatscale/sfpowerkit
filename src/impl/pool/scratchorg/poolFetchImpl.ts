@@ -8,20 +8,23 @@ export default class PoolFetchImpl {
   private tag: string;
   private mypool: boolean;
   private sendToUser: string;
-  private alias:string;
+  private alias: string;
+  private isScratchOrgNotTobeOpened: boolean;
 
   public constructor(
     hubOrg: Org,
     tag: string,
     mypool: boolean,
     sendToUser: string,
-    alias:string
+    alias: string,
+    isScratchOrgNotTobeOpened: boolean
   ) {
     this.hubOrg = hubOrg;
     this.tag = tag;
     this.mypool = mypool;
     this.sendToUser = sendToUser;
     this.alias = alias;
+    this.isScratchOrgNotTobeOpened = isScratchOrgNotTobeOpened;
   }
 
   public async execute(): Promise<ScratchOrg> {
@@ -83,7 +86,7 @@ export default class PoolFetchImpl {
           soDetail.username = element.SignupUsername;
           soDetail.password = element.Password__c;
           soDetail.expityDate = element.ExpirationDate;
-          soDetail.sfdxAuthUrl= element.SfdxAuthUrl__c;
+          soDetail.sfdxAuthUrl = element.SfdxAuthUrl__c;
           soDetail.status = "Assigned";
 
           break;
@@ -101,8 +104,6 @@ export default class PoolFetchImpl {
         `No scratch org available at the moment for ${this.tag}, try again in sometime.`
       );
     }
-
-
 
     if (this.sendToUser) {
       //Fetch the email for user id
@@ -125,21 +126,37 @@ export default class PoolFetchImpl {
   }
 
   public loginToScratchOrgIfSfdxAuthURLExits(soDetail: ScratchOrg) {
-    if (soDetail.sfdxAuthUrl && this.alias) {
+    if (soDetail.sfdxAuthUrl) {
       let soLogin: any = {};
       soLogin.sfdxAuthUrl = soDetail.sfdxAuthUrl;
-      fs.writeFileSync('soAuth.json', JSON.stringify(soLogin));
+      fs.writeFileSync("soAuth.json", JSON.stringify(soLogin));
 
-      SFPowerkit.log(`Initiating Auto Login`, LoggerLevel.INFO);
-      child_process.execSync(
-        `sfdx auth:sfdxurl:store -f soAuth.json -a ${this.alias}`,
-        { encoding: "utf8", stdio: "inherit" }
+      SFPowerkit.log(
+        `Initiating Auto Login for Scratch Org with ${soDetail.username}`,
+        LoggerLevel.INFO
       );
-      SFPowerkit.log(`Opening Scratch org ${this.alias}`, LoggerLevel.INFO);
-      child_process.execSync(
-        `sfdx force:org:open -u ${this.alias}`,
-        { encoding: "utf8", stdio: "inherit" }
-      );
+
+      if (this.alias)
+        child_process.execSync(
+          `sfdx auth:sfdxurl:store -f soAuth.json -a ${this.alias}`,
+          { encoding: "utf8", stdio: "inherit" }
+        );
+      else
+        child_process.execSync(`sfdx auth:sfdxurl:store -f soAuth.json`, {
+          encoding: "utf8",
+          stdio: "inherit",
+        });
+
+      if (!this.isScratchOrgNotTobeOpened) {
+        SFPowerkit.log(
+          `Opening Scratch org ${soDetail.username}`,
+          LoggerLevel.INFO
+        );
+        child_process.execSync(`sfdx force:org:open -u ${soDetail.username}`, {
+          encoding: "utf8",
+          stdio: "inherit",
+        });
+      }
     }
   }
 }
