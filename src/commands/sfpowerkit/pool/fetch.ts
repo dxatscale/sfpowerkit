@@ -41,10 +41,6 @@ export default class Fetch extends SfdxCommand {
       description: messages.getMessage("aliasDescription"),
       required: false,
     }),
-    donotopen: flags.boolean({
-      description: messages.getMessage("donotopenDescription"),
-      required: false,
-    }),
     sendtouser: flags.string({
       char: "s",
       description: messages.getMessage("sendToUserDescription"),
@@ -91,7 +87,6 @@ export default class Fetch extends SfdxCommand {
       this.flags.mypool,
       this.flags.sendtouser,
       this.flags.alias,
-      this.flags.donotopen,
       this.flags.setdefaultusername
     );
 

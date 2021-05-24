@@ -9,7 +9,6 @@ export default class PoolFetchImpl {
   private mypool: boolean;
   private sendToUser: string;
   private alias: string;
-  private isScratchOrgNotTobeOpened: boolean;
   private setdefaultusername:boolean;
 
   public constructor(
@@ -18,7 +17,6 @@ export default class PoolFetchImpl {
     mypool: boolean,
     sendToUser: string,
     alias: string,
-    isScratchOrgNotTobeOpened: boolean,
     setdefaultusername:boolean
   ) {
     this.hubOrg = hubOrg;
@@ -26,7 +24,6 @@ export default class PoolFetchImpl {
     this.mypool = mypool;
     this.sendToUser = sendToUser;
     this.alias = alias;
-    this.isScratchOrgNotTobeOpened = isScratchOrgNotTobeOpened;
     this.setdefaultusername = setdefaultusername;
   }
 
@@ -140,7 +137,7 @@ export default class PoolFetchImpl {
       );
 
       let authURLStoreCommand:string = `sfdx auth:sfdxurl:store -f soAuth.json`;
-      
+
       if(this.alias)
          authURLStoreCommand+=` -a ${this.alias}`;
       if(this.setdefaultusername)
@@ -160,17 +157,6 @@ export default class PoolFetchImpl {
         stdio: "pipe",
       });
 
-
-      if (!this.isScratchOrgNotTobeOpened) {
-        SFPowerkit.log(
-          `Opening Scratch org ${soDetail.username}`,
-          LoggerLevel.INFO
-        );
-        child_process.execSync(`sfdx force:org:open -u ${soDetail.username}`, {
-          encoding: "utf8",
-          stdio: "inherit",
-        });
-      }
     }
   }
 }
