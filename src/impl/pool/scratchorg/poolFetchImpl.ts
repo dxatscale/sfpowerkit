@@ -147,6 +147,8 @@ export default class PoolFetchImpl {
           stdio: "inherit",
         });
 
+      fs.unlinkSync("soAuth.json");
+
       if (!this.isScratchOrgNotTobeOpened) {
         SFPowerkit.log(
           `Opening Scratch org ${soDetail.username}`,
