@@ -4,5 +4,6 @@
   "mypoolDescription": "Filter the tag for any additions created  by the executor of the command",
   "aliasDescription":"Fetch and set an alias for the org",
   "donotopenDescription": "Do not open the scratch org after authenticating while using sfdxAuth url based pools",
+  "setdefaultusernameDescription": "set the authenticated org as the default username that all commands run against",
   "sendToUserDescription": "Send the credentials of the fetched scratchorg to another DevHub user, Useful for situations when pool is only limited to certain users"
 }

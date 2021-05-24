@@ -50,6 +50,11 @@ export default class Fetch extends SfdxCommand {
       description: messages.getMessage("sendToUserDescription"),
       required: false,
     }),
+    setdefaultusername: flags.boolean({
+      char: "d",
+      description: messages.getMessage("setdefaultusernameDescription"),
+      required: false,
+    }),
     loglevel: flags.enum({
       description: "logging level for this command invocation",
       default: "info",
@@ -86,7 +91,8 @@ export default class Fetch extends SfdxCommand {
       this.flags.mypool,
       this.flags.sendtouser,
       this.flags.alias,
-      this.flags.donotopen
+      this.flags.donotopen,
+      this.flags.setdefaultusername
     );
 
     let result = await fetchImpl.execute();

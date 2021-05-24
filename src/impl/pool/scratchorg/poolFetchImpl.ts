@@ -10,6 +10,7 @@ export default class PoolFetchImpl {
   private sendToUser: string;
   private alias: string;
   private isScratchOrgNotTobeOpened: boolean;
+  private setdefaultusername:boolean;
 
   public constructor(
     hubOrg: Org,
@@ -17,7 +18,8 @@ export default class PoolFetchImpl {
     mypool: boolean,
     sendToUser: string,
     alias: string,
-    isScratchOrgNotTobeOpened: boolean
+    isScratchOrgNotTobeOpened: boolean,
+    setdefaultusername:boolean
   ) {
     this.hubOrg = hubOrg;
     this.tag = tag;
@@ -25,6 +27,7 @@ export default class PoolFetchImpl {
     this.sendToUser = sendToUser;
     this.alias = alias;
     this.isScratchOrgNotTobeOpened = isScratchOrgNotTobeOpened;
+    this.setdefaultusername = setdefaultusername;
   }
 
   public async execute(): Promise<ScratchOrg> {
@@ -136,16 +139,17 @@ export default class PoolFetchImpl {
         LoggerLevel.INFO
       );
 
-      if (this.alias)
-        child_process.execSync(
-          `sfdx auth:sfdxurl:store -f soAuth.json -a ${this.alias}`,
+      let authURLStoreCommand:string = `sfdx auth:sfdxurl:store -f soAuth.json`;
+      
+      if(this.alias)
+         authURLStoreCommand+=` -a ${this.alias}`;
+      if(this.setdefaultusername)
+          authURLStoreCommand+=` --setdefaultusername`;
+
+         child_process.execSync(
+          authURLStoreCommand,
           { encoding: "utf8", stdio: "inherit" }
-        );
-      else
-        child_process.execSync(`sfdx auth:sfdxurl:store -f soAuth.json`, {
-          encoding: "utf8",
-          stdio: "inherit",
-        });
+        );;
 
       fs.unlinkSync("soAuth.json");
 
