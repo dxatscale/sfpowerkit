@@ -1,23 +1,30 @@
-import { Connection, LoggerLevel, Org, SfdxError } from "@salesforce/core";
+import { Connection, fs, LoggerLevel, Org, SfdxError } from "@salesforce/core";
 import { SFPowerkit } from "../../../sfpowerkit";
 import ScratchOrgUtils, { ScratchOrg } from "../../../utils/scratchOrgUtils";
 import { getUserEmail } from "../../../utils/getUserDetails";
+import child_process = require("child_process");
 export default class PoolFetchImpl {
   private hubOrg: Org;
   private tag: string;
   private mypool: boolean;
   private sendToUser: string;
+  private alias: string;
+  private setdefaultusername:boolean;
 
   public constructor(
     hubOrg: Org,
     tag: string,
     mypool: boolean,
-    sendToUser: string
+    sendToUser: string,
+    alias: string,
+    setdefaultusername:boolean
   ) {
     this.hubOrg = hubOrg;
     this.tag = tag;
     this.mypool = mypool;
     this.sendToUser = sendToUser;
+    this.alias = alias;
+    this.setdefaultusername = setdefaultusername;
   }
 
   public async execute(): Promise<ScratchOrg> {
@@ -79,6 +86,7 @@ export default class PoolFetchImpl {
           soDetail.username = element.SignupUsername;
           soDetail.password = element.Password__c;
           soDetail.expityDate = element.ExpirationDate;
+          soDetail.sfdxAuthUrl = element.SfdxAuthUrl__c;
           soDetail.status = "Assigned";
 
           break;
@@ -115,5 +123,40 @@ export default class PoolFetchImpl {
     }
 
     return soDetail;
+  }
+
+  public loginToScratchOrgIfSfdxAuthURLExits(soDetail: ScratchOrg) {
+    if (soDetail.sfdxAuthUrl) {
+      let soLogin: any = {};
+      soLogin.sfdxAuthUrl = soDetail.sfdxAuthUrl;
+      fs.writeFileSync("soAuth.json", JSON.stringify(soLogin));
+
+      SFPowerkit.log(
+        `Initiating Auto Login for Scratch Org with ${soDetail.username}`,
+        LoggerLevel.INFO
+      );
+
+      let authURLStoreCommand:string = `sfdx auth:sfdxurl:store -f soAuth.json`;
+
+      if(this.alias)
+         authURLStoreCommand+=` -a ${this.alias}`;
+      if(this.setdefaultusername)
+          authURLStoreCommand+=` --setdefaultusername`;
+
+         child_process.execSync(
+          authURLStoreCommand,
+          { encoding: "utf8", stdio: "inherit" }
+        );;
+
+      fs.unlinkSync("soAuth.json");
+
+
+      //Run shape list to reassign this org to the pool
+      child_process.execSync(`sfdx force:org:shape:list`, {
+        encoding: "utf8",
+        stdio: "pipe",
+      });
+
+    }
   }
 }

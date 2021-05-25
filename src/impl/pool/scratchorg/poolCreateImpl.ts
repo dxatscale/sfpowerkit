@@ -200,6 +200,7 @@ export default class PoolCreateImpl {
                 ? "Available"
                 : "",
               Password__c: scratchOrg.password,
+              SfdxAuthUrl__c: scratchOrg.sfdxAuthUrl,
             },
             this.hubOrg
           );
@@ -672,6 +673,7 @@ export default class PoolCreateImpl {
                 ? "Available"
                 : "",
               Password__c: scratchOrg.password,
+              SfdxAuthUrl__c: scratchOrg.sfdxAuthUrl,
             },
             this.hubOrg
           ).then(
