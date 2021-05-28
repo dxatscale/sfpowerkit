@@ -102,7 +102,7 @@ export default class Fetch extends SfdxCommand {
       }
       this.ux.table(list, ["key", "value"]);
 
-      fetchImpl.loginToScratchOrgIfSfdxAuthURLExits(result);
+      fetchImpl.loginToScratchOrgIfSfdxAuthURLExists(result);
     }
 
     if (!this.flags.sendtouser) return result as AnyJson;
