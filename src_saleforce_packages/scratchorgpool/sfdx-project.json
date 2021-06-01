@@ -1,18 +1,19 @@
 {
-  "packageDirectories": [
-    {
-      "path": "force-app",
-      "default": true,
-      "package": "sfpower-scratchorg-pool",
-      "versionName": "sfpower-pool 1.0.0",
-      "versionNumber": "1.0.0.NEXT"
+    "packageDirectories": [
+        {
+            "path": "force-app",
+            "default": true,
+            "package": "sfpower-scratchorg-pool",
+            "versionName": "sfpower-pool 1.1.0",
+            "versionNumber": "1.1.0.NEXT"
+        }
+    ],
+    "namespace": "",
+    "sfdcLoginUrl": "https://login.salesforce.com",
+    "sourceApiVersion": "51.0",
+    "packageAliases": {
+        "sfpower-scratchorg-pool": "0Ho1P000000blK7SAI",
+        "sfpower-scratchorg-pool@1.0.0-1": "04t1P000000gOkXQAU",
+        "sfpower-scratchorg-pool@1.1.0-1": "04t1P000000gOqzQAE"
     }
-  ],
-  "namespace": "",
-  "sfdcLoginUrl": "https://login.salesforce.com",
-  "sourceApiVersion": "51.0",
-  "packageAliases": {
-    "sfpower-scratchorg-pool": "0Ho1P000000blK7SAI",
-    "sfpower-scratchorg-pool@1.0.0-1": "04t1P000000gOkXQAU"
-  }
 }
