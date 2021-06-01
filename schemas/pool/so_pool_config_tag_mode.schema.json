@@ -2,7 +2,7 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://example.com/product.schema.json",
     "title": "sfpowerkit pool config schema - tag mode",
-    "description": "Confid with Script File and specific IP range to relax",
+    "description": "Config with script file and relaxing full IP range (tag mode)",
     "type": "object",
     "additionalProperties": false,
     "required" : ["pool"],

@@ -1,0 +1,26 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://example.com/product.schema.json",
+    "title": "sfpowerkit pool config schema - user mode",
+    "description": "Config with Script file (user mode)",
+    "type": "object",
+    "additionalProperties": false,
+    "required" : ["pool"],
+    "properties": {
+        "pool": {
+            "expiry": 1,
+            "config_file_path": "config/project-scratch-def.json",
+            "script_file_path": "scripts/so_script.sh",
+            "tag": "sfpowerkit"
+          },
+          "poolUsers": [
+            {
+              "max_allocation": 5,
+              "min_allocation": 2,
+              "username": "manivasga.murugesan@accenture.com",
+              "expiry": 1,
+              "priority": 1
+            }
+          ]
+    }
+}
