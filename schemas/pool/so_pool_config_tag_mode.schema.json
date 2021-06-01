@@ -1,0 +1,27 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://example.com/product.schema.json",
+    "title": "sfpowerkit pool config schema - tag mode",
+    "description": "Confid with Script File and specific IP range to relax",
+    "type": "object",
+    "additionalProperties": false,
+    "required" : ["pool"],
+    "properties": {
+        "pool": {
+            "expiry": 1,
+            "config_file_path": "config/project-scratch-def.json",
+            "tag": "sfpowerkit",
+            "relax_ip_ranges": [
+              {
+                "start": "49.0.0.0",
+                "end": "49.255.255.255"
+              },
+              {
+                "start": "42.0.0.0",
+                "end": "42.255.255.255"
+              }
+            ],
+            "max_allocation": 1
+          }
+    }
+}
