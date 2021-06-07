@@ -28,11 +28,11 @@
             "properties": {
               "start": {
                 "type" : "string",
-                "pattern" : "ipv4"
+                "format" : "ipv4"
               },
               "end": {
                 "type" : "string",
-                "pattern" : "ipv4"
+                "format" : "ipv4"
               }
             }
           }
