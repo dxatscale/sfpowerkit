@@ -1,37 +1,41 @@
 {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://example.com/product.schema.json",
-    "title": "sfpowerkit pool config schema - tag mode",
-    "description": "Config with script file and relaxing full IP range (tag mode)",
-    "type": "object",
-    "additionalProperties": false,
-    "required" : ["pool"],
-    "properties": {
-        "pool": {
-            "type" : "object",
-            "expiry": {
-              "type" : "integer"
-            },
-            "config_file_path": {
-              "$ref" : "#/config/project-scratch-def.json"
-            },
-            "tag": {
-              "type" : "string"
-            },
-            "relax_ip_ranges": [
-              {
-                "start": "49.0.0.0",
-                "end": "49.255.255.255"
-              },
-              {
-                "start": "42.0.0.0",
-                "end": "42.255.255.255"
-              }
-            ],
-            "max_allocation": {
-              "description" : "this is the max number of scratch orgs",
-              "type": "integer"
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/product.schema.json",
+  "title": "sfpowerkit pool config schema - tag mode",
+  "description": "Config with script file and relaxing full IP range (tag mode)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "pool"
+  ],
+  "properties": {
+    "pool": {
+      "type": "object",
+      "properties": {
+        "expiry": {
+          "type": "integer"
+        },
+        "config_file_path": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        },
+        "relax_ip_ranges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "start": "49.0.0.0",
+              "end": "49.255.255.255"
             }
           }
+        }
+      }
+    },
+    "max_allocation": {
+      "description": "this is the max number of scratch orgs",
+      "type": "integer"
     }
+  }
 }

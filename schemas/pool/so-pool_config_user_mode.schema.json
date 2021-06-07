@@ -1,45 +1,53 @@
 {
-    "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://example.com/product.schema.json",
-    "title": "sfpowerkit pool config schema - user mode",
-    "description": "Config with Script file (user mode)",
-    "type": "object",
-    "additionalProperties": false,
-    "required" : ["pool"],
-    "properties": {
-        "pool": {
-            "expiry": {
-              "type" : "integer"
-            },
-            "config_file_path": {
-              "$ref" : "#/config/project-scratch-def.json"
-            },
-            "script_file_path": {
-              "$ref" : "#/scripts/so_script.sh"
-            },
-            "tag": {
-              "type" : "string",
-              "default" : "sfpowerkit"
-            }
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/product.schema.json",
+  "title": "sfpowerkit pool config schema - user mode",
+  "description": "Config with Script file (user mode)",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "pool"
+  ],
+  "properties": {
+    "pool": {
+      "type": "object",
+      "properties": {
+        "expiry": {
+          "type": "integer"
+        },
+        "config_file_path": {
+          "type": "string"
+        },
+        "script_file_path": {
+          "type": "string"
+        },
+        "tag": {
+          "type": "string"
+        }
+      }
+    },
+    "poolUsers": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "max_allocation": {
+            "type": "integer"
           },
-          "poolUsers": [
-            {
-              "max_allocation": {
-                "type" : "integer"
-              },
-              "min_allocation": {
-                "type" : "integer"
-              },
-              "username": {
-                "type" : "string"
-              },
-              "expiry": {
-                "type" : "integer"
-              },
-              "priority": {
-                "type" : "integer"
-              }
-            }
-          ]
+          "min_allocation": {
+            "type": "integer"
+          },
+          "username": {
+            "type": "string"
+          },
+          "expiry": {
+            "type": "integer"
+          },
+          "priority": {
+            "type": "integer"
+          }
+        }
+      }
     }
+  }
 }
