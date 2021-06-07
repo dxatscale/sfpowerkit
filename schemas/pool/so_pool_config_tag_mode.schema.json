@@ -23,11 +23,17 @@
         },
         "relax_ip_ranges": {
           "type": "array",
-          "items": {
+          "contains": {
             "type": "object",
             "properties": {
-              "start": "49.0.0.0",
-              "end": "49.255.255.255"
+              "start": {
+                "type" : "string",
+                "pattern" : "ipv4"
+              },
+              "end": {
+                "type" : "string",
+                "pattern" : "ipv4"
+              }
             }
           }
         }

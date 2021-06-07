@@ -28,7 +28,7 @@
     },
     "poolUsers": {
       "type": "array",
-      "items": {
+      "contains": {
         "type": "object",
         "properties": {
           "max_allocation": {
