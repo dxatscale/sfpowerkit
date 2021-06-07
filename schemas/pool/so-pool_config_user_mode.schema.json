@@ -24,7 +24,8 @@
         "tag": {
           "type": "string"
         }
-      }
+      },
+      "additionalProperties" : false
     },
     "poolUsers": {
       "type": "array",
@@ -46,7 +47,8 @@
           "priority": {
             "type": "integer"
           }
-        }
+        },
+        "additionalProperties" : false 
       }
     }
   }

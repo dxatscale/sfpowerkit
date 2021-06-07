@@ -37,7 +37,8 @@
             }
           }
         }
-      }
+      },
+      "additionalProperties" : false
     },
     "max_allocation": {
       "description": "this is the max number of scratch orgs",
