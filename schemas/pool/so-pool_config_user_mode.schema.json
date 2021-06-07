@@ -8,18 +8,37 @@
     "required" : ["pool"],
     "properties": {
         "pool": {
-            "expiry": 1,
-            "config_file_path": "config/project-scratch-def.json",
-            "script_file_path": "scripts/so_script.sh",
-            "tag": "sfpowerkit"
+            "expiry": {
+              "type" : "integer"
+            },
+            "config_file_path": {
+              "$ref" : "#/config/project-scratch-def.json"
+            },
+            "script_file_path": {
+              "$ref" : "#/scripts/so_script.sh"
+            },
+            "tag": {
+              "type" : "string",
+              "default" : "sfpowerkit"
+            }
           },
           "poolUsers": [
             {
-              "max_allocation": 5,
-              "min_allocation": 2,
-              "username": "manivasga.murugesan@accenture.com",
-              "expiry": 1,
-              "priority": 1
+              "max_allocation": {
+                "type" : "integer"
+              },
+              "min_allocation": {
+                "type" : "integer"
+              },
+              "username": {
+                "type" : "string"
+              },
+              "expiry": {
+                "type" : "integer"
+              },
+              "priority": {
+                "type" : "integer"
+              }
             }
           ]
     }

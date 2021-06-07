@@ -10,14 +10,14 @@
         "pool": {
             "type" : "object",
             "expiry": {
-              "description" : "Setting the Expiration time for the scratch org",
               "type" : "integer"
             },
             "config_file_path": {
-              "description": "This is the config file path for scratch org",
-              "type": "string"
+              "$ref" : "#/config/project-scratch-def.json"
             },
-            "tag": "sfpowerkit",
+            "tag": {
+              "type" : "string"
+            },
             "relax_ip_ranges": [
               {
                 "start": "49.0.0.0",
