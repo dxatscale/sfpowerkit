@@ -25,7 +25,8 @@
           "type": "string"
         }
       },
-      "additionalProperties" : false
+      "additionalProperties" : false,
+      "required": ["expiry", "config_file_path", "script_file_path", "tag"]
     },
     "poolUsers": {
       "type": "array",
@@ -48,7 +49,8 @@
             "type": "integer"
           }
         },
-        "additionalProperties" : false 
+        "additionalProperties" : false,
+        "required" : ["max_allocation", "min_allocation", "username", "expiry"]
       }
     }
   }

@@ -38,7 +38,8 @@
           }
         }
       },
-      "additionalProperties" : false
+      "additionalProperties" : false,
+      "required": ["config_file_path"]
     },
     "max_allocation": {
       "description": "this is the max number of scratch orgs",
