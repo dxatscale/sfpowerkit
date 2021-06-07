@@ -8,8 +8,15 @@
     "required" : ["pool"],
     "properties": {
         "pool": {
-            "expiry": 1,
-            "config_file_path": "config/project-scratch-def.json",
+            "type" : "object",
+            "expiry": {
+              "description" : "Setting the Expiration time for the scratch org",
+              "type" : "integer"
+            },
+            "config_file_path": {
+              "description": "This is the config file path for scratch org",
+              "type": "string"
+            },
             "tag": "sfpowerkit",
             "relax_ip_ranges": [
               {
@@ -21,7 +28,10 @@
                 "end": "42.255.255.255"
               }
             ],
-            "max_allocation": 1
+            "max_allocation": {
+              "description" : "this is the max number of scratch orgs",
+              "type": "integer"
+            }
           }
     }
 }
