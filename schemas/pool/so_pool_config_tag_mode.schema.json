@@ -13,15 +13,19 @@
       "type": "object",
       "properties": {
         "expiry": {
+          "description": "Number of days after which the pooled scratch org will expire",
           "type": "integer"
         },
         "config_file_path": {
+          "description" : "(Required) Path to the scratch org definition file",
           "type": "string"
         },
         "tag": {
+          "description" : "(Required) Identifier for the pool created",
           "type": "string"
         },
         "relax_ip_ranges": {
+          "description": "Relax IP address ranges from which clients can access created scratch orgs.",
           "type": "array",
           "contains": {
             "type": "object",
@@ -42,7 +46,7 @@
       "required": ["config_file_path"]
     },
     "max_allocation": {
-      "description": "this is the max number of scratch orgs",
+      "description": "(Required) Size of the pool, ignored if pool users are specified",
       "type": "integer"
     }
   }

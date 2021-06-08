@@ -13,20 +13,24 @@
       "type": "object",
       "properties": {
         "expiry": {
+          "description": "Number of days after which the pooled scratch org will expire",
           "type": "integer"
         },
         "config_file_path": {
+          "description" : "(Required) Path to the scratch org definition file",
           "type": "string"
         },
         "script_file_path": {
+          "description" : "Path to a script file to be executed e.g. to install dependencies in scratch orgs. Currently supports batch file or shell scripts which gets executed by cmd or bash respectively. The script will be passed two arguments the scratchorg username and devhub username respectively as %1 and %2",
           "type": "string"
         },
         "tag": {
+          "description" : "(Required) Identifier for the pool created",
           "type": "string"
         }
       },
       "additionalProperties" : false,
-      "required": ["expiry", "config_file_path", "script_file_path", "tag"]
+      "required": ["config_file_path", "tag"]
     },
     "poolUsers": {
       "type": "array",
@@ -50,7 +54,7 @@
           }
         },
         "additionalProperties" : false,
-        "required" : ["max_allocation", "min_allocation", "username", "expiry"]
+        "required" : ["max_allocation"]
       }
     }
   }
