@@ -5,9 +5,6 @@
   "description": "Config with Script file (user mode)",
   "type": "object",
   "additionalProperties": false,
-  "required": [
-    "pool"
-  ],
   "properties": {
     "pool": {
       "type": "object",

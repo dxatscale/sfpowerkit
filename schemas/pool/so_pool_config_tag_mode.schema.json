@@ -5,9 +5,6 @@
   "description": "Config with script file and relaxing full IP range (tag mode)",
   "type": "object",
   "additionalProperties": false,
-  "required": [
-    "pool"
-  ],
   "properties": {
     "pool": {
       "type": "object",
