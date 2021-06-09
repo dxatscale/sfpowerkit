@@ -1,0 +1,86 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://example.com/product.schema.json",
+    "title": "sfpowerkit pool config schema - tag mode",
+    "description": "Config with script file and relaxing full IP range (tag mode)",
+    "definitions": {
+        "mode": {
+            "type": "object",
+            "properties": {
+                "expiry": {
+                    "description": "Number of days after which the pooled scratch org will expire",
+                    "type": "integer"
+                },
+                "config_file_path": {
+                    "description": "(Required) Path to the scratch org definition file",
+                    "type": "string"
+                },
+                "tag": {
+                    "description": "(Required) Identifier for the pool created",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "config_file_path",
+                "tag",
+                "expiry"
+            ]
+        }
+    },
+    "type": "object",
+    "properties": {
+        "pool": {
+            "oneOf" : [{
+                "user_mode_expiry": {
+                "$ref": "#/definitions/expiry"
+                },
+                "user_mode_config_file_path": {
+                    "$ref": "#/defintions/config_file_path"
+                },
+                "user_mode_tag": {
+                    "#ref": "#/defintions/tag"
+                }
+            }, {
+                "tag_mode_expiry": {
+                "$ref": "#/definitions/expiry"
+                },
+                "tag_mode_config_file_path": {
+                    "$ref": "#/defintions/config_file_path"
+                },
+                "tag_mode_tag": {
+                    "#ref": "#/defintions/tag"
+                }
+            }]
+            
+            
+            
+        }
+    },
+    "poolUsers": {
+        "type": "array",
+        "contains": {
+            "type": "object",
+            "properties": {
+                "max_allocation": {
+                    "type": "integer"
+                },
+                "min_allocation": {
+                    "type": "integer"
+                },
+                "username": {
+                    "type": "string"
+                },
+                "expiry": {
+                    "type": "integer"
+                },
+                "priority": {
+                    "type": "integer"
+                }
+            },
+            "additionalProperties": false,
+            "required": [
+                "max_allocation"
+            ]
+        }
+    }
+}
