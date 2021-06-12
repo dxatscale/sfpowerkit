@@ -96,6 +96,9 @@ export default class MetadataRetriever {
     if (items === undefined || items === null) {
       items = [];
     }
+    if(!Array.isArray(items)){
+      items=[items];
+    }
     return items;
   }
 
