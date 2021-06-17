@@ -1,5 +1,6 @@
 {
   "commandDescription": "Creates a pool of prebuilt scratchorgs, which can the be consumed by users or CI",
   "configFilePathDescription": "Relative Path to the pool configuration json file. The schema of the file could be found in the Wiki",
-  "batchSizeDescription": "Number of scratch org to be created in a single batch"
+  "batchSizeDescription": "Number of scratch org to be created in a single batch",
+  "skipCheck": "If specified, the pre-requisite check will be skipped."
 }

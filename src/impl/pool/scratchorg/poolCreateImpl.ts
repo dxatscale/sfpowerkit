@@ -24,13 +24,15 @@ export default class PoolCreateImpl {
   private limiter;
   private scriptExecutorWrappedForBottleneck;
   private ipRangeRelaxerWrappedForBottleneck;
+  private skipPreRequisiteCheck;
 
   public constructor(
     private poolconfigFilePath: string,
     private hubOrg: Org,
     private apiversion: string,
     private sfdx: SfdxApi,
-    private batchSize: number
+    private batchSize: number,
+    private skipCheck = false
   ) {
     this.limiter = new Bottleneck({
       maxConcurrent: batchSize,
@@ -42,6 +44,8 @@ export default class PoolCreateImpl {
     this.ipRangeRelaxerWrappedForBottleneck = this.limiter.wrap(
       this.ipRangeRelaxer
     );
+
+    this.skipPreRequisiteCheck = skipCheck;
   }
 
   public async poolScratchOrgs(): Promise<boolean> {
@@ -55,16 +59,18 @@ export default class PoolCreateImpl {
     await this.hubOrg.refreshAuth();
     this.hubConn = this.hubOrg.getConnection();
 
-    let preRequisiteCheck = await ScratchOrgUtils.checkForPreRequisite(
-      this.hubOrg
-    );
-
-    if (!preRequisiteCheck) {
-      SFPowerkit.log(
-        "Required Prerequisite fields are missing in the DevHub, Please look into the wiki to getting the fields deployed in DevHub",
-        LoggerLevel.ERROR
+    if (!this.skipPreRequisiteCheck) {
+      let preRequisiteCheck = await ScratchOrgUtils.checkForPreRequisite(
+        this.hubOrg
       );
-      return false;
+
+      if (!preRequisiteCheck) {
+        SFPowerkit.log(
+          "Required Prerequisite fields are missing in the DevHub, Please look into the wiki to getting the fields deployed in DevHub",
+          LoggerLevel.ERROR
+        );
+        return false;
+      }
     }
 
     //Read pool config file
@@ -338,8 +344,8 @@ export default class PoolCreateImpl {
 
   private async generateScratchOrgs() {
     //Generate Scratch Orgs
-    let soCount=1;
-    for (let [index,poolUser] of this.poolConfig.poolUsers.entries()) {
+    let soCount = 1;
+    for (let [index, poolUser] of this.poolConfig.poolUsers.entries()) {
       let userCount = 1;
       poolUser.scratchOrgs = new Array<ScratchOrg>();
       for (let i = 0; i < poolUser.to_allocate; i++) {
@@ -347,13 +353,11 @@ export default class PoolCreateImpl {
           `Creating Scratch  Org ${soCount}/${this.totalToBeAllocated}`,
           LoggerLevel.INFO
         );
-        if(this.poolConfig.pool.user_mode)
-        {
+        if (this.poolConfig.pool.user_mode) {
           SFPowerkit.log(
             `Scratch  Org allocation:${poolUser.username}  alias:${soCount} count:${userCount}/${poolUser.to_allocate}`,
             LoggerLevel.INFO
           );
-
         }
 
         try {

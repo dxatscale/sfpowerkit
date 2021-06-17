@@ -57,6 +57,12 @@ export default class Create extends SfdxCommand {
         "FATAL",
       ],
     }),
+    skipcheck: flags.boolean({
+      char: "s",
+      default: false,
+      description: messages.getMessage("skipCheck"),
+      required: false,
+    }),
   };
 
   public async run(): Promise<AnyJson> {
@@ -76,7 +82,8 @@ export default class Create extends SfdxCommand {
       this.hubOrg,
       this.flags.apiversion,
       sfdx,
-      this.flags.batchsize
+      this.flags.batchsize,
+      this.flags.skipcheck
     );
 
     try {
