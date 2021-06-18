@@ -152,8 +152,7 @@ export default class Install extends SfdxCommand {
       );
     }
 
-    if (isNullOrUndefined(installedpackages) || installedpackages.length == 0) {
-      this.flags.updateall = true;
+    if (!installedpackages || installedpackages.length == 0) {
       installedpackages = [];
     }
 
