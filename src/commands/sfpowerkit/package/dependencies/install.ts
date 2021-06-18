@@ -7,7 +7,6 @@ import { SfdxProject } from "@salesforce/core";
 import { loadSFDX } from "../../../../sfdxnode/GetNodeWrapper";
 import { sfdx } from "../../../..//sfdxnode/parallel";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
-import { isNullOrUndefined } from "util";
 import { get18DigitSalesforceId } from "./../../../../utils/get18DigitSalesforceId";
 let retry = require("async-retry");
 
