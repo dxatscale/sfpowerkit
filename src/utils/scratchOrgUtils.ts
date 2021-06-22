@@ -11,7 +11,7 @@ export default class ScratchOrgUtils {
   public static isNewVersionCompatible: boolean = false;
   private static isVersionCompatibilityChecked: boolean = false;
   private static sfdxAuthUrlFieldExists: boolean = false;
-  
+
 
   public static async checkForNewVersionCompatible(hubOrg: Org) {
     let conn = hubOrg.getConnection();
@@ -39,7 +39,6 @@ export default class ScratchOrgUtils {
                     availableValues.push(picklistValue.value);
                   }
                 }
-                break;
               }
             }
           }
@@ -193,7 +192,7 @@ export default class ScratchOrgUtils {
     let passwordData = await Passwordgenerateimpl.run(scratchOrg.username);
 
     scratchOrg.password = passwordData.password;
-    
+
     //Get Sfdx Auth URL
     const authInfo = await AuthInfo.create({ username: scratchOrg.username });
 
@@ -294,8 +293,8 @@ export default class ScratchOrgUtils {
     hubOrg: Org
   ): Promise<boolean> {
     let hubConn = hubOrg.getConnection();
-    
-    
+
+
     if (!this.sfdxAuthUrlFieldExists) {
       delete soInfo.SfdxAuthUrl__c;
       SFPowerkit.log("Removed sfdxAuthUrl info as SfdxAuthUrl__c field is not found on Org", LoggerLevel.TRACE);
