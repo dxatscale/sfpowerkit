@@ -1441,7 +1441,7 @@
         }
       ],
       "channels": {
-        "unlockedPackagingWithoutNamespace": false,
+        "unlockedPackagingWithoutNamespace": true,
         "unlockedPackagingWithNamespace": false,
         "toolingApi": true,
         "sourceTracking": true,
