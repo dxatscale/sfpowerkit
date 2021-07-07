@@ -10,7 +10,6 @@ import FileUtils from "../../../utils/fileutils";
 import * as path from "path";
 import * as rimraf from "rimraf";
 import { SfdxApi } from "../../../sfdxnode/types";
-import requestPromise = require("request-promise");
 import Ajv from "ajv";
 import soPoolConfigSchema from "./soPoolConfigSchema"
 
@@ -42,7 +41,7 @@ export default class PoolCreateImpl {
 
     if (!validationResult) {
       let errorMsg: string =
-        `SO Pool Config does not meet schema requirements, ` + 
+        `SO Pool Config does not meet schema requirements, ` +
         `found ${validator.errors.length} validation errors:\n`;
 
         validator.errors.forEach((error,errorNum) => {
