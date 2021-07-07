@@ -194,9 +194,18 @@ export default class ScratchOrgUtils {
     scratchOrg.password = passwordData.password;
 
     //Get Sfdx Auth URL
+    try
+    {
     const authInfo = await AuthInfo.create({ username: scratchOrg.username });
-
     scratchOrg.sfdxAuthUrl = authInfo.getSfdxAuthUrl();
+    }
+    catch(error)
+    {
+      SFPowerkit.log(
+        `Unable to fetch authURL for ${passwordData.username}. Only Scratch Orgs created from DevHub using authenticated using auth:sfdxurl or auth:web will have access token and enabled for autoLogin`,
+        LoggerLevel.INFO
+      );
+    }
 
 
     if (!passwordData.password) {
