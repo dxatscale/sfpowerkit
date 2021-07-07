@@ -202,7 +202,7 @@ export default class ScratchOrgUtils {
     catch(error)
     {
       SFPowerkit.log(
-        `Unable to fetch authURL for ${passwordData.username}. Only Scratch Orgs created from DevHub using authenticated using auth:sfdxurl or auth:web will have access token and enabled for autoLogin`,
+        `Unable to fetch authURL for ${scratchOrg.username}. Only Scratch Orgs created from DevHub using authenticated using auth:sfdxurl or auth:web will have access token and enabled for autoLogin`,
         LoggerLevel.INFO
       );
     }
