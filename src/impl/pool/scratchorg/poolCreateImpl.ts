@@ -11,7 +11,6 @@ import * as path from "path";
 import * as rimraf from "rimraf";
 import { SfdxApi } from "../../../sfdxnode/types";
 import Ajv from "ajv";
-import soPoolConfigSchema from "./soPoolConfigSchema"
 
 export default class PoolCreateImpl {
   private hubConn: Connection;
@@ -28,7 +27,7 @@ export default class PoolCreateImpl {
   private ipRangeRelaxerWrappedForBottleneck;
 
   private validateSoPoolConfig(
-    soPoolConfig: soPoolConfigSchema
+    soPoolConfig: PoolConfig
   ): void {
 
     let schema = fs.readJSONSync(
@@ -108,6 +107,8 @@ export default class PoolCreateImpl {
     this.poolConfig = JSON.parse(
       fs.readFileSync(this.poolconfigFilePath).toString()
     );
+
+    this.validateSoPoolConfig(this.poolConfig)
 
     //Validate Inputs
     if (isNullOrUndefined(this.poolConfig.pool.config_file_path)) {

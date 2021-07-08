@@ -1,78 +1,109 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.com/product.schema.json",
-  "title": "sfpowerkit pool config schema - tag mode",
-  "description": "Config with script file and relaxing full IP range (tag mode)",
+  "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "properties": {
-    "pool": {
-      "type": "object",
-      "properties": {
-        "expiry": {
-          "description": "Number of days after which the pooled scratch org will expire",
-          "type": "integer"
-        },
-        "config_file_path": {
-          "description": "(Required) Path to the scratch org definition file",
-          "type": "string"
-        },
-        "script_file_path": {
-          "description": "Path to a script file to be executed e.g. to install dependencies in scratch orgs. Currently supports batch file or shell scripts which gets executed by cmd or bash respectively. The script will be passed two arguments the scratchorg username and devhub username respectively as %1 and %2",
-          "type": "string"
-        },
-        "tag": {
-          "description": "(Required) Identifier for the pool created",
-          "type": "string"
-        },
-        "relax_ip_ranges": {
-          "description": "Relax IP address ranges from which clients can access created scratch orgs.",
-          "type": "array",
-          "contains": {
-            "type": "object",
-            "properties": {
-              "start": {
-                "type": "string",
-                "format": "ipv4"
+      "pool": {
+          "type": "object",
+          "properties": {
+              "expiry": {
+                  "description": "Number of days after which the pooled scratch org will expire",
+                  "type": "integer"
               },
-              "end": {
-                "type": "string",
-                "format": "ipv4"
+              "config_file_path": {
+                  "description": "(Required) Path to the scratch org definition file",
+                  "type": "string"
+              },
+              "script_file_path": {
+                  "description": "Path to the Script file",
+                  "type": "string"
+              },
+              "tag": {
+                  "description": "(Required) Identifier for the pool created",
+                  "type": "string"
               }
-            }
-          }
-        }
+          },
+          "required": [
+              "expiry",
+              "config_file_path",
+              "tag"
+          ]
       },
-      "additionalProperties": false,
-      "required": ["config_file_path", "tag"]
-    }
-  },
-  "max_allocation": {
-    "description": "(Required) Size of the pool, ignored if pool users are specified",
-    "type": "integer"
-  },
-  "poolUsers": {
-    "type": "array",
-    "contains": {
-      "type": "object",
-      "properties": {
-        "max_allocation": {
-          "type": "integer"
-        },
-        "min_allocation": {
-          "type": "integer"
-        },
-        "username": {
-          "type": "string"
-        },
-        "expiry": {
-          "type": "integer"
-        },
-        "priority": {
-          "type": "integer"
-        }
+      "poolUsers": {
+          "type": "array",
+          "items": [
+              {
+                  "type": "object",
+                  "properties": {
+                      "max_allocation": {
+                          "type": "integer"
+                      },
+                      "min_allocation": {
+                          "type": "integer"
+                      },
+                      "username": {
+                          "type": "string"
+                      },
+                      "expiry": {
+                          "type": "integer"
+                      },
+                      "priority": {
+                          "type": "integer"
+                      }
+                  },
+                  "required": [
+                      "max_allocation",
+                      "min_allocation",
+                      "username",
+                      "expiry",
+                      "priority"
+                  ]
+              }
+          ]
       },
-      "additionalProperties": false,
-      "required": ["max_allocation"]
-    }
-  }
-}
+      "relax_ip_ranges": {
+          "type": "array",
+          "items": [
+              {
+                  "type": "object",
+                  "properties": {
+                      "start": {
+                          "type": "string"
+                      },
+                      "end": {
+                          "type": "string"
+                      }
+                  },
+                  "required": [
+                      "start",
+                      "end"
+                  ]
+              },
+              {
+                  "type": "object",
+                  "properties": {
+                      "start": {
+                          "type": "string"
+                      },
+                      "end": {
+                          "type": "string"
+                      }
+                  },
+                  "required": [
+                      "start",
+                      "end"
+                  ]
+              }
+          ]
+      },
+      "max_allocation": {
+          "type": "integer"
+      }
+  },
+  "oneOf": [
+      { "required": ["poolUsers"] },
+      { "required": ["relax_ip_ranges"] }
+    ],
+  "required": [
+      "pool"
+  ]
+} 
