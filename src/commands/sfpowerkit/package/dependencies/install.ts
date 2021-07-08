@@ -7,6 +7,7 @@ import { SfdxProject } from "@salesforce/core";
 import { loadSFDX } from "../../../../sfdxnode/GetNodeWrapper";
 import { sfdx } from "../../../..//sfdxnode/parallel";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
+import { isNullOrUndefined } from "util";
 import { get18DigitSalesforceId } from "./../../../../utils/get18DigitSalesforceId";
 let retry = require("async-retry");
 
@@ -151,7 +152,8 @@ export default class Install extends SfdxCommand {
       );
     }
 
-    if (!installedpackages || installedpackages.length == 0) {
+    if (isNullOrUndefined(installedpackages) || installedpackages.length == 0) {
+      this.flags.updateall = true;
       installedpackages = [];
     }
 
@@ -235,8 +237,6 @@ export default class Install extends SfdxCommand {
             versionNumber;
           } = await this.getPackageVersionDetails(packageName, versionNumber);
 
-       
-          
           packageInfo.packageVersionId = packageVersionDetail.versionId;
           packageInfo.versionNumber = packageVersionDetail.versionNumber;
 
@@ -398,16 +398,12 @@ export default class Install extends SfdxCommand {
     // Keeping original name so that it can be used in error message if needed
     let packageName = name;
 
- 
-
     // TODO: Some stuff are duplicated here, some code don't need to be executed for every package
     // First look if it's an alias
     if (packageAliasesMap[packageName]) {
       packageName = packageAliasesMap[packageName];
     }
 
-
-    
     if (packageName.startsWith(packageVersionIdPrefix)) {
       // Package2VersionId is set directly
       packageDetail = {
@@ -452,18 +448,13 @@ export default class Install extends SfdxCommand {
 
       if (resultPackageId.size === 0) {
         // Query returned no result
-        const errorMessage = `Unable to find version id for dependent package ${name}, Did you create a version of the package yet?`;
+        const errorMessage = `Unable to find SubscriberPackageVersionId for dependent package ${name}`;
         throw new core.SfdxError(errorMessage);
       } else {
         let versionId = resultPackageId.records[0].SubscriberPackageVersionId;
         let versionNumber = `${resultPackageId.records[0].MajorVersion}.${resultPackageId.records[0].MinorVersion}.${resultPackageId.records[0].PatchVersion}.${resultPackageId.records[0].BuildNumber}`;
         packageDetail = { versionId: versionId, versionNumber: versionNumber };
       }
-    }
-    else
-    {
-      const errorMessage = `Unable to find package Id of the package ${name}, Are you missing the package in packageAliases?`;
-      throw new core.SfdxError(errorMessage);
     }
 
     return packageDetail;
