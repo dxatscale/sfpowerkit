@@ -131,7 +131,7 @@ export default class List extends SfdxCommand {
             "orgId",
             "username",
             "password",
-            "expityDate",
+            "expiryDate",
             "status",
             "loginURL",
           ]);
@@ -140,7 +140,7 @@ export default class List extends SfdxCommand {
             "tag",
             "orgId",
             "username",
-            "expityDate",
+            "expiryDate",
             "status",
             "loginURL",
           ]);

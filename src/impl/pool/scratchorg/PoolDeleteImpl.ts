@@ -52,7 +52,7 @@ export default class PoolDeleteImpl {
           soDetail.orgId = element.ScratchOrg;
           soDetail.loginURL = element.LoginUrl;
           soDetail.username = element.SignupUsername;
-          soDetail.expityDate = element.ExpirationDate;
+          soDetail.expiryDate = element.ExpirationDate;
           soDetail.status = "Deleted";
 
           scratchOrgToDelete.push(soDetail);

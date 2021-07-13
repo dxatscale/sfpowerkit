@@ -46,7 +46,7 @@ export default class PoolListImpl {
         soDetail.loginURL = element.LoginUrl;
         soDetail.username = element.SignupUsername;
         soDetail.password = element.Password__c;
-        soDetail.expityDate = element.ExpirationDate;
+        soDetail.expiryDate = element.ExpirationDate;
         if (element.Allocation_status__c === "Assigned") {
           soDetail.status = "In use";
         } else if (
