@@ -85,7 +85,7 @@ export default class PoolFetchImpl {
           soDetail.loginURL = element.LoginUrl;
           soDetail.username = element.SignupUsername;
           soDetail.password = element.Password__c;
-          soDetail.expityDate = element.ExpirationDate;
+          soDetail.expiryDate = element.ExpirationDate;
           soDetail.sfdxAuthUrl = element.SfdxAuthUrl__c;
           soDetail.status = "Assigned";
 
