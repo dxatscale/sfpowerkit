@@ -13,7 +13,7 @@ export default class ApexTypeListener implements ApexParserListener {
   };
 
   protected enterAnnotation(ctx: AnnotationContext): void {
-    if (ctx._stop.text.toUpperCase() === "ISTEST") {
+    if (ctx.text.toUpperCase().startsWith("@ISTEST")) {
       this.apexType["testClass"] = true;
     }
   }
