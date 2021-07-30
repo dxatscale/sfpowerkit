@@ -107,27 +107,64 @@ This command is a wrapper around PMD ( downloads PMD for the first time) with so
 ```
 
 USAGE
-  $ sfdx sfpowerkit:source:pmd [-d <string>] [-r <string>] [-f <string>] [-o <filepath>] [--javahome <string>] [--supressoutput] [--version <string>] [--json] [--loglevel
-  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
+  $ sfdx sfpowerkit:source:pmd [-d <directory> | --filelist <filepath>] [-r <string> | -R <string>] [-f <string>] [--report <filepath> | -o 
+  <filepath>] [--javahome <string>] [--failonviolation] [--minimumpriority <integer>] [--shortnames] [--showsuppressed] [--suppressmarker 
+  <string>] [--version <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
-  -d, --directory=directory                                                         [default: Default project directory as mentioned in sfdx-project.json] Override this to set a
-                                                                                    different directory in the project folder
-  -f, --format=format                                                               [default: text] [default: text] The format for the pmd output, Possible values are available
-                                                                                    at https://pmd.github.io/latest/pmd_userdocs_cli_reference.html#available-report-formats
-  -o, --report=report                                                               [default: pmd-output] [default: pmd-output] The path to where the output of the analysis
-                                                                                    should be written
-  -r, --ruleset=ruleset                                                             [default:
-                                                                                    [sfpowerkit](https://github.com/Accenture/sfpowerkit/blob/main/resources/pmd-ruleset.xml)]
-                                                                                    The comma separated pmd ruleset that will be utilzied for analyzing the apex classes,  Checkout
-                                                                                    https://pmd.github.io/latest/pmd_userdocs_making_rulesets.html to create your own ruleset
-  --javahome=javahome                                                               The command will try to locate the javahome path to execute PMD automatically, set this flag
-                                                                                    to override it to another javahome path
-  --json                                                                            format output as json
-  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: info] logging level for this command invocation
-  --supressoutput                                                                   [default: false] Supress the ouptut of the analysis to be displayed in the console
-  --version=version                                                                 [default: 6.30.0] The version of the pmd to be utilized for the analysis,
-                                                                                    this version will be downloaded to sfpowerkit's cache directory
+  -R, --rulesets=rulesets
+      [default: [sfpowerkit](https://github.com/Accenture/sfpowerkit/blob/main/resources/pmd-ruleset.xml)] The comma separated pmd ruleset that 
+      will be utilzied for analyzing the apex classes,  Checkout https://pmd.github.io/latest/pmd_userdocs_making_rulesets.html to create your 
+      own ruleset
+
+  -d, --directory=directory
+      [default: Default project directory as mentioned in sfdx-project.json] Override this to set a different directory in the project folder
+
+  -f, --format=format
+      [default: text] [default: text] The format for the pmd output, Possible values are available at 
+      https://pmd.github.io/latest/pmd_userdocs_cli_reference.html#available-report-formats
+
+  -o, --reportfile=reportfile
+      [default: pmd-output] The path to where the output of the analysis should be written
+
+  -r, --ruleset=ruleset
+      DEPRECATED: use --rulesets instead
+
+  --[no-]failonviolation
+      [default: true] By default PMD exits with status 4 if violations are found. Disable this feature with -failOnViolation false to exit with 
+      0 instead and just output the report.
+
+  --filelist=filelist
+      Path to file containing a comma delimited list of files to analyze.
+
+  --javahome=javahome
+      The command will try to locate the javahome path to execute PMD automatically, set this flag to override it to another javahome path
+
+  --json
+      format output as json
+
+  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)
+      [default: warn] logging level for this command invocation
+
+  --minimumpriority=minimumpriority
+      Rule priority threshold; rules with lower priority than configured here won't be used.
+
+  --report=report
+      DEPRECATED: [default: pmd-output] use --reportfile instead.
+
+  --[no-]shortnames
+      Prints shortened filenames in the report.
+
+  --[no-]showsuppressed
+      Causes the suppressed rule violations to be added to the report.
+
+  --suppressmarker=suppressmarker
+      [default: NOPMD] Specifies the comment token that marks lines which PMD should ignore.
+
+  --version=version
+      [default: 6.34.0] [default: 6.34.0] The version of the pmd to be utilized for the analysis, this version will be downloaded to 
+      sfpowerkit's cache directory
+
 EXAMPLE
   $ sfdx sfpowerkit:source:pmd
 
