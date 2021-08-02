@@ -31,7 +31,15 @@ export default class PoolCreateImpl {
   ): void {
 
     let schema = fs.readJSONSync(
-      path.join(__dirname, "..", "..", "..", "..", "schemas", "pool", "so_pool_config.schema.json"),
+      path.join(
+        __dirname,
+        "..",
+        "..",
+        "..",
+        "..",
+        "resources",
+        "so_pool_config.schema.json"
+      ),
       {encoding: "UTF-8"}
     );
 
