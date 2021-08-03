@@ -10,7 +10,7 @@ import FileUtils from "../../../utils/fileutils";
 import * as path from "path";
 import * as rimraf from "rimraf";
 import { SfdxApi } from "../../../sfdxnode/types";
-import Ajv from "ajv";
+
 
 export default class PoolCreateImpl {
   private hubConn: Connection;
@@ -26,39 +26,7 @@ export default class PoolCreateImpl {
   private scriptExecutorWrappedForBottleneck;
   private ipRangeRelaxerWrappedForBottleneck;
 
-  private validateSoPoolConfig(
-    soPoolConfig: PoolConfig
-  ): void {
-
-    let schema = fs.readJSONSync(
-      path.join(
-        __dirname,
-        "..",
-        "..",
-        "..",
-        "..",
-        "resources",
-        "so_pool_config.schema.json"
-      ),
-      {encoding: "UTF-8"}
-    );
-
-    let validator = new Ajv({allErrors: true}).compile(schema);
-    let validationResult = validator(soPoolConfig);
-
-    if (!validationResult) {
-      let errorMsg: string =
-        `SO Pool Config does not meet schema requirements, ` +
-        `found ${validator.errors.length} validation errors:\n`;
-
-        validator.errors.forEach((error,errorNum) => {
-          errorMsg += `\n${errorNum+1}: ${error.schemaPath}: ${error.message} ${JSON.stringify(error.params, null, 4)}`;
-          });
-
-      throw new Error(errorMsg);
-    }
-  }
-
+  
   public constructor(
     private poolconfigFilePath: string,
     private hubOrg: Org,
@@ -116,7 +84,8 @@ export default class PoolCreateImpl {
       fs.readFileSync(this.poolconfigFilePath).toString()
     );
 
-    this.validateSoPoolConfig(this.poolConfig)
+    //Temporarily remove validate SO Pool Config
+    // this.validateSoPoolConfig(this.poolConfig)
 
     //Validate Inputs
     if (isNullOrUndefined(this.poolConfig.pool.config_file_path)) {
@@ -764,6 +733,9 @@ export default class PoolCreateImpl {
       obj[item[keyfield]] = item;
       return obj;
     }, {});
+
+ 
+  
 }
 
 export interface PoolConfig {
