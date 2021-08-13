@@ -15,7 +15,8 @@
     "target": "es6",
     "allowJs": true,
     "lib": ["es6"],
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "skipLibCheck": true
   },
   "exclude": ["node_modules", "lib"],
   "include": ["./src/**/*"]

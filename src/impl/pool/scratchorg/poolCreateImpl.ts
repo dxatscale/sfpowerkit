@@ -10,7 +10,7 @@ import FileUtils from "../../../utils/fileutils";
 import * as path from "path";
 import * as rimraf from "rimraf";
 import { SfdxApi } from "../../../sfdxnode/types";
-
+import Ajv from "ajv";
 
 export default class PoolCreateImpl {
   private hubConn: Connection;
@@ -26,7 +26,7 @@ export default class PoolCreateImpl {
   private scriptExecutorWrappedForBottleneck;
   private ipRangeRelaxerWrappedForBottleneck;
 
-  
+
   public constructor(
     private poolconfigFilePath: string,
     private hubOrg: Org,
@@ -44,7 +44,7 @@ export default class PoolCreateImpl {
     this.ipRangeRelaxerWrappedForBottleneck = this.limiter.wrap(
       this.ipRangeRelaxer
     );
-    
+
   }
 
   public async poolScratchOrgs(): Promise<boolean> {
@@ -734,8 +734,8 @@ export default class PoolCreateImpl {
       return obj;
     }, {});
 
- 
-  
+
+
 }
 
 export interface PoolConfig {
