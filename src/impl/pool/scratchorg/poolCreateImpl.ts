@@ -738,6 +738,18 @@ export default class PoolCreateImpl {
       soPoolConfig: PoolConfig
     ): void {
   
+      if (!soPoolConfig.pool.max_allocation && !soPoolConfig.poolUsers) {
+        throw new Error(
+          "Max allocation field is required for tag mode."
+        );
+      }
+
+      if (soPoolConfig.pool.max_allocation && soPoolConfig.poolUsers) {
+        throw new Error(
+          "You cannot specify both pool and poolUser max allocations must be one."
+        );
+      }
+
       let schema = fs.readJSONSync(
         path.join(
           __dirname,
@@ -753,14 +765,7 @@ export default class PoolCreateImpl {
   
       let validator = new Ajv({allErrors: true}).compile(schema);
       let validationResult = validator(soPoolConfig);
-
-      let poolUsersMaxAllocation = soPoolConfig.poolUsers.map(({max_allocation}) => max_allocation);
-
-      if (soPoolConfig.pool.max_allocation && poolUsersMaxAllocation) {
-        throw new Error(
-          "You cannot specify both pool and poolUser max allocations must be one"
-        );
-      }
+      
 
       if (!validationResult) {
         let errorMsg: string =
@@ -773,11 +778,7 @@ export default class PoolCreateImpl {
   
         throw new Error(errorMsg);
       }
-
-      
     }
-
-
 }
 
 export interface PoolConfig {
