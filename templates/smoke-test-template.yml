@@ -36,11 +36,12 @@ steps:
       script: |
         sfdx plugins:link
 
-  - task: sfpwowerscript-authenticateorg-task@9
-    displayName: "Authenticate  HubOrg using ServiceConnection"
+  - task: sfppowerkit-authenticateorg-task@9
+    displayName: "Authenticate HubOrg using authURL"
     inputs:
-      salesforce_connection: "devhub_ma"
-      alias: HubOrg
+      - script: |
+                    echo $(DEVHUB_SFDX_AUTH_URL) > ./authfile
+                    sfdx auth:sfdxurl:store -f authfile -a HubOrg
 
   - task: CmdLine@2
     displayName: Smoke Test Org Commands
