@@ -36,7 +36,7 @@ steps:
       script: |
         sfdx plugins:link
 
-  - task: sfppowerkit-authenticateorg-task@9
+  - task: CmdLine@2
     displayName: "Authenticate HubOrg using authURL"
     inputs:
       - script: |
