@@ -85,7 +85,7 @@ export default class PoolCreateImpl {
     );
 
     //Temporarily remove validate SO Pool Config
-    // this.validateSoPoolConfig(this.poolConfig)
+    this.validateSoPoolConfig(this.poolConfig)
 
     //Validate Inputs
     if (isNullOrUndefined(this.poolConfig.pool.config_file_path)) {
@@ -734,6 +734,48 @@ export default class PoolCreateImpl {
       return obj;
     }, {});
 
+    private validateSoPoolConfig(
+      soPoolConfig: PoolConfig
+    ): void {
+  
+      let schema = fs.readJSONSync(
+        path.join(
+          __dirname,
+          "..",
+          "..",
+          "..",
+          "..",
+          "resources",
+          "so_pool_config.schema.json"
+        ),
+        {encoding: "UTF-8"}
+      );
+  
+      let validator = new Ajv({allErrors: true}).compile(schema);
+      let validationResult = validator(soPoolConfig);
+
+      let poolUsersMaxAllocation = soPoolConfig.poolUsers.map(({max_allocation}) => max_allocation);
+
+      if (soPoolConfig.pool.max_allocation && poolUsersMaxAllocation) {
+        throw new Error(
+          "You cannot specify both pool and poolUser max allocations must be one"
+        );
+      }
+
+      if (!validationResult) {
+        let errorMsg: string =
+          `SO Pool Config does not meet schema requirements, ` +
+          `found ${validator.errors.length} validation errors:\n`;
+  
+          validator.errors.forEach((error,errorNum) => {
+            errorMsg += `\n${errorNum+1}: ${error.schemaPath}: ${error.message} ${JSON.stringify(error.params, null, 4)}`;
+            });
+  
+        throw new Error(errorMsg);
+      }
+
+      
+    }
 
 
 }
