@@ -39,9 +39,9 @@ steps:
   - task: CmdLine@2
     displayName: "Authenticate HubOrg using authURL"
     inputs:
-      - script: |
-                    echo $(DEVHUB_SFDX_AUTH_URL) > ./authfile
-                    sfdx auth:sfdxurl:store -f authfile -a HubOrg
+      script: |
+        echo $(DEVHUB_SFDX_AUTH_URL) > ./authfile
+        sfdx auth:sfdxurl:store -f authfile -a HubOrg
 
   - task: CmdLine@2
     displayName: Smoke Test Org Commands
