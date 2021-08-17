@@ -41,10 +41,7 @@ steps:
     inputs:
       secureFile: 'authFile.json'
 
-  - task: CmdLine@2
-    displayName: "Authenticate to HubOrg"
-    inputs:
-      script: |
+  - script: |
         sfdx auth:sfdxurl:store -f authFile.json -a HubOrg
 
   - task: CmdLine@2
