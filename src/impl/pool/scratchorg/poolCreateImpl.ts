@@ -744,12 +744,6 @@ export default class PoolCreateImpl {
         );
       }
 
-      if (soPoolConfig.pool.max_allocation && soPoolConfig.poolUsers) {
-        throw new Error(
-          "You cannot specify both pool and poolUser max allocations must be one."
-        );
-      }
-
       let schema = fs.readJSONSync(
         path.join(
           __dirname,
