@@ -37,12 +37,13 @@ steps:
         sfdx plugins:link
 
   - task: DownloadSecureFile@1
+    displayName: 
     name: hubOrgAuthFile
     inputs:
       secureFile: 'authFile.json'
 
   - script: |
-        sfdx auth:sfdxurl:store -f hubOrgAuthFile -a HubOrg
+        sfdx auth:sfdxurl:store -f $(hubOrgAuthFile.secureFilePath) -a HubOrg
     displayName: 'Authenticate HubOrg'
 
   - task: CmdLine@2
