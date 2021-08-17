@@ -36,12 +36,12 @@ steps:
       script: |
         sfdx plugins:link
 
-  - task: CmdLine@2
-    displayName: "Authenticate HubOrg using authURL"
+  - task: DownloadSecureFile@1
+    displayName: "HubOrg authFile"
     inputs:
+      secureFile: authFile.json
       script: |
-        echo $(DEVHUB_SFDX_AUTH_URL) > ./authfile
-        sfdx auth:sfdxurl:store -f authfile -a HubOrg
+        sfdx auth:sfdxurl:store -f authFile.json -a HubOrg
 
   - task: CmdLine@2
     displayName: Smoke Test Org Commands
