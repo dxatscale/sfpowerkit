@@ -37,7 +37,6 @@ steps:
         sfdx plugins:link
 
   - task: DownloadSecureFile@1
-    displayName: 
     name: hubOrgAuthFile
     inputs:
       secureFile: 'authFile.json'
