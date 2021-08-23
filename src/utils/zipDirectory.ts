@@ -5,7 +5,7 @@ export async function zipDirectory(source, out) {
   const archive = archiver("zip", { zlib: { level: 9 } });
   const stream = fs.createWriteStream(out);
 
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     archive
       .directory(source, false)
       .on("error", err => reject(err))

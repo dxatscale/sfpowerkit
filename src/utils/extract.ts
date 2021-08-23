@@ -2,7 +2,7 @@ import * as fs from "fs-extra";
 var unzipper = require("unzip-stream");
 
 export async function extract(path: string, location: string) {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     fs.createReadStream(path)
       .pipe(unzipper.Extract({ path: `${location}` }))
       .on("close", () => {
