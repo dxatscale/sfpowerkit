@@ -109,31 +109,31 @@ This command is a wrapper around PMD ( downloads PMD for the first time) with so
 ```
 
 USAGE
-  $ sfdx sfpowerkit:source:pmd [-d <directory> | --filelist <filepath>] [-r <string> | -R <string>] [-f <string>] [--report <filepath> | -o 
-  <filepath>] [--javahome <string>] [--failonviolation] [--minimumpriority <integer>] [--shortnames] [--showsuppressed] [--suppressmarker 
+  $ sfdx sfpowerkit:source:pmd [-d <directory> | --filelist <filepath>] [-r <string> | -R <string>] [-f <string>] [--report <filepath> | -o
+  <filepath>] [--javahome <string>] [--failonviolation] [--minimumpriority <integer>] [--shortnames] [--showsuppressed] [--suppressmarker
   <string>] [--version <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
   -R, --rulesets=rulesets
-      [default: [sfpowerkit](https://github.com/Accenture/sfpowerkit/blob/main/resources/pmd-ruleset.xml)] The comma separated pmd ruleset that 
-      will be utilzied for analyzing the apex classes,  Checkout https://pmd.github.io/latest/pmd_userdocs_making_rulesets.html to create your 
+      [default: [sfpowerkit](https://github.com/Accenture/sfpowerkit/blob/main/resources/pmd-ruleset.xml)] The comma separated pmd ruleset that
+      will be utilzied for analyzing the apex classes,  Checkout https://pmd.github.io/latest/pmd_userdocs_making_rulesets.html to create your
       own ruleset
 
   -d, --directory=directory
       [default: Default project directory as mentioned in sfdx-project.json] Override this to set a different directory in the project folder
 
   -f, --format=format
-      [default: text] [default: text] The format for the pmd output, Possible values are available at 
+      [default: text] [default: text] The format for the pmd output, Possible values are available at
       https://pmd.github.io/latest/pmd_userdocs_cli_reference.html#available-report-formats
 
   -o, --reportfile=reportfile
-      [default: pmd-output] The path to where the output of the analysis should be written
+      The path to where the output of the analysis should be written
 
   -r, --ruleset=ruleset
       DEPRECATED: use --rulesets instead
 
   --[no-]failonviolation
-      [default: true] By default PMD exits with status 4 if violations are found. Disable this feature with -failOnViolation false to exit with 
+      [default: true] By default PMD exits with status 4 if violations are found. Disable this feature with -failOnViolation false to exit with
       0 instead and just output the report.
 
   --filelist=filelist
@@ -152,7 +152,7 @@ OPTIONS
       Rule priority threshold; rules with lower priority than configured here won't be used.
 
   --report=report
-      DEPRECATED: [default: pmd-output] use --reportfile instead.
+      DEPRECATED: use --reportfile instead.
 
   --[no-]shortnames
       Prints shortened filenames in the report.
@@ -164,7 +164,7 @@ OPTIONS
       [default: NOPMD] Specifies the comment token that marks lines which PMD should ignore.
 
   --version=version
-      [default: 6.34.0] [default: 6.34.0] The version of the pmd to be utilized for the analysis, this version will be downloaded to 
+      [default: 6.34.0] [default: 6.34.0] The version of the pmd to be utilized for the analysis, this version will be downloaded to
       sfpowerkit's cache directory
 
 EXAMPLE
