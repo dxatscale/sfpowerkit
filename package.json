@@ -31,6 +31,7 @@
     "@salesforce/core": "^2.20.10",
     "@salesforce/plugin-user": "1.2.8",
     "@types/jsforce": "^1.9.23",
+    "ajv": "^8.6.2",
     "apex-parser": "^2.8.0",
     "archiver": "5.3.0",
     "async-retry": "^1.3.1",
@@ -85,7 +86,7 @@
     "pretty-quick": "^3.1.0",
     "rimraf": "^3.0.2",
     "sinon": "^10.0.0",
-    "typescript": "^4.0.5"
+    "typescript": "^4.3.5"
   },
   "engines": {
     "node": ">=8.0.0"
