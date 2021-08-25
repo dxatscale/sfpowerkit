@@ -15,6 +15,7 @@ export default class Delete extends SfdxCommand {
   public static examples = [
     `$ sfdx sfpowerkit:org:scratchorg:delete  -e xyz@kyz.com -v devhub`,
     `$ sfdx sfpowerkit:org:scratchorg:delete  -u xyz@kyz.com -v devhub`,
+    `$ sfdx sfpowerkit:org:scratchorg:delete  -e xyz@kyz.com -v devhub --ignorepool`
   ];
 
   // Comment this out if your command does not require a hub org username
@@ -114,7 +115,7 @@ export default class Delete extends SfdxCommand {
       const collection = orgIds.map((id) => `'${id}'`).toString();
       query += ` AND ScratchOrg NOT IN (${collection})`;
     }
-    console.log("query:", query);
+
     const scratch_orgs = (await conn.query(query)) as any;
 
     return scratch_orgs;

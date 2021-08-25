@@ -109,21 +109,21 @@ This command is a wrapper around PMD ( downloads PMD for the first time) with so
 ```
 
 USAGE
-  $ sfdx sfpowerkit:source:pmd [-d <directory> | --filelist <filepath>] [-r <string> | -R <string>] [-f <string>] [--report <filepath> | -o 
-  <filepath>] [--javahome <string>] [--failonviolation] [--minimumpriority <integer>] [--shortnames] [--showsuppressed] [--suppressmarker 
+  $ sfdx sfpowerkit:source:pmd [-d <directory> | --filelist <filepath>] [-r <string> | -R <string>] [-f <string>] [--report <filepath> | -o
+  <filepath>] [--javahome <string>] [--failonviolation] [--minimumpriority <integer>] [--shortnames] [--showsuppressed] [--suppressmarker
   <string>] [--version <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
   -R, --rulesets=rulesets
-      [default: [sfpowerkit](https://github.com/Accenture/sfpowerkit/blob/main/resources/pmd-ruleset.xml)] The comma separated pmd ruleset that 
-      will be utilzied for analyzing the apex classes,  Checkout https://pmd.github.io/latest/pmd_userdocs_making_rulesets.html to create your 
+      [default: [sfpowerkit](https://github.com/Accenture/sfpowerkit/blob/main/resources/pmd-ruleset.xml)] The comma separated pmd ruleset that
+      will be utilzied for analyzing the apex classes,  Checkout https://pmd.github.io/latest/pmd_userdocs_making_rulesets.html to create your
       own ruleset
 
   -d, --directory=directory
       [default: Default project directory as mentioned in sfdx-project.json] Override this to set a different directory in the project folder
 
   -f, --format=format
-      [default: text] [default: text] The format for the pmd output, Possible values are available at 
+      [default: text] [default: text] The format for the pmd output, Possible values are available at
       https://pmd.github.io/latest/pmd_userdocs_cli_reference.html#available-report-formats
 
   -o, --reportfile=reportfile
@@ -133,7 +133,7 @@ OPTIONS
       DEPRECATED: use --rulesets instead
 
   --[no-]failonviolation
-      [default: true] By default PMD exits with status 4 if violations are found. Disable this feature with -failOnViolation false to exit with 
+      [default: true] By default PMD exits with status 4 if violations are found. Disable this feature with -failOnViolation false to exit with
       0 instead and just output the report.
 
   --filelist=filelist
@@ -164,7 +164,7 @@ OPTIONS
       [default: NOPMD] Specifies the comment token that marks lines which PMD should ignore.
 
   --version=version
-      [default: 6.34.0] [default: 6.34.0] The version of the pmd to be utilized for the analysis, this version will be downloaded to 
+      [default: 6.34.0] [default: 6.34.0] The version of the pmd to be utilized for the analysis, this version will be downloaded to
       sfpowerkit's cache directory
 
 EXAMPLE
@@ -1293,12 +1293,15 @@ OPTIONS
   -u, --username=username                                                           Username of the scratch org to be deleted
   -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
   --apiversion=apiversion                                                           override the api version used for api requests made by this command
+  --dryrun                                                                          Perform a dry run, without deleting the scratch orgs
+  --ignorepool                                                                      Ignore scratch orgs which belong to a pool
   --json                                                                            format output as json
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
 EXAMPLES
   $ sfdx sfpowerkit:org:scratchorg:delete  -e xyz@kyz.com -v devhub
   $ sfdx sfpowerkit:org:scratchorg:delete  -u xyz@kyz.com -v devhub
+  $ sfdx sfpowerkit:org:scratchorg:delete  -e xyz@kyz.com -v devhub --ignorepool
 ```
 
 _See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/scratchorg/usage.ts)_
