@@ -179,7 +179,7 @@ async function spawnProcess(
   quiet: boolean,
   cwd: string
 ): Promise<any> {
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     const spawnOptions: SpawnOptions = {
       cwd
     };
