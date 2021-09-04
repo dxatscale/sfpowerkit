@@ -1,4 +1,5 @@
 # sfpowerkit
+A Salesforce DX Plugin with multiple functionalities aimed at improving development and operational workflows
 
 [![NPM](https://img.shields.io/npm/v/sfpowerkit.svg)](https://www.npmjs.com/package/sfpowerkit) ![npm (tag)](https://img.shields.io/npm/v/sfpowerkit/beta) [![Build Status](https://dev.azure.com/dxatscale/sfpowerkit/_apis/build/status/Release?branchName=main)](https://dev.azure.com/dxatscale/sfpowerkit/_build/latest?definitionId=48&branchName=main) ![npm](https://img.shields.io/npm/dw/sfpowerkit)[![CodeFactor](https://www.codefactor.io/repository/github/accenture/sfpowerkit/badge)](https://www.codefactor.io/repository/github/accenture/sfpowerkit)
 
@@ -8,8 +9,8 @@
   <img alt="sfpowerkit" src="https://user-images.githubusercontent.com/44075423/111021309-6f3c2f80-841f-11eb-94c7-60661bd96202.png" width="480" height="400">
 </p>
 
-A Salesforce DX Plugin with multiple functionalities aimed at improving development and operational workflows
-Read the blog here https://accenture.github.io/blog/2019/06/27/sfpowerkit.html
+
+
 
 ## Installation
 
@@ -127,7 +128,7 @@ OPTIONS
       https://pmd.github.io/latest/pmd_userdocs_cli_reference.html#available-report-formats
 
   -o, --reportfile=reportfile
-      [default: pmd-output] The path to where the output of the analysis should be written
+      The path to where the output of the analysis should be written
 
   -r, --ruleset=ruleset
       DEPRECATED: use --rulesets instead
@@ -152,7 +153,7 @@ OPTIONS
       Rule priority threshold; rules with lower priority than configured here won't be used.
 
   --report=report
-      DEPRECATED: [default: pmd-output] use --reportfile instead.
+      DEPRECATED: use --reportfile instead.
 
   --[no-]shortnames
       Prints shortened filenames in the report.
