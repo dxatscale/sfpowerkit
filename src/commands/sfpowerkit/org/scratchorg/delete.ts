@@ -15,6 +15,7 @@ export default class Delete extends SfdxCommand {
   public static examples = [
     `$ sfdx sfpowerkit:org:scratchorg:delete  -e xyz@kyz.com -v devhub`,
     `$ sfdx sfpowerkit:org:scratchorg:delete  -u xyz@kyz.com -v devhub`,
+    `$ sfdx sfpowerkit:org:scratchorg:delete  -e xyz@kyz.com -v devhub --ignorepool`
   ];
 
   // Comment this out if your command does not require a hub org username
@@ -33,6 +34,15 @@ export default class Delete extends SfdxCommand {
       exclusive: ["email"],
       description: messages.getMessage("usernameFlagDescription"),
     }),
+    ignorepool: flags.boolean({
+      required: false,
+      dependsOn: ["email"],
+      description: messages.getMessage("ignorePoolFlagDescription")
+    }),
+    dryrun: flags.boolean({
+      required: false,
+      description: messages.getMessage("dryRunFlagDescription")
+    })
   };
 
   public async run(): Promise<AnyJson> {
@@ -63,14 +73,17 @@ export default class Delete extends SfdxCommand {
       );
       this.ux.table(info.records, [
         "Id",
+        "ScratchOrg",
         "SignupUsername",
         "SignupEmail",
         "ExpirationDate",
       ]);
 
-      let scratchOrgIds: string[] = info.records.map((elem) => elem.Id);
-      await ScratchOrgUtils.deleteScratchOrg(this.hubOrg, scratchOrgIds);
-      this.ux.log("Scratch Org(s) deleted successfully.");
+      if (!this.flags.dryrun) {
+        let scratchOrgIds: string[] = info.records.map((elem) => elem.Id);
+        await ScratchOrgUtils.deleteScratchOrg(this.hubOrg, scratchOrgIds);
+        this.ux.log("Scratch Org(s) deleted successfully.");
+      }
     } else {
       this.ux.log(
         `No Scratch Org(s) found for the given ${
@@ -89,7 +102,7 @@ export default class Delete extends SfdxCommand {
     email: string,
     username: string
   ): Promise<any> {
-    let query = `SELECT Id, SignupUsername, SignupEmail, ExpirationDate FROM ActiveScratchOrg`;
+    let query = `SELECT Id, ScratchOrg, SignupUsername, SignupEmail, ExpirationDate FROM ActiveScratchOrg`;
 
     if (username) {
       query = `${query} WHERE SignupUsername = '${username}'`;
@@ -97,8 +110,19 @@ export default class Delete extends SfdxCommand {
       query = `${query} WHERE SignupEmail = '${email}'`;
     }
 
+    if (this.flags.ignorepool && !username) {
+      const orgIds = await this.getOrgIdOfPooledScratchOrgs();
+      const collection = orgIds.map((id) => `'${id}'`).toString();
+      query += ` AND ScratchOrg NOT IN (${collection})`;
+    }
+
     const scratch_orgs = (await conn.query(query)) as any;
 
     return scratch_orgs;
+  }
+
+  private async getOrgIdOfPooledScratchOrgs(): Promise<string[]> {
+    const results = await ScratchOrgUtils.getScratchOrgsByTag(null, this.hubOrg, false, false);
+    return results.records.map((record) => record.ScratchOrg)
   }
 }

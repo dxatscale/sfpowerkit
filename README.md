@@ -1294,12 +1294,15 @@ OPTIONS
   -u, --username=username                                                           Username of the scratch org to be deleted
   -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
   --apiversion=apiversion                                                           override the api version used for api requests made by this command
+  --dryrun                                                                          Perform a dry run, without deleting the scratch orgs
+  --ignorepool                                                                      Ignore scratch orgs which belong to a pool
   --json                                                                            format output as json
   --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
 
 EXAMPLES
   $ sfdx sfpowerkit:org:scratchorg:delete  -e xyz@kyz.com -v devhub
   $ sfdx sfpowerkit:org:scratchorg:delete  -u xyz@kyz.com -v devhub
+  $ sfdx sfpowerkit:org:scratchorg:delete  -e xyz@kyz.com -v devhub --ignorepool
 ```
 
 _See code: [src\commands\sfpowerkit\org\scratchorg\usage.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/scratchorg/usage.ts)_
