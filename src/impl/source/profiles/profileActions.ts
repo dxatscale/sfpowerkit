@@ -69,7 +69,7 @@ export default abstract class ProfileActions {
             profileComponent,
             METADATA_INFO.Profile.sourceExtension
           );
-          if (profileName === oneName) {
+          if (profileName === oneName && profiles.includes(profileName)) {
             profilesStatus.updated.push(profileComponent);
             found = true;
             break;
