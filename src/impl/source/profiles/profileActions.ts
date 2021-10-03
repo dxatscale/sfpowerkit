@@ -91,6 +91,7 @@ export default abstract class ProfileActions {
         }
         if (!found) {
           profilesStatus.deleted.push(profileName);
+          SFPowerkit.log(`Profile ${profileName} not found in the org`,LoggerLevel.WARN);
         }
       }
     } else {
