@@ -11,3 +11,4 @@ test/commands/package/version/*
 test/*
 tsconfig.tsbuildinfo
 .DS_Store
+npm-shrinkwrap.json
