@@ -65,11 +65,11 @@ export default abstract class ProfileActions {
 
         for (let j = 0; j < metadataFiles.length; j++) {
           let profileComponent = metadataFiles[j];
-          let oneName = path.basename(
+          let retrievedProfileFileName = path.basename(
             profileComponent,
             METADATA_INFO.Profile.sourceExtension
           );
-          if (profileName === oneName && profiles.includes(profileName)) {
+          if (profileName === retrievedProfileFileName && profiles.includes(profileName)) {
             profilesStatus.updated.push(profileComponent);
             found = true;
             break;
@@ -100,18 +100,18 @@ export default abstract class ProfileActions {
       );
 
       profilesStatus.deleted = metadataFiles.filter((file) => {
-        let oneName = path.basename(
+        let retrievedProfileFileName = path.basename(
           file,
           METADATA_INFO.Profile.sourceExtension
         );
-        return !profiles.includes(oneName);
+        return !profiles.includes(retrievedProfileFileName);
       });
       profilesStatus.updated = metadataFiles.filter((file) => {
-        let oneName = path.basename(
+        let retrievedProfileFileName = path.basename(
           file,
           METADATA_INFO.Profile.sourceExtension
         );
-        return profiles.includes(oneName);
+        return profiles.includes(retrievedProfileFileName);
       });
 
       if (profiles && profiles.length > 0) {
@@ -119,14 +119,14 @@ export default abstract class ProfileActions {
           let found = false;
           for (let i = 0; i < profilesStatus.updated.length; i++) {
             let profileComponent = profilesStatus.updated[i];
-            let oneName = path.basename(
+            let fileName = path.basename(
               profileComponent,
               METADATA_INFO.Profile.sourceExtension
             );
             //escape some caracters
             let onlineName = profileObj.replace("'", "%27");
             onlineName = onlineName.replace("/", "%2F");
-            if (onlineName === oneName) {
+            if (onlineName === fileName) {
               found = true;
               break;
             }
@@ -137,11 +137,11 @@ export default abstract class ProfileActions {
           SFPowerkit.log("New profiles founds", LoggerLevel.DEBUG);
           for (let i = 0; i < newProfiles.length; i++) {
             SFPowerkit.log(newProfiles[i], LoggerLevel.DEBUG);
-            let newPRofilePath = path.join(
+            let newProfilePath = path.join(
               profilePath,
               newProfiles[i] + METADATA_INFO.Profile.sourceExtension
             );
-            profilesStatus.added.push(newPRofilePath);
+            profilesStatus.added.push(newProfilePath);
           }
         } else {
           SFPowerkit.log(
