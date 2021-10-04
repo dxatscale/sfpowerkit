@@ -155,13 +155,6 @@ export default class PoolFetchImpl {
 
       fs.unlinkSync("soAuth.json");
 
-
-      //Run shape list to reassign this org to the pool
-      child_process.execSync(`sfdx force:org:shape:list`, {
-        encoding: "utf8",
-        stdio: "pipe",
-      });
-
     }
   }
 
