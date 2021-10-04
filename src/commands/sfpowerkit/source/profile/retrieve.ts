@@ -3,7 +3,7 @@ import {
   SfdxCommand,
   flags,
   FlagsConfig,
-  SfdxResult
+  SfdxResult,
 } from "@salesforce/command";
 
 import { SfdxProject, SfdxError } from "@salesforce/core";
@@ -27,7 +27,7 @@ export default class Retrieve extends SfdxCommand {
   public static examples = [
     `$ sfdx sfpowerkit:source:profile:retrieve -u prod`,
     `$ sfdx sfpowerkit:source:profile:retrieve  -f force-app -n "My Profile" -u prod`,
-    `$ sfdx sfpowerkit:source:profile:retrieve  -f "module1, module2, module3" -n "My Profile1, My profile2"  -u prod`
+    `$ sfdx sfpowerkit:source:profile:retrieve  -f "module1, module2, module3" -n "My Profile1, My profile2"  -u prod`,
   ];
 
   //public static args = [{ name: 'file' }];
@@ -37,18 +37,18 @@ export default class Retrieve extends SfdxCommand {
       char: "f",
       description: messages.getMessage("folderFlagDescription"),
       required: false,
-      map: (f: string) => f.trim()
+      map: (f: string) => f.trim(),
     }),
     profilelist: flags.array({
       char: "n",
       description: messages.getMessage("profileListFlagDescription"),
       required: false,
-      map: (p: string) => p.trim()
+      map: (p: string) => p.trim(),
     }),
     delete: flags.boolean({
       char: "d",
       description: messages.getMessage("deleteFlagDescription"),
-      required: false
+      required: false,
     }),
     loglevel: flags.enum({
       description: "logging level for this command invocation",
@@ -66,9 +66,9 @@ export default class Retrieve extends SfdxCommand {
         "INFO",
         "WARN",
         "ERROR",
-        "FATAL"
-      ]
-    })
+        "FATAL",
+      ],
+    }),
   };
 
   // Comment this out if your command does not require an org username
@@ -83,14 +83,14 @@ export default class Retrieve extends SfdxCommand {
         { key: "state", label: "State" },
         { key: "fullName", label: "Full Name" },
         { key: "type", label: "Type" },
-        { key: "path", label: "Path" }
-      ]
+        { key: "path", label: "Path" },
+      ],
     },
     display() {
       if (Array.isArray(this.data) && this.data.length) {
         this.ux.table(this.data, this.tableColumnData);
       }
-    }
+    },
   };
 
   public async run(): Promise<any> {
@@ -122,35 +122,55 @@ export default class Retrieve extends SfdxCommand {
 
     let result = [];
     if (syncPofles.added) {
-      syncPofles.added.forEach(file => {
+      syncPofles.added.forEach((file) => {
         result.push({
           state: "Add",
           fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
           type: "Profile",
-          path: path.relative(process.cwd(), file)
+          path: path.relative(process.cwd(), file),
         });
       });
     }
     if (syncPofles.updated) {
-      syncPofles.updated.forEach(file => {
+      syncPofles.updated.forEach((file) => {
         result.push({
           state: "Updated",
           fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
           type: "Profile",
-          path: path.relative(process.cwd(), file)
+          path: path.relative(process.cwd(), file),
         });
       });
     }
-    if (syncPofles.deleted && this.flags.delete) {
-      syncPofles.deleted.forEach(file => {
-        result.push({
-          state: "Deleted",
-          fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
-          type: "Profile",
-          path: path.relative(process.cwd(), file)
+    if (this.flags.delete) {
+      if (syncPofles.deleted) {
+        syncPofles.deleted.forEach((file) => {
+          result.push({
+            state: "Deleted",
+            fullName: path.basename(
+              file,
+              METADATA_INFO.Profile.sourceExtension
+            ),
+            type: "Profile",
+            path: path.relative(process.cwd(), file),
+          });
         });
-      });
+      }
+    } else {
+      if (syncPofles.deleted) {
+        syncPofles.deleted.forEach((file) => {
+          result.push({
+            state: "Skipped",
+            fullName: path.basename(
+              file,
+              METADATA_INFO.Profile.sourceExtension
+            ),
+            type: "Profile",
+            path: path.relative(process.cwd(), file),
+          });
+        });
+      }
     }
+
     return result;
   }
 }
