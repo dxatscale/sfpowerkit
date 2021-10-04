@@ -3,7 +3,7 @@ import {
   SfdxCommand,
   flags,
   FlagsConfig,
-  SfdxResult
+  SfdxResult,
 } from "@salesforce/command";
 
 import { SfdxError } from "@salesforce/core";
@@ -28,7 +28,7 @@ export default class Merge extends SfdxCommand {
   public static examples = [
     `$ sfdx sfpowerkit:source:profile:merge -u sandbox`,
     `$ sfdx sfpowerkit:source:profile:merge -f force-app -n "My Profile" -r -u sandbox`,
-    `$ sfdx sfpowerkit:source:profile:merge -f "module1, module2, module3" -n "My Profile1, My profile2"  -u sandbox`
+    `$ sfdx sfpowerkit:source:profile:merge -f "module1, module2, module3" -n "My Profile1, My profile2"  -u sandbox`,
   ];
 
   //public static args = [{ name: 'file' }];
@@ -39,13 +39,13 @@ export default class Merge extends SfdxCommand {
       char: "f",
       description: messages.getMessage("folderFlagDescription"),
       required: false,
-      map: (f: string) => f.trim()
+      map: (f: string) => f.trim(),
     }),
     profilelist: flags.array({
       char: "n",
       description: messages.getMessage("profileListFlagDescription"),
       required: false,
-      map: (n: string) => n.trim()
+      map: (n: string) => n.trim(),
     }),
     metadata: flags.array({
       char: "m",
@@ -56,14 +56,14 @@ export default class Merge extends SfdxCommand {
         let parts = val.split(":");
         return {
           MetadataType: parts[0].trim(),
-          ApiName: parts.length >= 2 ? parts[1].trim() : "*"
+          ApiName: parts.length >= 2 ? parts[1].trim() : "*",
         };
-      }
+      },
     }),
     delete: flags.boolean({
       char: "d",
       description: messages.getMessage("deleteFlagDescription"),
-      required: false
+      required: false,
     }),
     loglevel: flags.enum({
       description: "logging level for this command invocation",
@@ -81,9 +81,9 @@ export default class Merge extends SfdxCommand {
         "INFO",
         "WARN",
         "ERROR",
-        "FATAL"
-      ]
-    })
+        "FATAL",
+      ],
+    }),
   };
 
   // Comment this out if your command does not require an org username
@@ -101,14 +101,14 @@ export default class Merge extends SfdxCommand {
         { key: "state", label: "State" },
         { key: "fullName", label: "Full Name" },
         { key: "type", label: "Type" },
-        { key: "path", label: "Path" }
-      ]
+        { key: "path", label: "Path" },
+      ],
     },
     display() {
       if (Array.isArray(this.data) && this.data.length) {
         this.ux.table(this.data, this.tableColumnData);
       }
-    }
+    },
   };
 
   public async run(): Promise<any> {
@@ -123,7 +123,7 @@ export default class Merge extends SfdxCommand {
 
     if (argMetadatas !== undefined) {
       metadatas = {};
-      ProfileRetriever.supportedMetadataTypes.forEach(val => {
+      ProfileRetriever.supportedMetadataTypes.forEach((val) => {
         metadatas[val] = [];
       });
       for (let i = 0; i < argMetadatas.length; i++) {
@@ -166,35 +166,55 @@ export default class Merge extends SfdxCommand {
 
     let result = [];
     if (mergedProfiles.added) {
-      mergedProfiles.added.forEach(file => {
+      mergedProfiles.added.forEach((file) => {
         result.push({
           state: "Add",
           fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
           type: "Profile",
-          path: path.relative(process.cwd(), file)
+          path: path.relative(process.cwd(), file),
         });
       });
     }
     if (mergedProfiles.updated) {
-      mergedProfiles.updated.forEach(file => {
+      mergedProfiles.updated.forEach((file) => {
         result.push({
           state: "Merged",
           fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
           type: "Profile",
-          path: path.relative(process.cwd(), file)
+          path: path.relative(process.cwd(), file),
         });
       });
     }
-    if (mergedProfiles.deleted && this.flags.delete) {
-      mergedProfiles.deleted.forEach(file => {
-        result.push({
-          state: "Deleted",
-          fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
-          type: "Profile",
-          path: path.relative(process.cwd(), file)
+    if (this.flags.delete) {
+      if (mergedProfiles.deleted) {
+        mergedProfiles.deleted.forEach((file) => {
+          result.push({
+            state: "Deleted",
+            fullName: path.basename(
+              file,
+              METADATA_INFO.Profile.sourceExtension
+            ),
+            type: "Profile",
+            path: path.relative(process.cwd(), file),
+          });
         });
-      });
+      }
+    } else {
+      if (mergedProfiles.deleted) {
+        mergedProfiles.deleted.forEach((file) => {
+          result.push({
+            state: "Skipped",
+            fullName: path.basename(
+              file,
+              METADATA_INFO.Profile.sourceExtension
+            ),
+            type: "Profile",
+            path: path.relative(process.cwd(), file),
+          });
+        });
+      }
     }
+
     return result;
   }
 }
