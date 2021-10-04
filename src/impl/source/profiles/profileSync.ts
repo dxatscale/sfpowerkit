@@ -116,10 +116,16 @@ export default class ProfileSync extends ProfileActions {
           var profileObj = metadataList[count] as Profile;
           SFPowerkit.log("Reconciling  Tabs", LoggerLevel.DEBUG);
           await this.reconcileTabs(profileObj);
-          profileWriter.writeProfile(
-            profileObj,
-            profilePathAssoc[profileObj.fullName]
-          );
+          let filePath = profilePathAssoc[profileObj.fullName];
+          if(filePath){
+            profileWriter.writeProfile(
+              profileObj,
+              profilePathAssoc[profileObj.fullName]
+            );
+          }
+          else{
+            SFPowerkit.log("File path not found...", LoggerLevel.DEBUG);
+          }
           //profileList.push(profileObj.fullName);
         }
         progressBar.increment(j - i > chunk ? chunk : j - i);
