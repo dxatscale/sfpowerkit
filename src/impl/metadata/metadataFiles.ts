@@ -221,6 +221,7 @@ export default class MetadataFiles {
     }
     const moduleFolder = packageDirectories.find((packageFolder) => {
       let packageFolderNormalized = path.relative("", packageFolder);
+      packageFolderNormalized = packageFolderNormalized+ path.sep;
       return filePath.startsWith(packageFolderNormalized);
     });
     return moduleFolder !== undefined;
