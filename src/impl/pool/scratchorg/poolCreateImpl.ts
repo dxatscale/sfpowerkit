@@ -757,7 +757,7 @@ export default class PoolCreateImpl {
         {encoding: "UTF-8"}
       );
   
-      let validator = new Ajv({allErrors: true}).compile(schema);
+      let validator = new Ajv({allErrors: true, strictTuples: false}).compile(schema);
       let validationResult = validator(soPoolConfig);
       
 
