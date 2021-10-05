@@ -1,0 +1,22 @@
+# Trigger the workflow on milestone events
+on:
+  milestone:
+    types: [closed]
+  workflow_dispatch:
+    inputs:
+      milestoneId:
+        description: 'Milestone ID'     
+        required: true
+        default: '1'
+name: Generate Release Notes
+jobs:
+  create-release-notes:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Create Release Notes
+      uses: docker://decathlon/release-notes-generator-action:3.1.4
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        OUTPUT_FOLDER: release_notes
+        USE_MILESTONE_TITLE: "true"
