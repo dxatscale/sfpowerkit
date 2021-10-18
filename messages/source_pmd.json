@@ -8,7 +8,7 @@
   "filelistFlagDescription": "Path to file containing a comma delimited list of files to analyze.",
   "reportFlagDescription": "DEPRECATED: use --reportfile instead.",
   "reportfileFlagDescription": "The path to where the output of the analysis should be written",
-  "versionFlagDescription": "[default: 6.34.0] The version of the pmd to be utilized for the analysis, this version will be downloaded to sfpowerkit's cache directory",
+  "versionFlagDescription": "[default: 6.39.0] The version of the pmd to be utilized for the analysis, this version will be downloaded to sfpowerkit's cache directory",
   "minimumpriorityFlagDescription": "Rule priority threshold; rules with lower priority than configured here won't be used.",
   "shortnamesFlagDescription": "Prints shortened filenames in the report.",
   "showsuppressedFlagDescription": "Causes the suppressed rule violations to be added to the report.",
