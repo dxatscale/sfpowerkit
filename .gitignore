@@ -5,6 +5,7 @@
 /lib
 /tmp
 node_modules
+oclif.manifest.json
 .vs
 .sfdx
 test/commands/package/version/*
