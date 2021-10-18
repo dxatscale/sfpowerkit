@@ -154,6 +154,7 @@
   },
   "repository": "accenture/sfpowerkit",
   "scripts": {
+    "postpack": "rm -f oclif.manifest.json",
     "posttest": "tslint -p test -t stylish",
     "prepare": "rimraf tsconfig.tsbuildinfo && rimraf lib && tsc -b && oclif-dev manifest && npm shrinkwrap",
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
