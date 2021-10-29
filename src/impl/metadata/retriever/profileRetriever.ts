@@ -7,6 +7,7 @@ import { MetadataInfo } from "jsforce";
 import * as _ from "lodash";
 import MetadataRetriever from "./metadataRetriever";
 import { METADATA_INFO } from "../metadataInfo";
+import QueryExecutor from "../../../utils/queryExecutor";
 
 const unsuportedObjects = ["PersonAccount"];
 /**
@@ -37,18 +38,21 @@ export default class ProfileRetriever {
   public constructor(private conn: Connection, private debugFlag?: boolean) {}
 
   public async loadProfiles(profileNames: string[]): Promise<MetadataInfo[]> {
+
+    let profilePermissions = await this.fetchPermissionsWithValue(profileNames);
+
     let metadata = (await this.conn.metadata.readSync(
       "Profile",
       profileNames
     )) as any;
     if (Array.isArray(metadata)) {
       for (let i = 0; i < metadata.length; i++) {
-        await this.handlePermissions(metadata[i]);
+        await this.handlePermissions(metadata[i], profilePermissions);
         metadata[i] = await this.completeObjects(metadata[i], false);
       }
       return metadata;
     } else if (metadata !== null) {
-      await this.handlePermissions(metadata);
+      await this.handlePermissions(metadata, profilePermissions);
       metadata = await this.completeObjects(metadata, false);
       return [metadata];
     } else {
@@ -56,18 +60,18 @@ export default class ProfileRetriever {
     }
   }
 
-  public async handlePermissions(profileObj: Profile): Promise<Profile> {
+  public async handlePermissions(profileObj: Profile, permissions): Promise<Profile> {
     await this.handleViewAllDataPermission(profileObj);
     await this.handleInstallPackagingPermission(profileObj);
 
     this.handleQueryAllFilesPermission(profileObj);
     //Check if the permission QueryAllFiles is true and give read access to objects
-    profileObj = await this.completeUserPermissions(profileObj);
+    profileObj = await this.completeUserPermissions(profileObj, permissions);
 
     return profileObj;
   }
 
-  private async completeUserPermissions(profileObj: Profile): Promise<Profile> {
+  private async completeUserPermissions(profileObj: Profile, profilePermissions): Promise<Profile> {
     let supportedPermissions = await this.fetchPermissions();
     // remove unsupported userLicence
     var unsupportedLicencePermissions = this.getUnsupportedLicencePermissions(
@@ -107,8 +111,17 @@ export default class ProfileRetriever {
       delete profileObj.userPermissions;
     } else {
       for (var i = 0; i < notRetrievedPermissions.length; i++) {
+        let profileName = decodeURIComponent(profileObj.fullName);
+        let profilePermission = profilePermissions.find(record=>{
+          return record.Name==profileName;
+        });
+        let permissionField = 'Permissions'+notRetrievedPermissions[i];
+        let permissionValue = false;
+        if(profilePermission){
+          permissionValue=profilePermission[permissionField];
+        }
         var newPermission: ProfileUserPermission = {
-          enabled: false,
+          enabled: permissionValue,
           name: notRetrievedPermissions[i],
         };
         if (profileObj.userPermissions === undefined) {
@@ -341,5 +354,22 @@ export default class ProfileRetriever {
       return elem.fullName;
     });
     return supportedPermissions;
+  }
+
+  private async fetchPermissionsWithValue(profileNames: string[]) {
+    let describeResult = await this.conn.sobject("Profile").describe();
+    let permissions = [];
+    describeResult.fields.forEach((field) => {
+      let fieldName = field["name"] as string;
+      if (fieldName.startsWith("Permissions")) {
+        permissions.push(fieldName.trim());
+      }
+    });
+    let permissionStr = permissions.join(', ');
+    let query = `SELECT Name, ${permissionStr} FROM Profile WHERE Name IN ('${profileNames.join('\',\'')}')`;
+    query = decodeURIComponent(query);
+    let executor = new QueryExecutor(this.conn);
+    let profiles = await  executor.executeQuery(query, false);
+    return profiles;
   }
 }
