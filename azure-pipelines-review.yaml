@@ -27,6 +27,12 @@ stages:
           vmImage: $(image)
 
         steps:
+
+          - task: NodeTool@0
+            inputs:
+             versionSpec: '14.x' 
+
+          
           - task: CmdLine@2
             displayName: Run npm install
             inputs:
