@@ -1,5 +1,4 @@
 import { core, SfdxCommand, FlagsConfig, flags } from "@salesforce/command";
-import findJavaHome from "find-java-home";
 import { spawnSync } from "child_process";
 import FileUtils from "../../../utils/fileutils";
 import { extract } from "../../../utils/extract";
@@ -8,6 +7,7 @@ import { SfdxError, Logger, SfdxProject } from "@salesforce/core";
 const request = require("request");
 const fs = require("fs");
 const path = require("path");
+const findJavaHome = require("find-java-home");
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
