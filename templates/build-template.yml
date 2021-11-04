@@ -31,6 +31,10 @@ steps:
       workingFile: ".npmrc"
       customEndpoint: "npm-sfpowerkit"
 
+   - task: NodeTool@0
+     inputs:
+      versionSpec: '14.x' 
+
   - task: CmdLine@2
     displayName: Run NPM install
     condition: or(eq( '${{ parameters.version }}', 'alpha'), eq( '${{ parameters.version }}', 'hotfix'), eq( '${{ parameters.version }}', 'review') )
