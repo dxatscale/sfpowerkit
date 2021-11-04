@@ -73,13 +73,6 @@ Elements supported included in your package testPackage
     })
   };
 
-  // Comment this out if your command does not require an org username
-  //protected static requiresUsername = true;
-
-  // Comment this out if your command does not support a hub org username
-  // protected static supportsDevhubUsername = true;
-
-  // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   protected static requiresProject = true;
 
   private coverageJSON;
@@ -117,7 +110,7 @@ Elements supported included in your package testPackage
 
     const packageDirectories =
       (projectJson.get("packageDirectories") as JsonArray) || [];
-    const result_store = [];
+    const result_store: SFDXPackage[] = [];
 
     if (packageToBeScanned != undefined) {
       SFPowerkit.log(`Analyzing ${packageToBeScanned}`, LoggerLevel.INFO);
@@ -130,9 +123,10 @@ Elements supported included in your package testPackage
             `located ${packageToBeScanned} in project ${sf_package["path"]}`,
             LoggerLevel.DEBUG
           );
-          let result;
+
           try {
-            result = await this.validate(sf_package);
+            const result = await this.validate(sf_package);
+            result_store.push(result);
           } catch (e) {
             SFPowerkit.log(
               `Error Occured Unable to analyze ${sf_package["package"]}`,
@@ -155,9 +149,8 @@ Elements supported included in your package testPackage
             `Analyzing ${sf_package["package"]}`,
             LoggerLevel.DEBUG
           );
-          let result;
           try {
-            result = await this.validate(sf_package);
+            const result = await this.validate(sf_package);
             result_store.push(result);
           } catch (e) {
             SFPowerkit.log(
@@ -175,7 +168,7 @@ Elements supported included in your package testPackage
           throw new SfdxError("Analysis Failed, Unsupported metadata present");
       });
     }
-    return { packages: result_store };
+    return { packages: result_store } as unknown as AnyJson;
   }
 
   public async validate(packageToBeScanned: AnyJson) {
