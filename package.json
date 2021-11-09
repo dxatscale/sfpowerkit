@@ -46,6 +46,7 @@
     "fast-glob": "^3.2.5",
     "find-java-home": "^1.1.0",
     "fs-extra": "^9.1.0",
+    "glob": "^7.2.0",
     "hook-std": "^2.0.0",
     "ignore": "^5.1.8",
     "nested-object-diff": "^1.1.0",
