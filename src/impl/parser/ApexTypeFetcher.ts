@@ -3,9 +3,6 @@ const path = require("path");
 const glob = require("glob");
 import { SFPowerkit, LoggerLevel } from "../../sfpowerkit";
 
-import { CommonTokenStream} from "antlr4ts";
-import { ParseTreeWalker } from "antlr4ts/tree/ParseTreeWalker";
-
 import ApexTypeListener from "./listeners/ApexTypeListener";
 
 import {
@@ -13,7 +10,9 @@ import {
   ApexParser,
   ApexParserListener,
   ThrowingErrorListener,
-  CaseInsensitiveInputStream
+  CaseInsensitiveInputStream,
+  CommonTokenStream,
+  ParseTreeWalker
 } from "apex-parser";
 
 export default class ApexTypeFetcher {
