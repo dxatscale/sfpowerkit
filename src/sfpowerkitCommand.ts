@@ -30,8 +30,6 @@ export default abstract class SFPowerkitCommand extends SfdxCommand {
         }
       }
 
-      this.setLogLevel();
-
       SFPowerkit.log(
       COLOR_HEADER(
         `-------------------------------------------------------------------------------------------`
@@ -50,23 +48,5 @@ export default abstract class SFPowerkitCommand extends SfdxCommand {
     );
 
     await this.excute();
-  }
-
-  private setLogLevel() {
-    const flagLogLevel = this.flags.logLevel;
-    let SFPKLogLevel = SFPKLogger.logLevel;
-    if (flagLogLevel === "trace" || flagLogLevel === "TRACE") {
-      SFPKLogLevel = LoggerLevel.TRACE;
-    } else if (flagLogLevel === "debug" || flagLogLevel === "DEBUG") {
-      SFPKLogLevel = LoggerLevel.DEBUG;
-    } else if (flagLogLevel === "info" || flagLogLevel === "INFO") {
-      SFPKLogLevel = LoggerLevel.INFO;
-    } else if (flagLogLevel === "warn" || flagLogLevel === "WARN") {
-      SFPKLogLevel = LoggerLevel.WARN;
-    } else if (flagLogLevel === "error" || flagLogLevel === "ERROR") {
-      SFPKLogLevel = LoggerLevel.ERROR;
-    } else if (flagLogLevel === "fatal" || flagLogLevel === "FATAL") {
-      SFPKLogLevel = LoggerLevel.FATAL;
-    } else SFPKLogLevel = LoggerLevel.INFO;
   }
 }

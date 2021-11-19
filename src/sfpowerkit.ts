@@ -1,6 +1,7 @@
 import { SfdxProject } from "@salesforce/core";
 import { isNullOrUndefined } from "util";
 import { UX } from "@salesforce/command";
+import chalk = require("chalk");
 const Logger = require("pino");
 const NodeCache = require("node-cache");
 
@@ -12,6 +13,18 @@ export enum LoggerLevel {
   ERROR = 50,
   FATAL = 60,
 }
+
+export const COLOR_ERROR = chalk.bold.red;
+export const COLOR_WARNING = chalk.keyword("orange");
+export const COLOR_INFO = chalk.white;
+export const COLOR_TRACE = chalk.gray;
+export const COLOR_DEBUG = chalk.blue;
+export const COLOR_HEADER = chalk.yellowBright.bold;
+export const COLOR_SUCCESS = chalk.green.bold;
+export const COLOR_TIME = chalk.magentaBright
+export const COLOR_KEY_MESSAGE = chalk.magentaBright.bold
+export const COLOR_KEY_VALUE = chalk.black.bold.bgGreenBright;
+
 export class SFPowerkit {
   private static defaultFolder: string;
   private static projectDirectories: string[];
@@ -22,6 +35,15 @@ export class SFPowerkit {
   private static logger;
   public static logLevel;
   private static cache;
+
+  static enableColor() {
+    chalk.level = 2;
+  }
+
+  static disableColor() {
+    chalk.level = 0;
+  }
+
 
   public static getCache() {
     if (SFPowerkit.cache == null) {
