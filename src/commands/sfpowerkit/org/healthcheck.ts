@@ -1,9 +1,10 @@
-import { core, flags, SfdxCommand, Result } from "@salesforce/command";
+import { core, flags, Result } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import * as fs from "fs-extra";
 let request = require("request-promise-native");
 import * as rimraf from "rimraf";
-const querystring = require("querystring");
+const querystring = require("querystring")
+import SFPowerkitCommand from "../../../sfpowerkitCommand"
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -12,7 +13,7 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages("sfpowerkit", "org_healthcheck");
 
-export default class HealthCheck extends SfdxCommand {
+export default class HealthCheck extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
@@ -24,7 +25,7 @@ export default class HealthCheck extends SfdxCommand {
   // Comment this out if your command does not require an org username
   protected static requiresUsername = true;
 
-  public async run(): Promise<AnyJson> {
+  public async excute(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
 
     await this.org.refreshAuth();

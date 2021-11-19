@@ -1,7 +1,8 @@
-import { core, flags, SfdxCommand, FlagsConfig } from "@salesforce/command";
+import { core, flags, FlagsConfig } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import * as rimraf from "rimraf";
 import { SFPowerkit } from "../../../sfpowerkit";
+import SFPowerkitCommand from "../../../sfpowerkitCommand";
 import ScratchOrgImpl from "../../../impl/pool/scratchorg/poolCreateImpl";
 import { SfdxError } from "@salesforce/core";
 import { loadSFDX } from "../../../sfdxnode/GetNodeWrapper";
@@ -17,7 +18,7 @@ const messages = core.Messages.loadMessages(
   "scratchorg_pool_create"
 );
 
-export default class Create extends SfdxCommand {
+export default class Create extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
   protected static requiresDevhubUsername = true;
 
@@ -59,7 +60,7 @@ export default class Create extends SfdxCommand {
     }),
   };
 
-  public async run(): Promise<AnyJson> {
+  public async excute(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 

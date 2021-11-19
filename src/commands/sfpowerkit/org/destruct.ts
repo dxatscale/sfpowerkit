@@ -1,6 +1,7 @@
-import { core, SfdxCommand, FlagsConfig, flags } from "@salesforce/command";
+import { core, FlagsConfig, flags } from "@salesforce/command";
 import FileUtils from "../../../utils/fileutils";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
+import SFPowerkitCommand from "../../../sfpowerkitCommand";
 import * as xml2js from "xml2js";
 import * as rimraf from "rimraf";
 import * as util from "util";
@@ -20,7 +21,7 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages("sfpowerkit", "org_destruct");
 
-export default class Destruct extends SfdxCommand {
+export default class Destruct extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
@@ -60,7 +61,7 @@ export default class Destruct extends SfdxCommand {
   // Comment this out if your command does not require an org username
   protected static requiresUsername = true;
 
-  public async run(): Promise<any> {
+  public async excute(): Promise<any> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     await this.org.refreshAuth();

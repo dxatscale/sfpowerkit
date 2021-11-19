@@ -1,8 +1,9 @@
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import * as fs from "fs-extra";
 import * as path from "path";
 import { SFPowerkit } from "../../../../sfpowerkit";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import xmlUtil from "../../../../utils/xmlUtil";
 import getDefaults from "../../../../utils/getDefaults";
 
@@ -16,7 +17,7 @@ const messages = core.Messages.loadMessages(
   "source_customlabel_buildmanifest"
 );
 
-export default class Buildmanifest extends SfdxCommand {
+export default class Buildmanifest extends SFPowerkitCommand {
   public output: string[];
   public static description = messages.getMessage("commandDescription");
 
@@ -60,7 +61,7 @@ export default class Buildmanifest extends SfdxCommand {
     })
   };
 
-  public async run(): Promise<AnyJson> {
+  public async excute(): Promise<AnyJson> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
     this.flags.apiversion =
       this.flags.apiversion || getDefaults.getApiVersion();

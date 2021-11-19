@@ -1,6 +1,7 @@
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
+import SFPowerkitCommand from "../../../sfpowerkitCommand";
 import PoolFetchImpl from "../../../impl/pool/scratchorg/poolFetchImpl";
 
 // Initialize Messages with the current plugin directory
@@ -13,7 +14,7 @@ const messages = core.Messages.loadMessages(
   "scratchorg_poolFetch"
 );
 
-export default class Fetch extends SfdxCommand {
+export default class Fetch extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   protected static requiresDevhubUsername = true;
@@ -72,7 +73,7 @@ export default class Fetch extends SfdxCommand {
     }),
   };
 
-  public async run(): Promise<AnyJson> {
+  public async excute(): Promise<AnyJson> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     await this.hubOrg.refreshAuth();

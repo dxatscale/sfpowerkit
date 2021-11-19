@@ -1,8 +1,9 @@
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 let request = require("request-promise-native");
 import { SfdxError } from "@salesforce/core";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -11,7 +12,7 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages("sfpowerkit", "sandbox_refresh");
 
-export default class Refresh extends SfdxCommand {
+export default class Refresh extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
@@ -42,7 +43,7 @@ export default class Refresh extends SfdxCommand {
   // Comment this out if your command does not require a hub org username
   protected static requiresDevhubUsername = true;
 
-  public async run(): Promise<AnyJson> {
+  public async excute(): Promise<AnyJson> {
     SFPowerkit.setLogLevel("INFO", false);
 
     await this.hubOrg.refreshAuth();

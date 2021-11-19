@@ -1,6 +1,7 @@
 import { AnyJson } from "@salesforce/ts-types";
 import * as fs from "fs-extra";
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import * as rimraf from "rimraf";
 import { AsyncResult } from "jsforce";
 import { SfdxError } from "@salesforce/core";
@@ -23,7 +24,7 @@ const messages = core.Messages.loadMessages(
   "connectedapp_retrieve"
 );
 
-export default class Retrieve extends SfdxCommand {
+export default class Retrieve extends SFPowerkitCommand {
   public connectedapp_consumerKey: string;
   public static description = messages.getMessage("commandDescription");
 
@@ -44,7 +45,7 @@ export default class Retrieve extends SfdxCommand {
     })
   };
 
-  public async run(): Promise<AnyJson> {
+  public async excute(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
     let retrieveRequest = {
       apiVersion: getDefaults.getApiVersion()

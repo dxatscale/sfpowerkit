@@ -1,6 +1,6 @@
 import { AnyJson } from "@salesforce/ts-types";
 import fs from "fs-extra";
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
 import rimraf = require("rimraf");
 import { AsyncResult, DeployResult } from "jsforce";
 import { SfdxError } from "@salesforce/core";
@@ -10,6 +10,7 @@ import { checkRetrievalStatus } from "../../../utils/checkRetrievalStatus";
 import { checkDeploymentStatus } from "../../../utils/checkDeploymentStatus";
 import { extract } from "../../../utils/extract";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
+import SFPowerkitCommand from "../../../sfpowerkitCommand";
 import FileUtils from "../../../utils/fileutils";
 
 // Initialize Messages with the current plugin directory
@@ -19,7 +20,7 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages("sfpowerkit", "package_applypatch");
 
-export default class Applypatch extends SfdxCommand {
+export default class Applypatch extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
@@ -56,7 +57,7 @@ export default class Applypatch extends SfdxCommand {
   // Comment this out if your command does not require an org username
   protected static requiresUsername = true;
   private folderPath: string;
-  public async run(): Promise<AnyJson> {
+  public async excute(): Promise<AnyJson> {
     this.folderPath = `temp_sfpowerkit_${FileUtils.makefolderid(5)}`;
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 

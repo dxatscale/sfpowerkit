@@ -1,6 +1,6 @@
 import { AnyJson } from "@salesforce/ts-types";
 import fs from "fs-extra";
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
 import rimraf = require("rimraf");
 import { SfdxProject } from "@salesforce/core";
 import xml2js = require("xml2js");
@@ -15,6 +15,7 @@ import { zipDirectory } from "../../../../utils/zipDirectory";
 import MetadataFiles from "../../../../impl/metadata/metadataFiles";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 import FileUtils from "../../../../utils/fileutils";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 
 var path = require("path");
 const glob = require("glob");
@@ -30,7 +31,7 @@ const messages = core.Messages.loadMessages(
   "source_picklist_generatepatch"
 );
 
-export default class Generatepatch extends SfdxCommand {
+export default class Generatepatch extends SFPowerkitCommand {
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   protected static requiresProject = true;
   private folderPath: string;
@@ -67,7 +68,7 @@ export default class Generatepatch extends SfdxCommand {
     }),
   };
 
-  public async run(): Promise<AnyJson> {
+  public async excute(): Promise<AnyJson> {
     //clean any existing temp sf powerkit source folder
     this.folderPath = `temp_sfpowerkit_${FileUtils.makefolderid(5)}`;
 

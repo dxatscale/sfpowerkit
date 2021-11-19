@@ -1,7 +1,8 @@
 import { AnyJson } from "@salesforce/ts-types";
 import { existsSync } from "fs";
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import { SfdxError } from "@salesforce/core";
 import ApexTypeFetcher, {
   ApexSortedByType,
@@ -17,7 +18,7 @@ const messages = core.Messages.loadMessages(
   "source_apextest_list"
 );
 
-export default class List extends SfdxCommand {
+export default class List extends SFPowerkitCommand {
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   protected static requiresProject = true;
   public static description = messages.getMessage("commandDescription");
@@ -57,7 +58,7 @@ export default class List extends SfdxCommand {
     }),
   };
 
-  public async run(): Promise<AnyJson> {
+  public async excute(): Promise<AnyJson> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     //set apex class directory

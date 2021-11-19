@@ -1,10 +1,11 @@
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import * as xml2js from "xml2js";
 import * as util from "util";
 import * as fs from "fs-extra";
 import * as rimraf from "rimraf";
 import * as path from "path";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -16,7 +17,7 @@ const messages = core.Messages.loadMessages(
   "source_customlabel_clean"
 );
 
-export default class Reconcile extends SfdxCommand {
+export default class Reconcile extends SFPowerkitCommand {
   private customlabel_path: string;
 
   public static description = messages.getMessage("commandDescription");
@@ -49,7 +50,7 @@ export default class Reconcile extends SfdxCommand {
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   protected static requiresProject = true;
 
-  public async run(): Promise<AnyJson> {
+  public async excute(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
 
     // Gives first value in url after https protocol

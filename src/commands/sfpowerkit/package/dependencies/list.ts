@@ -1,5 +1,6 @@
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
 import { Connection } from "@salesforce/core";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import * as fs from "fs-extra";
 
 const packageIdPrefix = "0Ho";
@@ -15,7 +16,7 @@ const messages = core.Messages.loadMessages(
   "dependency_versionlist"
 );
 
-export default class List extends SfdxCommand {
+export default class List extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
@@ -49,7 +50,7 @@ export default class List extends SfdxCommand {
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   protected static requiresProject = true;
 
-  public async run(): Promise<any> {
+  public async excute(): Promise<any> {
     const conn = this.hubOrg.getConnection();
     let projectConfig = JSON.parse(
       fs.readFileSync("sfdx-project.json", "utf8")

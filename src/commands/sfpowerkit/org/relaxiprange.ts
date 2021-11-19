@@ -1,7 +1,8 @@
 import { AnyJson } from "@salesforce/ts-types";
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
 import { SfdxError } from "@salesforce/core";
 import RelaxIPRangeImpl from "../../../impl/org/relaxIPRangeImpl";
+import SFPowerkitCommand from "../../../sfpowerkitCommand";
 
 // tslint:disable-next-line:ordered-imports
 var path = require("path");
@@ -14,7 +15,7 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages("sfpowerkit", "org_relaxiprange");
 
-export default class Relaxiprange extends SfdxCommand {
+export default class Relaxiprange extends SFPowerkitCommand {
   public connectedapp_consumerKey: string;
   public static description = messages.getMessage("commandDescription");
 
@@ -62,7 +63,7 @@ export default class Relaxiprange extends SfdxCommand {
   // Comment this out if your command does not require an org username
   protected static requiresUsername = true;
 
-  public async run(): Promise<AnyJson> {
+  public async excute(): Promise<AnyJson> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     //validate only one param is passed

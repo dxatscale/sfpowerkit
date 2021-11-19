@@ -1,10 +1,11 @@
-import { flags, SfdxCommand } from "@salesforce/command";
+import { flags } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 import Passwordgenerateimpl from "../../../../impl/user/passwordgenerateimpl";
 import { SfdxError } from "@salesforce/core";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 
-export default class Generate extends SfdxCommand {
+export default class Generate extends SFPowerkitCommand {
   public static description =
     "Generates password for a given user in a salesforce org.";
 
@@ -36,7 +37,7 @@ export default class Generate extends SfdxCommand {
   // Comment this out if your command does not require a hub org username
   protected static requiresUsername = true;
 
-  public async run(): Promise<AnyJson> {
+  public async excute(): Promise<AnyJson> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     //Connect to the org

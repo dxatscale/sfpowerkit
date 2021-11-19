@@ -1,6 +1,7 @@
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
+import SFPowerkitCommand from "../../../sfpowerkitCommand";
 import poolListImpl from "../../../impl/pool/scratchorg/poolListImpl";
 import { isNullOrUndefined } from "util";
 import P from "pino";
@@ -16,7 +17,7 @@ const messages = core.Messages.loadMessages(
   "scratchorg_poollist"
 );
 
-export default class List extends SfdxCommand {
+export default class List extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   protected static requiresDevhubUsername = true;
@@ -65,7 +66,7 @@ export default class List extends SfdxCommand {
     }),
   };
 
-  public async run(): Promise<AnyJson> {
+  public async excute(): Promise<AnyJson> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     await this.hubOrg.refreshAuth();

@@ -1,4 +1,4 @@
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import * as fs from "fs-extra";
 import * as rimraf from "rimraf";
@@ -7,6 +7,7 @@ import { AsyncResult, DeployResult } from "jsforce";
 import { checkDeploymentStatus } from "../../../../utils/checkDeploymentStatus";
 import { SfdxError } from "@salesforce/core";
 import { SFPowerkit } from "../../../../sfpowerkit";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 
 const spawn = require("child-process-promise").spawn;
 
@@ -20,7 +21,7 @@ const messages = core.Messages.loadMessages(
   "source_customlabel_create"
 );
 
-export default class Create extends SfdxCommand {
+export default class Create extends SFPowerkitCommand {
   public customlabel_fullname: string;
   public customlabel_categories: string;
   public customlabel_language: string = "en_US";
@@ -106,7 +107,7 @@ export default class Create extends SfdxCommand {
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   protected static requiresProject = true;
 
-  public async run(): Promise<AnyJson> {
+  public async excute(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 

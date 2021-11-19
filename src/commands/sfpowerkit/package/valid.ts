@@ -1,4 +1,4 @@
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import { JsonArray } from "@salesforce/ts-types";
 import { SfdxProject, SfdxError } from "@salesforce/core";
@@ -8,6 +8,7 @@ import * as fs from "fs-extra";
 import * as rimraf from "rimraf";
 import * as path from "path";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
+import SFPowerkitCommand from "../../../sfpowerkitCommand";
 import { loadSFDX } from "../../../sfdxnode/GetNodeWrapper";
 import { sfdx } from "../../../sfdxnode/parallel";
 
@@ -20,7 +21,7 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages("sfpowerkit", "valid");
 
-export default class Valid extends SfdxCommand {
+export default class Valid extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
@@ -77,7 +78,7 @@ Elements supported included in your package testPackage
 
   private coverageJSON;
 
-  public async run(): Promise<AnyJson> {
+  public async excute(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
 
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);

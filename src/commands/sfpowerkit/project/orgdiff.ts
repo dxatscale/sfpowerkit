@@ -1,11 +1,11 @@
 import {
   core,
-  SfdxCommand,
   FlagsConfig,
   flags,
   SfdxResult
 } from "@salesforce/command";
 import { SFPowerkit } from "../../../sfpowerkit";
+import SFPowerkitCommand from "../../../sfpowerkitCommand";
 import OrgDiffImpl from "../../../impl/project/orgdiff/orgDiffImpl";
 import { fs } from "@salesforce/core";
 
@@ -16,7 +16,7 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages("sfpowerkit", "project_orgdiff");
 
-export default class OrgDiff extends SfdxCommand {
+export default class OrgDiff extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
@@ -82,7 +82,7 @@ export default class OrgDiff extends SfdxCommand {
   protected static requiresUsername = true;
   protected static requiresProject = true;
 
-  public async run(): Promise<any> {
+  public async excute(): Promise<any> {
     SFPowerkit.setUx(this.ux);
     this.ux.startSpinner("Running...");
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);

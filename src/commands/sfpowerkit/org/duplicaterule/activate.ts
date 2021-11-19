@@ -1,6 +1,7 @@
 import { AnyJson } from "@salesforce/ts-types";
 import * as fs from "fs-extra";
 import { core, flags, SfdxCommand } from "@salesforce/command";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import * as rimraf from "rimraf";
 import { AsyncResult, DeployResult } from "jsforce";
 import { AsyncResource } from "async_hooks";
@@ -26,7 +27,7 @@ const messages = core.Messages.loadMessages(
   "duplicaterule_activate"
 );
 
-export default class Activate extends SfdxCommand {
+export default class Activate extends SFPowerkitCommand {
   public connectedapp_consumerKey: string;
   public static description = messages.getMessage("commandDescription");
 
@@ -72,7 +73,7 @@ export default class Activate extends SfdxCommand {
   // Comment this out if your command does not require an org username
   protected static requiresUsername = true;
 
-  public async run(): Promise<AnyJson> {
+  public async excute(): Promise<AnyJson> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
     rimraf.sync("temp_sfpowerkit");
 

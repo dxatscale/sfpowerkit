@@ -1,8 +1,8 @@
-import { SfdxCommand } from "@salesforce/command";
 import { Connection, SfdxError } from "@salesforce/core";
 import { AnyJson } from "@salesforce/ts-types";
 import queryApi from "../../../utils/queryExecutor";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
+import SFPowerkitCommand from "../../../sfpowerkitCommand";
 import { chunkArray } from "../../../utils/chunkArray";
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
@@ -10,7 +10,7 @@ import { chunkArray } from "../../../utils/chunkArray";
 const CODECOVAGG_QUERY = `SELECT Id FROM ApexCodeCoverageAggregate`;
 const APEXTESTRESULT_QUERY = `SELECT Id FROM ApexTestResult`;
 
-export default class Cleartestresult extends SfdxCommand {
+export default class Cleartestresult extends SFPowerkitCommand {
   public static description = `This command helps to clear any test results and code coverage in the org to get fresh and enhanced coverage everytime`;
 
   public static examples = [
@@ -20,7 +20,7 @@ export default class Cleartestresult extends SfdxCommand {
   // Comment this out if your command does not require an org username
   protected static requiresUsername = true;
 
-  public async run(): Promise<AnyJson> {
+  public async excute(): Promise<AnyJson> {
     SFPowerkit.setLogLevel("Info", this.flags.json);
     await this.org.refreshAuth();
 

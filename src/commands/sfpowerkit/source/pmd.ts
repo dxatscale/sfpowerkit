@@ -1,8 +1,9 @@
-import { core, SfdxCommand, FlagsConfig, flags } from "@salesforce/command";
+import { core, FlagsConfig, flags } from "@salesforce/command";
 import { spawnSync } from "child_process";
 import FileUtils from "../../../utils/fileutils";
 import { extract } from "../../../utils/extract";
 import { SfdxError, Logger, SfdxProject } from "@salesforce/core";
+import SFPowerkitCommand from "../../../sfpowerkitCommand";
 
 const request = require("request");
 const fs = require("fs");
@@ -16,7 +17,7 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages("sfpowerkit", "source_pmd");
 
-export default class Pmd extends SfdxCommand {
+export default class Pmd extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [`$ sfdx sfpowerkit:source:pmd`];
@@ -127,7 +128,7 @@ export default class Pmd extends SfdxCommand {
     return super.initLoggerAndUx();
   }
 
-  public async run(): Promise<any> {
+  public async excute(): Promise<any> {
     // setup result display
     this.result.display = function() {
       if (typeof this.data === "string") {

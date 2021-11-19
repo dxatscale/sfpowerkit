@@ -2,7 +2,6 @@ import {
   core,
   flags,
   FlagsConfig,
-  SfdxCommand,
   Result,
 } from "@salesforce/command";
 import { SfdxError } from "@salesforce/core";
@@ -10,6 +9,7 @@ import { AnyJson } from "@salesforce/ts-types";
 import * as fs from "fs-extra";
 import * as path from "path";
 import FileUtils from "../../../utils/fileutils";
+import SFPowerkitCommand from "../../../sfpowerkitCommand";
 let request = require("request-promise-native");
 import * as rimraf from "rimraf";
 const querystring = require("querystring");
@@ -26,7 +26,7 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages("sfpowerkit", "org_coverage");
 
-export default class OrgCoverage extends SfdxCommand {
+export default class OrgCoverage extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
@@ -64,7 +64,7 @@ export default class OrgCoverage extends SfdxCommand {
   // Comment this out if your command does not require an org username
   protected static requiresUsername = true;
 
-  public async run(): Promise<AnyJson> {
+  public async excute(): Promise<AnyJson> {
     if (this.flags.output && !this.flags.format) {
       throw new SfdxError("format is required to generate the output");
     } else if (this.flags.format && !this.flags.output) {

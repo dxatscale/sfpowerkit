@@ -1,6 +1,7 @@
 import { AnyJson, JsonArray, asJsonArray } from "@salesforce/ts-types";
 import * as fs from "fs-extra";
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import * as rimraf from "rimraf";
 import { SfdxError, SfdxProject, LoggerLevel } from "@salesforce/core";
 import * as xml2js from "xml2js";
@@ -25,7 +26,7 @@ const messages = core.Messages.loadMessages(
   "apextestsuite_convert"
 );
 
-export default class Convert extends SfdxCommand {
+export default class Convert extends SFPowerkitCommand {
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   protected static requiresProject = true;
 
@@ -64,7 +65,7 @@ export default class Convert extends SfdxCommand {
     })
   };
 
-  public async run(): Promise<AnyJson> {
+  public async excute(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
 
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
