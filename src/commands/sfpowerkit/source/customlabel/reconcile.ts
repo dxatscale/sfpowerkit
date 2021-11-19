@@ -50,7 +50,7 @@ export default class Reconcile extends SFPowerkitCommand {
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   protected static requiresProject = true;
 
-  public async excute(): Promise<AnyJson> {
+  public async execute(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
 
     // Gives first value in url after https protocol

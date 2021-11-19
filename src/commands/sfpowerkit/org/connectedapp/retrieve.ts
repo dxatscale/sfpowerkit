@@ -45,7 +45,7 @@ export default class Retrieve extends SFPowerkitCommand {
     })
   };
 
-  public async excute(): Promise<AnyJson> {
+  public async execute(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
     let retrieveRequest = {
       apiVersion: getDefaults.getApiVersion()

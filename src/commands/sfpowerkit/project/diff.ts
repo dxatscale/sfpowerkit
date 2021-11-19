@@ -109,7 +109,7 @@ export default class Diff extends SFPowerkitCommand {
   protected static requiresUsername = false;
   protected static requiresProject = true;
 
-  public async excute(): Promise<any> {
+  public async execute(): Promise<any> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     const outputFolder: string = this.flags.output;

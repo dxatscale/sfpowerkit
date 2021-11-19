@@ -61,7 +61,7 @@ export default class Buildmanifest extends SFPowerkitCommand {
     })
   };
 
-  public async excute(): Promise<AnyJson> {
+  public async execute(): Promise<AnyJson> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
     this.flags.apiversion =
       this.flags.apiversion || getDefaults.getApiVersion();

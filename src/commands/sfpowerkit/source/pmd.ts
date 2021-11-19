@@ -128,7 +128,7 @@ export default class Pmd extends SFPowerkitCommand {
     return super.initLoggerAndUx();
   }
 
-  public async excute(): Promise<any> {
+  public async execute(): Promise<any> {
     // setup result display
     this.result.display = function() {
       if (typeof this.data === "string") {

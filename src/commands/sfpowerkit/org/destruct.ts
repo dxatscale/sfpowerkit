@@ -61,7 +61,7 @@ export default class Destruct extends SFPowerkitCommand {
   // Comment this out if your command does not require an org username
   protected static requiresUsername = true;
 
-  public async excute(): Promise<any> {
+  public async execute(): Promise<any> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     await this.org.refreshAuth();

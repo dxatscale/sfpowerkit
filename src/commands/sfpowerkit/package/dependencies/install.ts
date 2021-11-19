@@ -123,7 +123,7 @@ export default class Install extends SFPowerkitCommand {
   private tagMap: Map<string, string>;
   private branchMap: Map<string, string>;
 
-  public async excute(): Promise<any> {
+  public async execute(): Promise<any> {
     const result = { installedPackages: {} };
 
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);

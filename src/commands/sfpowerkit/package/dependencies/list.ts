@@ -50,7 +50,7 @@ export default class List extends SFPowerkitCommand {
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   protected static requiresProject = true;
 
-  public async excute(): Promise<any> {
+  public async execute(): Promise<any> {
     const conn = this.hubOrg.getConnection();
     let projectConfig = JSON.parse(
       fs.readFileSync("sfdx-project.json", "utf8")

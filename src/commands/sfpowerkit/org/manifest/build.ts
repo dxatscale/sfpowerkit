@@ -60,7 +60,7 @@ export default class Build extends SFPowerkitCommand {
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   protected static requiresProject = false;
 
-  public async excute(): Promise<AnyJson> {
+  public async execute(): Promise<AnyJson> {
     SFPowerkit.setLogLevel("Info", this.flags.json);
 
     if (this.flags.quickfilter) {

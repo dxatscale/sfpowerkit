@@ -46,7 +46,7 @@ export default class Delete extends SFPowerkitCommand {
     })
   };
 
-  public async excute(): Promise<AnyJson> {
+  public async execute(): Promise<AnyJson> {
     if (!this.flags.username && !this.flags.email) {
       throw new SfdxError(
         "Required flags are missing, Please provide either username or email."

@@ -54,7 +54,7 @@ export default class Create extends SFPowerkitCommand {
   // Comment this out if your command does not require a hub org username
   protected static requiresDevhubUsername = true;
 
-  public async excute(): Promise<AnyJson> {
+  public async execute(): Promise<AnyJson> {
     SFPowerkit.setLogLevel("INFO", false);
 
     await this.hubOrg.refreshAuth();

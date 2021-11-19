@@ -57,7 +57,7 @@ export default class Applypatch extends SFPowerkitCommand {
   // Comment this out if your command does not require an org username
   protected static requiresUsername = true;
   private folderPath: string;
-  public async excute(): Promise<AnyJson> {
+  public async execute(): Promise<AnyJson> {
     this.folderPath = `temp_sfpowerkit_${FileUtils.makefolderid(5)}`;
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 

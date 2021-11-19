@@ -55,7 +55,7 @@ export default class Login extends SFPowerkitCommand {
   loginUrl: string;
   password: string;
 
-  public async excute(): Promise<AnyJson> {
+  public async execute(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
 
     if (this.flags.url) this.loginUrl = this.flags.url;

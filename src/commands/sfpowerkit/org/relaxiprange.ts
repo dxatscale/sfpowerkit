@@ -63,7 +63,7 @@ export default class Relaxiprange extends SFPowerkitCommand {
   // Comment this out if your command does not require an org username
   protected static requiresUsername = true;
 
-  public async excute(): Promise<AnyJson> {
+  public async execute(): Promise<AnyJson> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     //validate only one param is passed

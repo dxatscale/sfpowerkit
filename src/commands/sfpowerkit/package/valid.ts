@@ -78,7 +78,7 @@ Elements supported included in your package testPackage
 
   private coverageJSON;
 
-  public async excute(): Promise<AnyJson> {
+  public async execute(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
 
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);

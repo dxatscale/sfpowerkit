@@ -60,7 +60,7 @@ export default class Create extends SFPowerkitCommand {
     }),
   };
 
-  public async excute(): Promise<AnyJson> {
+  public async execute(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 

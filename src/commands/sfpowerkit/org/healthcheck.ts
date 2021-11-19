@@ -25,7 +25,7 @@ export default class HealthCheck extends SFPowerkitCommand {
   // Comment this out if your command does not require an org username
   protected static requiresUsername = true;
 
-  public async excute(): Promise<AnyJson> {
+  public async execute(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
 
     await this.org.refreshAuth();

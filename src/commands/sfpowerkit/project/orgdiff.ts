@@ -82,7 +82,7 @@ export default class OrgDiff extends SFPowerkitCommand {
   protected static requiresUsername = true;
   protected static requiresProject = true;
 
-  public async excute(): Promise<any> {
+  public async execute(): Promise<any> {
     SFPowerkit.setUx(this.ux);
     this.ux.startSpinner("Running...");
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);

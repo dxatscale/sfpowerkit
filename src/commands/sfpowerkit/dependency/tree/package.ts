@@ -93,7 +93,7 @@ export default class Tree extends SFPowerkitCommand {
   protected metadataMap: Map<string, MetadataSummary>;
   protected output: any[];
 
-  public async excute(): Promise<any> {
+  public async execute(): Promise<any> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
     this.conn = this.org.getConnection();
 

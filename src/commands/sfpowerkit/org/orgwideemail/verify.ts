@@ -31,7 +31,7 @@ export default class OrgWideEmail extends SFPowerkitCommand {
 
   protected static requiresUsername = true;
 
-  public async excute(): Promise<any> {
+  public async execute(): Promise<any> {
     this.ux.log(
       "This command is deprecated, It is no longer guaranteed to work, Please update your workflow with alternate solution"
     );

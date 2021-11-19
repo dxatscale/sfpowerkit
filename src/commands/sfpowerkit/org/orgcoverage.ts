@@ -64,7 +64,7 @@ export default class OrgCoverage extends SFPowerkitCommand {
   // Comment this out if your command does not require an org username
   protected static requiresUsername = true;
 
-  public async excute(): Promise<AnyJson> {
+  public async execute(): Promise<AnyJson> {
     if (this.flags.output && !this.flags.format) {
       throw new SfdxError("format is required to generate the output");
     } else if (this.flags.format && !this.flags.output) {

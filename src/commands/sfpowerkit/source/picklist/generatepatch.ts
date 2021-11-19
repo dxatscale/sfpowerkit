@@ -68,7 +68,7 @@ export default class Generatepatch extends SFPowerkitCommand {
     }),
   };
 
-  public async excute(): Promise<AnyJson> {
+  public async execute(): Promise<AnyJson> {
     //clean any existing temp sf powerkit source folder
     this.folderPath = `temp_sfpowerkit_${FileUtils.makefolderid(5)}`;
 
