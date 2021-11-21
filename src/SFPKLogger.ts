@@ -66,46 +66,45 @@ export default class SFPKLogger {
     static log(message: string, logLevel = LoggerLevel.INFO, logger?: Logger) {
 
 
-        if (typeof jest == "undefined") {
-            if (logLevel == null) logLevel = LoggerLevel.INFO;
 
-            if (logLevel < this.logLevel) return;
+        if (logLevel == null) logLevel = LoggerLevel.INFO;
 
-            //Todo: Proper fix
-            if (logger && logger.logType === LoggerType.console) {
-                logger = null; //Make it nullable, so it goes to console
+        if (logLevel < this.logLevel) return;
+
+        //Todo: Proper fix
+        if (logger && logger.logType === LoggerType.console) {
+            logger = null; //Make it nullable, so it goes to console
+        }
+
+        if (logger) {
+            if (logger.logType === LoggerType.void) {
+                return;
+            } else if (logger.logType === LoggerType.file) {
+                let fileLogger = logger as FileLogger;
+                fs.appendFileSync(fileLogger.path, message + EOL, "utf8");
             }
+        } else {
 
-            if (logger) {
-                if (logger.logType === LoggerType.void) {
-                    return;
-                } else if (logger.logType === LoggerType.file) {
-                    let fileLogger = logger as FileLogger;
-                    fs.appendFileSync(fileLogger.path, message + EOL, "utf8");
-                }
-            } else {
+            switch (logLevel) {
+                case LoggerLevel.TRACE:
+                    console.log(COLOR_TRACE(message));
+                    break;
 
-                switch (logLevel) {
-                    case LoggerLevel.TRACE:
-                        console.log(COLOR_TRACE(message));
-                        break;
+                case LoggerLevel.DEBUG:
+                    console.log(COLOR_DEBUG(message));
+                    break;
 
-                    case LoggerLevel.DEBUG:
-                        console.log(COLOR_DEBUG(message));
-                        break;
+                case LoggerLevel.INFO:
+                    console.log(message);
+                    break;
 
-                    case LoggerLevel.INFO:
-                        console.log(message);
-                        break;
+                case LoggerLevel.WARN:
+                    console.log(COLOR_WARNING(message));
+                    break;
 
-                    case LoggerLevel.WARN:
-                        console.log(COLOR_WARNING(message));
-                        break;
-
-                    case LoggerLevel.ERROR:
-                        console.log(COLOR_ERROR(message));
-                        break;
-                }
+                case LoggerLevel.ERROR:
+                    console.log(COLOR_ERROR(message));
+                    break;
             }
         }
     }
