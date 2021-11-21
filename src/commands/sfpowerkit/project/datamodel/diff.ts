@@ -1,4 +1,4 @@
-import { core, SfdxCommand, FlagsConfig, flags } from "@salesforce/command";
+import { core, FlagsConfig, flags } from "@salesforce/command";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import * as fs from "fs-extra";

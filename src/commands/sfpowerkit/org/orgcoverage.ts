@@ -1,8 +1,7 @@
 import {
   core,
   flags,
-  FlagsConfig,
-  Result,
+  FlagsConfig
 } from "@salesforce/command";
 import { SfdxError } from "@salesforce/core";
 import { AnyJson } from "@salesforce/ts-types";

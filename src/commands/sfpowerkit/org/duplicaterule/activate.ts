@@ -1,6 +1,6 @@
 import { AnyJson } from "@salesforce/ts-types";
 import * as fs from "fs-extra";
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import * as rimraf from "rimraf";
 import { AsyncResult, DeployResult } from "jsforce";
