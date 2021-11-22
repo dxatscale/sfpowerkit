@@ -1,6 +1,5 @@
 import { core, flags } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
-import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import SFPowerkitCommand from "../../../sfpowerkitCommand";
 import PoolFetchImpl from "../../../impl/pool/scratchorg/poolFetchImpl";
 
@@ -74,7 +73,6 @@ export default class Fetch extends SFPowerkitCommand {
   };
 
   public async execute(): Promise<AnyJson> {
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     await this.hubOrg.refreshAuth();
     const hubConn = this.hubOrg.getConnection();

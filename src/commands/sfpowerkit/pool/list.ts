@@ -67,7 +67,6 @@ export default class List extends SFPowerkitCommand {
   };
 
   public async execute(): Promise<AnyJson> {
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     await this.hubOrg.refreshAuth();
     const hubConn = this.hubOrg.getConnection();

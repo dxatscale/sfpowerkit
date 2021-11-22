@@ -38,8 +38,6 @@ export default class Generate extends SFPowerkitCommand {
   protected static requiresUsername = true;
 
   public async execute(): Promise<AnyJson> {
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
-
     //Connect to the org
     await this.org.refreshAuth();
     const userName = this.org.getUsername();

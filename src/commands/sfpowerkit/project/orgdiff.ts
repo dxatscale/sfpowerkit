@@ -85,7 +85,6 @@ export default class OrgDiff extends SFPowerkitCommand {
   public async execute(): Promise<any> {
     SFPowerkit.setUx(this.ux);
     this.ux.startSpinner("Running...");
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     let filesOrFolders = this.flags.filesorfolders;
 

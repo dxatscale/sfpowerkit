@@ -1,7 +1,6 @@
 import { core, flags } from "@salesforce/command";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import { SfdxError, Connection } from "@salesforce/core";
-
 import DependencyImpl from "../../../../impl/dependency/dependencyImpl";
 import MetadataSummaryInfoFetcher, {
   MetadataSummary
@@ -94,7 +93,6 @@ export default class Tree extends SFPowerkitCommand {
   protected output: any[];
 
   public async execute(): Promise<any> {
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
     this.conn = this.org.getConnection();
 
     this.output = [];

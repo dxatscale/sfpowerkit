@@ -108,8 +108,6 @@ export default class Reconcile extends SFPowerkitCommand {
   };
 
   public async execute(): Promise<any> {
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
-
     let argFolder = this.flags.folder;
     let argProfileList = this.flags.profilelist;
     if (!this.flags.sourceonly) {

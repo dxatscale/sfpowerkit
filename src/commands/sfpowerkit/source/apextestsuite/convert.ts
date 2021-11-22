@@ -68,8 +68,6 @@ export default class Convert extends SFPowerkitCommand {
   public async execute(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
 
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
-
     const entries = fg.sync(`**${this.flags.name}.testSuite-meta.xml`, {
       onlyFiles: true,
       absolute: true,

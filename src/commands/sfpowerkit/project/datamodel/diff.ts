@@ -78,7 +78,6 @@ export default class Diff extends SFPowerkitCommand {
   protected static requiresProject = true;
 
   public async execute(): Promise<AnyJson> {
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
     let isOutputCSV = this.flags.csv;
     let outputDirectory = this.flags.outputdir
       ? this.flags.outputdir

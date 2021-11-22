@@ -81,8 +81,6 @@ Elements supported included in your package testPackage
   public async execute(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
 
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
-
     loadSFDX();
 
     // Getting Project config

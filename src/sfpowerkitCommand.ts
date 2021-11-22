@@ -1,5 +1,6 @@
 import { SfdxCommand } from "@salesforce/command";
 import SFPKLogger, {COLOR_HEADER, LoggerLevel} from "./SFPKLogger";
+import { SFPowerkit } from "./sfpowerkit";
 
 /**
  * A base class that provides common funtionality for sfpowerscripts commands
@@ -20,6 +21,8 @@ export default abstract class SFPowerkitCommand extends SfdxCommand {
    * Entry point for the commands
    */
   async run(): Promise<any> {
+    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
+
     // Always enable color by default
     if (process.env.SFPOWERKIT_NOCOLOR) SFPKLogger.disableColor();
     else SFPKLogger.enableColor();

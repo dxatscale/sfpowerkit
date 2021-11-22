@@ -59,8 +59,6 @@ export default class List extends SFPowerkitCommand {
   };
 
   public async execute(): Promise<AnyJson> {
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
-
     //set apex class directory
     if (!existsSync(this.flags.path)) {
       throw new SfdxError(

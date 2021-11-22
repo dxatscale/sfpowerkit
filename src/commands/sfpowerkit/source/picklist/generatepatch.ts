@@ -72,8 +72,6 @@ export default class Generatepatch extends SFPowerkitCommand {
     //clean any existing temp sf powerkit source folder
     this.folderPath = `temp_sfpowerkit_${FileUtils.makefolderid(5)}`;
 
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
-
     // Getting Project config
     const project = await SfdxProject.resolve();
     const projectJson = await project.retrieveSfdxProjectJson();

@@ -8,7 +8,6 @@ import {
 import { SfdxProject, SfdxError } from "@salesforce/core";
 import * as fs from "fs-extra";
 import * as _ from "lodash";
-import { SFPowerkit } from "../../../../sfpowerkit";
 import * as path from "path";
 import { METADATA_INFO } from "../../../../impl/metadata/metadataInfo";
 import ProfileSync from "../../../../impl/source/profiles/profileSync";
@@ -94,8 +93,6 @@ export default class Retrieve extends SFPowerkitCommand {
   };
 
   public async execute(): Promise<any> {
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
-
     let argFolder: string = this.flags.folder;
     let argProfileList: string[] = this.flags.profilelist;
 

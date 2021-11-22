@@ -6,7 +6,6 @@ import {
 } from "@salesforce/command";
 import DiffImpl from "../../../impl/project/diff/diffImpl";
 import * as path from "path";
-import { SFPowerkit } from "../../../sfpowerkit";
 import SFPowerkitCommand from "../../../sfpowerkitCommand";
 import { fs } from "@salesforce/core";
 import * as rimraf from "rimraf";
@@ -110,7 +109,6 @@ export default class Diff extends SFPowerkitCommand {
   protected static requiresProject = true;
 
   public async execute(): Promise<any> {
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     const outputFolder: string = this.flags.output;
     const revisionfrom: string = this.flags.revisionfrom;

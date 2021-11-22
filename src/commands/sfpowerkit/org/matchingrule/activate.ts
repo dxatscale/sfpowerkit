@@ -74,7 +74,6 @@ export default class Activate extends SFPowerkitCommand {
 
   public async execute(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     //Connect to the org
     await this.org.refreshAuth();

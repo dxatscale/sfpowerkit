@@ -2,7 +2,6 @@ import { core, flags } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import * as fs from "fs-extra";
 import * as path from "path";
-import { SFPowerkit } from "../../../../sfpowerkit";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import xmlUtil from "../../../../utils/xmlUtil";
 import getDefaults from "../../../../utils/getDefaults";
@@ -62,7 +61,6 @@ export default class Buildmanifest extends SFPowerkitCommand {
   };
 
   public async execute(): Promise<AnyJson> {
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
     this.flags.apiversion =
       this.flags.apiversion || getDefaults.getApiVersion();
 

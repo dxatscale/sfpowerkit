@@ -126,8 +126,6 @@ export default class Install extends SFPowerkitCommand {
   public async execute(): Promise<any> {
     const result = { installedPackages: {} };
 
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
-
     // this.org is guaranteed because requiresUsername=true, as opposed to supportsUsername
     const username = this.org.getUsername();
 

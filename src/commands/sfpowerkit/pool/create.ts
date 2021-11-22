@@ -1,7 +1,6 @@
 import { core, flags, FlagsConfig } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import * as rimraf from "rimraf";
-import { SFPowerkit } from "../../../sfpowerkit";
 import SFPowerkitCommand from "../../../sfpowerkitCommand";
 import ScratchOrgImpl from "../../../impl/pool/scratchorg/poolCreateImpl";
 import { SfdxError } from "@salesforce/core";
@@ -62,7 +61,6 @@ export default class Create extends SFPowerkitCommand {
 
   public async execute(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     await this.hubOrg.refreshAuth();
     const hubConn = this.hubOrg.getConnection();

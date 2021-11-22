@@ -2,7 +2,7 @@ import { core, flags, SfdxCommand } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import * as fs from "fs-extra";
 import * as path from "path";
-import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
+import { SFPowerkit } from "../../../../sfpowerkit";
 import xmlUtil from "../../../../utils/xmlUtil";
 import getDefaults from "../../../../utils/getDefaults";
 
@@ -72,8 +72,6 @@ export default class Diff extends SfdxCommand {
 
   protected output: any[];
   public async run(): Promise<AnyJson> {
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
-
     this.flags.apiversion =
       this.flags.apiversion || getDefaults.getApiVersion();
 
