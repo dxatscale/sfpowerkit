@@ -1,6 +1,6 @@
 import { SfdxCommand } from "@salesforce/command";
+import { ArrayInitializerContext } from "apex-parser";
 import SFPKLogger, {COLOR_HEADER, LoggerLevel} from "./SFPKLogger";
-import { OutputFlags } from "@oclif/paser";
 import { SFPowerkit } from "./sfpowerkit";
 
 /**
@@ -9,21 +9,6 @@ import { SFPowerkit } from "./sfpowerkit";
  * @extends SfdxCommand
  */
 export default abstract class SFPowerkitCommand extends SfdxCommand {
-    /**
-   * List of recognised CLI inputs that are substituted with their
-   * corresponding environment variable at runtime
-   */
-     private readonly sfpowerkit_variable_dictionary: string[] = [
-      "sfpowerkit_incremented_project_version",
-      "sfpowerkit_artifact_directory",
-      "sfpowerkit_artifact_metadata_directory",
-      "sfpowerkit_package_version_id",
-      "sfpowerkit_package_version_number",
-      "sfpowerkit_pmd_output_path",
-      "sfpowerkit_scratchorg_username",
-      "sfpowerkit_installsourcepackage_deployment_id",
-    ];
-
   public static isJsonFormatEnabled: boolean;
   public static logLevel;
   private sfpowerkitConfig;
@@ -51,8 +36,13 @@ export default abstract class SFPowerkitCommand extends SfdxCommand {
         }
       }
 
-    this.loadSfpowerkitVariables(this.flags);
+    this.sfpowerkitHeader();
+    
+    await this.execute();
+  }
 
+  private sfpowerkitHeader() {
+    if (!process.env.SFPOWERKIT_NOHEADER) {
     SFPKLogger.log(
       COLOR_HEADER(
         `-------------------------------------------------------------------------------------------`
@@ -69,9 +59,8 @@ export default abstract class SFPowerkitCommand extends SfdxCommand {
         `-------------------------------------------------------------------------------------------`
       )
     );
-
-    await this.execute();
   }
+}
 
   private setLogLevel() {
     if (this.flags.loglevel === "trace" || this.flags.loglevel === "TRACE")
@@ -89,29 +78,4 @@ export default abstract class SFPowerkitCommand extends SfdxCommand {
     else SFPKLogger.logLevel = LoggerLevel.INFO;
     }
 
-    /**
-   * Substitutes CLI inputs, that match the variable dictionary, with
-   * the corresponding environment variable
-   *
-   * @param flags
-   */
-  private loadSfpowerkitVariables(flags: OutputFlags<any>): void {
-    require("dotenv").config();
-
-    for (let flag in flags) {
-      for (let sfpowerkit_variable of this
-        .sfpowerkit_variable_dictionary) {
-        if (
-          typeof flags[flag] === "string" &&
-          flags[flag].includes(sfpowerkit_variable)
-        ) {
-          console.log(
-            `Substituting ${flags[flag]} with ${process.env[flags[flag]]}`
-          );
-          flags[flag] = process.env[flags[flag]];
-          break;
-        }
-      }
-    }
-  }
 }
