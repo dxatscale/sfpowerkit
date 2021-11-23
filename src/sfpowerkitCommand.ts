@@ -35,9 +35,11 @@ export default abstract class SFPowerkitCommand extends SfdxCommand {
         }
       }
 
-    this.sfpowerkitHeader();
+    if (!this.flags.json) {
+      this.sfpowerkitHeader();
+    }
     
-    await this.execute();
+    return this.execute();
   }
 
   private sfpowerkitHeader() {
