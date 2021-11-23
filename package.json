@@ -49,6 +49,7 @@
     "diff": "^5.0.0",
     "diff-match-patch": "^1.0.5",
     "diff-match-patch-line-and-word": "^0.1.2",
+    "dotenv": "^10.0.0",
     "fast-glob": "^3.2.5",
     "find-java-home": "^1.1.0",
     "fs-extra": "^9.1.0",
