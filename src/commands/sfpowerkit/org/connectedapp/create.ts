@@ -9,7 +9,6 @@ import { zipDirectory } from "../../../../utils/zipDirectory";
 import { AsyncResult, DeployResult } from "jsforce";
 import { checkDeploymentStatus } from "../../../../utils/checkDeploymentStatus";
 import { SfdxError } from "@salesforce/core";
-import { SFPowerkit } from "../../../../sfpowerkit";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);

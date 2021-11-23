@@ -2,7 +2,6 @@ import { core, flags, SfdxCommand } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import * as fs from "fs-extra";
 import * as path from "path";
-import { SFPowerkit } from "../../../../sfpowerkit";
 import xmlUtil from "../../../../utils/xmlUtil";
 import getDefaults from "../../../../utils/getDefaults";
 

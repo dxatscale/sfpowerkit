@@ -6,7 +6,6 @@ import SFPowerkitCommand from "../../../sfpowerkitCommand";
 
 // tslint:disable-next-line:ordered-imports
 var path = require("path");
-import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);

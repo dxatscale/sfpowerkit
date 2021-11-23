@@ -1,5 +1,4 @@
 import { SfdxCommand } from "@salesforce/command";
-import { ArrayInitializerContext } from "apex-parser";
 import SFPKLogger, {COLOR_HEADER, LoggerLevel} from "./SFPKLogger";
 import { SFPowerkit } from "./sfpowerkit";
 

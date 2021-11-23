@@ -4,7 +4,6 @@ import {
   flags,
   SfdxResult
 } from "@salesforce/command";
-import { SFPowerkit } from "../../../../sfpowerkit";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import ProfileDiffImpl from "../../../../impl/source/profiles/profileDiff";
 
