@@ -1,6 +1,5 @@
 import { SfdxCommand } from "@salesforce/command";
-import SFPKLogger, {COLOR_HEADER, LoggerLevel} from "./SFPKLogger";
-import { SFPowerkit } from "./sfpowerkit";
+import { SFPowerkit, LoggerLevel, COLOR_HEADER } from "./sfpowerkit";
 
 /**
  * A base class that provides common funtionality for sfpowerscripts commands
@@ -27,8 +26,6 @@ export default abstract class SFPowerkitCommand extends SfdxCommand {
     if (process.env.SFPOWERKIT_NOCOLOR) SFPowerkit.disableColor();
     else SFPowerkit.enableColor();
 
-    this.setLogLevel();
-
     for (const plugin of this.config.plugins) {
       if (plugin.name === "sfpowerkit") {
         this.sfpowerkitConfig = plugin;
@@ -44,39 +41,23 @@ export default abstract class SFPowerkitCommand extends SfdxCommand {
 
   private sfpowerkitHeader() {
     if (!process.env.SFPOWERKIT_NOHEADER) {
-    SFPKLogger.log(
+    console.log(
       COLOR_HEADER(
         `-------------------------------------------------------------------------------------------`
       )
     );
-    SFPKLogger.log(
+    console.log(
       COLOR_HEADER(
         `sfpowerkit  -- The DX@Scale Developer Toolkit -Version:${this.sfpowerkitConfig.version} -Release:${this.sfpowerkitConfig.pjson.release}`
       )
     );
 
-    SFPKLogger.log(
+    console.log(
       COLOR_HEADER(
         `-------------------------------------------------------------------------------------------`
       )
     );
   }
 }
-
-  private setLogLevel() {
-    if (this.flags.loglevel === "trace" || this.flags.loglevel === "TRACE")
-      SFPKLogger.logLevel = LoggerLevel.TRACE;
-    else if (this.flags.loglevel === "debug" || this.flags.loglevel === "DEBUG")
-      SFPKLogger.logLevel = LoggerLevel.DEBUG;
-    else if (this.flags.loglevel === "info" || this.flags.loglevel === "INFO")
-      SFPKLogger.logLevel = LoggerLevel.INFO;
-    else if (this.flags.loglevel === "warn" || this.flags.loglevel === "WARN")
-      SFPKLogger.logLevel = LoggerLevel.WARN;
-    else if (this.flags.loglevel === "error" || this.flags.loglevel === "ERROR")
-      SFPKLogger.logLevel = LoggerLevel.ERROR;
-    else if (this.flags.loglevel === "fatal" || this.flags.loglevel === "FATAL")
-      SFPKLogger.logLevel = LoggerLevel.FATAL;
-    else SFPKLogger.logLevel = LoggerLevel.INFO;
-    }
 
 }
