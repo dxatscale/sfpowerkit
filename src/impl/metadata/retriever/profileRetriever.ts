@@ -119,6 +119,9 @@ export default class ProfileRetriever {
         let permissionValue = false;
         if(profilePermission){
           permissionValue=profilePermission[permissionField];
+          if(permissionValue==undefined){
+            permissionValue=false;
+          }
         }
         var newPermission: ProfileUserPermission = {
           enabled: permissionValue,
