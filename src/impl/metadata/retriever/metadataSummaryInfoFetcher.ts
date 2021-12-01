@@ -1,7 +1,7 @@
-import { SfdxError, Connection } from "@salesforce/core";
+import { SfdxError } from "@salesforce/core";
 import getDefaults from "../../../utils/getDefaults";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
-import { DescribeMetadataResult, FileProperties } from "jsforce";
+import { Connection, DescribeMetadataResult, FileProperties } from "jsforce";
 import { chunkArray } from "../../../utils/chunkArray";
 import { ProgressBar } from "../../../ui/progressBar";
 import GetDefaults from "../../../utils/getDefaults";

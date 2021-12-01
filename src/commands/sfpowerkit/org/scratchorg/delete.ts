@@ -1,14 +1,14 @@
-import { core, flags } from "@salesforce/command";
-import { SfdxError } from "@salesforce/core";
+import {  flags } from "@salesforce/command";
+import { Connection, Messages, SfdxError } from "@salesforce/core";
 import { AnyJson } from "@salesforce/ts-types";
 import ScratchOrgUtils from "../../../../utils/scratchOrgUtils";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand"
 // Initialize Messages with the current plugin directory
-core.Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages("sfpowerkit", "scratchorg_delete");
+const messages = Messages.loadMessages("sfpowerkit", "scratchorg_delete");
 
 export default class Delete extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
@@ -99,7 +99,7 @@ export default class Delete extends SFPowerkitCommand {
   }
 
   private async getActiveScratchOrgsForUser(
-    conn: core.Connection,
+    conn: Connection,
     email: string,
     username: string
   ): Promise<any> {

@@ -1,21 +1,21 @@
-import { core, flags } from "@salesforce/command";
+import {  flags } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import * as fs from "fs-extra";
 import * as rimraf from "rimraf";
 import { zipDirectory } from "../../../../utils/zipDirectory";
 import { AsyncResult, DeployResult } from "jsforce";
 import { checkDeploymentStatus } from "../../../../utils/checkDeploymentStatus";
-import { SfdxError } from "@salesforce/core";
+import { Messages, SfdxError } from "@salesforce/core";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 
 const spawn = require("child-process-promise").spawn;
 
 // Initialize Messages with the current plugin directory
-core.Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages(
+const messages = Messages.loadMessages(
   "sfpowerkit",
   "source_customlabel_create"
 );

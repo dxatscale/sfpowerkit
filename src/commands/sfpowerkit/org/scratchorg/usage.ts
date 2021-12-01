@@ -1,15 +1,14 @@
-import { core } from "@salesforce/command";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import { AnyJson } from "@salesforce/ts-types";
 let request = require("request-promise-native");
-import { spawn } from "child_process";
+import { Connection, Messages } from "@salesforce/core";
 
 // Initialize Messages with the current plugin directory
-core.Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages("sfpowerkit", "scratchorg_usage");
+const messages = Messages.loadMessages("sfpowerkit", "scratchorg_usage");
 
 export default class Usage extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
@@ -65,7 +64,7 @@ export default class Usage extends SFPowerkitCommand {
     return 1;
   }
 
-  private async getScratchOrgLimits(conn: core.Connection) {
+  private async getScratchOrgLimits(conn: Connection) {
     var query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/limits`;
 
     //this.ux.log(`Query URI ${query_uri}`);
@@ -81,7 +80,7 @@ export default class Usage extends SFPowerkitCommand {
 
     return limits;
   }
-  private async getScratchOrgInfo(conn: core.Connection) {
+  private async getScratchOrgInfo(conn: Connection) {
     let query =
       "SELECT count(id) In_Use, SignupEmail FROM ActiveScratchOrg GROUP BY SignupEmail ORDER BY count(id) DESC";
 

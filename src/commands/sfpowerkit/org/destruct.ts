@@ -1,4 +1,4 @@
-import { core, FlagsConfig, flags } from "@salesforce/command";
+import { FlagsConfig, flags } from "@salesforce/command";
 import FileUtils from "../../../utils/fileutils";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import SFPowerkitCommand from "../../../sfpowerkitCommand";
@@ -8,18 +8,18 @@ import * as util from "util";
 import { zipDirectory } from "../../../utils/zipDirectory";
 import { AsyncResult, DeployResult } from "jsforce";
 import { checkDeploymentStatus } from "../../..//utils/checkDeploymentStatus";
-import { SfdxError } from "@salesforce/core";
+import { Connection, Messages, SfdxError } from "@salesforce/core";
 import * as fs from "fs-extra";
 import { isEmpty } from "@salesforce/kit";
 
 const path = require("path");
 
 // Initialize Messages with the current plugin directory
-core.Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages("sfpowerkit", "org_destruct");
+const messages = Messages.loadMessages("sfpowerkit", "org_destruct");
 
 export default class Destruct extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
@@ -160,7 +160,7 @@ export default class Destruct extends SFPowerkitCommand {
   }
   private async deployDestructiveManifest(
     zipFile: string,
-    conn: core.Connection
+    conn: Connection
   ) {
     //Deploy Package
     conn.metadata.pollTimeout = 300;

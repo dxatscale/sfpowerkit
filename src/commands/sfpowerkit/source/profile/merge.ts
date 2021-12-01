@@ -1,11 +1,10 @@
 import {
-  core,
   flags,
   FlagsConfig,
   SfdxResult,
 } from "@salesforce/command";
 
-import { SfdxError } from "@salesforce/core";
+import { Messages, SfdxError } from "@salesforce/core";
 
 import * as _ from "lodash";
 import { SFPowerkit } from "../../../../sfpowerkit";
@@ -16,11 +15,11 @@ import ProfileMerge from "../../../../impl/source/profiles/profileMerge";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 
 // Initialize Messages with the current plugin directory
-core.Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages("sfpowerkit", "profile_merge");
+const messages = Messages.loadMessages("sfpowerkit", "profile_merge");
 
 export default class Merge extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");

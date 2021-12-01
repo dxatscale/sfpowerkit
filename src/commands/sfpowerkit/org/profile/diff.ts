@@ -1,16 +1,16 @@
 import {
-  core,
   FlagsConfig,
   flags,
   SfdxResult
 } from "@salesforce/command";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import ProfileDiffImpl from "../../../../impl/source/profiles/profileDiff";
+import { Messages } from "@salesforce/core";
 
 // Initialize Messages with the current plugin directory
-core.Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(__dirname);
 
-const messages = core.Messages.loadMessages("sfpowerkit", "org_profile_diff");
+const messages = Messages.loadMessages("sfpowerkit", "org_profile_diff");
 
 export default class Diff extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");

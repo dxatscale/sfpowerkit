@@ -1,9 +1,8 @@
 import {
-  core,
   flags,
   FlagsConfig
 } from "@salesforce/command";
-import { SfdxError } from "@salesforce/core";
+import { Connection, Messages, SfdxError } from "@salesforce/core";
 import { AnyJson } from "@salesforce/ts-types";
 import * as fs from "fs-extra";
 import * as path from "path";
@@ -19,11 +18,11 @@ import MetadataSummaryInfoFetcher, {
 import DependencyImpl from "../../../impl/dependency/dependencyImpl";
 
 // Initialize Messages with the current plugin directory
-core.Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages("sfpowerkit", "org_coverage");
+const messages = Messages.loadMessages("sfpowerkit", "org_coverage");
 
 export default class OrgCoverage extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
@@ -93,7 +92,7 @@ export default class OrgCoverage extends SFPowerkitCommand {
     return { coverage: apexcoverage.coverage, classCoverage: classCoverage };
   }
 
-  private async getApexCoverage(conn: core.Connection) {
+  private async getApexCoverage(conn: Connection) {
     var encoded_querystring = querystring.escape(
       `SELECT PercentCovered FROM ApexOrgWideCoverage`
     );
@@ -113,7 +112,7 @@ export default class OrgCoverage extends SFPowerkitCommand {
     return coverage_score_query_result.records[0].PercentCovered;
   }
   private async getApexCoverageByDetails(
-    conn: core.Connection,
+    conn: Connection,
     outputDir: string
   ) {
     let metadataVsPackageMap = await this.getmetadataVsPackageMap(conn);
@@ -206,7 +205,7 @@ export default class OrgCoverage extends SFPowerkitCommand {
     this.ux.log(`Output ${outputDir}/output.csv is generated successfully`);
   }
 
-  private async getmetadataVsPackageMap(conn: core.Connection) {
+  private async getmetadataVsPackageMap(conn: Connection) {
     let metadataMap: Map<string, MetadataSummary> = new Map<
       string,
       MetadataSummary

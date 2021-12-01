@@ -1,15 +1,16 @@
-import { core, flags } from "@salesforce/command";
+import {  flags } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import poolHydrateImpl from "../../../impl/pool/scratchorg/PoolDeleteImpl";
 import SFPowerkitCommand from "../../../sfpowerkitCommand";
+import { Messages } from "@salesforce/core";
 
 // Initialize Messages with the current plugin directory
-core.Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages(
+const messages = Messages.loadMessages(
   "sfpowerkit",
   "scratchorg_poolhydrate"
 );

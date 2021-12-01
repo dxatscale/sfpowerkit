@@ -1,13 +1,14 @@
-import { core } from "@salesforce/command";
 import { SFPowerkit, LoggerLevel } from "../../sfpowerkit";
 import queryApi from "../../utils/queryExecutor";
 import { chunkArray } from "../../utils/chunkArray";
 import { MetadataSummary } from "../metadata/retriever/metadataSummaryInfoFetcher";
 import { ProgressBar } from "../../ui/progressBar";
+import { Connection } from "jsforce";
+
 
 export default class DependencyImpl {
   public static async getDependencyMapById(
-    conn: core.Connection,
+    conn: Connection,
     refMetadata: string[]
   ) {
     let progressBar = new ProgressBar().create(
@@ -48,7 +49,7 @@ export default class DependencyImpl {
   }
 
   public static async getDependencyMapByType(
-    conn: core.Connection,
+    conn: Connection,
     refMetadata: string[]
   ) {
     let progressBar = new ProgressBar().create(
@@ -102,7 +103,7 @@ export default class DependencyImpl {
   }
 
   private static async fetchDependencies(
-    conn: core.Connection,
+    conn: Connection,
     filterOn: string,
     refMetadata: string[],
     dependencyMap: Map<string, string[]>,
@@ -140,7 +141,7 @@ export default class DependencyImpl {
   }
 
   public static async getMemberVsPackageMap(
-    conn: core.Connection
+    conn: Connection
   ): Promise<Map<string, string>> {
     let query =
       `SELECT CurrentPackageVersionId, MaxPackageVersionId, MinPackageVersionId, SubjectId, SubjectKeyPrefix, SubjectManageableState, SubscriberPackageId ` +
@@ -158,7 +159,7 @@ export default class DependencyImpl {
   }
 
   public static async getPackageVsMemberMap(
-    conn: core.Connection
+    conn: Connection
   ): Promise<Map<string, string[]>> {
     let query =
       `SELECT CurrentPackageVersionId, MaxPackageVersionId, MinPackageVersionId, SubjectId, SubjectKeyPrefix, SubjectManageableState, SubscriberPackageId ` +
@@ -179,7 +180,7 @@ export default class DependencyImpl {
   }
 
   public static async getMemberFromPackage(
-    conn: core.Connection,
+    conn: Connection,
     packageId: string
   ): Promise<string[]> {
     let query =
@@ -198,7 +199,7 @@ export default class DependencyImpl {
     return packageMember;
   }
   public static async getMemberVsPackageNameMapByKeyPrefix(
-    conn: core.Connection,
+    conn: Connection,
     subjectKeyPrefixList: String[]
   ): Promise<Map<string, string>> {
     let query =

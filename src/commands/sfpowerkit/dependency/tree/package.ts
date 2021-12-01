@@ -1,6 +1,6 @@
-import { core, flags } from "@salesforce/command";
+import {  flags } from "@salesforce/command";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
-import { SfdxError, Connection } from "@salesforce/core";
+import { SfdxError, Messages } from "@salesforce/core";
 import DependencyImpl from "../../../../impl/dependency/dependencyImpl";
 import MetadataSummaryInfoFetcher, {
   MetadataSummary
@@ -14,13 +14,14 @@ import PackageInfo from "../../../../impl/package/version/packageInfo";
 import GetDefaults from "../../../../utils/getDefaults";
 import { ProgressBar } from "../../../../ui/progressBar";
 import { PackageDetail } from "../../../../utils/packageUtils";
+import { Connection } from "jsforce";
 
 // Initialize Messages with the current plugin directory
-core.Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages(
+const messages = Messages.loadMessages(
   "sfpowerkit",
   "dependency_tree_package"
 );

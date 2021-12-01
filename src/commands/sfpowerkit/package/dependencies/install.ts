@@ -1,9 +1,9 @@
 //Code initially based from https://github.com/texei/texei-sfdx-plugin
 //Updated to reflect mono repo (mpd), handle tags, individual package and skip install if already installed scenarios
 
-import { core, flags } from "@salesforce/command";
+import { flags } from "@salesforce/command";
 import { JsonArray, JsonMap } from "@salesforce/ts-types";
-import { SfdxProject } from "@salesforce/core";
+import { Messages, SfdxError, SfdxProject } from "@salesforce/core";
 import { loadSFDX } from "../../../../sfdxnode/GetNodeWrapper";
 import { sfdx } from "../../../..//sfdxnode/parallel";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
@@ -17,11 +17,11 @@ const packageAliasesMap = [];
 const defaultWait = 60;
 
 // Initialize Messages with the current plugin directory
-core.Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages("sfpowerkit", "install");
+const messages = Messages.loadMessages("sfpowerkit", "install");
 
 export default class Install extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
@@ -415,7 +415,7 @@ export default class Install extends SFPowerkitCommand {
       };
     } else if (packageName.startsWith(packageIdPrefix)) {
       if (!version) {
-        throw new core.SfdxError(`version number is mandatory for ${name}`);
+        throw new SfdxError(`version number is mandatory for ${name}`);
       }
 
       // Get Package version id from package + versionNumber
@@ -452,7 +452,7 @@ export default class Install extends SFPowerkitCommand {
       if (resultPackageId.size === 0) {
         // Query returned no result
         const errorMessage = `Unable to find version id for dependent package ${name}, Did you create a version of the package yet?`;
-        throw new core.SfdxError(errorMessage);
+        throw new SfdxError(errorMessage);
       } else {
         let versionId = resultPackageId.records[0].SubscriberPackageVersionId;
         let versionNumber = `${resultPackageId.records[0].MajorVersion}.${resultPackageId.records[0].MinorVersion}.${resultPackageId.records[0].PatchVersion}.${resultPackageId.records[0].BuildNumber}`;
@@ -462,17 +462,17 @@ export default class Install extends SFPowerkitCommand {
     else
     {
       const errorMessage = `Unable to find package Id of the package ${name}, Are you missing the package in packageAliases?`;
-      throw new core.SfdxError(errorMessage);
+      throw new SfdxError(errorMessage);
     }
 
     return packageDetail;
   }
   private validateVersionNumber(packageName,versionParts){
     if(!(versionParts.length > 1)){
-      throw new core.SfdxError(`Invalid dependency version number ${versionParts.join('.')} for package ${packageName}. Valid format is 1.0.0.1 (or) 1.0.0.LATEST`);
+      throw new SfdxError(`Invalid dependency version number ${versionParts.join('.')} for package ${packageName}. Valid format is 1.0.0.1 (or) 1.0.0.LATEST`);
     }
     else if((versionParts.length === 4 && versionParts[3] === 'NEXT')){
-      throw new core.SfdxError(`Invalid dependency version number ${versionParts.join('.')} for package ${packageName}, NEXT is not allowed. Valid format is 1.0.0.1 (or) 1.0.0.LATEST`);
+      throw new SfdxError(`Invalid dependency version number ${versionParts.join('.')} for package ${packageName}, NEXT is not allowed. Valid format is 1.0.0.1 (or) 1.0.0.LATEST`);
     }
   }
 
@@ -535,7 +535,7 @@ export default class Install extends SFPowerkitCommand {
         response.set(packageNameWithValue[0], packageNameWithValue[1]);
       } else {
         // Format is not correct, throw an error
-        throw new core.SfdxError(
+        throw new SfdxError(
           `Error in parsing ${item}, format should be: ${format}`
         );
       }

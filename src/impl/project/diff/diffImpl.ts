@@ -19,14 +19,13 @@ import WorkflowDiff from "./workflowDiff";
 import SharingRuleDiff from "./sharingRuleDiff";
 import CustomLabelsDiff from "./customLabelsDiff";
 import DiffUtil, { DiffFile, DiffFileStatus } from "./diffUtil";
-import { core } from "@salesforce/command";
-
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import { DXProjectManifestUtils } from "../../../utils/dxProjectManifestUtils";
 import simplegit from "simple-git/promise";
+import { Messages } from "@salesforce/core";
 
-core.Messages.importMessagesDirectory(__dirname);
-const messages = core.Messages.loadMessages("sfpowerkit", "project_diff");
+Messages.importMessagesDirectory(__dirname);
+const messages = Messages.loadMessages("sfpowerkit", "project_diff");
 
 const deleteNotSupported = ["RecordType"];
 

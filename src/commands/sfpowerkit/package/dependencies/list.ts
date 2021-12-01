@@ -1,5 +1,5 @@
-import { core, flags } from "@salesforce/command";
-import { Connection } from "@salesforce/core";
+import { flags } from "@salesforce/command";
+import { Connection, Messages, SfdxError } from "@salesforce/core";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import * as fs from "fs-extra";
 
@@ -7,11 +7,11 @@ const packageIdPrefix = "0Ho";
 const packageVersionIdPrefix = "04t";
 
 // Initialize Messages with the current plugin directory
-core.Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages(
+const messages = Messages.loadMessages(
   "sfpowerkit",
   "dependency_versionlist"
 );
@@ -132,7 +132,7 @@ export default class List extends SFPowerkitCommand {
       dependency["versionId"] = packageId;
     } else if (packageId.startsWith(packageIdPrefix)) {
       if (!dependency.versionNumber) {
-        throw new core.SfdxError(
+        throw new SfdxError(
           `version number is mandatory for ${dependency.package}`
         );
       }
@@ -164,7 +164,7 @@ export default class List extends SFPowerkitCommand {
         } of version ${
           dependency.versionNumber
         } in devhub ${this.hubOrg.getUsername()}. Are you sure it is created yet?`;
-        throw new core.SfdxError(errorMessage);
+        throw new SfdxError(errorMessage);
       } else {
         let versionId = resultPackageId.records[0].SubscriberPackageVersionId;
         let versionNumber = `${resultPackageId.records[0].MajorVersion}.${resultPackageId.records[0].MinorVersion}.${resultPackageId.records[0].PatchVersion}.${resultPackageId.records[0].BuildNumber}`;
@@ -175,10 +175,10 @@ export default class List extends SFPowerkitCommand {
   }
   private validateVersionNumber(packageName,versionParts){
     if(!(versionParts.length > 1)){
-      throw new core.SfdxError(`Invalid dependency version number ${versionParts.join('.')} for package ${packageName}. Valid format is 1.0.0.1 (or) 1.0.0.LATEST`);
+      throw new SfdxError(`Invalid dependency version number ${versionParts.join('.')} for package ${packageName}. Valid format is 1.0.0.1 (or) 1.0.0.LATEST`);
     }
     else if((versionParts.length === 4 && versionParts[3] === 'NEXT')){
-      throw new core.SfdxError(`Invalid dependency version number ${versionParts.join('.')} for package ${packageName}, NEXT is not allowed. Valid format is 1.0.0.1 (or) 1.0.0.LATEST`);
+      throw new SfdxError(`Invalid dependency version number ${versionParts.join('.')} for package ${packageName}, NEXT is not allowed. Valid format is 1.0.0.1 (or) 1.0.0.LATEST`);
     }
   }
 }

@@ -1,7 +1,7 @@
-import { core, flags } from "@salesforce/command";
+import { flags } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import { JsonArray } from "@salesforce/ts-types";
-import { SfdxProject, SfdxError } from "@salesforce/core";
+import { SfdxProject, SfdxError, Messages } from "@salesforce/core";
 import * as xml2js from "xml2js";
 import * as util from "util";
 import * as fs from "fs-extra";
@@ -15,11 +15,11 @@ import { sfdx } from "../../../sfdxnode/parallel";
 
 
 // Initialize Messages with the current plugin directory
-core.Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages("sfpowerkit", "valid");
+const messages = Messages.loadMessages("sfpowerkit", "valid");
 
 export default class Valid extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");

@@ -1,5 +1,4 @@
 import {
-  core,
   FlagsConfig,
   flags,
   SfdxResult
@@ -7,16 +6,16 @@ import {
 import DiffImpl from "../../../impl/project/diff/diffImpl";
 import * as path from "path";
 import SFPowerkitCommand from "../../../sfpowerkitCommand";
-import { fs } from "@salesforce/core";
+import { fs, Messages } from "@salesforce/core";
 import * as rimraf from "rimraf";
 import * as fsextra from "fs-extra";
 
 // Initialize Messages with the current plugin directory
-core.Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages("sfpowerkit", "project_diff");
+const messages = Messages.loadMessages("sfpowerkit", "project_diff");
 
 export default class Diff extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");

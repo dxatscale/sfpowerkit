@@ -1,16 +1,16 @@
-import { core, flags } from "@salesforce/command";
+import {  flags } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 let request = require("request-promise-native");
-import { SfdxError } from "@salesforce/core";
+import { Connection, Messages, SfdxError } from "@salesforce/core";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 
 // Initialize Messages with the current plugin directory
-core.Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages("sfpowerkit", "sandbox_refresh");
+const messages = Messages.loadMessages("sfpowerkit", "sandbox_refresh");
 
 export default class Refresh extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
@@ -105,7 +105,7 @@ export default class Refresh extends SFPowerkitCommand {
     return result;
   }
 
-  public async getSandboxId(conn: core.Connection, name: string) {
+  public async getSandboxId(conn: Connection, name: string) {
     const query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=SELECT+Id,SandboxName+FROM+SandboxInfo+WHERE+SandboxName+in+('${name}')`;
 
     const sandbox_query_result = await request({
