@@ -1,4 +1,5 @@
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import { AnyJson } from "@salesforce/ts-types";
 import * as fs from "fs-extra";
 import * as rimraf from "rimraf";
@@ -8,7 +9,6 @@ import { zipDirectory } from "../../../../utils/zipDirectory";
 import { AsyncResult, DeployResult } from "jsforce";
 import { checkDeploymentStatus } from "../../../../utils/checkDeploymentStatus";
 import { SfdxError } from "@salesforce/core";
-import { SFPowerkit } from "../../../../sfpowerkit";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -20,7 +20,7 @@ const messages = core.Messages.loadMessages(
   "connectedapp_create"
 );
 
-export default class Create extends SfdxCommand {
+export default class Create extends SFPowerkitCommand {
   public connectedapp_consumerKey: string;
   public connectedapp_certificate: string;
   public connectedapp_label: string;
@@ -80,9 +80,8 @@ export default class Create extends SfdxCommand {
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   //protected static requiresProject = true;
 
-  public async run(): Promise<AnyJson> {
+  public async execute(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     await this.org.refreshAuth();
 

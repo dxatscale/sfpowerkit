@@ -1,12 +1,13 @@
 //Code initially based from https://github.com/texei/texei-sfdx-plugin
 //Updated to reflect mono repo (mpd), handle tags, individual package and skip install if already installed scenarios
 
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
 import { JsonArray, JsonMap } from "@salesforce/ts-types";
 import { SfdxProject } from "@salesforce/core";
 import { loadSFDX } from "../../../../sfdxnode/GetNodeWrapper";
 import { sfdx } from "../../../..//sfdxnode/parallel";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import { get18DigitSalesforceId } from "./../../../../utils/get18DigitSalesforceId";
 let retry = require("async-retry");
 
@@ -22,7 +23,7 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages("sfpowerkit", "install");
 
-export default class Install extends SfdxCommand {
+export default class Install extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
@@ -122,10 +123,8 @@ export default class Install extends SfdxCommand {
   private tagMap: Map<string, string>;
   private branchMap: Map<string, string>;
 
-  public async run(): Promise<any> {
+  public async execute(): Promise<any> {
     const result = { installedPackages: {} };
-
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     // this.org is guaranteed because requiresUsername=true, as opposed to supportsUsername
     const username = this.org.getUsername();

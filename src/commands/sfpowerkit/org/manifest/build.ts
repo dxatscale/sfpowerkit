@@ -1,4 +1,4 @@
-import { flags, SfdxCommand } from "@salesforce/command";
+import { flags } from "@salesforce/command";
 import { Messages } from "@salesforce/core";
 import { AnyJson } from "@salesforce/ts-types";
 import {
@@ -6,6 +6,7 @@ import {
   Packagexml,
 } from "../../../../impl/metadata/packageBuilder";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -14,7 +15,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages("sfpowerkit", "package_build");
 
-export default class Build extends SfdxCommand {
+export default class Build extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
@@ -59,7 +60,7 @@ export default class Build extends SfdxCommand {
   // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
   protected static requiresProject = false;
 
-  public async run(): Promise<AnyJson> {
+  public async execute(): Promise<AnyJson> {
     SFPowerkit.setLogLevel("Info", this.flags.json);
 
     if (this.flags.quickfilter) {

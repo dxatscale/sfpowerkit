@@ -1,5 +1,6 @@
 import { AnyJson, getString } from "@salesforce/ts-types";
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
+import SFPowerkitCommand from "../../../sfpowerkitCommand";
 import * as rimraf from "rimraf";
 import { Connection } from "jsforce";
 
@@ -14,7 +15,7 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages("sfpowerkit", "auth_login");
 
-export default class Login extends SfdxCommand {
+export default class Login extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
@@ -54,7 +55,7 @@ export default class Login extends SfdxCommand {
   loginUrl: string;
   password: string;
 
-  public async run(): Promise<AnyJson> {
+  public async execute(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
 
     if (this.flags.url) this.loginUrl = this.flags.url;

@@ -1,10 +1,10 @@
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import * as fs from "fs-extra";
 import * as path from "path";
-import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 import xmlUtil from "../../../../utils/xmlUtil";
 import getDefaults from "../../../../utils/getDefaults";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -16,7 +16,7 @@ const messages = core.Messages.loadMessages(
   "project_manifest_diff"
 );
 
-export default class Diff extends SfdxCommand {
+export default class Diff extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
@@ -71,9 +71,7 @@ export default class Diff extends SfdxCommand {
   };
 
   protected output: any[];
-  public async run(): Promise<AnyJson> {
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
-
+  public async execute(): Promise<AnyJson> {
     this.flags.apiversion =
       this.flags.apiversion || getDefaults.getApiVersion();
 

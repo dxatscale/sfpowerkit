@@ -1,4 +1,5 @@
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core } from "@salesforce/command";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import { AnyJson } from "@salesforce/ts-types";
 let request = require("request-promise-native");
 import { spawn } from "child_process";
@@ -10,7 +11,7 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages("sfpowerkit", "scratchorg_usage");
 
-export default class Usage extends SfdxCommand {
+export default class Usage extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
@@ -29,7 +30,7 @@ export default class Usage extends SfdxCommand {
   // Comment this out if your command does not require a hub org username
   protected static requiresDevhubUsername = true;
 
-  public async run(): Promise<AnyJson> {
+  public async execute(): Promise<AnyJson> {
     await this.hubOrg.refreshAuth();
     const conn = this.hubOrg.getConnection();
     this.flags.apiversion =

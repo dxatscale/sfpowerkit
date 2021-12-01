@@ -1,6 +1,5 @@
 import {
   core,
-  SfdxCommand,
   flags,
   FlagsConfig,
   SfdxResult,
@@ -14,6 +13,7 @@ import * as path from "path";
 import { METADATA_INFO } from "../../../../impl/metadata/metadataInfo";
 import ProfileRetriever from "../../../../impl/metadata/retriever/profileRetriever";
 import ProfileMerge from "../../../../impl/source/profiles/profileMerge";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -22,7 +22,7 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages("sfpowerkit", "profile_merge");
 
-export default class Merge extends SfdxCommand {
+export default class Merge extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
@@ -111,9 +111,7 @@ export default class Merge extends SfdxCommand {
     },
   };
 
-  public async run(): Promise<any> {
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
-
+  public async execute(): Promise<any> {
     let argFolder = this.flags.folder;
     let argProfileList = this.flags.profilelist;
     let argMetadatas = this.flags.metadata;

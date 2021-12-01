@@ -1,11 +1,10 @@
 import {
   core,
-  SfdxCommand,
   FlagsConfig,
   flags,
   SfdxResult
 } from "@salesforce/command";
-import { SFPowerkit } from "../../../../sfpowerkit";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import ProfileDiffImpl from "../../../../impl/source/profiles/profileDiff";
 
 // Initialize Messages with the current plugin directory
@@ -13,7 +12,7 @@ core.Messages.importMessagesDirectory(__dirname);
 
 const messages = core.Messages.loadMessages("sfpowerkit", "org_profile_diff");
 
-export default class Diff extends SfdxCommand {
+export default class Diff extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
@@ -79,8 +78,7 @@ export default class Diff extends SfdxCommand {
 
   protected static requiresUsername = true;
 
-  public async run(): Promise<any> {
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
+  public async execute(): Promise<any> {
 
     const outputFolder: string = this.flags.output;
     const sourceusername: string = this.flags.sourceusername;

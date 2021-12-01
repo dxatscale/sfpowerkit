@@ -1,7 +1,8 @@
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
 import { SfdxError } from "@salesforce/core";
 import { AnyJson } from "@salesforce/ts-types";
 import ScratchOrgUtils from "../../../../utils/scratchOrgUtils";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand"
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
 
@@ -9,7 +10,7 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages("sfpowerkit", "scratchorg_delete");
 
-export default class Delete extends SfdxCommand {
+export default class Delete extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
@@ -45,7 +46,7 @@ export default class Delete extends SfdxCommand {
     })
   };
 
-  public async run(): Promise<AnyJson> {
+  public async execute(): Promise<AnyJson> {
     if (!this.flags.username && !this.flags.email) {
       throw new SfdxError(
         "Required flags are missing, Please provide either username or email."

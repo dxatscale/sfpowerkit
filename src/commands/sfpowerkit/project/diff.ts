@@ -1,13 +1,12 @@
 import {
   core,
-  SfdxCommand,
   FlagsConfig,
   flags,
   SfdxResult
 } from "@salesforce/command";
 import DiffImpl from "../../../impl/project/diff/diffImpl";
 import * as path from "path";
-import { SFPowerkit } from "../../../sfpowerkit";
+import SFPowerkitCommand from "../../../sfpowerkitCommand";
 import { fs } from "@salesforce/core";
 import * as rimraf from "rimraf";
 import * as fsextra from "fs-extra";
@@ -19,7 +18,7 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages("sfpowerkit", "project_diff");
 
-export default class Diff extends SfdxCommand {
+export default class Diff extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
@@ -109,8 +108,7 @@ export default class Diff extends SfdxCommand {
   protected static requiresUsername = false;
   protected static requiresProject = true;
 
-  public async run(): Promise<any> {
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
+  public async execute(): Promise<any> {
 
     const outputFolder: string = this.flags.output;
     const revisionfrom: string = this.flags.revisionfrom;

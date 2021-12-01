@@ -1,6 +1,5 @@
 import {
   core,
-  SfdxCommand,
   flags,
   FlagsConfig,
   SfdxResult,
@@ -13,6 +12,7 @@ import { METADATA_INFO } from "../../../../impl/metadata/metadataInfo";
 import * as path from "path";
 import ProfileReconcile from "../../../../impl/source/profiles/profileReconcile";
 import MetadataFiles from "../../../../impl/metadata/metadataFiles";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -21,7 +21,7 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages("sfpowerkit", "profile_reconcile");
 
-export default class Reconcile extends SfdxCommand {
+export default class Reconcile extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
@@ -107,9 +107,7 @@ export default class Reconcile extends SfdxCommand {
     },
   };
 
-  public async run(): Promise<any> {
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
-
+  public async execute(): Promise<any> {
     let argFolder = this.flags.folder;
     let argProfileList = this.flags.profilelist;
     if (!this.flags.sourceonly) {

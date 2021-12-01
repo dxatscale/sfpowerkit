@@ -1,7 +1,8 @@
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import poolHydrateImpl from "../../../impl/pool/scratchorg/PoolDeleteImpl";
+import SFPowerkitCommand from "../../../sfpowerkitCommand";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -13,7 +14,7 @@ const messages = core.Messages.loadMessages(
   "scratchorg_poolhydrate"
 );
 
-export default class Delete extends SfdxCommand {
+export default class Delete extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   protected static requiresDevhubUsername = true;
@@ -68,8 +69,7 @@ export default class Delete extends SfdxCommand {
     }),
   };
 
-  public async run(): Promise<AnyJson> {
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
+  public async execute(): Promise<AnyJson> {
 
     await this.hubOrg.refreshAuth();
     const hubConn = this.hubOrg.getConnection();

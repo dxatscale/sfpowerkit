@@ -1,5 +1,6 @@
-import { core, SfdxCommand, FlagsConfig, flags } from "@salesforce/command";
+import { core, FlagsConfig, flags } from "@salesforce/command";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import * as fs from "fs-extra";
 import simpleGit, { SimpleGit } from "simple-git";
 import { isNullOrUndefined } from "util";
@@ -18,7 +19,7 @@ const messages = core.Messages.loadMessages(
   "project_datamodel_diff"
 );
 
-export default class Diff extends SfdxCommand {
+export default class Diff extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
@@ -76,8 +77,7 @@ export default class Diff extends SfdxCommand {
   protected static requiresUsername = false;
   protected static requiresProject = true;
 
-  public async run(): Promise<AnyJson> {
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
+  public async execute(): Promise<AnyJson> {
     let isOutputCSV = this.flags.csv;
     let outputDirectory = this.flags.outputdir
       ? this.flags.outputdir

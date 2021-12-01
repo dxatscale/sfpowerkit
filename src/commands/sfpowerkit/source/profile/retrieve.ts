@@ -1,6 +1,5 @@
 import {
   core,
-  SfdxCommand,
   flags,
   FlagsConfig,
   SfdxResult,
@@ -9,10 +8,10 @@ import {
 import { SfdxProject, SfdxError } from "@salesforce/core";
 import * as fs from "fs-extra";
 import * as _ from "lodash";
-import { SFPowerkit } from "../../../../sfpowerkit";
 import * as path from "path";
 import { METADATA_INFO } from "../../../../impl/metadata/metadataInfo";
 import ProfileSync from "../../../../impl/source/profiles/profileSync";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -21,7 +20,7 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages("sfpowerkit", "profile_retrieve");
 
-export default class Retrieve extends SfdxCommand {
+export default class Retrieve extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
@@ -93,9 +92,7 @@ export default class Retrieve extends SfdxCommand {
     },
   };
 
-  public async run(): Promise<any> {
-    SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
-
+  public async execute(): Promise<any> {
     let argFolder: string = this.flags.folder;
     let argProfileList: string[] = this.flags.profilelist;
 

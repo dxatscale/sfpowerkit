@@ -1,10 +1,11 @@
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import * as fs from "fs-extra";
 import * as path from "path";
-import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
+import { SFPowerkit } from "../../../../sfpowerkit";
 import xmlUtil from "../../../../utils/xmlUtil";
 import getDefaults from "../../../../utils/getDefaults";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -16,7 +17,7 @@ const messages = core.Messages.loadMessages(
   "project_manifest_merge"
 );
 
-export default class Merge extends SfdxCommand {
+export default class Merge extends SFPowerkitCommand {
   public output: Map<string, string[]>;
 
   public static description = messages.getMessage("commandDescription");
@@ -61,7 +62,7 @@ export default class Merge extends SfdxCommand {
     })
   };
 
-  public async run(): Promise<AnyJson> {
+  public async execute(): Promise<AnyJson> {
     this.output = new Map<string, string[]>();
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 

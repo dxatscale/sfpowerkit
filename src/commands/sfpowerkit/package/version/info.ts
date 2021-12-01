@@ -1,7 +1,8 @@
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import { SFPowerkit } from "../../../../sfpowerkit";
 import PackageInfo from "../../../../impl/package/version/packageInfo";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -10,7 +11,7 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages("sfpowerkit", "package_info");
 
-export default class Info extends SfdxCommand {
+export default class Info extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
@@ -45,7 +46,7 @@ export default class Info extends SfdxCommand {
   // Comment this out if your command does not require an org username
   protected static requiresUsername = true;
   public static readonly supportsDevhubUsername = true;
-  public async run(): Promise<AnyJson> {
+  public async execute(): Promise<AnyJson> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     await this.org.refreshAuth();

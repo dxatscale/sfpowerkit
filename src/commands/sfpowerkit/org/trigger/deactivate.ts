@@ -1,6 +1,6 @@
 import { AnyJson } from "@salesforce/ts-types";
 import * as fs from "fs-extra";
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
 import * as rimraf from "rimraf";
 import { AsyncResult, DeployResult } from "jsforce";
 import { SfdxError } from "@salesforce/core";
@@ -15,6 +15,7 @@ import { checkDeploymentStatus } from "../../../../utils/checkDeploymentStatus";
 import { extract } from "../../../../utils/extract";
 import { zipDirectory } from "../../../../utils/zipDirectory";
 import { SFPowerkit } from "../../../../sfpowerkit";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand"
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -23,7 +24,7 @@ core.Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = core.Messages.loadMessages("sfpowerkit", "trigger_deactivate");
 
-export default class Deactivate extends SfdxCommand {
+export default class Deactivate extends SFPowerkitCommand {
   public connectedapp_consumerKey: string;
   public static description = messages.getMessage("commandDescription");
 
@@ -68,7 +69,7 @@ export default class Deactivate extends SfdxCommand {
   // Comment this out if your command does not require an org username
   protected static requiresUsername = true;
 
-  public async run(): Promise<AnyJson> {
+  public async execute(): Promise<AnyJson> {
     rimraf.sync("temp_sfpowerkit");
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 

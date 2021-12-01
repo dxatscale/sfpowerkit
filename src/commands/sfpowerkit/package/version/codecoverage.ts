@@ -1,8 +1,9 @@
-import { core, flags, SfdxCommand } from "@salesforce/command";
+import { core, flags } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import { SFPowerkit } from "../../../../sfpowerkit";
 import { SfdxError } from "@salesforce/core";
 import PackageVersionCoverage from "../../../../impl/package/version/packageVersionCoverage";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
 
@@ -13,7 +14,7 @@ const messages = core.Messages.loadMessages(
   "package_codecoverage"
 );
 
-export default class CodeCoverage extends SfdxCommand {
+export default class CodeCoverage extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
@@ -65,7 +66,7 @@ export default class CodeCoverage extends SfdxCommand {
 
   // Comment this out if your command does not require an org username
   protected static requiresDevhubUsername = true;
-  public async run(): Promise<AnyJson> {
+  public async execute(): Promise<AnyJson> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
     await this.hubOrg.refreshAuth();

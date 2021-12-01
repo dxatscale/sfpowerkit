@@ -1,4 +1,5 @@
-import { core, SfdxCommand, FlagsConfig, flags } from "@salesforce/command";
+import { core, FlagsConfig, flags } from "@salesforce/command";
+import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 
 // Initialize Messages with the current plugin directory
 core.Messages.importMessagesDirectory(__dirname);
@@ -10,7 +11,7 @@ const messages = core.Messages.loadMessages(
   "orgwideemail_create"
 );
 
-export default class OrgWideEmail extends SfdxCommand {
+export default class OrgWideEmail extends SFPowerkitCommand {
   public static description = messages.getMessage(
     "orgWideEmailCreateCommandDescription"
   );
@@ -42,7 +43,7 @@ export default class OrgWideEmail extends SfdxCommand {
   };
   protected static requiresUsername = true;
 
-  public async run(): Promise<any> {
+  public async execute(): Promise<any> {
     this.ux.log(
       "This command is deprecated, It is no longer guaranteed to work, Please update your workflow with alternate solution"
     );

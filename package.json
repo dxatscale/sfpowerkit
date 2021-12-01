@@ -1,6 +1,7 @@
 {
   "name": "sfpowerkit",
   "version": "3.3.5",
+  "release": "november 21",
   "author": {
     "name": "DXatScale",
     "email": "dxatscale@accenture.com"
@@ -23,6 +24,10 @@
     {
       "name": "Alan Ly",
       "email": "alan.ly@accenture.com"
+    },
+    {
+      "name": "Henry Lay",
+      "email": "henry.lay@accenture.com"
     }
   ],
   "bugs": "https://github.com/accenture/sfpowerkit/issues",
@@ -37,6 +42,7 @@
     "async-retry": "^1.3.1",
     "axios": "0.21.3",
     "bottleneck": "^2.19.5",
+    "chalk": "^4.1.2",
     "child-process": "^1.0.2",
     "child-process-promise": "^2.2.1",
     "cli-ux": "^5.5.1",
