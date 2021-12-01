@@ -1,4 +1,5 @@
-import { core, flags, Result } from "@salesforce/command";
+import { flags, Result } from "@salesforce/command";
+import { Connection, Messages } from "@salesforce/core";
 import { AnyJson } from "@salesforce/ts-types";
 import * as fs from "fs-extra";
 let request = require("request-promise-native");
@@ -7,11 +8,11 @@ const querystring = require("querystring")
 import SFPowerkitCommand from "../../../sfpowerkitCommand"
 
 // Initialize Messages with the current plugin directory
-core.Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages("sfpowerkit", "org_healthcheck");
+const messages = Messages.loadMessages("sfpowerkit", "org_healthcheck");
 
 export default class HealthCheck extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
@@ -72,7 +73,7 @@ export default class HealthCheck extends SFPowerkitCommand {
     return true;
   }
 
-  public async getOrgHealthScore(conn: core.Connection) {
+  public async getOrgHealthScore(conn: Connection) {
     var encoded_querystring = querystring.escape(
       `SELECT Score FROM SecurityHealthCheck`
     );
@@ -94,7 +95,7 @@ export default class HealthCheck extends SFPowerkitCommand {
     return health_score_query_result.records[0].Score;
   }
 
-  public async getOrgHealthHighRisks(conn: core.Connection) {
+  public async getOrgHealthHighRisks(conn: Connection) {
     var encoded_querystring = querystring.escape(
       `SELECT RiskType, Setting, SettingGroup, OrgValue, StandardValue FROM SecurityHealthCheckRisks where RiskType='HIGH_RISK'`
     );
@@ -116,7 +117,7 @@ export default class HealthCheck extends SFPowerkitCommand {
     return health_score_query_result.records;
   }
 
-  public async getOrgHealthMediumRisks(conn: core.Connection) {
+  public async getOrgHealthMediumRisks(conn: Connection) {
     var encoded_querystring = querystring.escape(
       `SELECT RiskType, Setting, SettingGroup, OrgValue, StandardValue FROM SecurityHealthCheckRisks where RiskType='MEDIUM_RISK'`
     );
@@ -138,7 +139,7 @@ export default class HealthCheck extends SFPowerkitCommand {
     return health_score_query_result.records;
   }
 
-  public async getOrgHealthLowRisks(conn: core.Connection) {
+  public async getOrgHealthLowRisks(conn: Connection) {
     var encoded_querystring = querystring.escape(
       `SELECT RiskType, Setting, SettingGroup, OrgValue, StandardValue FROM SecurityHealthCheckRisks where RiskType='LOW_RISK'`
     );
@@ -160,7 +161,7 @@ export default class HealthCheck extends SFPowerkitCommand {
     return health_score_query_result.records;
   }
 
-  public async getInformationalRisks(conn: core.Connection) {
+  public async getInformationalRisks(conn: Connection) {
     var encoded_querystring = querystring.escape(
       `SELECT RiskType, Setting, SettingGroup, OrgValue, StandardValue FROM SecurityHealthCheckRisks where RiskType='INFORMATIONAL'`
     );

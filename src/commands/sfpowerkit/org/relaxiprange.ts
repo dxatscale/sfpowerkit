@@ -1,6 +1,6 @@
 import { AnyJson } from "@salesforce/ts-types";
-import { core, flags } from "@salesforce/command";
-import { SfdxError } from "@salesforce/core";
+import {  flags } from "@salesforce/command";
+import { Messages, SfdxError } from "@salesforce/core";
 import RelaxIPRangeImpl from "../../../impl/org/relaxIPRangeImpl";
 import SFPowerkitCommand from "../../../sfpowerkitCommand";
 
@@ -8,11 +8,11 @@ import SFPowerkitCommand from "../../../sfpowerkitCommand";
 var path = require("path");
 
 // Initialize Messages with the current plugin directory
-core.Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages("sfpowerkit", "org_relaxiprange");
+const messages = Messages.loadMessages("sfpowerkit", "org_relaxiprange");
 
 export default class Relaxiprange extends SFPowerkitCommand {
   public connectedapp_consumerKey: string;

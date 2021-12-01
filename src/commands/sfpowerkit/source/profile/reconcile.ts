@@ -1,11 +1,10 @@
 import {
-  core,
   flags,
   FlagsConfig,
   SfdxResult,
 } from "@salesforce/command";
 
-import { Org } from "@salesforce/core";
+import { Messages, Org } from "@salesforce/core";
 import * as _ from "lodash";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 import { METADATA_INFO } from "../../../../impl/metadata/metadataInfo";
@@ -15,11 +14,11 @@ import MetadataFiles from "../../../../impl/metadata/metadataFiles";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 
 // Initialize Messages with the current plugin directory
-core.Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages("sfpowerkit", "profile_reconcile");
+const messages = Messages.loadMessages("sfpowerkit", "profile_reconcile");
 
 export default class Reconcile extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");

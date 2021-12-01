@@ -1,8 +1,8 @@
-import { core, FlagsConfig, flags } from "@salesforce/command";
+import { FlagsConfig, flags } from "@salesforce/command";
 import { spawnSync } from "child_process";
 import FileUtils from "../../../utils/fileutils";
 import { extract } from "../../../utils/extract";
-import { SfdxError, Logger, SfdxProject } from "@salesforce/core";
+import { SfdxError, Logger, SfdxProject, Messages } from "@salesforce/core";
 import SFPowerkitCommand from "../../../sfpowerkitCommand";
 
 const request = require("request");
@@ -11,11 +11,11 @@ const path = require("path");
 const findJavaHome = require("find-java-home");
 
 // Initialize Messages with the current plugin directory
-core.Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages("sfpowerkit", "source_pmd");
+const messages = Messages.loadMessages("sfpowerkit", "source_pmd");
 
 export default class Pmd extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");

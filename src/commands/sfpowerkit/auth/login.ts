@@ -1,19 +1,19 @@
 import { AnyJson, getString } from "@salesforce/ts-types";
-import { core, flags } from "@salesforce/command";
+import {  flags } from "@salesforce/command";
 import SFPowerkitCommand from "../../../sfpowerkitCommand";
 import * as rimraf from "rimraf";
 import { Connection } from "jsforce";
 
-import { SfdxError, AuthInfo, Aliases, ConfigGroup } from "@salesforce/core";
+import { SfdxError, AuthInfo, Aliases, ConfigGroup, Messages } from "@salesforce/core";
 // tslint:disable-next-line:ordered-imports
 var jsforce = require("jsforce");
 
 // Initialize Messages with the current plugin directory
-core.Messages.importMessagesDirectory(__dirname);
+Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = core.Messages.loadMessages("sfpowerkit", "auth_login");
+const messages = Messages.loadMessages("sfpowerkit", "auth_login");
 
 export default class Login extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
