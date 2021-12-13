@@ -9,7 +9,8 @@ import { SFPowerkit, LoggerLevel, COLOR_WARNING, COLOR_SUCCESS, COLOR_KEY_MESSAG
 import SFPowerkitCommand from "../../../sfpowerkitCommand";
 import { MetadataResolver } from '@salesforce/source-deploy-retrieve'
 
-
+//JSON Update from the below api
+//https://mdcoverage.secure.force.com/services/apexrest/report?version=54
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -106,7 +107,7 @@ Elements supported included in your package testPackage
     const result_store: SFDXPackage[] = [];
 
     if (packageToBeScanned != undefined) {
-      SFPowerkit.log(`Analyzing ${packageToBeScanned}`, LoggerLevel.INFO);
+      SFPowerkit.log(`Fetching components of ${packageToBeScanned}`, LoggerLevel.INFO);
       for (const sf_package of packageDirectories as JsonArray) {
         if (
           packageToBeScanned != undefined &&
@@ -186,15 +187,40 @@ Elements supported included in your package testPackage
       sfdx_package.typesToBypass = this.flags.bypass;
     }
 
+    SFPowerkit.log(
+      `Component,${JSON.stringify(components)}`,
+      LoggerLevel.TRACE
+    );
 
       if (Array.isArray(components)) {
         for (const component of components) {
+          
+              SFPowerkit.log(
+                `Component: ${component.type.name}`,
+                LoggerLevel.TRACE
+              );
+
+              SFPowerkit.log(
+                `Component Found : ${JSON.stringify( this.coverageJSON.types[component.type.name])}`,
+                LoggerLevel.TRACE
+              );
+
+            if(this.coverageJSON.types[component.type.name])
+            {
             if (
-              this.coverageJSON.types[component.type.name].channels
+              this.coverageJSON.types[component.type.name]?.channels
                 .unlockedPackagingWithoutNamespace
             )
-              sfdx_package.supportedTypes.push(`${COLOR_KEY_MESSAGE(component.type.name)}: ${component.name}   ${component.name}`);
-            else sfdx_package.unsupportedtypes.push(`${COLOR_KEY_MESSAGE(component.type.name)}: ${component.name}`);
+              sfdx_package.supportedTypes.push(`${COLOR_KEY_MESSAGE(component.type.name)}: ${component.name}`);
+            else  
+              {
+                sfdx_package.unsupportedtypes.push(`${COLOR_KEY_MESSAGE(component.type.name)}: ${component.name}`)
+              };
+            }
+            else
+            {
+              console.log(`Skipped analysis of ${COLOR_KEY_MESSAGE(component.type.name)}: ${component.name} as mdCoverage is inconsistent`)
+            }
         }
       }
       sfdx_package.processed = true;
