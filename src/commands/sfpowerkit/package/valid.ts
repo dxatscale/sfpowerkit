@@ -7,7 +7,6 @@ import * as rimraf from "rimraf";
 import * as path from "path";
 import { SFPowerkit, LoggerLevel, COLOR_WARNING, COLOR_SUCCESS, COLOR_KEY_MESSAGE } from "../../../sfpowerkit";
 import SFPowerkitCommand from "../../../sfpowerkitCommand";
-import { loadSFDX } from "../../../sfdxnode/GetNodeWrapper";
 import { MetadataResolver } from '@salesforce/source-deploy-retrieve'
 
 
@@ -23,8 +22,8 @@ export default class Valid extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:package:valid -n testPackage
-  Now analyzing testPackage
+`$ sfdx sfpowerkit:package:valid -n testPackage
+ Now analyzing testPackage
 Converting package testPackage
 Elements supported included in your package testPackage
 [
@@ -77,9 +76,6 @@ Elements supported included in your package testPackage
   private coverageJSON;
 
   public async execute(): Promise<AnyJson> {
-    rimraf.sync("temp_sfpowerkit");
-
-    loadSFDX();
 
     // Getting Project config
     const project = await SfdxProject.resolve();
@@ -174,7 +170,7 @@ Elements supported included in your package testPackage
       LoggerLevel.DEBUG
     );
     SFPowerkit.log(
-      `Converting package ${packageToBeScanned["package"]}`,
+      `Analyzing package ${packageToBeScanned["package"]}`,
       LoggerLevel.INFO
     );
 
