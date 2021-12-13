@@ -3,7 +3,6 @@ import { AnyJson } from "@salesforce/ts-types";
 import { JsonArray } from "@salesforce/ts-types";
 import { SfdxProject, SfdxError, Messages } from "@salesforce/core";
 import * as fs from "fs-extra";
-import * as rimraf from "rimraf";
 import * as path from "path";
 import { SFPowerkit, LoggerLevel, COLOR_WARNING, COLOR_SUCCESS, COLOR_KEY_MESSAGE } from "../../../sfpowerkit";
 import SFPowerkitCommand from "../../../sfpowerkitCommand";
