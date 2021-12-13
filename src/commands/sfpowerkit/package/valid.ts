@@ -5,7 +5,7 @@ import { SfdxProject, SfdxError, Messages } from "@salesforce/core";
 import * as fs from "fs-extra";
 import * as rimraf from "rimraf";
 import * as path from "path";
-import { SFPowerkit, LoggerLevel, COLOR_INFO, COLOR_WARNING, COLOR_SUCCESS, COLOR_KEY_VALUE, COLOR_KEY_MESSAGE } from "../../../sfpowerkit";
+import { SFPowerkit, LoggerLevel, COLOR_WARNING, COLOR_SUCCESS, COLOR_KEY_MESSAGE } from "../../../sfpowerkit";
 import SFPowerkitCommand from "../../../sfpowerkitCommand";
 import { loadSFDX } from "../../../sfdxnode/GetNodeWrapper";
 import { MetadataResolver } from '@salesforce/source-deploy-retrieve'
