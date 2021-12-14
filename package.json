@@ -1,6 +1,6 @@
 {
   "name": "sfpowerkit",
-  "version": "3.4.2",
+  "version": "3.4.3",
   "release": "December 21",
   "author": {
     "name": "DXatScale",
@@ -35,7 +35,7 @@
     "@salesforce/command": "^4.1.5",
     "@salesforce/core": "2.31.0",
     "@salesforce/plugin-user": "1.6.0",
-    "@salesforce/source-deploy-retrieve":"5.8.0",
+    "@salesforce/source-deploy-retrieve": "5.8.0",
     "salesforce-alm": "53.5.1",
     "ajv": "^8.8.2",
     "apex-parser": "^2.11.0",
