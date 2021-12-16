@@ -193,7 +193,7 @@ Elements supported included in your package testPackage
 
       if (Array.isArray(components)) {
         for (const component of components) {
-          
+
               SFPowerkit.log(
                 `Component: ${component.type.name}`,
                 LoggerLevel.TRACE
@@ -210,10 +210,10 @@ Elements supported included in your package testPackage
               this.coverageJSON.types[component.type.name]?.channels
                 .unlockedPackagingWithoutNamespace
             )
-              sfdx_package.supportedTypes.push(`${COLOR_KEY_MESSAGE(component.type.name)}: ${component.name}`);
-            else  
+              sfdx_package.supportedTypes.push({name: component.name, type: component.type.name});
+            else
               {
-                sfdx_package.unsupportedtypes.push(`${COLOR_KEY_MESSAGE(component.type.name)}: ${component.name}`)
+                sfdx_package.unsupportedtypes.push({name: component.name, type: component.type.name});
               };
             }
             else
@@ -228,8 +228,8 @@ Elements supported included in your package testPackage
         this.ux.log(
           COLOR_SUCCESS(`Supported metadata in package ${packageToBeScanned["package"]}`)
         );
-        sfdx_package.supportedTypes.forEach(element => {
-          this.ux.log(element);
+        sfdx_package.supportedTypes.forEach(component => {
+          this.ux.log(`${COLOR_KEY_MESSAGE(component.type)}: ${component.name}`);
         });
         sfdx_package.valid = true;
         this.ux.log(
@@ -242,17 +242,12 @@ Elements supported included in your package testPackage
         sfdx_package.typesToBypass.length > 0 &&
         sfdx_package.unsupportedtypes.length > 0
       ) {
-        let itemsToRemove = [];
+        let itemsToRemove: string[] = [];
 
-        sfdx_package.typesToBypass = sfdx_package.typesToBypass.map(element =>
-          element.toLowerCase()
-        );
-        sfdx_package.unsupportedtypes = sfdx_package.unsupportedtypes.map(
-          element => element.toLowerCase()
-        );
-
-        itemsToRemove = sfdx_package.typesToBypass.filter(element =>
-          sfdx_package.unsupportedtypes.includes(element)
+        itemsToRemove = sfdx_package.typesToBypass.filter(type =>
+          sfdx_package.unsupportedtypes.find(component =>
+            component.type.toLowerCase() === type.toLowerCase()
+          ) ? true : false
         );
 
         if (itemsToRemove.length > 0) {
@@ -263,7 +258,7 @@ Elements supported included in your package testPackage
             this.ux.log(element);
           });
           sfdx_package.unsupportedtypes = sfdx_package.unsupportedtypes.filter(
-            element => !itemsToRemove.includes(element)
+            component => !itemsToRemove.find(item => item.toLowerCase() === component.type.toLowerCase()) ? true : false
           );
           this.ux.log(
             `--------------------------------------------------------------------------------`
@@ -275,15 +270,15 @@ Elements supported included in your package testPackage
         this.ux.log(
           COLOR_WARNING(`Unsupported metadata in package ${packageToBeScanned["package"]}`)
         );
-        sfdx_package.unsupportedtypes.forEach(element => {
-          this.ux.log(element);
+        sfdx_package.unsupportedtypes.forEach(component => {
+          this.ux.log(`${COLOR_KEY_MESSAGE(component.type)}: ${component.name}`);
         });
         sfdx_package.valid = false;
         this.ux.log(
           `--------------------------------------------------------------------------------`
         );
       }
-    
+
 
 
     return sfdx_package;
@@ -318,10 +313,15 @@ Elements supported included in your package testPackage
 }
 
 export class SFDXPackage {
-  public unsupportedtypes = [];
-  public supportedTypes = [];
-  public typesToBypass = [];
+  public unsupportedtypes: Component[] = [];
+  public supportedTypes: Component[] = [];
+  public typesToBypass: string[] = [];
   public packageName: string;
   public valid: boolean;
   public processed: boolean;
+}
+
+interface Component {
+  name: string;
+  type: string
 }
