@@ -210,10 +210,10 @@ Elements supported included in your package testPackage
               this.coverageJSON.types[component.type.name]?.channels
                 .unlockedPackagingWithoutNamespace
             )
-              sfdx_package.supportedTypes.push({name: component.name, type: component.type.name});
+              sfdx_package.supportedComponents.push({name: component.name, type: component.type.name});
             else
               {
-                sfdx_package.unsupportedtypes.push({name: component.name, type: component.type.name});
+                sfdx_package.unsupportedComponents.push({name: component.name, type: component.type.name});
               };
             }
             else
@@ -224,11 +224,11 @@ Elements supported included in your package testPackage
       }
       sfdx_package.processed = true;
 
-      if (sfdx_package.supportedTypes.length > 0) {
+      if (sfdx_package.supportedComponents.length > 0) {
         this.ux.log(
           COLOR_SUCCESS(`Supported metadata in package ${packageToBeScanned["package"]}`)
         );
-        sfdx_package.supportedTypes.forEach(component => {
+        sfdx_package.supportedComponents.forEach(component => {
           this.ux.log(`${COLOR_KEY_MESSAGE(component.type)}: ${component.name}`);
         });
         sfdx_package.valid = true;
@@ -240,12 +240,12 @@ Elements supported included in your package testPackage
       //Bypass metadata in package validator
       if (
         sfdx_package.typesToBypass.length > 0 &&
-        sfdx_package.unsupportedtypes.length > 0
+        sfdx_package.unsupportedComponents.length > 0
       ) {
         let itemsToRemove: string[] = [];
 
         itemsToRemove = sfdx_package.typesToBypass.filter(type =>
-          sfdx_package.unsupportedtypes.find(component =>
+          sfdx_package.unsupportedComponents.find(component =>
             component.type.toLowerCase() === type.toLowerCase()
           ) ? true : false
         );
@@ -257,7 +257,7 @@ Elements supported included in your package testPackage
           itemsToRemove.forEach(element => {
             this.ux.log(element);
           });
-          sfdx_package.unsupportedtypes = sfdx_package.unsupportedtypes.filter(
+          sfdx_package.unsupportedComponents = sfdx_package.unsupportedComponents.filter(
             component => !itemsToRemove.find(item => item.toLowerCase() === component.type.toLowerCase()) ? true : false
           );
           this.ux.log(
@@ -266,11 +266,11 @@ Elements supported included in your package testPackage
         }
       }
 
-      if (sfdx_package.unsupportedtypes.length > 0) {
+      if (sfdx_package.unsupportedComponents.length > 0) {
         this.ux.log(
           COLOR_WARNING(`Unsupported metadata in package ${packageToBeScanned["package"]}`)
         );
-        sfdx_package.unsupportedtypes.forEach(component => {
+        sfdx_package.unsupportedComponents.forEach(component => {
           this.ux.log(`${COLOR_KEY_MESSAGE(component.type)}: ${component.name}`);
         });
         sfdx_package.valid = false;
@@ -313,8 +313,8 @@ Elements supported included in your package testPackage
 }
 
 export class SFDXPackage {
-  public unsupportedtypes: Component[] = [];
-  public supportedTypes: Component[] = [];
+  public unsupportedComponents: Component[] = [];
+  public supportedComponents: Component[] = [];
   public typesToBypass: string[] = [];
   public packageName: string;
   public valid: boolean;
