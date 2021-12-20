@@ -29,7 +29,7 @@ export default class MetadataRetriever {
     }
 
     let key = parent ? this._componentType + "_" + parent : this._componentType;
-    if (!SFPowerkit.getCache().get(key)) {
+    if (_.isNil(SFPowerkit.getCache().get(key))) {
       let items;
       if (this._componentType === "UserLicense") {
         items = await this.getUserLicense();
@@ -50,7 +50,16 @@ export default class MetadataRetriever {
       } else {
         items = await this.getComponentsFromOrgUsingListMetadata();
       }
+
+      //Set Full
       SFPowerkit.getCache().set(key, items);
+
+      for (const item of items) {
+        SFPowerkit.getCache().set(
+          `${this.componentType}_${item.fullName}`,
+          true
+        );
+      }
     }
     return SFPowerkit.getCache().get(key);
   }
@@ -61,8 +70,13 @@ export default class MetadataRetriever {
     let queryUtil = new QueryExecutor(this._conn);
     let items = await queryUtil.executeQuery(query, false);
 
+    if (items === undefined || items === null) {
+      items = [];
+    }
+
     return items.map((lic) => {
       lic.fullName = lic.Name;
+
       return lic;
     });
   }
@@ -71,6 +85,10 @@ export default class MetadataRetriever {
 
     let queryUtil = new QueryExecutor(this._conn);
     let items = await queryUtil.executeQuery(query, false);
+
+    if (items === undefined || items === null) {
+      items = [];
+    }
 
     items.map((tab) => {
       tab.fullName = tab.Name;
@@ -93,12 +111,15 @@ export default class MetadataRetriever {
       },
       apiversion
     );
+
     if (items === undefined || items === null) {
       items = [];
     }
-    if(!Array.isArray(items)){
-      items=[items];
+
+    if (!Array.isArray(items)) {
+      items = [items];
     }
+
     return items;
   }
 
@@ -107,26 +128,60 @@ export default class MetadataRetriever {
     parent?: string
   ): Promise<boolean> {
     let items = await this.getComponents(parent);
-    let foundItem = items.find((p) => {
-      return p.fullName === item;
-    });
-    foundItem = !_.isNil(foundItem);
+    //Do a cache hit before deep interospection
 
+    let foundItem = item
+      ? SFPowerkit.getCache().get(`${this.componentType}_${item}`)
+      : null;
+    if (_.isNil(foundItem) && !_.isNil(items)) {
+      foundItem = items.find((p) => {
+        return p?.fullName === item;
+      });
+      foundItem = !_.isNil(foundItem);
+    }
     return foundItem;
   }
 
   public async isComponentExistsInProjectDirectory(
     item: string
   ): Promise<boolean> {
-    let found: boolean = false;
     if (
       !_.isNil(this._metadataInProjectDirectory[this._componentType].components)
     ) {
-      found = this._metadataInProjectDirectory[
-        this._componentType
-      ].components.includes(item);
-    }
-    return found;
+      if (
+        !SFPowerkit.getCache().get(
+          `${this.componentType}_SOURCE_CACHE_AVAILABLE`
+        )
+      ) {
+        //Do a one time update
+        for (const component of this._metadataInProjectDirectory[
+          this._componentType
+        ].components) {
+          SFPowerkit.getCache().set(
+            `SOURCE_${this.componentType}_${component}`,
+            true
+          );
+        }
+       
+        SFPowerkit.getCache().set(
+          `${this.componentType}_SOURCE_CACHE_AVAILABLE`,
+          true
+        );
+      }
+
+      let found: boolean = false;
+
+      if (
+        !_.isNil(
+          SFPowerkit.getCache().get(`SOURCE_${this.componentType}_${item}`)
+        )
+      )
+      {
+        found = true;
+      }
+
+      return found;
+    } else return false;
   }
 
   public async isComponentExistsInProjectDirectoryOrInOrg(
@@ -138,9 +193,10 @@ export default class MetadataRetriever {
     found = await this.isComponentExistsInProjectDirectory(item);
     SFPowerkit.log(`Found in Directory? ${item} ${found}`, LoggerLevel.TRACE);
     if (found === false)
+    {
       found = await this.isComponentExistsInTheOrg(item, parent);
-
-    SFPowerkit.log(`Found in Org? ${item} ${found}`, LoggerLevel.TRACE);
+      SFPowerkit.log(`Found in Org? ${item} ${found}`, LoggerLevel.TRACE);
+    }
     return found;
   }
 
