@@ -756,7 +756,7 @@ USAGE
 
 OPTIONS
   -m, --manifest                                 (required) The path to xml containing the members that need to be destroyed. Instructions 
-                                                 [here Deleting Files from an Organization](https://developer.salesforce.com/docs/atlas.en-us.daas.meta/daas/daas_destructive_changes.htm)
+                                                 [here](https://developer.salesforce.com/docs/atlas.en-us.daas.meta/daas/daas_destructive_changes.htm)
 
   -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
 
