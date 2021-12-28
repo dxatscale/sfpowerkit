@@ -99,6 +99,11 @@ export default class ProfileReconcile extends ProfileActions {
         result.push(outputFile);
         resolve(result);
         return result;
+      }).catch(error=>{
+        SFPowerkit.log(
+          "|Error whipe processing file " + profileComponent + '. ERROR Message: ' + error.message,
+          LoggerLevel.ERROR
+        );
       });
     });
     return reconcilePromise;
