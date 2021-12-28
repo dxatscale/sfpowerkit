@@ -59,8 +59,22 @@ export default class ProfileReconcile extends ProfileActions {
     //Find Profiles to Reconcile
     let profilesToReconcile = this.findProfilesToReconcile(profileList);
 
+    let promises:Promise<any>[] = [];
     for (let count = 0; count < profilesToReconcile.length; count++) {
-      let profileComponent = profilesToReconcile[count];
+      let reconcilePromise = this.getReconcilePromise(profilesToReconcile[count], destFolder);
+      promises.push(reconcilePromise);
+    }
+    return Promise.all(promises).then(values =>{
+      for(let res of values){
+        result.push(...res);
+      }
+       return result;
+    });
+  }
+
+  private getReconcilePromise(profileComponent:string, destFolder:string):Promise<string[]>{
+    let reconcilePromise = new Promise<string[]>((resolve, reject) => {
+      let result: string[] = []; // Handle result of command execution
       SFPowerkit.log(
         "Reconciling profile " + profileComponent,
         LoggerLevel.INFO
@@ -68,25 +82,27 @@ export default class ProfileReconcile extends ProfileActions {
       let profileXmlString = fs.readFileSync(profileComponent);
       const parser = new xml2js.Parser({ explicitArray: true });
       const parseString = util.promisify(parser.parseString);
-      let parseResult = await parseString(profileXmlString);
-      let profileWriter = new ProfileWriter();
-
-      let profileObj: Profile = profileWriter.toProfile(parseResult.Profile); // as Profile
-
-      await this.reconcileProfile(profileObj);
-
-      //write profile back
-      let outputFile = profileComponent;
-      if (!_.isNil(destFolder)) {
-        outputFile = path.join(destFolder, path.basename(profileComponent));
-      }
-      profileWriter.writeProfile(profileObj, outputFile);
-
-      result.push(outputFile);
-    }
-    return result;
+      parseString(profileXmlString).then(parseResult =>{
+        let profileWriter = new ProfileWriter();
+        let profileObj: Profile = profileWriter.toProfile(parseResult.Profile); // as Profile
+        return profileObj;
+      }).then(profileObj=>{
+        return this.reconcileProfile(profileObj);
+      }).then(profileObj=>{
+        //write profile back
+        let outputFile = profileComponent;
+        if (!_.isNil(destFolder)) {
+          outputFile = path.join(destFolder, path.basename(profileComponent));
+        }
+        let profileWriter = new ProfileWriter();
+        profileWriter.writeProfile(profileObj, outputFile);
+        result.push(outputFile);
+        resolve(result);
+        return result;
+      });
+    });
+    return reconcilePromise;
   }
-
   private findProfilesToReconcile(profileList: string[]) {
     let profilesToReconcile;
     if (profileList.length > 0) {
@@ -692,7 +708,7 @@ export default class ProfileReconcile extends ProfileActions {
     }
   }
 
-  private async reconcileProfile(profileObj: Profile): Promise<void> {
+  private async reconcileProfile(profileObj: Profile): Promise<Profile> {
     SFPowerkit.log("Reconciling App", LoggerLevel.DEBUG);
     await this.reconcileApp(profileObj);
     SFPowerkit.log("Reconciling Classes", LoggerLevel.DEBUG);
@@ -725,5 +741,6 @@ export default class ProfileReconcile extends ProfileActions {
     await this.cleanupUserLicenses(profileObj);
     SFPowerkit.log("Reconciling  User Permissions", LoggerLevel.DEBUG);
     await this.reconcileUserPermissions(profileObj);
+    return profileObj;
   }
 }
