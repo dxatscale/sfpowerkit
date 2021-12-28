@@ -174,7 +174,7 @@ Elements supported included in your package testPackage
       LoggerLevel.INFO
     );
 
-    var sfdx_package = new SFDXPackage();
+    let sfdx_package = new SFDXPackage();
     sfdx_package.packageName = packageToBeScanned["package"];
 
     const resolver = new MetadataResolver();
@@ -214,7 +214,7 @@ Elements supported included in your package testPackage
             else
               {
                 sfdx_package.unsupportedComponents.push({name: component.name, type: component.type.name});
-              };
+              }
             }
             else
             {

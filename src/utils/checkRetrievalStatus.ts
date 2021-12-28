@@ -1,4 +1,4 @@
-import { Connection, DeployResult } from "jsforce";
+import { Connection } from "jsforce";
 import { delay } from "./delay";
 import { SFPowerkit } from "../sfpowerkit";
 import { LoggerLevel, SfdxError } from "@salesforce/core";
@@ -6,7 +6,7 @@ import { LoggerLevel, SfdxError } from "@salesforce/core";
 export async function checkRetrievalStatus(
   conn: Connection,
   retrievedId: string,
-  isToBeLoggedToConsole: boolean = true
+  isToBeLoggedToConsole = true
 ) {
   let metadata_result;
 

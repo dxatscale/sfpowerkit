@@ -8,8 +8,6 @@ import { checkDeploymentStatus } from "../../../../utils/checkDeploymentStatus";
 import { Messages, SfdxError } from "@salesforce/core";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 
-const spawn = require("child-process-promise").spawn;
-
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
 
@@ -23,8 +21,8 @@ const messages = Messages.loadMessages(
 export default class Create extends SFPowerkitCommand {
   public customlabel_fullname: string;
   public customlabel_categories: string;
-  public customlabel_language: string = "en_US";
-  public customlabel_protected: boolean = false;
+  public customlabel_language = "en_US";
+  public customlabel_protected = false;
   public customlabel_shortdescription: string;
   public customlabel_value: string;
 
@@ -132,7 +130,7 @@ export default class Create extends SFPowerkitCommand {
 
     this.customlabel_shortdescription = this.flags.shortdescription;
 
-    var customlabels_metadata: string = `<?xml version="1.0" encoding="UTF-8"?>
+    let customlabels_metadata = `<?xml version="1.0" encoding="UTF-8"?>
 <CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
     <labels>
         <fullName>${this.customlabel_fullname}</fullName>${
@@ -149,7 +147,7 @@ export default class Create extends SFPowerkitCommand {
     </labels>
 </CustomLabels>`;
 
-    var package_xml: string = `<?xml version="1.0" encoding="UTF-8"?>
+    let package_xml = `<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>*</members>
@@ -164,14 +162,14 @@ export default class Create extends SFPowerkitCommand {
     let targetpackagepath = "temp_sfpowerkit/mdapi/package.xml";
     fs.outputFileSync(targetpackagepath, package_xml);
 
-    var zipFile = "temp_sfpowerkit/package.zip";
+    const zipFile = "temp_sfpowerkit/package.zip";
     await zipDirectory("temp_sfpowerkit/mdapi", zipFile);
 
     //Deploy Rule
     conn.metadata.pollTimeout = 300;
     let deployId: AsyncResult;
 
-    var zipStream = fs.createReadStream(zipFile);
+    let zipStream = fs.createReadStream(zipFile);
     await conn.metadata.deploy(
       zipStream,
       { rollbackOnError: true, singlePackage: true },

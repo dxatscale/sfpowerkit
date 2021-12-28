@@ -33,7 +33,7 @@ export default class PackageVersionCoverage {
     )) as any;
     if (result && result.size > 0) {
       result.records.forEach(record => {
-        var packageCoverage = <PackageCoverage>{};
+        let packageCoverage = <PackageCoverage>{};
         packageCoverage.HasPassedCodeCoverageCheck =
           record.HasPassedCodeCoverageCheck;
         packageCoverage.coverage = record.CodeCoverage
@@ -62,7 +62,7 @@ export default class PackageVersionCoverage {
     versionNumber: string,
     packageName: string
   ): Promise<string> {
-    var whereClause = "";
+    let whereClause = "";
     if (versionId && versionId.length > 0) {
       whereClause = this.buildWhereFilter(
         "SubscriberPackageVersionId",
@@ -83,7 +83,7 @@ export default class PackageVersionCoverage {
   }
   // buid the where clause IN or = based on length
   private buildWhereFilter(key: string, value: string[]) {
-    var result = "";
+    let result = "";
     if (value.length > 1) {
       result = `${key} IN ('${value.join("','")}')`;
     } else {
@@ -98,7 +98,7 @@ export default class PackageVersionCoverage {
     nameKey: string,
     value: string
   ) {
-    var result = "";
+    let result = "";
     if (value.startsWith(idFilter)) {
       result = `${idKey} = '${value}' `;
     } else {
@@ -107,7 +107,7 @@ export default class PackageVersionCoverage {
     return result;
   }
   private buildVersionNumberFilter(versionNumber: string) {
-    var result = "";
+    let result = "";
     let versionNumberList = versionNumber.split(".");
     if (versionNumberList.length === 4) {
       result = `MajorVersion = ${versionNumberList[0]} AND MinorVersion = ${versionNumberList[1]} AND PatchVersion = ${versionNumberList[2]} AND BuildNumber = ${versionNumberList[3]}`;
@@ -125,5 +125,5 @@ interface PackageCoverage {
   packageId: string;
   packageVersionNumber: string;
   packageVersionId: string;
-  HasPassedCodeCoverageCheck: Boolean;
+  HasPassedCodeCoverageCheck: boolean;
 }

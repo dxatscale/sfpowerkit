@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { LoggerLevel, AuthInfo, Org } from "@salesforce/core";
 let request = require("request-promise-native");
 import { SFPowerkit } from "../sfpowerkit";
@@ -8,9 +9,9 @@ import Passwordgenerateimpl from "../impl/user/passwordgenerateimpl";
 
 const ORDER_BY_FILTER = " ORDER BY CreatedDate ASC";
 export default class ScratchOrgUtils {
-  public static isNewVersionCompatible: boolean = false;
-  private static isVersionCompatibilityChecked: boolean = false;
-  private static sfdxAuthUrlFieldExists: boolean = false;
+  public static isNewVersionCompatible = false;
+  private static isVersionCompatibilityChecked = false;
+  private static sfdxAuthUrlFieldExists = false;
 
 
   public static async checkForNewVersionCompatible(hubOrg: Org) {
@@ -71,7 +72,7 @@ export default class ScratchOrgUtils {
   public static async getScratchOrgLimits(hubOrg: Org, apiversion: string) {
     let conn = hubOrg.getConnection();
 
-    var query_uri = `${conn.instanceUrl}/services/data/v${apiversion}/limits`;
+    let query_uri = `${conn.instanceUrl}/services/data/v${apiversion}/limits`;
     const limits = await request({
       method: "get",
       url: query_uri,
@@ -145,7 +146,6 @@ export default class ScratchOrgUtils {
 
     let result;
 
-    try {
       if (adminEmail) {
         result = await sfdx.force.org.create(
           {
@@ -168,10 +168,6 @@ export default class ScratchOrgUtils {
           wait: 10,
         });
       }
-    } catch (error) {
-      //Poolcreateimpl to handle
-      throw error;
-    }
 
     SFPowerkit.log(JSON.stringify(result), LoggerLevel.TRACE);
 
@@ -441,7 +437,7 @@ export default class ScratchOrgUtils {
 
     return await retry(
       async (bail) => {
-        var query_uri = `${hubConn.instanceUrl}/services/data/v${apiversion}/query?q=SELECT+Id+FROM+ActiveScratchOrg+WHERE+ScratchOrg+=+'${scratchOrgId}'`;
+        let query_uri = `${hubConn.instanceUrl}/services/data/v${apiversion}/query?q=SELECT+Id+FROM+ActiveScratchOrg+WHERE+ScratchOrg+=+'${scratchOrgId}'`;
 
         const result = await request({
           method: "get",

@@ -3,6 +3,7 @@ import * as _ from "lodash";
 import { Connection } from "jsforce";
 import { MetadataInfo, METADATA_INFO } from "../metadataInfo";
 import QueryExecutor from "../../../utils/queryExecutor";
+import MetadataOperation from "../../../utils/metadataOperation";
 
 export default class MetadataRetriever {
   protected _componentType;
@@ -29,7 +30,7 @@ export default class MetadataRetriever {
     }
 
     let key = parent ? this._componentType + "_" + parent : this._componentType;
-    if (_.isNil(SFPowerkit.getCache().get(key))) {
+    if (SFPowerkit.getCache().get(key)==null) {
       let items;
       if (this._componentType === "UserLicense") {
         items = await this.getUserLicense();
@@ -48,12 +49,13 @@ export default class MetadataRetriever {
       } else if (this._componentType === METADATA_INFO.RecordType.xmlName) {
         items = await this.getRecordTypes();
       } else {
-        items = await this.getComponentsFromOrgUsingListMetadata();
+        items = await (new MetadataOperation(this._conn)).getComponentsFromOrgUsingListMetadata(this._componentType);
       }
 
-      //Set Full
+      //Set Full.. 
       SFPowerkit.getCache().set(key, items);
 
+        
       for (const item of items) {
         SFPowerkit.getCache().set(
           `${this.componentType}_${item.fullName}`,
@@ -95,7 +97,7 @@ export default class MetadataRetriever {
       return tab;
     });
 
-    let listMetadataItems = await this.getComponentsFromOrgUsingListMetadata();
+    let listMetadataItems = await new MetadataOperation(this._conn).getComponentsFromOrgUsingListMetadata(this._componentType);
     if (listMetadataItems.length > 0) {
       items = items.concat(listMetadataItems);
     }
@@ -103,37 +105,17 @@ export default class MetadataRetriever {
     return items;
   }
 
-  private async getComponentsFromOrgUsingListMetadata() {
-    const apiversion: string = await SFPowerkit.getApiVersion();
-    let items = await this._conn.metadata.list(
-      {
-        type: this._componentType,
-      },
-      apiversion
-    );
-
-    if (items === undefined || items === null) {
-      items = [];
-    }
-
-    if (!Array.isArray(items)) {
-      items = [items];
-    }
-
-    return items;
-  }
 
   public async isComponentExistsInTheOrg(
     item: string,
     parent?: string
-  ): Promise<boolean> {
+  ): Promise<boolean> {         
     let items = await this.getComponents(parent);
     //Do a cache hit before deep interospection
-
     let foundItem = item
       ? SFPowerkit.getCache().get(`${this.componentType}_${item}`)
       : null;
-    if (_.isNil(foundItem) && !_.isNil(items)) {
+    if (_.isNil(foundItem) && !_.isNil(items) && Array.isArray(items)) {
       foundItem = items.find((p) => {
         return p?.fullName === item;
       });
@@ -169,7 +151,7 @@ export default class MetadataRetriever {
         );
       }
 
-      let found: boolean = false;
+      let found = false;
 
       if (
         !_.isNil(
@@ -188,7 +170,7 @@ export default class MetadataRetriever {
     item: string,
     parent?: string
   ): Promise<boolean> {
-    let found: boolean = false;
+    let found = false;
     //First check in directory
     found = await this.isComponentExistsInProjectDirectory(item);
     SFPowerkit.log(`Found in Directory? ${item} ${found}`, LoggerLevel.TRACE);

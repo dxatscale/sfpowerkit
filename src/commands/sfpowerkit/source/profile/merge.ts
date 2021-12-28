@@ -154,7 +154,7 @@ export default class Merge extends SFPowerkitCommand {
       this.flags.loglevel == "debug"
     );
 
-    var mergedProfiles = await profileUtils.merge(
+    let mergedProfiles = await profileUtils.merge(
       argFolder,
       argProfileList || [],
       metadatas,

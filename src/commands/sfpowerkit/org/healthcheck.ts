@@ -1,4 +1,3 @@
-import { flags, Result } from "@salesforce/command";
 import { Connection, Messages } from "@salesforce/core";
 import { AnyJson } from "@salesforce/ts-types";
 import * as fs from "fs-extra";
@@ -36,10 +35,10 @@ export default class HealthCheck extends SFPowerkitCommand {
     this.flags.apiversion =
       this.flags.apiversion || (await conn.retrieveMaxApiVersion());
 
-    var healthResult = new HealthResult();
+    let healthResult = new HealthResult();
 
     healthResult.score = await this.getOrgHealthScore(conn);
-    var riskItems = await this.getOrgHealthHighRisks(conn);
+    let riskItems = await this.getOrgHealthHighRisks(conn);
 
     riskItems.forEach(element => {
       healthResult.highriskitems.push(element.Setting);
@@ -74,11 +73,11 @@ export default class HealthCheck extends SFPowerkitCommand {
   }
 
   public async getOrgHealthScore(conn: Connection) {
-    var encoded_querystring = querystring.escape(
+    let encoded_querystring = querystring.escape(
       `SELECT Score FROM SecurityHealthCheck`
     );
 
-    var query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=${encoded_querystring}`;
+    let query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=${encoded_querystring}`;
 
     //this.ux.log(`Query URI ${query_uri}`);
 
@@ -96,11 +95,11 @@ export default class HealthCheck extends SFPowerkitCommand {
   }
 
   public async getOrgHealthHighRisks(conn: Connection) {
-    var encoded_querystring = querystring.escape(
+    let encoded_querystring = querystring.escape(
       `SELECT RiskType, Setting, SettingGroup, OrgValue, StandardValue FROM SecurityHealthCheckRisks where RiskType='HIGH_RISK'`
     );
 
-    var query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=${encoded_querystring}`;
+    let query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=${encoded_querystring}`;
 
     // this.ux.log(`Query URI ${query_uri}`);
 
@@ -118,11 +117,11 @@ export default class HealthCheck extends SFPowerkitCommand {
   }
 
   public async getOrgHealthMediumRisks(conn: Connection) {
-    var encoded_querystring = querystring.escape(
+    let encoded_querystring = querystring.escape(
       `SELECT RiskType, Setting, SettingGroup, OrgValue, StandardValue FROM SecurityHealthCheckRisks where RiskType='MEDIUM_RISK'`
     );
 
-    var query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=${encoded_querystring}`;
+    let query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=${encoded_querystring}`;
 
     // this.ux.log(`Query URI ${query_uri}`);
 
@@ -140,11 +139,11 @@ export default class HealthCheck extends SFPowerkitCommand {
   }
 
   public async getOrgHealthLowRisks(conn: Connection) {
-    var encoded_querystring = querystring.escape(
+    let encoded_querystring = querystring.escape(
       `SELECT RiskType, Setting, SettingGroup, OrgValue, StandardValue FROM SecurityHealthCheckRisks where RiskType='LOW_RISK'`
     );
 
-    var query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=${encoded_querystring}`;
+    let query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=${encoded_querystring}`;
 
     // this.ux.log(`Query URI ${query_uri}`);
 
@@ -162,11 +161,11 @@ export default class HealthCheck extends SFPowerkitCommand {
   }
 
   public async getInformationalRisks(conn: Connection) {
-    var encoded_querystring = querystring.escape(
+    let encoded_querystring = querystring.escape(
       `SELECT RiskType, Setting, SettingGroup, OrgValue, StandardValue FROM SecurityHealthCheckRisks where RiskType='INFORMATIONAL'`
     );
 
-    var query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=${encoded_querystring}`;
+    let query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=${encoded_querystring}`;
 
     // this.ux.log(`Query URI ${query_uri}`);
 

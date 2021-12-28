@@ -213,12 +213,12 @@ export default class DiffUtil {
 
     let metadataFiles = new MetadataFiles();
 
-    var diffFile: DiffFile = {
+    let diffFile: DiffFile = {
       deleted: [],
       addedEdited: [],
     };
 
-    for (var i = 0; i < fileContents.length; i++) {
+    for (let i = 0; i < fileContents.length; i++) {
       if (statusRegEx.test(fileContents[i])) {
         let lineParts = fileContents[i].split(statusRegEx);
 
@@ -347,7 +347,7 @@ export default class DiffUtil {
   }
 
   public static addMemberToPackage(packageObj, name, member) {
-    let typeIsPresent: boolean = false;
+    let typeIsPresent = false;
     for (let i = 0; i < packageObj.length; i++) {
       if (packageObj[i].name === name) {
         typeIsPresent = true;

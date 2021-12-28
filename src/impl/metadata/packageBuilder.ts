@@ -166,7 +166,7 @@ export class Packagexml {
 
   private async buildInstalledPackageRegex() {
     // fetch and execute installed package promise to build regex
-    let ipRegexStr: string = "^(";
+    let ipRegexStr = "^(";
 
     let instPack = await this.conn.metadata.list(
       {
@@ -311,7 +311,7 @@ export class Packagexml {
     }
   }
 
-  private isAvailableinIncludeList(type: string, member: string = "") {
+  private isAvailableinIncludeList(type: string, member = "") {
     let found = false;
 
     for (let includeFilter of this.configs.includeFilters) {

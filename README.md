@@ -53,7 +53,7 @@ $ sfdx plugins:link
     - [`sfpowerkit:source:customlabel:create`](#sfpowerkitsourcecustomlabelcreate)
     - [`sfpowerkit:source:customlabel:reconcile`](#sfpowerkitsourcecustomlabelreconcile)
     - [`sfpowerkit:source:customlabel:buildmanifest`](#sfpowerkitsourcecustomlabelbuildmanifest)
-    - [`sfpowerkit:source:apextest:list [BETA]`](#sfpowerkitsourceapextestlist-beta)
+    - [`sfpowerkit:source:apextest:list`](#sfpowerkitsourceapextestlist)
     - [`sfpowerkit:source:apextestsuite:convert`](#sfpowerkitsourceapextestsuiteconvert)
     - [`sfpowerkit:source:picklist:generatepatch`](#sfpowerkitsourcepicklistgeneratepatch)
     - [`sfpowerkit:project:diff`](#sfpowerkitprojectdiff)
@@ -199,7 +199,7 @@ EXAMPLES
   $ sfdx sfpowerkit:source:profile:retrieve  -f "module1, module2, module3" -n "My Profile1, My profile2"  -u prod
 ```
 
-_See code: [src\commands\sfpowerkit\profile\retrieve.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/profile/retrieve.ts)_
+_See code: [src\commands\sfpowerkit\source\profile\retrieve.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/source/profile/retrieve.ts)_
 
 ### `sfpowerkit:source:profile:reconcile`
 
@@ -229,7 +229,7 @@ EXAMPLES
   $ sfdx sfpowerkit:source:profile:reconcile  -u myscratchorg -d destfolder
 ```
 
-_See code: [src\commands\sfpowerkit\profile\reconcile.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/profile/reconcile.ts)_
+_See code: [src\commands\sfpowerkit\source\profile\reconcile.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/source/profile/reconcile.ts)_
 
 ### `sfpowerkit:source:profile:merge`
 
@@ -358,7 +358,7 @@ EXAMPLE
   $ sfdx sfpowerkit:source:customlabel:buildmanifest -p project1/path/to/customlabelfile.xml,project2/path/to/customlabelfile.xml -x mdapiout/package.xml
 ```
 
-### `sfpowerkit:source:apextest:list [BETA]`
+### `sfpowerkit:source:apextest:list`
 
 This command helps to get list of all apex text classes located in source path
 
@@ -674,6 +674,7 @@ USAGE
   $ sfdx sfpowerkit:package:version:info [-v <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
+  -a, --alias=alias                                                                 Fetch and set an alias for the org
   -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
   -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
   --apiversion=apiversion                                                           API version

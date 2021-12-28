@@ -163,7 +163,7 @@ export default class Diff extends SFPowerkitCommand {
     }
 
     if (isOutputCSV) {
-      let csvOutput: string = `Object,API_Name,Type,Operation,Coordinates,Commit ID (${revisionFrom}),Commit ID (${revisionTo}),Filepath\n`;
+      let csvOutput = `Object,API_Name,Type,Operation,Coordinates,Commit ID (${revisionFrom}),Commit ID (${revisionTo}),Filepath\n`;
 
       for (let row of rowsToDisplay) {
         let rowCells: string[] = Object.values(row);

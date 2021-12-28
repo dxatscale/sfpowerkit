@@ -17,7 +17,7 @@ import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 import FileUtils from "../../../../utils/fileutils";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 
-var path = require("path");
+const path = require("path");
 const glob = require("glob");
 const spawn = require("child-process-promise").spawn;
 
@@ -236,7 +236,7 @@ export default class Generatepatch extends SFPowerkitCommand {
 
   private async generateStaticResource(packageToBeUsed: any) {
     // sfdx project json file running force source command
-    var sfdx_project_json: string = `{	
+    let sfdx_project_json = `{	
       "packageDirectories": [	
         {	
           "path": "${packageToBeUsed.path}",	
@@ -269,7 +269,7 @@ export default class Generatepatch extends SFPowerkitCommand {
       });
 
       //Generate zip file
-      var zipFile = `${this.folderPath}/${packageToBeUsed.package}_picklist.zip`;
+      let zipFile = `${this.folderPath}/${packageToBeUsed.package}_picklist.zip`;
       await zipDirectory(`${this.folderPath}/mdapi`, zipFile);
 
       //Create Static Resource Directory if not exist
@@ -280,7 +280,7 @@ export default class Generatepatch extends SFPowerkitCommand {
       fs.copyFileSync(zipFile, `${dir}${packageToBeUsed.package}_picklist.zip`);
 
       //Store it to static resources
-      var metadata: string = `<?xml version="1.0" encoding="UTF-8"?>	
+      const metadata = `<?xml version="1.0" encoding="UTF-8"?>	
       <StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">	
           <cacheControl>Public</cacheControl>	
           <contentType>application/zip</contentType>	

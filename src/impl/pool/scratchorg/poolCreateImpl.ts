@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-array-constructor */
 import ScratchOrgUtils, { ScratchOrg } from "../../../utils/scratchOrgUtils";
 import { Connection, LoggerLevel, Org, AuthInfo } from "@salesforce/core";
 import { SFPowerkit } from "../../../sfpowerkit";
@@ -21,7 +23,7 @@ export default class PoolCreateImpl {
   private ipRangeExecResultsAsObject;
   private limits;
   private scriptFileExists: boolean;
-  private totalAllocated: number = 0;
+  private totalAllocated = 0;
   private limiter;
   private scriptExecutorWrappedForBottleneck;
   private ipRangeRelaxerWrappedForBottleneck;
@@ -505,8 +507,8 @@ export default class PoolCreateImpl {
 
     //sort pooleconfig.poolusers based on priority
     poolUsers = poolUsers.sort((a, b) => a.priority - b.priority);
-    let totalMaxOrgRequired: number = 0,
-      totalMinOrgRequired: number = 0;
+    let totalMaxOrgRequired = 0,
+      totalMinOrgRequired = 0;
 
     poolUsers.forEach((pooluser) => {
       SFPowerkit.log(pooluser, LoggerLevel.TRACE);

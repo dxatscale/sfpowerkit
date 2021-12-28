@@ -7,8 +7,7 @@ import { Messages, SfdxError } from "@salesforce/core";
 import * as xml2js from "xml2js";
 import * as util from "util";
 // tslint:disable-next-line:ordered-imports
-var jsforce = require("jsforce");
-var path = require("path");
+const path = require("path");
 import { checkRetrievalStatus } from "../../../../utils/checkRetrievalStatus";
 import { checkDeploymentStatus } from "../../../../utils/checkDeploymentStatus";
 import { extract } from "../../../../utils/extract";
@@ -109,7 +108,7 @@ export default class Deactivate extends SFPowerkitCommand {
       throw new SfdxError("Unable to find the requested Matching Rule");
 
     //Extract Matching Rule
-    var zipFileName = "temp_sfpowerkit/unpackaged.zip";
+    const zipFileName = "temp_sfpowerkit/unpackaged.zip";
     fs.mkdirSync("temp_sfpowerkit");
     fs.writeFileSync(zipFileName, metadata_retrieve_result.zipFile, {
       encoding: "base64"
@@ -151,17 +150,17 @@ export default class Deactivate extends SFPowerkitCommand {
       this.ux.log(`Preparing Deactivation`);
 
       let builder = new xml2js.Builder();
-      var xml = builder.buildObject(retrieve_matchingRule);
+      let xml = builder.buildObject(retrieve_matchingRule);
       fs.writeFileSync(resultFile, xml);
 
-      var zipFile = "temp_sfpowerkit/package.zip";
+      const zipFile = "temp_sfpowerkit/package.zip";
       await zipDirectory("temp_sfpowerkit", zipFile);
 
       //Deploy Rule
       conn.metadata.pollTimeout = 300;
       let deployId: AsyncResult;
 
-      var zipStream = fs.createReadStream(zipFile);
+      let zipStream = fs.createReadStream(zipFile);
       await conn.metadata.deploy(
         zipStream,
         { rollbackOnError: true, singlePackage: true },

@@ -1,4 +1,4 @@
-import { Connection, fs, LoggerLevel, Org, SfdxError } from "@salesforce/core";
+import { fs, LoggerLevel, Org, SfdxError } from "@salesforce/core";
 import { SFPowerkit } from "../../../sfpowerkit";
 import ScratchOrgUtils, { ScratchOrg } from "../../../utils/scratchOrgUtils";
 import { getUserEmail } from "../../../utils/getUserDetails";
@@ -9,7 +9,7 @@ export default class PoolFetchImpl {
   private mypool: boolean;
   private sendToUser: string;
   private alias: string;
-  private setdefaultusername:boolean;
+  private setdefaultusername: boolean;
 
   public constructor(
     hubOrg: Org,
@@ -17,7 +17,7 @@ export default class PoolFetchImpl {
     mypool: boolean,
     sendToUser: string,
     alias: string,
-    setdefaultusername:boolean
+    setdefaultusername: boolean
   ) {
     this.hubOrg = hubOrg;
     this.tag = tag;
@@ -43,8 +43,8 @@ export default class PoolFetchImpl {
       availableSo = !isNewVersionCompatible
         ? results.records
         : results.records.filter(
-            (soInfo) => soInfo.Allocation_status__c === "Available"
-          );
+          (soInfo) => soInfo.Allocation_status__c === "Available"
+        );
     }
 
     let emaiId;
@@ -141,17 +141,17 @@ export default class PoolFetchImpl {
         LoggerLevel.INFO
       );
 
-      let authURLStoreCommand:string = `sfdx auth:sfdxurl:store -f soAuth.json`;
+      let authURLStoreCommand = `sfdx auth:sfdxurl:store -f soAuth.json`;
 
-      if(this.alias)
-         authURLStoreCommand+=` -a ${this.alias}`;
-      if(this.setdefaultusername)
-          authURLStoreCommand+=` --setdefaultusername`;
+      if (this.alias)
+        authURLStoreCommand += ` -a ${this.alias}`;
+      if (this.setdefaultusername)
+        authURLStoreCommand += ` --setdefaultusername`;
 
-         child_process.execSync(
-          authURLStoreCommand,
-          { encoding: "utf8", stdio: "inherit" }
-        );;
+      child_process.execSync(
+        authURLStoreCommand,
+        { encoding: "utf8", stdio: "inherit" }
+      );
 
       fs.unlinkSync("soAuth.json");
 

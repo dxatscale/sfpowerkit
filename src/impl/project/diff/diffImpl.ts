@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-array-constructor */
 import MetadataFiles from "../../metadata/metadataFiles";
 
 import * as xml2js from "xml2js";
@@ -146,7 +147,7 @@ export default class DiffImpl {
     SFPowerkit.log(filesToCopy, LoggerLevel.DEBUG);
 
     if (filesToCopy && filesToCopy.length > 0) {
-      for (var i = 0; i < filesToCopy.length; i++) {
+      for (let i = 0; i < filesToCopy.length; i++) {
         let filePath = filesToCopy[i].path;
         try {
           if (DiffImpl.checkForIngore(this.pathToIgnore, filePath)) {
@@ -207,6 +208,7 @@ export default class DiffImpl {
               path: path
             });
           });
+          packageDirectorieslist[0].default=true;
           let sfdx_project = {
             packageDirectories: packageDirectorieslist,
             namespace: "",
@@ -619,7 +621,7 @@ export default class DiffImpl {
   }
 
   private buildDestructiveTypeObj(destructiveObj, name, member) {
-    let typeIsPresent: boolean = false;
+    let typeIsPresent = false;
     for (let i = 0; i < destructiveObj.length; i++) {
       if (destructiveObj[i].name === name) {
         typeIsPresent = true;

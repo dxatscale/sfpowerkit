@@ -135,7 +135,7 @@ export default class Destruct extends SFPowerkitCommand {
     workingDirectory: string,
     apiversion: string
   ) {
-    let packageXml: string = `<?xml version="1.0" encoding="UTF-8"?>
+    let packageXml = `<?xml version="1.0" encoding="UTF-8"?>
     <Package xmlns="http://soap.sforce.com/2006/04/metadata">
         <types>
             <members>*</members>
@@ -166,7 +166,7 @@ export default class Destruct extends SFPowerkitCommand {
     conn.metadata.pollTimeout = 300;
     let deployId: AsyncResult;
 
-    var zipStream = fs.createReadStream(zipFile);
+    const zipStream = fs.createReadStream(zipFile);
     await conn.metadata.deploy(
       zipStream,
       { rollbackOnError: true, singlePackage: true },

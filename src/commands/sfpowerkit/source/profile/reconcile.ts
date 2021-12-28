@@ -128,6 +128,10 @@ export default class Reconcile extends SFPowerkitCommand {
     let result = [];
 
     try {
+
+      //Reset Cache
+      SFPowerkit.resetCache();
+
       let profileUtils = new ProfileReconcile(
         this.org,
         this.flags.loglevel == "debug"

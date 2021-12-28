@@ -77,24 +77,24 @@ export default class ProfileSync extends ProfileActions {
     SFPowerkit.log(metadataFiles, LoggerLevel.TRACE);
 
     if (metadataFiles.length > 0) {
-      for (var i = 0; i < metadataFiles.length; i++) {
-        var profileComponent = metadataFiles[i];
-        var profileName = path.basename(
+      for (let i = 0; i < metadataFiles.length; i++) {
+        let profileComponent = metadataFiles[i];
+        let profileName = path.basename(
           profileComponent,
           METADATA_INFO.Profile.sourceExtension
         );
 
-        var supported = !unsupportedprofiles.includes(profileName);
+        let supported = !unsupportedprofiles.includes(profileName);
         if (supported) {
           profilePathAssoc[profileName] = profileComponent;
           profileNames.push(profileName);
         }
       }
 
-      var i: number,
+      let i: number,
         j: number,
-        chunk: number = 10;
-      var temparray;
+        chunk = 10;
+      let temparray;
       SFPowerkit.log(
         `Number of profiles found in the target org ${profileNames.length}`,
         LoggerLevel.INFO
@@ -109,11 +109,11 @@ export default class ProfileSync extends ProfileActions {
       for (i = 0, j = profileNames.length; i < j; i += chunk) {
         temparray = profileNames.slice(i, i + chunk);
 
-        var metadataList = await this.profileRetriever.loadProfiles(temparray);
+        let metadataList = await this.profileRetriever.loadProfiles(temparray);
 
         let profileWriter = new ProfileWriter();
-        for (var count = 0; count < metadataList.length; count++) {
-          var profileObj = metadataList[count] as Profile;
+        for (let count = 0; count < metadataList.length; count++) {
+          let profileObj = metadataList[count] as Profile;
           SFPowerkit.log("Reconciling  Tabs", LoggerLevel.DEBUG);
           await this.reconcileTabs(profileObj);
           let filePath = profilePathAssoc[profileObj.fullName];
