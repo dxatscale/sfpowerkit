@@ -14,6 +14,7 @@ import { LoggerLevel } from "@salesforce/core";
 import UserPermissionBuilder from "../../metadata/builder/userPermissionBuilder";
 import MetadataRetriever from "../../metadata/retriever/metadataRetriever";
 import ProfileRetriever from "../../metadata/retriever/profileRetriever";
+import { Worker } from 'worker_threads';
 
 export default class ProfileReconcile extends ProfileActions {
   metadataFiles: MetadataFiles;
@@ -24,8 +25,6 @@ export default class ProfileReconcile extends ProfileActions {
     destFolder: string
   ): Promise<string[]> {
     //Get supported permissions from the org
-
-    let result: string[] = []; // Handle result of command execution
 
     this.createDestinationFolder(destFolder);
     SFPowerkit.log(
@@ -59,20 +58,58 @@ export default class ProfileReconcile extends ProfileActions {
     //Find Profiles to Reconcile
     let profilesToReconcile = this.findProfilesToReconcile(profileList);
 
-    let promises:Promise<any>[] = [];
-    for (let count = 0; count < profilesToReconcile.length; count++) {
-      let reconcilePromise = this.getReconcilePromise(profilesToReconcile[count], destFolder);
-      promises.push(reconcilePromise);
-    }
-    return Promise.all(promises).then(values =>{
-      for(let res of values){
-        result.push(...res);
-      }
-       return result;
-    });
+    return this.runWorkers(profilesToReconcile, destFolder);
   }
 
-  private getReconcilePromise(profileComponent:string, destFolder:string):Promise<string[]>{
+  private runWorkers(profilesToReconcile:string[], destFolder){
+    let workerCount=0;
+    let finishedWorkerCount =0;
+    let chunk=10; // One worker to process 10 profiles
+    let i:number,
+      j:number;
+
+    let result: string[] = []; 
+
+    let workerPromise = new Promise<string[]>((resolve, reject)=>{
+      for (i = 0, j = profilesToReconcile.length; i < j; i += chunk) {
+        workerCount++;
+        let temparray:string[] = profilesToReconcile.slice(i, i + chunk);
+        const worker = new Worker(path.resolve(__dirname, './worker.js') , {
+          workerData: {
+            profileChunk: temparray,
+            destFolder: destFolder,
+            targetOrg:  this.org.getUsername(),
+            loglevel:  SFPowerkit.logLevelString,
+            isJsonFormatEnabled:  SFPowerkit.isJsonFormatEnabled,
+            path: './reconcileWorker.ts'
+          }
+        });
+         
+        worker.on('message', (data) => {
+          result.push(...data);
+        });
+
+        worker.on('error', reject);
+        worker.on('exit', (code) => {
+          finishedWorkerCount++;
+          SFPowerkit.log(`Worker exited. Worker Count: ${workerCount}, Finished Worker Count: ${finishedWorkerCount}`, LoggerLevel.DEBUG);
+          if (code !== 0)
+            //reject(new Error(`Worker stopped with exit code ${code}`));
+            SFPowerkit.log(
+              `Worker stopped with exit code ${code}`,
+              LoggerLevel.ERROR
+            );
+
+          if(workerCount===finishedWorkerCount){
+            resolve(result);
+          }
+        });
+      }
+    });
+    return workerPromise;
+  }
+
+  public getReconcilePromise(profileComponent:string, destFolder:string):Promise<string[]>{
     let reconcilePromise = new Promise<string[]>((resolve, reject) => {
       let result: string[] = []; // Handle result of command execution
       SFPowerkit.log(
