@@ -68,7 +68,7 @@ export default class ProfileReconcile extends ProfileActions {
     let i:number,
       j:number;
 
-    let result: string[] = []; 
+    let result: string[] = [];
 
     let workerPromise = new Promise<string[]>((resolve, reject)=>{
       for (i = 0, j = profilesToReconcile.length; i < j; i += chunk) {

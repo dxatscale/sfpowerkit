@@ -1,5 +1,4 @@
 import { SfdxProject } from "@salesforce/core";
-import { isNullOrUndefined } from "util";
 import { UX } from "@salesforce/command";
 import chalk = require("chalk");
 const Logger = require("pino");
