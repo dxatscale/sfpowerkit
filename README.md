@@ -755,7 +755,8 @@ USAGE
   $ sfdx sfpowerkit:org:destruct -m <filepath>  [-u <string>] [--apiversion  <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
 
 OPTIONS
-  -m, --manifest                                 (required) The path to xml containing the members that need to be destructed,follow the instructions here to                                                create such a file [here](https://developer.salesforce.com/docs/atlas.en-us.daas.meta/daas/daas_destructive_changes.htm)
+  -m, --manifest                                 (required) The path to xml containing the members that need to be destroyed. Instructions 
+                                                 [here](https://developer.salesforce.com/docs/atlas.en-us.daas.meta/daas/daas_destructive_changes.htm)
 
   -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
 

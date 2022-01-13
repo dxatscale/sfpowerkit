@@ -2,17 +2,14 @@ import { flags } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import { JsonArray } from "@salesforce/ts-types";
 import { SfdxProject, SfdxError, Messages } from "@salesforce/core";
-import * as xml2js from "xml2js";
-import * as util from "util";
 import * as fs from "fs-extra";
-import * as rimraf from "rimraf";
 import * as path from "path";
-import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
+import { SFPowerkit, LoggerLevel, COLOR_WARNING, COLOR_SUCCESS, COLOR_KEY_MESSAGE } from "../../../sfpowerkit";
 import SFPowerkitCommand from "../../../sfpowerkitCommand";
-import { loadSFDX } from "../../../sfdxnode/GetNodeWrapper";
-import { sfdx } from "../../../sfdxnode/parallel";
+import { MetadataResolver } from '@salesforce/source-deploy-retrieve'
 
-
+//JSON Update from the below api
+//https://mdcoverage.secure.force.com/services/apexrest/report?version=54
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -25,8 +22,8 @@ export default class Valid extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:package:valid -n testPackage
-  Now analyzing testPackage
+`$ sfdx sfpowerkit:package:valid -n testPackage
+ Now analyzing testPackage
 Converting package testPackage
 Elements supported included in your package testPackage
 [
@@ -79,9 +76,6 @@ Elements supported included in your package testPackage
   private coverageJSON;
 
   public async execute(): Promise<AnyJson> {
-    rimraf.sync("temp_sfpowerkit");
-
-    loadSFDX();
 
     // Getting Project config
     const project = await SfdxProject.resolve();
@@ -112,14 +106,14 @@ Elements supported included in your package testPackage
     const result_store: SFDXPackage[] = [];
 
     if (packageToBeScanned != undefined) {
-      SFPowerkit.log(`Analyzing ${packageToBeScanned}`, LoggerLevel.INFO);
+      SFPowerkit.log(`Fetching components of ${packageToBeScanned}`, LoggerLevel.INFO);
       for (const sf_package of packageDirectories as JsonArray) {
         if (
           packageToBeScanned != undefined &&
           packageToBeScanned === sf_package["package"]
         ) {
           SFPowerkit.log(
-            `located ${packageToBeScanned} in project ${sf_package["path"]}`,
+            `Located ${packageToBeScanned} in project ${sf_package["path"]}`,
             LoggerLevel.DEBUG
           );
 
@@ -128,7 +122,7 @@ Elements supported included in your package testPackage
             result_store.push(result);
           } catch (e) {
             SFPowerkit.log(
-              `Error Occured Unable to analyze ${sf_package["package"]}`,
+              `Unable to analyze ${sf_package["package"]} due to ${e.message}`,
               LoggerLevel.ERROR
             );
           }
@@ -176,67 +170,66 @@ Elements supported included in your package testPackage
       LoggerLevel.DEBUG
     );
     SFPowerkit.log(
-      `Converting package ${packageToBeScanned["package"]}`,
+      `Analyzing package ${packageToBeScanned["package"]}`,
       LoggerLevel.INFO
     );
 
     var sfdx_package = new SFDXPackage();
     sfdx_package.packageName = packageToBeScanned["package"];
 
-    await sfdx.force.source.convert({
-      quiet: true,
-      outputdir: "temp_sfpowerkit/mdapi",
-      packagename: packageToBeScanned["package"],
-      rootdir: packageToBeScanned["path"]
-    });
+    const resolver = new MetadataResolver();
+    const components = resolver.getComponentsFromPath(packageToBeScanned["path"]);
+
 
     //Bypass package validation
     if (this.flags.bypass) {
       sfdx_package.typesToBypass = this.flags.bypass;
     }
 
-    let targetFilename = "temp_sfpowerkit/mdapi/package.xml";
+    SFPowerkit.log(
+      `Component,${JSON.stringify(components)}`,
+      LoggerLevel.TRACE
+    );
 
-    if (fs.existsSync(targetFilename)) {
-      const parser = new xml2js.Parser({ explicitArray: false });
-      const parseString = util.promisify(parser.parseString);
-      const existing = await parseString(fs.readFileSync(targetFilename));
+      if (Array.isArray(components)) {
+        for (const component of components) {
 
-      if (Array.isArray(existing.Package.types)) {
-        for (const types of existing.Package.types as JsonArray) {
-          if (this.coverageJSON.types[types["name"]] != undefined)
+              SFPowerkit.log(
+                `Component: ${component.type.name}`,
+                LoggerLevel.TRACE
+              );
+
+              SFPowerkit.log(
+                `Component Found : ${JSON.stringify( this.coverageJSON.types[component.type.name])}`,
+                LoggerLevel.TRACE
+              );
+
+            if(this.coverageJSON.types[component.type.name])
+            {
             if (
-              this.coverageJSON.types[types["name"]].channels
+              this.coverageJSON.types[component.type.name]?.channels
                 .unlockedPackagingWithoutNamespace
             )
-              sfdx_package.supportedTypes.push(`${types["name"]}`);
-            else sfdx_package.unsupportedtypes.push(`${types["name"]}`);
+              sfdx_package.supportedComponents.push({name: component.name, type: component.type.name});
+            else
+              {
+                sfdx_package.unsupportedComponents.push({name: component.name, type: component.type.name});
+              };
+            }
+            else
+            {
+              console.log(`Skipped analysis of ${COLOR_KEY_MESSAGE(component.type.name)}: ${component.name} as mdCoverage is inconsistent`)
+            }
         }
-      } else {
-        if (
-          this.coverageJSON.types[existing.Package.types["name"]] != undefined
-        )
-          if (
-            this.coverageJSON.types[existing.Package.types["name"]].channels
-              .unlockedPackagingWithoutNamespace
-          )
-            sfdx_package.supportedTypes.push(
-              `${existing.Package.types["name"]}`
-            );
-          else
-            sfdx_package.unsupportedtypes.push(
-              `${existing.Package.types["name"]}`
-            );
       }
-
       sfdx_package.processed = true;
 
-      if (sfdx_package.supportedTypes.length > 0) {
+      if (sfdx_package.supportedComponents.length > 0) {
         this.ux.log(
-          `Supported metadata in package ${packageToBeScanned["package"]}`
+          COLOR_SUCCESS(`Supported metadata in package ${packageToBeScanned["package"]}`)
         );
-        sfdx_package.supportedTypes.forEach(element => {
-          this.ux.log(element);
+        sfdx_package.supportedComponents.forEach(component => {
+          this.ux.log(`${COLOR_KEY_MESSAGE(component.type)}: ${component.name}`);
         });
         sfdx_package.valid = true;
         this.ux.log(
@@ -247,30 +240,25 @@ Elements supported included in your package testPackage
       //Bypass metadata in package validator
       if (
         sfdx_package.typesToBypass.length > 0 &&
-        sfdx_package.unsupportedtypes.length > 0
+        sfdx_package.unsupportedComponents.length > 0
       ) {
-        let itemsToRemove = [];
+        let itemsToRemove: string[] = [];
 
-        sfdx_package.typesToBypass = sfdx_package.typesToBypass.map(element =>
-          element.toLowerCase()
-        );
-        sfdx_package.unsupportedtypes = sfdx_package.unsupportedtypes.map(
-          element => element.toLowerCase()
-        );
-
-        itemsToRemove = sfdx_package.typesToBypass.filter(element =>
-          sfdx_package.unsupportedtypes.includes(element)
+        itemsToRemove = sfdx_package.typesToBypass.filter(type =>
+          sfdx_package.unsupportedComponents.find(component =>
+            component.type.toLowerCase() === type.toLowerCase()
+          ) ? true : false
         );
 
         if (itemsToRemove.length > 0) {
           this.ux.log(
-            `Unsupported metadata in package ${packageToBeScanned["package"]}  to bypass`
+            COLOR_WARNING(`Unsupported metadata in package ${packageToBeScanned["package"]}  to bypass`)
           );
           itemsToRemove.forEach(element => {
             this.ux.log(element);
           });
-          sfdx_package.unsupportedtypes = sfdx_package.unsupportedtypes.filter(
-            element => !itemsToRemove.includes(element)
+          sfdx_package.unsupportedComponents = sfdx_package.unsupportedComponents.filter(
+            component => !itemsToRemove.find(item => item.toLowerCase() === component.type.toLowerCase()) ? true : false
           );
           this.ux.log(
             `--------------------------------------------------------------------------------`
@@ -278,21 +266,20 @@ Elements supported included in your package testPackage
         }
       }
 
-      if (sfdx_package.unsupportedtypes.length > 0) {
+      if (sfdx_package.unsupportedComponents.length > 0) {
         this.ux.log(
-          `Unsupported metadata in package ${packageToBeScanned["package"]}`
+          COLOR_WARNING(`Unsupported metadata in package ${packageToBeScanned["package"]}`)
         );
-        sfdx_package.unsupportedtypes.forEach(element => {
-          this.ux.log(element);
+        sfdx_package.unsupportedComponents.forEach(component => {
+          this.ux.log(`${COLOR_KEY_MESSAGE(component.type)}: ${component.name}`);
         });
         sfdx_package.valid = false;
         this.ux.log(
           `--------------------------------------------------------------------------------`
         );
       }
-    }
 
-    rimraf.sync("temp_sfpowerkit");
+
 
     return sfdx_package;
   }
@@ -326,10 +313,15 @@ Elements supported included in your package testPackage
 }
 
 export class SFDXPackage {
-  public unsupportedtypes = [];
-  public supportedTypes = [];
-  public typesToBypass = [];
+  public unsupportedComponents: Component[] = [];
+  public supportedComponents: Component[] = [];
+  public typesToBypass: string[] = [];
   public packageName: string;
   public valid: boolean;
   public processed: boolean;
+}
+
+interface Component {
+  name: string;
+  type: string
 }
