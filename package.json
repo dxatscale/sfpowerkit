@@ -1,35 +1,11 @@
 {
   "name": "sfpowerkit",
-  "version": "4.0.2",
-  "release": "January 21",
+  "version": "4.0.3",
+  "release": "January 22",
   "author": {
     "name": "DXatScale",
     "email": "dxatscale@accenture.com"
   },
-  "contributors": [
-    {
-      "name": "Azlam Abdulsalam",
-      "email": "azlam.abdulsalam@accenture.com",
-      "url": "https://www.linkedin.com/in/azlam/"
-    },
-    {
-      "name": "Genoud Douanla Djatio",
-      "email": "magloiredjatio@gmail.com"
-    },
-    {
-      "name": "Manivasaga Murugesan",
-      "email": "manivasaga.murugesan@accenture.com",
-      "url": "https://www.linkedin.com/in/manivasaga-vengatesh-murugesan/"
-    },
-    {
-      "name": "Alan Ly",
-      "email": "alan.ly@accenture.com"
-    },
-    {
-      "name": "Henry Lay",
-      "email": "henry.lay@accenture.com"
-    }
-  ],
   "bugs": "https://github.com/accenture/sfpowerkit/issues",
   "dependencies": {
     "@salesforce/command": "^4.1.5",
