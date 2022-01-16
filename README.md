@@ -674,6 +674,7 @@ USAGE
   $ sfdx sfpowerkit:package:version:info [-v <string>] [-u <string>] [--apiversion <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
 
 OPTIONS
+  -a, --alias=alias                                                                 Fetch and set an alias for the org
   -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
   -v, --targetdevhubusername=targetdevhubusername                                   username or alias for the dev hub org; overrides default dev hub org
   --apiversion=apiversion                                                           API version
