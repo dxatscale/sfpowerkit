@@ -56,8 +56,15 @@ export default class ProfileReconcile extends ProfileActions {
     );
 
     //Find Profiles to Reconcile
-    let profilesToReconcile = this.findProfilesToReconcile(profileList);
+    let profilesToReconcile:string[] = this.findProfilesToReconcile(profileList);
 
+    //Reconcile one first, then do the rest later to use cache for subsequent one
+
+    if(profilesToReconcile.length>1)
+    {
+      await this.runWorkers([profilesToReconcile[0]],destFolder);
+      profilesToReconcile.shift();
+    }
     return this.runWorkers(profilesToReconcile, destFolder);
   }
 
@@ -65,7 +72,7 @@ export default class ProfileReconcile extends ProfileActions {
     let workerCount=0;
     let finishedWorkerCount =0;
     let chunk=10; // One worker to process 10 profiles
-    let i:number,
+    let i:number, 
       j:number;
 
     let result: string[] = [];
@@ -92,7 +99,6 @@ export default class ProfileReconcile extends ProfileActions {
         worker.on('error', reject);
         worker.on('exit', (code) => {
           finishedWorkerCount++;
-          SFPowerkit.log(`Worker exited. Worker Count: ${workerCount}, Finished Worker Count: ${finishedWorkerCount}`, LoggerLevel.DEBUG);
           if (code !== 0)
             //reject(new Error(`Worker stopped with exit code ${code}`));
             SFPowerkit.log(
@@ -112,10 +118,7 @@ export default class ProfileReconcile extends ProfileActions {
   public getReconcilePromise(profileComponent:string, destFolder:string):Promise<string[]>{
     let reconcilePromise = new Promise<string[]>((resolve, reject) => {
       let result: string[] = []; // Handle result of command execution
-      SFPowerkit.log(
-        "Reconciling profile " + profileComponent,
-        LoggerLevel.INFO
-      );
+     
       let profileXmlString = fs.readFileSync(profileComponent);
       const parser = new xml2js.Parser({ explicitArray: true });
       const parseString = util.promisify(parser.parseString);
@@ -124,7 +127,7 @@ export default class ProfileReconcile extends ProfileActions {
         let profileObj: Profile = profileWriter.toProfile(parseResult.Profile); // as Profile
         return profileObj;
       }).then(profileObj=>{
-        return this.reconcileProfile(profileObj);
+        return this.reconcileProfile(profileObj,profileComponent);
       }).then(profileObj=>{
         //write profile back
         let outputFile = profileComponent;
@@ -138,7 +141,7 @@ export default class ProfileReconcile extends ProfileActions {
         return result;
       }).catch(error=>{
         SFPowerkit.log(
-          "|Error whipe processing file " + profileComponent + '. ERROR Message: ' + error.message,
+          "Error while processing file " + profileComponent + '. ERROR Message: ' + error.message,
           LoggerLevel.ERROR
         );
       });
@@ -750,38 +753,42 @@ export default class ProfileReconcile extends ProfileActions {
     }
   }
 
-  private async reconcileProfile(profileObj: Profile): Promise<Profile> {
-    SFPowerkit.log("Reconciling App", LoggerLevel.DEBUG);
+  private async reconcileProfile(profileObj: Profile,profileName:string): Promise<Profile> {
+    SFPowerkit.log(
+      "Reconciling profile " + profileName,
+      LoggerLevel.INFO
+    );
+    SFPowerkit.log(`Reconciling App: ${profileName}`, LoggerLevel.DEBUG);
     await this.reconcileApp(profileObj);
-    SFPowerkit.log("Reconciling Classes", LoggerLevel.DEBUG);
+    SFPowerkit.log(`Reconciling Classes: ${profileName}`, LoggerLevel.DEBUG);
     await this.reconcileClasses(profileObj);
-    SFPowerkit.log("Reconciling Fields", LoggerLevel.DEBUG);
+    SFPowerkit.log(`Reconciling Fields: ${profileName}`, LoggerLevel.DEBUG);
     await this.reconcileFields(profileObj);
-    SFPowerkit.log("Reconciling Objects", LoggerLevel.DEBUG);
+    SFPowerkit.log(`Reconciling Objects: ${profileName}`, LoggerLevel.DEBUG);
     await this.reconcileObjects(profileObj);
-    SFPowerkit.log("Reconciling Pages", LoggerLevel.DEBUG);
+    SFPowerkit.log(`Reconciling Pages: ${profileName}`, LoggerLevel.DEBUG);
     await this.reconcilePages(profileObj);
-    SFPowerkit.log("Reconciling Layouts", LoggerLevel.DEBUG);
+    SFPowerkit.log(`Reconciling Layouts: ${profileName}`, LoggerLevel.DEBUG);
     await this.reconcileLayouts(profileObj);
-    SFPowerkit.log("Reconciling Record Types", LoggerLevel.DEBUG);
+    SFPowerkit.log(`Reconciling Record Types: ${profileName}`, LoggerLevel.DEBUG);
     await this.reconcileRecordTypes(profileObj);
-    SFPowerkit.log("Reconciling  Tabs", LoggerLevel.DEBUG);
+    SFPowerkit.log(`Reconciling  Tabs: ${profileName}`, LoggerLevel.DEBUG);
     await this.reconcileTabs(profileObj);
-    SFPowerkit.log("Reconciling  ExternalDataSources", LoggerLevel.DEBUG);
+    SFPowerkit.log(`Reconciling  ExternalDataSources: ${profileName}`, LoggerLevel.DEBUG);
     await this.reconcileExternalDataSource(profileObj);
-    SFPowerkit.log("Reconciling  CustomPermissions", LoggerLevel.DEBUG);
+    SFPowerkit.log(`Reconciling  CustomPermissions: ${profileName}`, LoggerLevel.DEBUG);
     await this.reconcileCustomPermission(profileObj);
-    SFPowerkit.log("Reconciling  CustomMetadata", LoggerLevel.DEBUG);
+    SFPowerkit.log(`Reconciling  CustomMetadata: ${profileName}`, LoggerLevel.DEBUG);
     await this.reconcileCustomMetadata(profileObj);
-    SFPowerkit.log("Reconciling  CustomSettings", LoggerLevel.DEBUG);
+    SFPowerkit.log(`Reconciling  CustomSettings: ${profileName}`, LoggerLevel.DEBUG);
     await this.reconcileCustomSettings(profileObj);
-    SFPowerkit.log("Reconciling  Flow", LoggerLevel.DEBUG);
+    SFPowerkit.log(`Reconciling  Flow: ${profileName}`, LoggerLevel.DEBUG);
     await this.reconcileFlow(profileObj);
-    SFPowerkit.log("Reconciling  Login Flows", LoggerLevel.DEBUG);
+    SFPowerkit.log(`Reconciling  Login Flows: ${profileName}`, LoggerLevel.DEBUG);
     await this.reconcileLoginFlow(profileObj);
-    SFPowerkit.log("Reconciling  User Licenses", LoggerLevel.DEBUG);
+    SFPowerkit.log(`Reconciling  User Licenses: ${profileName}`, LoggerLevel.DEBUG);
     await this.cleanupUserLicenses(profileObj);
-    SFPowerkit.log("Reconciling  User Permissions", LoggerLevel.DEBUG);
+    SFPowerkit.log(`Reconciling  User Permissions: ${profileName}`, LoggerLevel.DEBUG);
     await this.reconcileUserPermissions(profileObj);
     return profileObj;
   }
