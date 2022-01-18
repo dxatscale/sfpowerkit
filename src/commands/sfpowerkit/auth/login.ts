@@ -69,8 +69,7 @@ export default class Login extends SFPowerkitCommand {
     });
 
     await conn.login(this.flags.username, this.password, function(
-      err,
-      userInfo
+      err
     ) {
       if (err) {
         throw new SfdxError("Unable to connect to the target org");
