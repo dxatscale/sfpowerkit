@@ -8,8 +8,7 @@ import { Messages, SfdxError } from "@salesforce/core";
 import * as xml2js from "xml2js";
 import * as util from "util";
 // tslint:disable-next-line:ordered-imports
-var jsforce = require("jsforce");
-var path = require("path");
+let path = require("path");
 import { checkRetrievalStatus } from "../../../../utils/checkRetrievalStatus";
 import { extract } from "../../../../utils/extract";
 import getDefaults from "../../../../utils/getDefaults";
