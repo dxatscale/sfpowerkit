@@ -4,7 +4,6 @@ import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import SFPowerkitCommand from "../../../sfpowerkitCommand";
 import poolListImpl from "../../../impl/pool/scratchorg/poolListImpl";
 import { isNullOrUndefined } from "util";
-import P from "pino";
 import { ScratchOrg } from "../../../utils/scratchOrgUtils";
 import { Messages } from "@salesforce/core";
 
