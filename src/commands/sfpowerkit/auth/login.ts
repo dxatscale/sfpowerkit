@@ -6,7 +6,6 @@ import { Connection } from "jsforce";
 
 import { SfdxError, AuthInfo, Aliases, ConfigGroup, Messages } from "@salesforce/core";
 // tslint:disable-next-line:ordered-imports
-var jsforce = require("jsforce");
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
