@@ -3,8 +3,6 @@ import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import { AnyJson } from "@salesforce/ts-types";
 import * as fs from "fs-extra";
 import * as rimraf from "rimraf";
-
-const spawn = require("child-process-promise").spawn;
 import { zipDirectory } from "../../../../utils/zipDirectory";
 import { AsyncResult, DeployResult } from "jsforce";
 import { checkDeploymentStatus } from "../../../../utils/checkDeploymentStatus";
@@ -90,7 +88,6 @@ export default class Create extends SFPowerkitCommand {
     const apiversion = await conn.retrieveMaxApiVersion();
 
     // this.org is guaranteed because requiresUsername=true, as opposed to supportsUsername
-    const username = this.org.getUsername();
     const pathToCertificate = this.flags.pathtocertificate.valueOf();
     this.connectedapp_email = this.flags.email;
     this.connectedapp_label = this.flags.name;
