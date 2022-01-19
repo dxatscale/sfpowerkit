@@ -5,7 +5,7 @@ import rimraf = require("rimraf");
 import { AsyncResult, DeployResult } from "jsforce";
 import { Messages, SfdxError } from "@salesforce/core";
 // tslint:disable-next-line:ordered-imports
-var path = require("path");
+const path = require("path");
 import { checkRetrievalStatus } from "../../../utils/checkRetrievalStatus";
 import { checkDeploymentStatus } from "../../../utils/checkDeploymentStatus";
 import { extract } from "../../../utils/extract";
@@ -95,7 +95,7 @@ export default class Applypatch extends SFPowerkitCommand {
     if (!metadata_retrieve_result.zipFile)
       throw new SfdxError("Unable to find the requested Static Resource");
 
-    var zipFileName = `${this.folderPath}/unpackaged.zip`;
+    let zipFileName = `${this.folderPath}/unpackaged.zip`;
     fs.mkdirSync(this.folderPath);
     fs.writeFileSync(zipFileName, metadata_retrieve_result.zipFile, {
       encoding: "base64",
@@ -115,7 +115,7 @@ export default class Applypatch extends SFPowerkitCommand {
         conn.metadata.pollTimeout = 300;
         let deployId: AsyncResult;
 
-        var zipStream = fs.createReadStream(zipFileName);
+        let zipStream = fs.createReadStream(zipFileName);
         await conn.metadata.deploy(
           zipStream,
           { rollbackOnError: true, singlePackage: true },

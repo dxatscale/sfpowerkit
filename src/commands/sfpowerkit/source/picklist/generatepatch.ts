@@ -17,7 +17,7 @@ import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 import FileUtils from "../../../../utils/fileutils";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 
-var path = require("path");
+const path = require("path");
 const glob = require("glob");
 const spawn = require("child-process-promise").spawn;
 

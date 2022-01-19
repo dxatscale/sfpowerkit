@@ -13,8 +13,7 @@ export default class PackageInfo {
 
   public constructor(
     conn: Connection,
-    apiversion: string,
-    jsonOutput: boolean
+    apiversion: string
   ) {
     this.conn = conn;
     this.apiversion = apiversion;

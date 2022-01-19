@@ -48,7 +48,7 @@ export default class Info extends SFPowerkitCommand {
     this.flags.apiversion =
       this.flags.apiversion || (await conn.retrieveMaxApiVersion());
 
-    var result = await this.getSandboxInfo(conn, this.flags.name);
+    let result = await this.getSandboxInfo(conn, this.flags.name);
 
     SFPowerkit.log(`Successfully Retrieved Sandbox Details`, LoggerLevel.INFO);
 
@@ -58,7 +58,7 @@ export default class Info extends SFPowerkitCommand {
   }
 
   private async getSandboxInfo(conn: Connection, name: string) {
-    var query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=SELECT+Id,SandboxName+FROM+SandboxProcess+WHERE+SandboxName+in+('${name}')+ORDER+BY+EndDate+DESC`;
+    let query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=SELECT+Id,SandboxName+FROM+SandboxProcess+WHERE+SandboxName+in+('${name}')+ORDER+BY+EndDate+DESC`;
 
     const sandbox_query_result = await request({
       method: "get",

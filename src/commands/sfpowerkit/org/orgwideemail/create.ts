@@ -52,9 +52,9 @@ export default class OrgWideEmail extends SFPowerkitCommand {
     const apiversion = await this.org.getConnection().retrieveMaxApiVersion();
     const address: string = this.flags.address;
     const displayname: string = this.flags.displayname;
-    var allprofile = this.flags.allprofile ? true : false;
+    let allprofile = this.flags.allprofile ? true : false;
 
-    var orgWideAddressObj = {
+    const orgWideAddressObj = {
       Address: address,
       DisplayName: displayname,
       IsAllowAllProfiles: allprofile

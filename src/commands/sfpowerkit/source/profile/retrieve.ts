@@ -4,7 +4,7 @@ import {
   SfdxResult,
 } from "@salesforce/command";
 
-import { SfdxProject, SfdxError, Messages } from "@salesforce/core";
+import { SfdxError, Messages } from "@salesforce/core";
 import * as fs from "fs-extra";
 import * as _ from "lodash";
 import * as path from "path";

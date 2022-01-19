@@ -169,7 +169,7 @@ export default class MetadataRetriever {
         );
       }
 
-      let found: boolean = false;
+      let found = false;
 
       if (
         !_.isNil(
@@ -188,7 +188,7 @@ export default class MetadataRetriever {
     item: string,
     parent?: string
   ): Promise<boolean> {
-    let found: boolean = false;
+    let found = false;
     //First check in directory
     found = await this.isComponentExistsInProjectDirectory(item);
     SFPowerkit.log(`Found in Directory? ${item} ${found}`, LoggerLevel.TRACE);

@@ -1,6 +1,4 @@
 import * as fs from "fs-extra";
-import { Org } from "@salesforce/core";
-import { Connection } from "@salesforce/core";
 import * as xml2js from "xml2js";
 import * as util from "util";
 import * as _ from "lodash";

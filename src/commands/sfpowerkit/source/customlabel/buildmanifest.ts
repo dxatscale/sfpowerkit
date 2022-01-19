@@ -136,7 +136,7 @@ export default class Buildmanifest extends SFPowerkitCommand {
     return manifest;
   }
   createpackagexml(manifest: string) {
-    var package_xml: string = `<?xml version="1.0" encoding="UTF-8"?>
+    let package_xml = `<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
   <types>
       <members>*</members>

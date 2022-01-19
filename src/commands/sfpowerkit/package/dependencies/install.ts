@@ -193,7 +193,7 @@ export default class Install extends SFPowerkitCommand {
     }
 
     // Getting Package
-    let packagesToInstall: Map<String, JsonMap> = new Map<String, JsonMap>();
+    let packagesToInstall: Map<string, JsonMap> = new Map<string, JsonMap>();
 
     for (let packageDirectory of packageDirectories) {
       packageDirectory = packageDirectory as JsonMap;
@@ -310,7 +310,7 @@ export default class Install extends SFPowerkitCommand {
       for (let packageInfo of packagesToInstallArray) {
         packageInfo = packageInfo as JsonMap;
         if (
-          result.installedPackages.hasOwnProperty(
+          result.installedPackages.hasOwnProperty.call(
             packageInfo.packageVersionId.toString()
           )
         ) {

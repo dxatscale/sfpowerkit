@@ -1,6 +1,6 @@
 import {  flags } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
-let request = require("request-promise-native");
+const request = require("request-promise-native");
 import { Connection, Messages, SfdxError } from "@salesforce/core";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
@@ -53,7 +53,7 @@ export default class Refresh extends SFPowerkitCommand {
     this.flags.apiversion =
       this.flags.apiversion || (await conn.retrieveMaxApiVersion());
 
-    var result;
+    let result;
 
     const sandboxId = await this.getSandboxId(conn, this.flags.name);
     const uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/sobjects/SandboxInfo/${sandboxId}/`;

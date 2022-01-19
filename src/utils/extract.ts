@@ -1,5 +1,5 @@
 import * as fs from "fs-extra";
-var unzipper = require("unzip-stream");
+const unzipper = require("unzip-stream");
 
 export async function extract(path: string, location: string) {
   return new Promise<void>((resolve, reject) => {

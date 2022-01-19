@@ -21,7 +21,7 @@ export default class PoolCreateImpl {
   private ipRangeExecResultsAsObject;
   private limits;
   private scriptFileExists: boolean;
-  private totalAllocated: number = 0;
+  private totalAllocated = 0;
   private limiter;
   private scriptExecutorWrappedForBottleneck;
   private ipRangeRelaxerWrappedForBottleneck;
