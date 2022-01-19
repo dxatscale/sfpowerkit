@@ -207,6 +207,7 @@ export default class DiffImpl {
               path: path
             });
           });
+          packageDirectorieslist[0].default=true;
           let sfdx_project = {
             packageDirectories: packageDirectorieslist,
             namespace: "",
