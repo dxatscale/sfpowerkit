@@ -92,8 +92,8 @@ export default class Create extends SFPowerkitCommand {
     this.connectedapp_email = this.flags.email;
     this.connectedapp_label = this.flags.name;
 
-    var certificate = fs.readFileSync(pathToCertificate).toString();
-    var textblock = certificate.split("\n");
+    let certificate = fs.readFileSync(pathToCertificate).toString();
+    let textblock = certificate.split("\n");
     textblock.splice(0, 1);
     textblock.splice(-2, 1);
     certificate = textblock.join("\n");
@@ -102,7 +102,7 @@ export default class Create extends SFPowerkitCommand {
 
     this.connectedapp_consumerKey = this.createConsumerKey();
 
-    var connectedApp_metadata: string = `<?xml version="1.0" encoding="UTF-8"?>
+    let connectedApp_metadata = `<?xml version="1.0" encoding="UTF-8"?>
      <ConnectedApp xmlns="http://soap.sforce.com/2006/04/metadata">
          <contactEmail>${this.connectedapp_email}</contactEmail>
          <label>${this.connectedapp_label}</label>
@@ -116,7 +116,7 @@ export default class Create extends SFPowerkitCommand {
          </oauthConfig>
      </ConnectedApp>`;
 
-    var package_xml: string = `<?xml version="1.0" encoding="UTF-8"?>
+    let package_xml = `<?xml version="1.0" encoding="UTF-8"?>
      <Package xmlns="http://soap.sforce.com/2006/04/metadata">
          <types>
              <members>*</members>
@@ -133,14 +133,14 @@ export default class Create extends SFPowerkitCommand {
     let targetpackagepath = "temp_sfpowerkit/mdapi/package.xml";
     fs.outputFileSync(targetpackagepath, package_xml);
 
-    var zipFile = "temp_sfpowerkit/package.zip";
+    const zipFile = "temp_sfpowerkit/package.zip";
     await zipDirectory("temp_sfpowerkit/mdapi", zipFile);
 
     //Deploy Rule
     conn.metadata.pollTimeout = 300;
     let deployId: AsyncResult;
 
-    var zipStream = fs.createReadStream(zipFile);
+    const zipStream = fs.createReadStream(zipFile);
     await conn.metadata.deploy(
       zipStream,
       { rollbackOnError: true, singlePackage: true },
@@ -175,11 +175,11 @@ export default class Create extends SFPowerkitCommand {
   }
 
   public createConsumerKey() {
-    var text = "";
-    var possible =
+    let text = "";
+    let possible =
       "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.";
 
-    for (var i = 0; i < 32; i++)
+    for (let i = 0; i < 32; i++)
       text += possible.charAt(Math.floor(Math.random() * possible.length));
 
     return text;

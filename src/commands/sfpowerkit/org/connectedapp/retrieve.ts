@@ -8,7 +8,7 @@ import { Messages, SfdxError } from "@salesforce/core";
 import * as xml2js from "xml2js";
 import * as util from "util";
 // tslint:disable-next-line:ordered-imports
-let path = require("path");
+const path = require("path");
 import { checkRetrievalStatus } from "../../../../utils/checkRetrievalStatus";
 import { extract } from "../../../../utils/extract";
 import getDefaults from "../../../../utils/getDefaults";
@@ -92,7 +92,7 @@ export default class Retrieve extends SFPowerkitCommand {
     if (!metadata_retrieve_result.zipFile)
       throw new SfdxError("Unable to find the requested ConnectedApp");
 
-    var zipFileName = "temp_sfpowerkit/unpackaged.zip";
+    const zipFileName = "temp_sfpowerkit/unpackaged.zip";
 
     fs.mkdirSync("temp_sfpowerkit");
     fs.writeFileSync(zipFileName, metadata_retrieve_result.zipFile, {
