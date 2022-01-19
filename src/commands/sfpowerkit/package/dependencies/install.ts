@@ -365,9 +365,9 @@ export default class Install extends SFPowerkitCommand {
 
         await sfdx.force.package.install(flags, opts);
 
-        var endTime = new Date().valueOf();
+        let endTime = new Date().valueOf();
 
-        var timeElapsed = (endTime - startTime) / 1000;
+        let timeElapsed = (endTime - startTime) / 1000;
 
         this.ux.log(
           `Elapsed time in installing package  ${packageInfo.packageVersionId} is ${timeElapsed} seconds`
