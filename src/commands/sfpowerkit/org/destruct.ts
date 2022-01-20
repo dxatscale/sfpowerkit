@@ -166,7 +166,7 @@ export default class Destruct extends SFPowerkitCommand {
     conn.metadata.pollTimeout = 300;
     let deployId: AsyncResult;
 
-    var zipStream = fs.createReadStream(zipFile);
+    const zipStream = fs.createReadStream(zipFile);
     await conn.metadata.deploy(
       zipStream,
       { rollbackOnError: true, singlePackage: true },

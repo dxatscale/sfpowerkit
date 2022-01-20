@@ -1,20 +1,14 @@
-import { AnyJson, JsonArray, asJsonArray } from "@salesforce/ts-types";
+import { AnyJson } from "@salesforce/ts-types";
 import * as fs from "fs-extra";
 import { flags } from "@salesforce/command";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import * as rimraf from "rimraf";
-import { SfdxError, SfdxProject, LoggerLevel, Messages } from "@salesforce/core";
+import { SfdxError, LoggerLevel, Messages } from "@salesforce/core";
 import * as xml2js from "xml2js";
 import * as util from "util";
 const fg = require("fast-glob");
-
-import {
-  getPackageInfo,
-  getDefaultPackageInfo
-} from "../../../../utils/getPackageInfo";
-
 import { SFPowerkit } from "../../../../sfpowerkit";
-var path = require("path");
+const path = require("path");
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);

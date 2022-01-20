@@ -5,7 +5,6 @@ import RelaxIPRangeImpl from "../../../impl/org/relaxIPRangeImpl";
 import SFPowerkitCommand from "../../../sfpowerkitCommand";
 
 // tslint:disable-next-line:ordered-imports
-var path = require("path");
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);

@@ -1,7 +1,7 @@
 import { flags } from "@salesforce/command";
 import { AnyJson } from "@salesforce/ts-types";
 import { SFPowerkit } from "../../../../sfpowerkit";
-import { Messages, SfdxError } from "@salesforce/core";
+import { Messages } from "@salesforce/core";
 import PackageVersionCoverage from "../../../../impl/package/version/packageVersionCoverage";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 // Initialize Messages with the current plugin directory
