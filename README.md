@@ -53,7 +53,7 @@ $ sfdx plugins:link
     - [`sfpowerkit:source:customlabel:create`](#sfpowerkitsourcecustomlabelcreate)
     - [`sfpowerkit:source:customlabel:reconcile`](#sfpowerkitsourcecustomlabelreconcile)
     - [`sfpowerkit:source:customlabel:buildmanifest`](#sfpowerkitsourcecustomlabelbuildmanifest)
-    - [`sfpowerkit:source:apextest:list [BETA]`](#sfpowerkitsourceapextestlist-beta)
+    - [`sfpowerkit:source:apextest:list`](#sfpowerkitsourceapextestlist)
     - [`sfpowerkit:source:apextestsuite:convert`](#sfpowerkitsourceapextestsuiteconvert)
     - [`sfpowerkit:source:picklist:generatepatch`](#sfpowerkitsourcepicklistgeneratepatch)
     - [`sfpowerkit:project:diff`](#sfpowerkitprojectdiff)
@@ -358,7 +358,7 @@ EXAMPLE
   $ sfdx sfpowerkit:source:customlabel:buildmanifest -p project1/path/to/customlabelfile.xml,project2/path/to/customlabelfile.xml -x mdapiout/package.xml
 ```
 
-### `sfpowerkit:source:apextest:list [BETA]`
+### `sfpowerkit:source:apextest:list`
 
 This command helps to get list of all apex text classes located in source path
 
