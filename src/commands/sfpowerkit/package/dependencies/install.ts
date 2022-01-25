@@ -4,8 +4,9 @@
 import { flags } from "@salesforce/command";
 import { JsonArray, JsonMap } from "@salesforce/ts-types";
 import { Messages, SfdxError, SfdxProject } from "@salesforce/core";
-import { loadSFDX } from "../../../../sfdxnode/GetNodeWrapper";
-import { sfdx } from "../../../..//sfdxnode/parallel";
+import { exec } from "child_process";
+// import { loadSFDX } from "../../../../sfdxnode/GetNodeWrapper";
+// import { sfdx } from "../../../..//sfdxnode/parallel";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import { get18DigitSalesforceId } from "./../../../../utils/get18DigitSalesforceId";
@@ -14,7 +15,7 @@ let retry = require("async-retry");
 const packageIdPrefix = "0Ho";
 const packageVersionIdPrefix = "04t";
 const packageAliasesMap = [];
-const defaultWait = 60;
+const defaultWait = 60; 
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -280,7 +281,7 @@ export default class Install extends SFPowerkitCommand {
 
     if (packagesToInstall.size > 0) {
       //Load SFDX
-      loadSFDX();
+      // loadSFDX();
 
       // Installing Packages
       let installationKeyMap: Map<string, string> = new Map<string, string>();
@@ -363,7 +364,8 @@ export default class Install extends SFPowerkitCommand {
           }`
         );
 
-        await sfdx.force.package.install(flags, opts);
+        await exec(`sfdx force:package:install ${flags} ${opts}`);
+        // await sfdx.force.package.install(flags, opts);
 
         let endTime = new Date().valueOf();
 
