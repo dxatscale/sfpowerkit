@@ -6,7 +6,6 @@ import { Connection } from "jsforce";
 
 import { SfdxError, AuthInfo, Aliases, ConfigGroup, Messages } from "@salesforce/core";
 // tslint:disable-next-line:ordered-imports
-var jsforce = require("jsforce");
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -70,8 +69,7 @@ export default class Login extends SFPowerkitCommand {
     });
 
     await conn.login(this.flags.username, this.password, function(
-      err,
-      userInfo
+      err
     ) {
       if (err) {
         throw new SfdxError("Unable to connect to the target org");

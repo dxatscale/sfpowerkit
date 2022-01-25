@@ -32,7 +32,7 @@ export default class FileUtils {
    */
   public static getAllFilesSync(
     folder: string,
-    extension: string = ".xml"
+    extension = ".xml"
   ): string[] {
     let result: string[] = [];
     let pathExists = fs.existsSync(folder);

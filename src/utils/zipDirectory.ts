@@ -1,4 +1,4 @@
-var archiver = require("archiver");
+const archiver = require("archiver");
 import * as fs from "fs-extra";
 
 export async function zipDirectory(source, out) {

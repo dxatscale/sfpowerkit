@@ -65,7 +65,7 @@ export default class Usage extends SFPowerkitCommand {
   }
 
   private async getScratchOrgLimits(conn: Connection) {
-    var query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/limits`;
+    let query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/limits`;
 
     //this.ux.log(`Query URI ${query_uri}`);
 

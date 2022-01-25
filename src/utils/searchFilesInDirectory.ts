@@ -11,7 +11,7 @@ export function searchFilesInDirectory(
     return;
   }
 
-  var filesFound = [];
+  let filesFound = [];
 
   // const files = fs.readdirSync(dir);
   const found = getFilesInDirectory(dir, ext);

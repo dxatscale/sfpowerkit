@@ -8,8 +8,6 @@ import { checkDeploymentStatus } from "../../../../utils/checkDeploymentStatus";
 import { Messages, SfdxError } from "@salesforce/core";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 
-const spawn = require("child-process-promise").spawn;
-
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
 
@@ -23,8 +21,8 @@ const messages = Messages.loadMessages(
 export default class Create extends SFPowerkitCommand {
   public customlabel_fullname: string;
   public customlabel_categories: string;
-  public customlabel_language: string = "en_US";
-  public customlabel_protected: boolean = false;
+  public customlabel_language = "en_US";
+  public customlabel_protected = false;
   public customlabel_shortdescription: string;
   public customlabel_value: string;
 

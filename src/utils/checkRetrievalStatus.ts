@@ -1,4 +1,4 @@
-import { Connection, DeployResult } from "jsforce";
+import { Connection } from "jsforce";
 import { delay } from "./delay";
 import { SFPowerkit } from "../sfpowerkit";
 import { LoggerLevel, SfdxError } from "@salesforce/core";

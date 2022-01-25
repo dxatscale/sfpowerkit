@@ -67,7 +67,7 @@ export default class Create extends SFPowerkitCommand {
 
     const uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/sobjects/SandboxInfo/`;
 
-    var result;
+    let result;
 
     if (this.flags.clonefrom) {
       const sourceSandboxId = await this.getSandboxId(

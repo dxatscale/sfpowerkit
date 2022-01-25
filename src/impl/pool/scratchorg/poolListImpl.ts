@@ -1,4 +1,4 @@
-import { Connection, LoggerLevel, Org, SfdxError } from "@salesforce/core";
+import { LoggerLevel, Org } from "@salesforce/core";
 import { SFPowerkit } from "../../../sfpowerkit";
 import ScratchOrgUtils, { ScratchOrg } from "../../../utils/scratchOrgUtils";
 
