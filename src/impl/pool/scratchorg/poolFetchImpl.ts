@@ -151,7 +151,7 @@ export default class PoolFetchImpl {
          child_process.execSync(
           authURLStoreCommand,
           { encoding: "utf8", stdio: "inherit" }
-        );;
+        );
 
       fs.unlinkSync("soAuth.json");
 
