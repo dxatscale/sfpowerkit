@@ -125,5 +125,5 @@ interface PackageCoverage {
   packageId: string;
   packageVersionNumber: string;
   packageVersionId: string;
-  HasPassedCodeCoverageCheck: Boolean;
+  HasPassedCodeCoverageCheck: boolean;
 }
