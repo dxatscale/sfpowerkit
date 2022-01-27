@@ -219,7 +219,7 @@ export default class OrgCoverage extends SFPowerkitCommand {
       metadataMap
     );
 
-    let subjectKeyPrefixList: String[] = ["01p", "01q"];
+    let subjectKeyPrefixList: string[] = ["01p", "01q"];
 
     let packageMember: Map<
       string,
