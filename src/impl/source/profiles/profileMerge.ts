@@ -835,7 +835,7 @@ export default class ProfileMerge extends ProfileActions {
     //SfPowerKit.ux.log("Loading profiles from server ");
     var i: number,
       j: number,
-      chunk: number = 10;
+      chunk = 10;
     var temparray;
     SFPowerkit.log(
       `${profileNames.length}  profiles found in the directory `,

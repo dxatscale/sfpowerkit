@@ -236,7 +236,7 @@ export default class Generatepatch extends SFPowerkitCommand {
 
   private async generateStaticResource(packageToBeUsed: any) {
     // sfdx project json file running force source command
-    var sfdx_project_json: string = `{	
+    var sfdx_project_json = `{	
       "packageDirectories": [	
         {	
           "path": "${packageToBeUsed.path}",	
@@ -280,7 +280,7 @@ export default class Generatepatch extends SFPowerkitCommand {
       fs.copyFileSync(zipFile, `${dir}${packageToBeUsed.package}_picklist.zip`);
 
       //Store it to static resources
-      var metadata: string = `<?xml version="1.0" encoding="UTF-8"?>	
+      var metadata = `<?xml version="1.0" encoding="UTF-8"?>	
       <StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">	
           <cacheControl>Public</cacheControl>	
           <contentType>application/zip</contentType>	

@@ -173,7 +173,7 @@ export default class ProfileRetriever {
 
   private async completeObjects(
     profileObj: Profile,
-    access: boolean = true
+    access = true
   ): Promise<Profile> {
     let objPerm = ProfileRetriever.filterObjects(profileObj);
     if (objPerm === undefined) {
@@ -194,7 +194,7 @@ export default class ProfileRetriever {
       if (unsuportedObjects.includes(name)) {
         return;
       }
-      let objectIsPresent: boolean = false;
+      let objectIsPresent = false;
 
       for (let i = 0; i < objPerm.length; i++) {
         if (objPerm[i].object === name) {
@@ -232,7 +232,7 @@ export default class ProfileRetriever {
 
   private static buildObjPermArray(
     objectName: string,
-    access: boolean = true
+    access = true
   ): ProfileObjectPermissions {
     var newObjPerm = {
       allowCreate: access,

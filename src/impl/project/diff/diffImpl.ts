@@ -621,7 +621,7 @@ export default class DiffImpl {
   }
 
   private buildDestructiveTypeObj(destructiveObj, name, member) {
-    let typeIsPresent: boolean = false;
+    let typeIsPresent = false;
     for (let i = 0; i < destructiveObj.length; i++) {
       if (destructiveObj[i].name === name) {
         typeIsPresent = true;

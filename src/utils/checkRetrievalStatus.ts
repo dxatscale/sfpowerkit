@@ -6,7 +6,7 @@ import { LoggerLevel, SfdxError } from "@salesforce/core";
 export async function checkRetrievalStatus(
   conn: Connection,
   retrievedId: string,
-  isToBeLoggedToConsole: boolean = true
+  isToBeLoggedToConsole = true
 ) {
   let metadata_result;
 

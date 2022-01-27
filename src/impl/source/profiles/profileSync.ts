@@ -93,7 +93,7 @@ export default class ProfileSync extends ProfileActions {
 
       var i: number,
         j: number,
-        chunk: number = 10;
+        chunk = 10;
       var temparray;
       SFPowerkit.log(
         `Number of profiles found in the target org ${profileNames.length}`,

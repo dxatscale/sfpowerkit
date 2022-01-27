@@ -130,7 +130,7 @@ export default class Create extends SFPowerkitCommand {
 
     this.customlabel_shortdescription = this.flags.shortdescription;
 
-    var customlabels_metadata: string = `<?xml version="1.0" encoding="UTF-8"?>
+    var customlabels_metadata = `<?xml version="1.0" encoding="UTF-8"?>
 <CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
     <labels>
         <fullName>${this.customlabel_fullname}</fullName>${
@@ -147,7 +147,7 @@ export default class Create extends SFPowerkitCommand {
     </labels>
 </CustomLabels>`;
 
-    var package_xml: string = `<?xml version="1.0" encoding="UTF-8"?>
+    var package_xml = `<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>*</members>

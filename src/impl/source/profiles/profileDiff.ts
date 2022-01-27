@@ -234,7 +234,7 @@ export default class ProfileDiffImpl {
   public async retrieveProfiles(profileNames: string[], retrieveOrg) {
     let i: number,
       j: number,
-      chunk: number = 10,
+      chunk = 10,
       temparray: string[];
     let profileRetriever = new ProfileRetriever(retrieveOrg, false);
     let retrievePromises = [];

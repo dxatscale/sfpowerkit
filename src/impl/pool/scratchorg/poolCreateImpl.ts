@@ -507,8 +507,8 @@ export default class PoolCreateImpl {
 
     //sort pooleconfig.poolusers based on priority
     poolUsers = poolUsers.sort((a, b) => a.priority - b.priority);
-    let totalMaxOrgRequired: number = 0,
-      totalMinOrgRequired: number = 0;
+    let totalMaxOrgRequired = 0,
+      totalMinOrgRequired = 0;
 
     poolUsers.forEach((pooluser) => {
       SFPowerkit.log(pooluser, LoggerLevel.TRACE);

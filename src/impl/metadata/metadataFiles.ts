@@ -16,7 +16,7 @@ import { LoggerLevel } from "@salesforce/core";
 const SEP = /\/|\\/;
 
 export default class MetadataFiles {
-  public static sourceOnly: boolean = false;
+  public static sourceOnly = false;
   forceignore: any;
   public constructor() {
     if (fs.existsSync(".forceignore")) {

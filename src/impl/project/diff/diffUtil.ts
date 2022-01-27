@@ -347,7 +347,7 @@ export default class DiffUtil {
   }
 
   public static addMemberToPackage(packageObj, name, member) {
-    let typeIsPresent: boolean = false;
+    let typeIsPresent = false;
     for (let i = 0; i < packageObj.length; i++) {
       if (packageObj[i].name === name) {
         typeIsPresent = true;
