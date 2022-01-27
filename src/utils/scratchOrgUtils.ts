@@ -146,8 +146,6 @@ export default class ScratchOrgUtils {
 
     let result;
 
-    // eslint-disable-next-line no-useless-catch
-    try {
       if (adminEmail) {
         result = await sfdx.force.org.create(
           {
@@ -170,10 +168,6 @@ export default class ScratchOrgUtils {
           wait: 10,
         });
       }
-    } catch (error) {
-      //Poolcreateimpl to handle
-      throw error;
-    }
 
     SFPowerkit.log(JSON.stringify(result), LoggerLevel.TRACE);
 
