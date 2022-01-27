@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-array-constructor */
 import MetadataFiles from "../../metadata/metadataFiles";
 
 import * as xml2js from "xml2js";
