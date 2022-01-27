@@ -40,7 +40,7 @@ export default class OrgWideEmail extends SFPowerkitCommand {
     const apiversion = await this.org.getConnection().retrieveMaxApiVersion();
     const id: string = this.flags.emailid;
 
-    var orgWideAddressObj = {};
+    let orgWideAddressObj = {};
 
     this.ux.log("Verify email " + id);
 

@@ -123,9 +123,9 @@ export default class UserPermissionBuilder {
   }
 
   private mergeObjectAccess(objectAccessRequired: any[]) {
-    var objectMapping = {};
-    for (var i = 0; i < objectAccessRequired.length; i++) {
-      var objectAccess = objectAccessRequired[i];
+    let objectMapping = {};
+    for (let i = 0; i < objectAccessRequired.length; i++) {
+      let objectAccess = objectAccessRequired[i];
       if (objectMapping[objectAccess.object] != undefined) {
         //console.log('Adding access');
         this.addAccess(objectMapping[objectAccess.object], objectAccess);
@@ -214,7 +214,7 @@ export default class UserPermissionBuilder {
         profileOrPermissionSet.objectPermissions.length > 0
       ) {
         for (
-          var i = 0;
+          let i = 0;
           i < profileOrPermissionSet.objectPermissions.length;
           i++
         ) {
@@ -252,7 +252,7 @@ export default class UserPermissionBuilder {
       profileObj.userPermissions !== undefined &&
       profileObj.userPermissions.length > 0
     ) {
-      for (var i = 0; i < profileObj.userPermissions.length; i++) {
+      for (let i = 0; i < profileObj.userPermissions.length; i++) {
         let element = profileObj.userPermissions[i];
         if (element.name === permissionName) {
           element.enabled = true;
@@ -288,7 +288,7 @@ export default class UserPermissionBuilder {
   ): boolean {
     let found = false;
     if (!_.isNil(profileOrPermissionSet.userPermissions)) {
-      for (var i = 0; i < profileOrPermissionSet.userPermissions.length; i++) {
+      for (let i = 0; i < profileOrPermissionSet.userPermissions.length; i++) {
         let element = profileOrPermissionSet.userPermissions[i];
         if (element.name === permissionName) {
           found = element.enabled;

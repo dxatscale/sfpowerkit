@@ -147,7 +147,7 @@ export default class DiffImpl {
     SFPowerkit.log(filesToCopy, LoggerLevel.DEBUG);
 
     if (filesToCopy && filesToCopy.length > 0) {
-      for (var i = 0; i < filesToCopy.length; i++) {
+      for (let i = 0; i < filesToCopy.length; i++) {
         let filePath = filesToCopy[i].path;
         try {
           if (DiffImpl.checkForIngore(this.pathToIgnore, filePath)) {

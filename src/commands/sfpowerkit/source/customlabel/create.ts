@@ -130,7 +130,7 @@ export default class Create extends SFPowerkitCommand {
 
     this.customlabel_shortdescription = this.flags.shortdescription;
 
-    var customlabels_metadata = `<?xml version="1.0" encoding="UTF-8"?>
+    let customlabels_metadata = `<?xml version="1.0" encoding="UTF-8"?>
 <CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
     <labels>
         <fullName>${this.customlabel_fullname}</fullName>${
@@ -147,7 +147,7 @@ export default class Create extends SFPowerkitCommand {
     </labels>
 </CustomLabels>`;
 
-    var package_xml = `<?xml version="1.0" encoding="UTF-8"?>
+    let package_xml = `<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
         <members>*</members>
@@ -162,14 +162,14 @@ export default class Create extends SFPowerkitCommand {
     let targetpackagepath = "temp_sfpowerkit/mdapi/package.xml";
     fs.outputFileSync(targetpackagepath, package_xml);
 
-    var zipFile = "temp_sfpowerkit/package.zip";
+    const zipFile = "temp_sfpowerkit/package.zip";
     await zipDirectory("temp_sfpowerkit/mdapi", zipFile);
 
     //Deploy Rule
     conn.metadata.pollTimeout = 300;
     let deployId: AsyncResult;
 
-    var zipStream = fs.createReadStream(zipFile);
+    let zipStream = fs.createReadStream(zipFile);
     await conn.metadata.deploy(
       zipStream,
       { rollbackOnError: true, singlePackage: true },

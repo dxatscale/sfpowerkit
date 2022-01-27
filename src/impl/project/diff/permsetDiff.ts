@@ -117,7 +117,7 @@ export default abstract class PermsetDiff {
 
   private static async writePermset(permsetObj: any, filePath: string) {
     //Delete eampty arrays
-    for (var key in permsetObj) {
+    for (let key in permsetObj) {
       if (Array.isArray(permsetObj[key])) {
         //All top element must be arays exept non arrayProperties
         if (!nonArayProperties.includes(key) && permsetObj[key].length === 0) {
@@ -126,11 +126,11 @@ export default abstract class PermsetDiff {
       }
     }
     if (permsetObj.label != undefined) {
-      var builder = new xml2js.Builder({ rootName: "PermissionSet" });
+      let builder = new xml2js.Builder({ rootName: "PermissionSet" });
       permsetObj["$"] = {
         xmlns: "http://soap.sforce.com/2006/04/metadata"
       };
-      var xml = builder.buildObject(permsetObj);
+      let xml = builder.buildObject(permsetObj);
 
       fs.writeFileSync(filePath, xml);
     }

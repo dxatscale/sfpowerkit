@@ -213,12 +213,12 @@ export default class DiffUtil {
 
     let metadataFiles = new MetadataFiles();
 
-    var diffFile: DiffFile = {
+    let diffFile: DiffFile = {
       deleted: [],
       addedEdited: [],
     };
 
-    for (var i = 0; i < fileContents.length; i++) {
+    for (let i = 0; i < fileContents.length; i++) {
       if (statusRegEx.test(fileContents[i])) {
         let lineParts = fileContents[i].split(statusRegEx);
 

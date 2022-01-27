@@ -6,7 +6,7 @@ import * as xml2js from "xml2js";
 import * as util from "util";
 
 // tslint:disable-next-line:ordered-imports
-var path = require("path");
+const path = require("path");
 import { checkRetrievalStatus } from "../../utils/checkRetrievalStatus";
 import { checkDeploymentStatus } from "../../utils/checkDeploymentStatus";
 import { extract } from "../../utils/extract";
@@ -126,17 +126,17 @@ export default class RelaxIPRangeImpl {
       }
 
       let builder = new xml2js.Builder();
-      var xml = builder.buildObject(retrieve_securitySetting);
+      let xml = builder.buildObject(retrieve_securitySetting);
       fs.writeFileSync(resultFile, xml);
 
-      var zipFile = `${retriveLocation}/package.zip`;
+      let zipFile = `${retriveLocation}/package.zip`;
       await zipDirectory(retriveLocation, zipFile);
 
       //Deploy Trigger
       conn.metadata.pollTimeout = 300;
       let deployId: AsyncResult;
 
-      var zipStream = fs.createReadStream(zipFile);
+      let zipStream = fs.createReadStream(zipFile);
       await conn.metadata.deploy(
         zipStream,
         { rollbackOnError: true, singlePackage: true },

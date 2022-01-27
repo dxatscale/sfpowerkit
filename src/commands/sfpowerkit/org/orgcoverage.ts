@@ -76,7 +76,7 @@ export default class OrgCoverage extends SFPowerkitCommand {
     this.flags.apiversion =
       this.flags.apiversion || (await conn.retrieveMaxApiVersion());
 
-    var apexcoverage = new ApexCoverage();
+    let apexcoverage = new ApexCoverage();
     apexcoverage.coverage = await this.getApexCoverage(conn);
 
     this.ux.log(
@@ -93,11 +93,11 @@ export default class OrgCoverage extends SFPowerkitCommand {
   }
 
   private async getApexCoverage(conn: Connection) {
-    var encoded_querystring = querystring.escape(
+    let encoded_querystring = querystring.escape(
       `SELECT PercentCovered FROM ApexOrgWideCoverage`
     );
 
-    var query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=${encoded_querystring}`;
+    let query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=${encoded_querystring}`;
 
     const coverage_score_query_result = await request({
       method: "get",
