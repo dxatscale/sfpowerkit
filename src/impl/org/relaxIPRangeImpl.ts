@@ -18,8 +18,8 @@ export default class RelaxIPRangeImpl {
     conn: Connection,
     username: string,
     ipRangeToSet: any[],
-    addall: Boolean = false,
-    removeall: Boolean = false
+    addall = false,
+    removeall = false
   ): Promise<{ username: string; success: boolean }> {
     const apiversion = await conn.retrieveMaxApiVersion();
 
