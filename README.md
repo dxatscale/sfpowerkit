@@ -199,7 +199,7 @@ EXAMPLES
   $ sfdx sfpowerkit:source:profile:retrieve  -f "module1, module2, module3" -n "My Profile1, My profile2"  -u prod
 ```
 
-_See code: [src\commands\sfpowerkit\profile\retrieve.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/profile/retrieve.ts)_
+_See code: [src\commands\sfpowerkit\source\profile\retrieve.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/source/profile/retrieve.ts)_
 
 ### `sfpowerkit:source:profile:reconcile`
 
@@ -229,7 +229,7 @@ EXAMPLES
   $ sfdx sfpowerkit:source:profile:reconcile  -u myscratchorg -d destfolder
 ```
 
-_See code: [src\commands\sfpowerkit\profile\reconcile.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/profile/reconcile.ts)_
+_See code: [src\commands\sfpowerkit\source\profile\reconcile.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/source/profile/reconcile.ts)_
 
 ### `sfpowerkit:source:profile:merge`
 
