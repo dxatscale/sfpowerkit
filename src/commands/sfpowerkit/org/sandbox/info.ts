@@ -72,7 +72,7 @@ export default class Info extends SFPowerkitCommand {
     if (sandbox_query_result.records[0] == undefined)
       throw new SfdxError(`Unable to find a sandbox with name: ${name}`);
 
-    var result = await this.processSandboxInfo(
+    let result = await this.processSandboxInfo(
       sandbox_query_result.records,
       conn,
       this.flags.showonlylatest
@@ -82,10 +82,10 @@ export default class Info extends SFPowerkitCommand {
   }
 
   private async processSandboxInfo(sandboxRecords, conn, isShowOnlyLatest) {
-    var result = [];
+    let result = [];
 
     for (const item of sandboxRecords) {
-      var output = await this.getDetailedSandboxInfo(item.attributes.url, conn);
+      let output = await this.getDetailedSandboxInfo(item.attributes.url, conn);
       result.push(output);
       if (isShowOnlyLatest) break;
     }

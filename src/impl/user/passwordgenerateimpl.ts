@@ -19,7 +19,7 @@ export default class Passwordgenerateimpl {
       try {
         pwd = buffer.toString("utf8");
 
-        // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore TODO: expose `soap` on Connection however appropriate
         const soap = userConnection.soap;
         await soap.setPassword(userRecord[0].Id, pwd);

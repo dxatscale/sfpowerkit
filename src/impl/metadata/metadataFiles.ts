@@ -16,7 +16,7 @@ import { LoggerLevel } from "@salesforce/core";
 const SEP = /\/|\\/;
 
 export default class MetadataFiles {
-  public static sourceOnly: boolean = false;
+  public static sourceOnly = false;
   forceignore: any;
   public constructor() {
     if (fs.existsSync(".forceignore")) {
@@ -134,7 +134,7 @@ export default class MetadataFiles {
   }
 
   public loadComponents(srcFolder: string, checkIgnore = true): void {
-    var metadataFiles: string[] = FileUtils.getAllFilesSync(srcFolder);
+    let metadataFiles: string[] = FileUtils.getAllFilesSync(srcFolder);
     let keys = Object.keys(METADATA_INFO);
     if (Array.isArray(metadataFiles) && metadataFiles.length > 0) {
       metadataFiles.forEach((metadataFile) => {

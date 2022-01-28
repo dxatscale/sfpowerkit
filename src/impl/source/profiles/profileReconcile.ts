@@ -291,7 +291,7 @@ export default class ProfileReconcile extends ProfileActions {
     );
 
     if (profileObj.layoutAssignments !== undefined) {
-      var validArray = [];
+      let validArray = [];
       for (
         let count = 0;
         count < profileObj.layoutAssignments.length;

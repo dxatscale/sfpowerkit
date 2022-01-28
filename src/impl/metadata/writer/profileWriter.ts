@@ -74,8 +74,8 @@ export default class ProfileWriter {
   }
 
   public toProfile(profileObj: any): Profile {
-    var convertedObject: any = {};
-    for (var key in profileObj) {
+    let convertedObject: any = {};
+    for (let key in profileObj) {
       if (Array.isArray(profileObj[key])) {
         //All top element must be arays exept non arrayProperties
         if (nonArayProperties.includes(key)) {
@@ -86,9 +86,9 @@ export default class ProfileWriter {
               ? false
               : profileObj[key][0];
         } else {
-          var data = [];
-          for (var i = 0; i < profileObj[key].length; i++) {
-            var element = this.removeArrayNatureOnValue(profileObj[key][i]);
+          let data = [];
+          for (let i = 0; i < profileObj[key].length; i++) {
+            let element = this.removeArrayNatureOnValue(profileObj[key][i]);
             if (element !== "") {
               data.push(element);
             }
@@ -105,8 +105,8 @@ export default class ProfileWriter {
   }
 
   private removeArrayNatureOnValue(obj: any): any {
-    var toReturn = {};
-    for (var key in obj) {
+    let toReturn = {};
+    for (let key in obj) {
       if (Array.isArray(obj[key]) && obj[key].length > 0) {
         //All top element must be arays exept non arrayProperties
         toReturn[key] =

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Connection } from "jsforce/connection";
 
 const retry = require("async-retry");
@@ -11,22 +12,14 @@ export default class QueryExecutor {
     if (tooling) {
       results = await retry(
         async (bail) => {
-          try {
             return (await this.conn.tooling.query(query)) as any;
-          } catch (error) {
-            throw error;
-          }
         },
         { retries: 3, minTimeout: 2000 }
       );
     } else {
       results = await retry(
         async (bail) => {
-          try {
             return (await this.conn.query(query)) as any;
-          } catch (error) {
-            throw error;
-          }
         },
         { retries: 3, minTimeout: 2000 }
       );
@@ -48,22 +41,14 @@ export default class QueryExecutor {
     if (tooling) {
       result = await retry(
         async (bail) => {
-          try {
             return (await this.conn.tooling.queryMore(url)) as any;
-          } catch (error) {
-            throw error;
-          }
         },
         { retries: 3, minTimeout: 2000 }
       );
     } else {
       result = await retry(
         async (bail) => {
-          try {
             return (await this.conn.tooling.query(url)) as any;
-          } catch (error) {
-            throw error;
-          }
         },
         { retries: 3, minTimeout: 2000 }
       );

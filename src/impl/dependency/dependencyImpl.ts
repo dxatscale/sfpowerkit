@@ -200,7 +200,7 @@ export default class DependencyImpl {
   }
   public static async getMemberVsPackageNameMapByKeyPrefix(
     conn: Connection,
-    subjectKeyPrefixList: String[]
+    subjectKeyPrefixList: string[]
   ): Promise<Map<string, string>> {
     let query =
       `SELECT SubjectId, SubscriberPackage.Name ` +

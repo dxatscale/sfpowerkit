@@ -43,10 +43,10 @@ export default class ProfileMerge extends ProfileActions {
     } else if (!Array.isArray(profileObj.applicationVisibilities)) {
       profileObj.applicationVisibilities = [profileObj.applicationVisibilities];
     }
-    for (var i = 0; i < applicationVisibilities.length; i++) {
+    for (let i = 0; i < applicationVisibilities.length; i++) {
       let appVisibility = applicationVisibilities[i];
       let found = false;
-      for (var j = 0; j < profileObj.applicationVisibilities.length; j++) {
+      for (let j = 0; j < profileObj.applicationVisibilities.length; j++) {
         if (
           appVisibility.application ===
           profileObj.applicationVisibilities[j].application
@@ -87,10 +87,10 @@ export default class ProfileMerge extends ProfileActions {
     } else if (!Array.isArray(profileObj.classAccesses)) {
       profileObj.classAccesses = [profileObj.classAccesses];
     }
-    for (var i = 0; i < classes.length; i++) {
+    for (let i = 0; i < classes.length; i++) {
       let classAccess = classes[i];
       let found = false;
-      for (var j = 0; j < profileObj.classAccesses.length; j++) {
+      for (let j = 0; j < profileObj.classAccesses.length; j++) {
         if (classAccess.apexClass === profileObj.classAccesses[j].apexClass) {
           profileObj.classAccesses[j].enabled = classAccess.enabled;
           found = true;
@@ -127,10 +127,10 @@ export default class ProfileMerge extends ProfileActions {
     } else if (!Array.isArray(profileObj.fieldPermissions)) {
       profileObj.fieldPermissions = [profileObj.fieldPermissions];
     }
-    for (var i = 0; i < fieldPermissions.length; i++) {
+    for (let i = 0; i < fieldPermissions.length; i++) {
       let fieldPermission = fieldPermissions[i];
       let found = false;
-      for (var j = 0; j < profileObj.fieldPermissions.length; j++) {
+      for (let j = 0; j < profileObj.fieldPermissions.length; j++) {
         if (fieldPermission.field === profileObj.fieldPermissions[j].field) {
           profileObj.fieldPermissions[j].editable = fieldPermission.editable;
           if (
@@ -174,7 +174,7 @@ export default class ProfileMerge extends ProfileActions {
     } else if (!Array.isArray(profileObj.layoutAssignments)) {
       profileObj.layoutAssignments = [profileObj.layoutAssignments];
     }
-    for (var i = 0; i < layoutAssignments.length; i++) {
+    for (let i = 0; i < layoutAssignments.length; i++) {
       let layoutAssignment = layoutAssignments[i];
       let objName = layoutAssignment.layout.split("-")[0];
       profileObj.layoutAssignments = profileObj.layoutAssignments.filter(
@@ -185,10 +185,10 @@ export default class ProfileMerge extends ProfileActions {
       );
     }
 
-    for (var i = 0; i < layoutAssignments.length; i++) {
+    for (let i = 0; i < layoutAssignments.length; i++) {
       let layoutAssignment = layoutAssignments[i];
       let found = false;
-      for (var j = 0; j < profileObj.layoutAssignments.length; j++) {
+      for (let j = 0; j < profileObj.layoutAssignments.length; j++) {
         if (
           layoutAssignment.layout === profileObj.layoutAssignments[j].layout &&
           layoutAssignment.recordType ===
@@ -238,10 +238,10 @@ export default class ProfileMerge extends ProfileActions {
     } else if (!Array.isArray(profileObj.objectPermissions)) {
       profileObj.objectPermissions = [profileObj.objectPermissions];
     }
-    for (var i = 0; i < objectPermissions.length; i++) {
+    for (let i = 0; i < objectPermissions.length; i++) {
       let objPerm = objectPermissions[i];
       let found = false;
-      for (var j = 0; j < profileObj.objectPermissions.length; j++) {
+      for (let j = 0; j < profileObj.objectPermissions.length; j++) {
         if (objPerm.object === profileObj.objectPermissions[j].object) {
           profileObj.objectPermissions[j].allowCreate = objPerm.allowCreate;
           profileObj.objectPermissions[j].allowDelete = objPerm.allowDelete;
@@ -285,10 +285,10 @@ export default class ProfileMerge extends ProfileActions {
     } else if (!Array.isArray(profileObj.pageAccesses)) {
       profileObj.pageAccesses = [profileObj.pageAccesses];
     }
-    for (var i = 0; i < pages.length; i++) {
+    for (let i = 0; i < pages.length; i++) {
       let page = pages[i];
       let found = false;
-      for (var j = 0; j < profileObj.pageAccesses.length; j++) {
+      for (let j = 0; j < profileObj.pageAccesses.length; j++) {
         if (page.apexPage === profileObj.pageAccesses[j].apexPage) {
           profileObj.pageAccesses[j].enabled = page.enabled;
           found = true;
@@ -325,10 +325,10 @@ export default class ProfileMerge extends ProfileActions {
     } else if (!Array.isArray(profileObj.recordTypeVisibilities)) {
       profileObj.recordTypeVisibilities = [profileObj.recordTypeVisibilities];
     }
-    for (var i = 0; i < recordTypes.length; i++) {
+    for (let i = 0; i < recordTypes.length; i++) {
       let recordType = recordTypes[i];
       let found = false;
-      for (var j = 0; j < profileObj.recordTypeVisibilities.length; j++) {
+      for (let j = 0; j < profileObj.recordTypeVisibilities.length; j++) {
         if (
           recordType.recordType ===
           profileObj.recordTypeVisibilities[j].recordType
@@ -376,10 +376,10 @@ export default class ProfileMerge extends ProfileActions {
     } else if (!Array.isArray(profileObj.tabVisibilities)) {
       profileObj.tabVisibilities = [profileObj.tabVisibilities];
     }
-    for (var i = 0; i < tabs.length; i++) {
+    for (let i = 0; i < tabs.length; i++) {
       let tab = tabs[i];
       let found = false;
-      for (var j = 0; j < profileObj.tabVisibilities.length; j++) {
+      for (let j = 0; j < profileObj.tabVisibilities.length; j++) {
         if (tab.tab === profileObj.tabVisibilities[j].tab) {
           profileObj.tabVisibilities[j].visibility = tab.visibility;
           found = true;
@@ -810,7 +810,7 @@ export default class ProfileMerge extends ProfileActions {
     }
     let profileListToReturn: string[] = [];
     let profileNames: string[] = [];
-    var profilePathAssoc = {};
+    let profilePathAssoc = {};
     let profileStatus = await this.getProfileFullNamesWithLocalStatus(profiles);
     let metadataFiles = profileStatus.updated || [];
     if (fetchNewProfiles) {
@@ -819,13 +819,13 @@ export default class ProfileMerge extends ProfileActions {
       profileStatus.added = [];
     }
     metadataFiles.sort();
-    for (var i = 0; i < metadataFiles.length; i++) {
-      var profileComponent = metadataFiles[i];
-      var profileName = path.basename(
+    for (let i = 0; i < metadataFiles.length; i++) {
+      let profileComponent = metadataFiles[i];
+      let profileName = path.basename(
         profileComponent,
         METADATA_INFO.Profile.sourceExtension
       );
-      var supported = !unsupportedprofiles.includes(profileName);
+      let supported = !unsupportedprofiles.includes(profileName);
       if (supported) {
         profilePathAssoc[profileName] = profileComponent;
         profileNames.push(profileName);
@@ -833,10 +833,10 @@ export default class ProfileMerge extends ProfileActions {
     }
 
     //SfPowerKit.ux.log("Loading profiles from server ");
-    var i: number,
+    let i: number,
       j: number,
-      chunk: number = 10;
-    var temparray;
+      chunk = 10;
+    let temparray;
     SFPowerkit.log(
       `${profileNames.length}  profiles found in the directory `,
       LoggerLevel.DEBUG
@@ -851,11 +851,11 @@ export default class ProfileMerge extends ProfileActions {
         LoggerLevel.INFO
       );
       let profileList: string[] = [];
-      var metadataList = await this.profileRetriever.loadProfiles(temparray);
+      let metadataList = await this.profileRetriever.loadProfiles(temparray);
 
-      for (var count = 0; count < metadataList.length; count++) {
+      for (let count = 0; count < metadataList.length; count++) {
         //handle profile merge here
-        var profileObjFromServer = metadataList[count] as Profile;
+        let profileObjFromServer = metadataList[count] as Profile;
 
         if (metadatas !== undefined) {
           //remove metadatas from profile
@@ -866,16 +866,16 @@ export default class ProfileMerge extends ProfileActions {
         }
         //Check if the component exists in the file system
         let filePath = profilePathAssoc[profileObjFromServer.fullName];
-        var profileObj: Profile = profileObjFromServer;
+        let profileObj: Profile = profileObjFromServer;
         let profileWriter = new ProfileWriter();
 
-        var exists = fs.existsSync(filePath);
+        let exists = fs.existsSync(filePath);
         if (exists) {
           SFPowerkit.log(
             "Merging profile " + profileObjFromServer.fullName,
             LoggerLevel.DEBUG
           );
-          var profileXml = fs.readFileSync(filePath);
+          let profileXml = fs.readFileSync(filePath);
 
           const parser = new xml2js.Parser({ explicitArray: false });
           const parseString = util.promisify(parser.parseString);

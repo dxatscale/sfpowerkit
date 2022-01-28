@@ -109,7 +109,7 @@ export default class Deactivate extends SFPowerkitCommand {
       throw new SfdxError("Unable to find the requested Duplicate Rule");
 
     //Extract Duplicate Rule
-    var zipFileName = "temp_sfpowerkit/unpackaged.zip";
+    const zipFileName = "temp_sfpowerkit/unpackaged.zip";
     fs.mkdirSync("temp_sfpowerkit");
     fs.writeFileSync(zipFileName, metadata_retrieve_result.zipFile, {
       encoding: "base64"
@@ -140,17 +140,17 @@ export default class Deactivate extends SFPowerkitCommand {
       this.ux.log(`Preparing Deactivation`);
       retrieved_duplicaterule.DuplicateRule.isActive = "false";
       let builder = new xml2js.Builder();
-      var xml = builder.buildObject(retrieved_duplicaterule);
+      let xml = builder.buildObject(retrieved_duplicaterule);
       fs.writeFileSync(resultFile, xml);
 
-      var zipFile = "temp_sfpowerkit/package.zip";
+      let zipFile = "temp_sfpowerkit/package.zip";
       await zipDirectory("temp_sfpowerkit", zipFile);
 
       //Deploy Rule
       conn.metadata.pollTimeout = 300;
       let deployId: AsyncResult;
 
-      var zipStream = fs.createReadStream(zipFile);
+      let zipStream = fs.createReadStream(zipFile);
       await conn.metadata.deploy(
         zipStream,
         { rollbackOnError: true, singlePackage: true },

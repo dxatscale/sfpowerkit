@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-array-constructor */
 import Profile, {
   ProfileObjectPermissions,
   ProfileUserPermission,
@@ -74,7 +75,7 @@ export default class ProfileRetriever {
   private async completeUserPermissions(profileObj: Profile, profilePermissions): Promise<Profile> {
     let supportedPermissions = await this.fetchPermissions();
     // remove unsupported userLicence
-    var unsupportedLicencePermissions = this.getUnsupportedLicencePermissions(
+    let unsupportedLicencePermissions = this.getUnsupportedLicencePermissions(
       profileObj.userLicense
     );
     if (
@@ -83,7 +84,7 @@ export default class ProfileRetriever {
     ) {
       profileObj.userPermissions = profileObj.userPermissions.filter(
         (permission) => {
-          var supported = !unsupportedLicencePermissions.includes(
+          let supported = !unsupportedLicencePermissions.includes(
             permission.name
           );
           return supported;
@@ -104,13 +105,13 @@ export default class ProfileRetriever {
       return found === null || found === undefined;
     });
 
-    var isCustom = "" + profileObj.custom;
+    let isCustom = "" + profileObj.custom;
 
     if (isCustom == "false") {
       //Remove System permission for standard profile as Salesforce does not support edition on those profile
       delete profileObj.userPermissions;
     } else {
-      for (var i = 0; i < notRetrievedPermissions.length; i++) {
+      for (let i = 0; i < notRetrievedPermissions.length; i++) {
         let profileName = decodeURIComponent(profileObj.fullName);
         let profilePermission = profilePermissions.find(record=>{
           return record.Name==profileName;
@@ -123,7 +124,7 @@ export default class ProfileRetriever {
             permissionValue=false;
           }
         }
-        var newPermission: ProfileUserPermission = {
+        let newPermission: ProfileUserPermission = {
           enabled: permissionValue,
           name: notRetrievedPermissions[i],
         };
@@ -159,7 +160,7 @@ export default class ProfileRetriever {
       profileObj.userPermissions !== undefined &&
       profileObj.userPermissions.length > 0
     ) {
-      for (var i = 0; i < profileObj.userPermissions.length; i++) {
+      for (let i = 0; i < profileObj.userPermissions.length; i++) {
         let element = profileObj.userPermissions[i];
         if (element.name === permissionName) {
           found = element.enabled;
@@ -172,7 +173,7 @@ export default class ProfileRetriever {
 
   private async completeObjects(
     profileObj: Profile,
-    access: boolean = true
+    access = true
   ): Promise<Profile> {
     let objPerm = ProfileRetriever.filterObjects(profileObj);
     if (objPerm === undefined) {
@@ -193,7 +194,7 @@ export default class ProfileRetriever {
       if (unsuportedObjects.includes(name)) {
         return;
       }
-      let objectIsPresent: boolean = false;
+      let objectIsPresent = false;
 
       for (let i = 0; i < objPerm.length; i++) {
         if (objPerm[i].object === name) {
@@ -231,9 +232,9 @@ export default class ProfileRetriever {
 
   private static buildObjPermArray(
     objectName: string,
-    access: boolean = true
+    access = true
   ): ProfileObjectPermissions {
-    var newObjPerm = {
+    let newObjPerm = {
       allowCreate: access,
       allowDelete: access,
       allowEdit: access,
@@ -257,7 +258,7 @@ export default class ProfileRetriever {
       profileObj.userPermissions !== null &&
       profileObj.userPermissions.length > 0
     ) {
-      for (var i = 0; i < profileObj.userPermissions.length; i++) {
+      for (let i = 0; i < profileObj.userPermissions.length; i++) {
         let element = profileObj.userPermissions[i];
         if (element.name === permissionName) {
           element.enabled = true;
@@ -296,7 +297,7 @@ export default class ProfileRetriever {
       profileObj.objectPermissions !== undefined &&
       profileObj.objectPermissions.length > 0
     ) {
-      for (var i = 0; i < profileObj.objectPermissions.length; i++) {
+      for (let i = 0; i < profileObj.objectPermissions.length; i++) {
         profileObj.objectPermissions[i].allowRead = true;
         profileObj.objectPermissions[i].viewAllRecords = true;
       }
@@ -312,7 +313,7 @@ export default class ProfileRetriever {
       profileObj.objectPermissions !== undefined &&
       profileObj.objectPermissions.length > 0
     ) {
-      for (var i = 0; i < profileObj.objectPermissions.length; i++) {
+      for (let i = 0; i < profileObj.objectPermissions.length; i++) {
         profileObj.objectPermissions[i].allowRead = true;
         profileObj.objectPermissions[i].viewAllRecords = true;
       }
@@ -334,7 +335,7 @@ export default class ProfileRetriever {
 
   public getUnsupportedLicencePermissions(licence: string): any {
     if (!_.isNil(licence)) {
-      for (var i = 0; i < userLicenceMap.length; i++) {
+      for (let i = 0; i < userLicenceMap.length; i++) {
         if (
           userLicenceMap[i].name.trim().toLocaleLowerCase() ===
           licence.trim().toLocaleLowerCase()

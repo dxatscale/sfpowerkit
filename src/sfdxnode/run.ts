@@ -7,6 +7,7 @@ const realStdoutWrite = process.stdout.write;
 const realStderrWrite = process.stderr.write;
 let sfdxErrors = [];
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 process.on("cmdError", errObj => {
   sfdxErrors.push(errObj);

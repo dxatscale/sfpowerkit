@@ -161,11 +161,11 @@ export default class HealthCheck extends SFPowerkitCommand {
   }
 
   public async getInformationalRisks(conn: Connection) {
-    var encoded_querystring = querystring.escape(
+    let encoded_querystring = querystring.escape(
       `SELECT RiskType, Setting, SettingGroup, OrgValue, StandardValue FROM SecurityHealthCheckRisks where RiskType='INFORMATIONAL'`
     );
 
-    var query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=${encoded_querystring}`;
+    let query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=${encoded_querystring}`;
 
     // this.ux.log(`Query URI ${query_uri}`);
 

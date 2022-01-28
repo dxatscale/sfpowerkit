@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { SfdxError } from "@salesforce/core";
 import getDefaults from "../../../utils/getDefaults";
 import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
@@ -105,7 +106,7 @@ export default class MetadataSummaryInfoFetcher {
 
   public static async fetchMetadataSummaryFromAnOrg(
     conn: Connection,
-    isDisplayProgressBar: boolean = false,
+    isDisplayProgressBar = false,
     filterTypes: string[] = MetadataSummaryInfoFetcher.NotSupportedTypes
   ): Promise<Map<string, MetadataSummary>> {
     let metadataMap: Map<string, MetadataSummary> = new Map<

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-array-constructor */
 import {
   MetadataInfo,
   MetadataDescribe,
@@ -407,7 +408,7 @@ export default class OrgDiffImpl {
     if (!metadata_retrieve_result.zipFile)
       throw new Error("Error while retrieveing metadata");
 
-    var zipFileName = "temp_sfpowerkit/unpackaged.zip";
+    const zipFileName = "temp_sfpowerkit/unpackaged.zip";
 
     fs.mkdirSync("temp_sfpowerkit");
     fs.writeFileSync(zipFileName, metadata_retrieve_result.zipFile, {
