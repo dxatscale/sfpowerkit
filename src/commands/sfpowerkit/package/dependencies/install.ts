@@ -4,7 +4,7 @@
 import { flags } from "@salesforce/command";
 import { JsonArray, JsonMap } from "@salesforce/ts-types";
 import { Messages, SfdxError, SfdxProject } from "@salesforce/core";
-import { exec } from "child_process";
+import child_process = require("child_process");
 // import { loadSFDX } from "../../../../sfdxnode/GetNodeWrapper";
 // import { sfdx } from "../../../..//sfdxnode/parallel";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
@@ -364,8 +364,8 @@ export default class Install extends SFPowerkitCommand {
           }`
         );
 
-        await exec(`sfdx force:package:install ${flags} ${opts}`);
-        // await sfdx.force.package.install(flags, opts);
+        const sfdxPackageInstallCommand = `sfdx force:package:install ${opts} ${flags}`;
+        child_process.execSync(sfdxPackageInstallCommand, { encoding: "utf8", stdio: "inherit" });
 
         let endTime = new Date().valueOf();
 
