@@ -362,7 +362,7 @@ export default class Install extends SFPowerkitCommand {
         // Flag string iterator
         let flagArray = []
         Object.keys(flags).forEach(function(key){
-          flagArray.push(key, flags[key]).toString()
+          flagArray.push(key, flags[key])
         });
 
         const sfdxPackageInstallCommand = `sfdx force:package:install ${opts.join(" ")} ${flagArray.join(" ")}`;
