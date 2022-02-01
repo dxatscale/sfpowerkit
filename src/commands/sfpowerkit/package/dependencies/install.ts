@@ -5,8 +5,6 @@ import { flags } from "@salesforce/command";
 import { JsonArray, JsonMap } from "@salesforce/ts-types";
 import { Messages, SfdxError, SfdxProject } from "@salesforce/core";
 import child_process = require("child_process");
-// import { loadSFDX } from "../../../../sfdxnode/GetNodeWrapper";
-// import { sfdx } from "../../../..//sfdxnode/parallel";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import { get18DigitSalesforceId } from "./../../../../utils/get18DigitSalesforceId";
@@ -280,9 +278,6 @@ export default class Install extends SFPowerkitCommand {
     }
 
     if (packagesToInstall.size > 0) {
-      //Load SFDX
-      // loadSFDX();
-
       // Installing Packages
       let installationKeyMap: Map<string, string> = new Map<string, string>();
 
@@ -324,9 +319,9 @@ export default class Install extends SFPowerkitCommand {
         //Build up options
         let flags = {};
         // USERNAME
-        flags["targetusername"] = username;
+        flags["-u"] = username;
         // PACKAGE ID
-        flags["package"] = packageInfo.packageVersionId;
+        flags["--package"] = packageInfo.packageVersionId;
 
         // INSTALLATION KEY
         if (
@@ -339,11 +334,11 @@ export default class Install extends SFPowerkitCommand {
 
         // WAIT
         const wait = this.flags.wait ? this.flags.wait.trim() : defaultWait;
-        flags["wait"] = wait;
-        flags["publishwait"] = wait;
+        flags["-w"] = wait;
+        flags["-b"] = wait;
 
         if (this.flags.apexcompileonlypackage) {
-          flags["apexcompile"] = "package";
+          flags["-a"] = "package";
         }
 
         let opts = [];
@@ -364,7 +359,13 @@ export default class Install extends SFPowerkitCommand {
           }`
         );
 
-        const sfdxPackageInstallCommand = `sfdx force:package:install ${opts} ${flags}`;
+        // Flag string iterator
+        let flagArray = []
+        Object.keys(flags).forEach(function(key){
+          flagArray.push(key, flags[key]).toString()
+        });
+
+        const sfdxPackageInstallCommand = `sfdx force:package:install ${opts.join(" ")} ${flagArray.join(" ")}`;
         child_process.execSync(sfdxPackageInstallCommand, { encoding: "utf8", stdio: "inherit" });
 
         let endTime = new Date().valueOf();
