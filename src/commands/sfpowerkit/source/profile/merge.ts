@@ -115,6 +115,10 @@ export default class Merge extends SFPowerkitCommand {
     let argProfileList = this.flags.profilelist;
     let argMetadatas = this.flags.metadata;
 
+
+    SFPowerkit.initCache();
+
+    
     let metadatas = undefined;
     let invalidArguments = [];
 

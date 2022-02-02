@@ -1,9 +1,10 @@
 import { SfdxProject } from "@salesforce/core";
-import { isNullOrUndefined } from "util";
 import { UX } from "@salesforce/command";
 import chalk = require("chalk");
 const Logger = require("pino");
-const NodeCache = require("node-cache");
+import * as fs from "fs-extra";
+//import pino from 'pino'
+import SQLITEKeyValue from "./utils/sqlitekv"
 
 export enum LoggerLevel {
   TRACE = 10,
@@ -34,7 +35,8 @@ export class SFPowerkit {
   private static sourceApiVersion: any;
   private static logger;
   public static logLevel;
-  private static cache;
+  public static logLevelString;
+  private static cache:SQLITEKeyValue;
 
   static enableColor() {
     chalk.level = 2;
@@ -45,49 +47,47 @@ export class SFPowerkit {
   }
 
 
+  public static resetCache()
+  {
+          if(fs.existsSync('./sfpowerkit-cache.db'))
+             fs.unlinkSync('./sfpowerkit-cache.db');
+  }
+
+
+  public static initCache()
+  {
+    SFPowerkit.cache = new SQLITEKeyValue('./sfpowerkit-cache.db');
+    SFPowerkit.cache.init();
+  }
+
   public static getCache() {
-    if (SFPowerkit.cache == null) {
-      SFPowerkit.cache = new NodeCache();
-    }
     return SFPowerkit.cache;
   }
 
+
+
+
   public static setLogLevel(logLevel: string, isJsonFormatEnabled: boolean) {
     logLevel = logLevel.toLowerCase();
+    this.logLevelString=logLevel;
     this.isJsonFormatEnabled = isJsonFormatEnabled;
     if (!isJsonFormatEnabled) {
+      
       SFPowerkit.logger = Logger({
         name: "sfpowerkit",
         level: logLevel,
-        prettyPrint: {
-          levelFirst: true, // --levelFirst
-          colorize: true,
-          translateTime: true,
-          ignore: "pid,hostname", // --ignore
-        },
+        transport: {
+          target: 'pino-pretty',
+          options: {
+            levelFirst: true, // --levelFirst
+            colorize: true,
+            translateTime: true,
+            ignore: "pid,hostname", // --ignore
+          }
+        }
       });
     } else {
       //do nothing for now, need to put pino to move to file
-    }
-    switch (logLevel) {
-      case "trace":
-        SFPowerkit.logLevel = LoggerLevel.TRACE;
-        break;
-      case "debug":
-        SFPowerkit.logLevel = LoggerLevel.DEBUG;
-        break;
-      case "info":
-        SFPowerkit.logLevel = LoggerLevel.INFO;
-        break;
-      case "warn":
-        SFPowerkit.logLevel = LoggerLevel.WARN;
-        break;
-      case "error":
-        SFPowerkit.logLevel = LoggerLevel.ERROR;
-        break;
-      case "fatal":
-        SFPowerkit.logLevel = LoggerLevel.FATAL;
-        break;
     }
   }
 
@@ -149,7 +149,7 @@ export class SFPowerkit {
    * @param messageLoglevel Log level for the message
    */
   public static log(message: any, logLevel: LoggerLevel) {
-    if (isNullOrUndefined(this.logger)) return;
+    if (!this.logger) return;
     if (this.isJsonFormatEnabled) return;
     switch (logLevel) {
       case LoggerLevel.TRACE:
