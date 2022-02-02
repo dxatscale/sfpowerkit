@@ -20,11 +20,7 @@ export default class SQLITEKeyValue {
     let q = "SELECT * FROM kv WHERE k = ?";
 
     let data = [];
-    try {
-      data = this.sqlite.prepare(q).all(key);
-    } catch (err) {
-      throw err;
-    }
+    data = this.sqlite.prepare(q).all(key);
 
     // parse the values
     data = data.map((x) => {
