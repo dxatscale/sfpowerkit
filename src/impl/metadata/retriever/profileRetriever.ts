@@ -43,30 +43,32 @@ export default class ProfileRetriever {
 
     let profilePermissions = await this.fetchPermissionsWithValue(profileNames);
 
-    let metadata = (await this.conn.metadata.readSync(
+    let profiles = (await this.conn.metadata.readSync(
       "Profile",
       profileNames
     )) as any;
-    if (Array.isArray(metadata)) {
-      for (let i = 0; i < metadata.length; i++) {
-        await this.handlePermissions(metadata[i], profilePermissions);
-        metadata[i] = await this.completeObjects(metadata[i], false);
+    if (Array.isArray(profiles)) {
+      for (let i = 0; i < profiles.length; i++) {
+        await this.handlePermissions(profiles[i], profilePermissions);
+        profiles[i] = await this.completeObjects(profiles[i], false);
       }
-      return metadata;
-    } else if (metadata !== null) {
-      await this.handlePermissions(metadata, profilePermissions);
-      metadata = await this.completeObjects(metadata, false);
-      return [metadata];
+      return profiles;
+    } else if (profiles !== null) {
+      await this.handlePermissions(profiles, profilePermissions);
+      profiles = await this.completeObjects(profiles, false);
+      return [profiles];
     } else {
       return [];
     }
   }
 
   public async handlePermissions(profileObj: Profile, permissions): Promise<Profile> {
+
     await this.handleViewAllDataPermission(profileObj);
     await this.handleInstallPackagingPermission(profileObj);
-
+    
     this.handleQueryAllFilesPermission(profileObj);
+
     //Check if the permission QueryAllFiles is true and give read access to objects
     profileObj = await this.completeUserPermissions(profileObj, permissions);
 

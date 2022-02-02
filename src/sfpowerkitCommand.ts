@@ -21,6 +21,8 @@ export default abstract class SFPowerkitCommand extends SfdxCommand {
    */
   async run(): Promise<any> {
     SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
+    SFPowerkit.resetCache();
+    SFPowerkit.initCache();
 
     // Always enable color by default
     if (process.env.SFPOWERKIT_NOCOLOR) SFPowerkit.disableColor();

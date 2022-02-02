@@ -129,8 +129,7 @@ export default class Reconcile extends SFPowerkitCommand {
 
     try {
 
-      //Reset Cache
-      SFPowerkit.resetCache();
+
 
       let profileUtils = new ProfileReconcile(
         this.org,
