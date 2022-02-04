@@ -143,20 +143,21 @@ export default class ScratchOrgUtils {
     );
 
     let result;
-    const sfdxForceCommand = `sfdx force:org:create -f ${config_file_path} -d ${expiry} -a SO${id} -w 10 -v ${hubOrg.getUsername()}`;
+    let getSFDXCommand = `sfdx force:org:create -f ${config_file_path} -d ${expiry} -a SO${id} -w 10 -v ${hubOrg.getUsername()} --json`;
 
     if (adminEmail) {
-      result = await child_process.execSync(sfdxForceCommand, { encoding: "utf8", stdio: "inherit" }), `adminEmail=${adminEmail}`;
-    } else {
-      result = await child_process.execSync(sfdxForceCommand, { encoding: "utf8", stdio: "inherit" });
+      getSFDXCommand += ` adminEmail=${adminEmail}`
     }
 
-    SFPowerkit.log(JSON.stringify(result), LoggerLevel.TRACE);
+    result = child_process.execSync(getSFDXCommand, { stdio: "pipe" });
+    const resultObject = JSON.parse(result);
+
+    SFPowerkit.log(JSON.stringify(resultObject), LoggerLevel.TRACE);
 
     let scratchOrg: ScratchOrg = {
       alias: `SO${id}`,
-      orgId: result.orgId,
-      username: result.username,
+      orgId: resultObject.result.orgId,
+      username: resultObject.result.username,
       signupEmail: adminEmail ? adminEmail : "",
     };
 

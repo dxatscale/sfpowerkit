@@ -11,7 +11,6 @@ import RelaxIPRangeImpl from "../../org/relaxIPRangeImpl";
 import FileUtils from "../../../utils/fileutils";
 import * as path from "path";
 import * as rimraf from "rimraf";
-import { SfdxApi } from "../../../sfdxnode/types";
 import Ajv from "ajv";
 
 export default class PoolCreateImpl {
@@ -33,7 +32,6 @@ export default class PoolCreateImpl {
     private poolconfigFilePath: string,
     private hubOrg: Org,
     private apiversion: string,
-    private sfdx: SfdxApi,
     private batchSize: number
   ) {
     this.limiter = new Bottleneck({
@@ -346,8 +344,8 @@ export default class PoolCreateImpl {
 
   private async generateScratchOrgs() {
     //Generate Scratch Orgs
-    let soCount=1;
-    for (let [index,poolUser] of this.poolConfig.poolUsers.entries()) {
+    let soCount = 1;
+    for (let [index, poolUser] of this.poolConfig.poolUsers.entries()) {
       let userCount = 1;
       poolUser.scratchOrgs = new Array<ScratchOrg>();
       for (let i = 0; i < poolUser.to_allocate; i++) {
@@ -355,8 +353,7 @@ export default class PoolCreateImpl {
           `Creating Scratch  Org ${soCount}/${this.totalToBeAllocated}`,
           LoggerLevel.INFO
         );
-        if(this.poolConfig.pool.user_mode)
-        {
+        if (this.poolConfig.pool.user_mode) {
           SFPowerkit.log(
             `Scratch  Org allocation:${poolUser.username}  alias:${soCount} count:${userCount}/${poolUser.to_allocate}`,
             LoggerLevel.INFO
@@ -366,7 +363,6 @@ export default class PoolCreateImpl {
 
         try {
           let scratchOrg: ScratchOrg = await ScratchOrgUtils.createScratchOrg(
-            this.sfdx,
             soCount,
             poolUser.username,
             this.poolConfig.pool.config_file_path,
@@ -736,45 +732,45 @@ export default class PoolCreateImpl {
       return obj;
     }, {});
 
-    private validateSoPoolConfig(
-      soPoolConfig: PoolConfig
-    ): void {
-  
-      if (!soPoolConfig.pool.max_allocation && !soPoolConfig.poolUsers) {
-        throw new Error(
-          "Max allocation field is required for tag mode."
-        );
-      }
+  private validateSoPoolConfig(
+    soPoolConfig: PoolConfig
+  ): void {
 
-      let schema = fs.readJSONSync(
-        path.join(
-          __dirname,
-          "..",
-          "..",
-          "..",
-          "..",
-          "resources",
-          "so_pool_config.schema.json"
-        ),
-        {encoding: "UTF-8"}
+    if (!soPoolConfig.pool.max_allocation && !soPoolConfig.poolUsers) {
+      throw new Error(
+        "Max allocation field is required for tag mode."
       );
-  
-      let validator = new Ajv({allErrors: true, strictTuples: false}).compile(schema);
-      let validationResult = validator(soPoolConfig);
-      
-
-      if (!validationResult) {
-        let errorMsg: string =
-          `SO Pool Config does not meet schema requirements, ` +
-          `found ${validator.errors.length} validation errors:\n`;
-  
-          validator.errors.forEach((error,errorNum) => {
-            errorMsg += `\n${errorNum+1}: ${error.schemaPath}: ${error.message} ${JSON.stringify(error.params, null, 4)}`;
-            });
-  
-        throw new Error(errorMsg);
-      }
     }
+
+    let schema = fs.readJSONSync(
+      path.join(
+        __dirname,
+        "..",
+        "..",
+        "..",
+        "..",
+        "resources",
+        "so_pool_config.schema.json"
+      ),
+      { encoding: "UTF-8" }
+    );
+
+    let validator = new Ajv({ allErrors: true, strictTuples: false }).compile(schema);
+    let validationResult = validator(soPoolConfig);
+
+
+    if (!validationResult) {
+      let errorMsg: string =
+        `SO Pool Config does not meet schema requirements, ` +
+        `found ${validator.errors.length} validation errors:\n`;
+
+      validator.errors.forEach((error, errorNum) => {
+        errorMsg += `\n${errorNum + 1}: ${error.schemaPath}: ${error.message} ${JSON.stringify(error.params, null, 4)}`;
+      });
+
+      throw new Error(errorMsg);
+    }
+  }
 }
 
 export interface PoolConfig {
