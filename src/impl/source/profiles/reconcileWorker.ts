@@ -42,6 +42,7 @@ export default class ReconcileWorker{
     }
 
     public reconcileProfileJob(profileComponent:string, destFolder:string):Promise<string[]>{
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         let reconcilePromise = new Promise<string[]>((resolve, reject) => {
           let result: string[] = []; // Handle result of command execution
          

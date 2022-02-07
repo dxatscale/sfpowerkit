@@ -43,6 +43,7 @@ export default class SQLITEKeyValue {
       v: JSON.stringify(value),
     };
 
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       try {
         this.sqlite.prepare(q).run(data);

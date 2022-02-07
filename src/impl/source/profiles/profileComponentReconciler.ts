@@ -233,7 +233,7 @@ export default class ProfileComponentReconciler
         );
     
         if (profileObj.layoutAssignments !== undefined) {
-          var validArray = [];
+          let validArray = [];
           for (
             let count = 0;
             count < profileObj.layoutAssignments.length;

@@ -90,6 +90,7 @@ export default class ProfileReconcile extends ProfileActions {
         });
          
         worker.on('message', (data) => {
+          // eslint-disable-next-line @typescript-eslint/no-array-constructor
           let completedProfiles:string[]=new Array();
           completedProfiles.push(...data);
           for (const profile of completedProfiles) {
