@@ -109,6 +109,7 @@ export default class Reconcile extends SFPowerkitCommand {
   public async execute(): Promise<any> {
     let argFolder = this.flags.folder;
     let argProfileList = this.flags.profilelist;
+
     if (!this.flags.sourceonly) {
       if (_.isNil(this.flags.targetorg)) {
         throw new Error(
@@ -119,6 +120,7 @@ export default class Reconcile extends SFPowerkitCommand {
       }
     }
 
+    SFPowerkit.initCache();
     MetadataFiles.sourceOnly = this.flags.sourceonly;
 
     if (!_.isNil(argFolder) && argFolder.length !== 0) {
@@ -128,6 +130,9 @@ export default class Reconcile extends SFPowerkitCommand {
     let result = [];
 
     try {
+
+
+
       let profileUtils = new ProfileReconcile(
         this.org,
         this.flags.loglevel == "debug"
