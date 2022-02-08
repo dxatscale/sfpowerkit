@@ -334,11 +334,11 @@ export default class Install extends SFPowerkitCommand {
 
         // WAIT
         const wait = this.flags.wait ? this.flags.wait.trim() : defaultWait;
-        flags["-w"] = wait;
-        flags["-b"] = wait;
+        flags["--wait"] = wait;
+        flags["--publishwait"] = wait;
 
         if (this.flags.apexcompileonlypackage) {
-          flags["-a"] = "package";
+          flags["--apexcompile"] = "package";
         }
 
         let opts = [];
