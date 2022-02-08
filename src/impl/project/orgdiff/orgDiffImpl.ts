@@ -21,8 +21,7 @@ import * as rimraf from "rimraf";
 import CustomLabelsDiff from "../diff/customLabelsDiff";
 import SharingRuleDiff from "../diff/sharingRuleDiff";
 import WorkflowDiff from "../diff/workflowDiff";
-import { loadSFDX } from "../../../sfdxnode/GetNodeWrapper";
-import { sfdx } from "../../../sfdxnode/parallel";
+import child_process = require("child_process");
 
 const jsdiff = require("diff");
 
@@ -440,14 +439,9 @@ export default class OrgDiffImpl {
 
     fs.writeFileSync("temp_sfpowerkit/sfdx-project.json", sfdxProjectJson);
 
-    loadSFDX();
+    const sfdxConvertCommand = `sfdx force:mdapi:convert --rootdir=mdapi --outputdir=source `;
 
-    await sfdx.force.mdapi.convert({
-      quiet: false,
-      cwd: path.join(process.cwd(), "temp_sfpowerkit"),
-      rootdir: "mdapi",
-      outputdir: "source"
-    });
+    child_process.execSync(sfdxConvertCommand, { encoding: "utf8", stdio: "inherit", cwd: path.join(process.cwd(), "temp_sfpowerkit") });
 
     //Should remove the mdapi folder
     rimraf.sync("temp_sfpowerkit/mdapi");

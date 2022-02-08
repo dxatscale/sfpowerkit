@@ -37,7 +37,6 @@
     "pino-pretty": "^7.3.0",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.9",
-    "salesforce-alm": "53.9.0",
     "simple-git": "2.38.0",
     "ts-node": "^9.1.1",
     "tslib": "2.1.0",

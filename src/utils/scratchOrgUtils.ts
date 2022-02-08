@@ -2,10 +2,10 @@
 import { LoggerLevel, AuthInfo, Org } from "@salesforce/core";
 let request = require("request-promise-native");
 import { SFPowerkit } from "../sfpowerkit";
-import { SfdxApi } from "../sfdxnode/types";
 let retry = require("async-retry");
 import { isNullOrUndefined } from "util";
 import Passwordgenerateimpl from "../impl/user/passwordgenerateimpl";
+const child_process = require("child_process");
 
 const ORDER_BY_FILTER = " ORDER BY CreatedDate ASC";
 export default class ScratchOrgUtils {
@@ -26,9 +26,8 @@ export default class ScratchOrgUtils {
             .describe();
           if (describeResult) {
             for (const field of describeResult.fields) {
-              if(field.name === "SfdxAuthUrl__c")
-              {
-                this.sfdxAuthUrlFieldExists=true;
+              if (field.name === "SfdxAuthUrl__c") {
+                this.sfdxAuthUrlFieldExists = true;
               }
 
               if (
@@ -59,8 +58,8 @@ export default class ScratchOrgUtils {
       if (!this.isNewVersionCompatible) {
         SFPowerkit.log(
           `Required Prerequisite values in ScratchOrgInfo.Allocation_status__c field is missing in the DevHub, expected values are : ${expectedValues}\n` +
-            `Switching back to previous version, we request you to update ScratchOrgInfo.Allocation_status__c field in the DevHub \n` +
-            `For more information Please refer https://github.com/Accenture/sfpowerkit/blob/main/src_saleforce_packages/scratchorgpool/force-app/main/default/objects/ScratchOrgInfo/fields/Allocation_status__c.field-meta.xml \n`,
+          `Switching back to previous version, we request you to update ScratchOrgInfo.Allocation_status__c field in the DevHub \n` +
+          `For more information Please refer https://github.com/Accenture/sfpowerkit/blob/main/src_saleforce_packages/scratchorgpool/force-app/main/default/objects/ScratchOrgInfo/fields/Allocation_status__c.field-meta.xml \n`,
           LoggerLevel.WARN
         );
       }
@@ -124,7 +123,6 @@ export default class ScratchOrgUtils {
   }
 
   public static async createScratchOrg(
-    sfdx: SfdxApi,
     id: number,
     adminEmail: string,
     config_file_path: string,
@@ -133,48 +131,33 @@ export default class ScratchOrgUtils {
   ): Promise<ScratchOrg> {
     SFPowerkit.log(
       "Parameters: " +
-        id +
-        " " +
-        adminEmail +
-        " " +
-        config_file_path +
-        " " +
-        expiry +
-        " ",
+      id +
+      " " +
+      adminEmail +
+      " " +
+      config_file_path +
+      " " +
+      expiry +
+      " ",
       LoggerLevel.TRACE
     );
 
     let result;
+    let getSFDXCommand = `sfdx force:org:create -f ${config_file_path} -d ${expiry} -a SO${id} -w 10 -v ${hubOrg.getUsername()} --json`;
 
-      if (adminEmail) {
-        result = await sfdx.force.org.create(
-          {
-            quiet: false,
-            definitionfile: config_file_path,
-            setalias: `SO${id}`,
-            durationdays: expiry,
-            targetdevhubusername: hubOrg.getUsername(),
-            wait: 10,
-          },
-          `adminEmail=${adminEmail}`
-        );
-      } else {
-        result = await sfdx.force.org.create({
-          quiet: false,
-          definitionfile: config_file_path,
-          setalias: `SO${id}`,
-          durationdays: expiry,
-          targetdevhubusername: hubOrg.getUsername(),
-          wait: 10,
-        });
-      }
+    if (adminEmail) {
+      getSFDXCommand += ` adminEmail=${adminEmail}`
+    }
+
+    result = child_process.execSync(getSFDXCommand, { stdio: "pipe" });
+    const resultObject = JSON.parse(result);
 
     SFPowerkit.log(JSON.stringify(result), LoggerLevel.TRACE);
 
     let scratchOrg: ScratchOrg = {
       alias: `SO${id}`,
-      orgId: result.orgId,
-      username: result.username,
+      orgId: resultObject.result.orgId,
+      username: resultObject.result.username,
       signupEmail: adminEmail ? adminEmail : "",
     };
 
@@ -190,13 +173,11 @@ export default class ScratchOrgUtils {
     scratchOrg.password = passwordData.password;
 
     //Get Sfdx Auth URL
-    try
-    {
-    const authInfo = await AuthInfo.create({ username: scratchOrg.username });
-    scratchOrg.sfdxAuthUrl = authInfo.getSfdxAuthUrl();
+    try {
+      const authInfo = await AuthInfo.create({ username: scratchOrg.username });
+      scratchOrg.sfdxAuthUrl = authInfo.getSfdxAuthUrl();
     }
-    catch(error)
-    {
+    catch (error) {
       SFPowerkit.log(
         `Unable to fetch authURL for ${scratchOrg.username}. Only Scratch Orgs created from DevHub using authenticated using auth:sfdxurl or auth:web will have access token and enabled for autoLogin`,
         LoggerLevel.INFO
@@ -339,20 +320,18 @@ export default class ScratchOrgUtils {
       async (bail) => {
         let query;
 
-        if(this.sfdxAuthUrlFieldExists)
-        {
+        if (this.sfdxAuthUrlFieldExists) {
           if (!isNullOrUndefined(tag))
-          query = `SELECT Pooltag__c, Id,  CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl,SfdxAuthUrl__c FROM ScratchOrgInfo WHERE Pooltag__c = '${tag}'  AND Status = 'Active' `;
-        else
-          query = `SELECT Pooltag__c, Id,  CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl,SfdxAuthUrl__c FROM ScratchOrgInfo WHERE Pooltag__c != null  AND Status = 'Active' `;
+            query = `SELECT Pooltag__c, Id,  CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl,SfdxAuthUrl__c FROM ScratchOrgInfo WHERE Pooltag__c = '${tag}'  AND Status = 'Active' `;
+          else
+            query = `SELECT Pooltag__c, Id,  CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl,SfdxAuthUrl__c FROM ScratchOrgInfo WHERE Pooltag__c != null  AND Status = 'Active' `;
 
         }
-        else
-        {
-        if (!isNullOrUndefined(tag))
-          query = `SELECT Pooltag__c, Id,  CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE Pooltag__c = '${tag}'  AND Status = 'Active' `;
-        else
-          query = `SELECT Pooltag__c, Id,  CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE Pooltag__c != null  AND Status = 'Active' `;
+        else {
+          if (!isNullOrUndefined(tag))
+            query = `SELECT Pooltag__c, Id,  CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE Pooltag__c = '${tag}'  AND Status = 'Active' `;
+          else
+            query = `SELECT Pooltag__c, Id,  CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE Pooltag__c != null  AND Status = 'Active' `;
         }
         if (isMyPool) {
           query =

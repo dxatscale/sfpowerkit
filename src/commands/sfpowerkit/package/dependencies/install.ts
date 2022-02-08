@@ -4,8 +4,7 @@
 import { flags } from "@salesforce/command";
 import { JsonArray, JsonMap } from "@salesforce/ts-types";
 import { Messages, SfdxError, SfdxProject } from "@salesforce/core";
-import { loadSFDX } from "../../../../sfdxnode/GetNodeWrapper";
-import { sfdx } from "../../../..//sfdxnode/parallel";
+import child_process = require("child_process");
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
 import { get18DigitSalesforceId } from "./../../../../utils/get18DigitSalesforceId";
@@ -234,8 +233,8 @@ export default class Install extends SFPowerkitCommand {
             versionNumber;
           } = await this.getPackageVersionDetails(packageName, versionNumber);
 
-       
-          
+
+
           packageInfo.packageVersionId = packageVersionDetail.versionId;
           packageInfo.versionNumber = packageVersionDetail.versionNumber;
 
@@ -279,9 +278,6 @@ export default class Install extends SFPowerkitCommand {
     }
 
     if (packagesToInstall.size > 0) {
-      //Load SFDX
-      loadSFDX();
-
       // Installing Packages
       let installationKeyMap: Map<string, string> = new Map<string, string>();
 
@@ -363,7 +359,13 @@ export default class Install extends SFPowerkitCommand {
           }`
         );
 
-        await sfdx.force.package.install(flags, opts);
+        let serializedFlags = "";
+        for (const key in flags) {
+          serializedFlags += ` --${key} ${flags[key]}`
+        }
+
+        const sfdxPackageInstallCommand = `sfdx force:package:install ${opts.join(" ")} ${serializedFlags}`;
+        child_process.execSync(sfdxPackageInstallCommand, { encoding: "utf8", stdio: "inherit" });
 
         let endTime = new Date().valueOf();
 
@@ -397,7 +399,7 @@ export default class Install extends SFPowerkitCommand {
     // Keeping original name so that it can be used in error message if needed
     let packageName = name;
 
- 
+
 
     // TODO: Some stuff are duplicated here, some code don't need to be executed for every package
     // First look if it's an alias
@@ -406,7 +408,7 @@ export default class Install extends SFPowerkitCommand {
     }
 
 
-    
+
     if (packageName.startsWith(packageVersionIdPrefix)) {
       // Package2VersionId is set directly
       packageDetail = {

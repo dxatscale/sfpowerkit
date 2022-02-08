@@ -4,8 +4,6 @@ import * as rimraf from "rimraf";
 import SFPowerkitCommand from "../../../sfpowerkitCommand";
 import ScratchOrgImpl from "../../../impl/pool/scratchorg/poolCreateImpl";
 import { Messages, SfdxError } from "@salesforce/core";
-import { loadSFDX } from "../../../sfdxnode/GetNodeWrapper";
-import { sfdx } from "../../../sfdxnode/parallel";
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -68,13 +66,10 @@ export default class Create extends SFPowerkitCommand {
     this.flags.apiversion =
       this.flags.apiversion || (await hubConn.retrieveMaxApiVersion());
 
-    loadSFDX();
-
     let scratchOrgPoolImpl = new ScratchOrgImpl(
       this.flags.configfilepath,
       this.hubOrg,
       this.flags.apiversion,
-      sfdx,
       this.flags.batchsize
     );
 
