@@ -152,7 +152,7 @@ export default class ScratchOrgUtils {
     result = child_process.execSync(getSFDXCommand, { stdio: "pipe" });
     const resultObject = JSON.parse(result);
 
-    SFPowerkit.log(JSON.stringify(resultObject), LoggerLevel.TRACE);
+    SFPowerkit.log(JSON.stringify(result), LoggerLevel.TRACE);
 
     let scratchOrg: ScratchOrg = {
       alias: `SO${id}`,
