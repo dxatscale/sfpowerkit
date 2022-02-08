@@ -439,7 +439,7 @@ export default class OrgDiffImpl {
 
     fs.writeFileSync("temp_sfpowerkit/sfdx-project.json", sfdxProjectJson);
 
-    const sfdxConvertCommand = `sfdx force:mdapi:convert -r mdapi -d source `;
+    const sfdxConvertCommand = `sfdx force:mdapi:convert --rootdir=mdapi --outputdir=source `;
 
     child_process.execSync(sfdxConvertCommand, { encoding: "utf8", stdio: "inherit", cwd: path.join(process.cwd(), "temp_sfpowerkit") });
 
