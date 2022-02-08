@@ -13,7 +13,7 @@ let retry = require("async-retry");
 const packageIdPrefix = "0Ho";
 const packageVersionIdPrefix = "04t";
 const packageAliasesMap = [];
-const defaultWait = 60; 
+const defaultWait = 60;
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -233,8 +233,8 @@ export default class Install extends SFPowerkitCommand {
             versionNumber;
           } = await this.getPackageVersionDetails(packageName, versionNumber);
 
-       
-          
+
+
           packageInfo.packageVersionId = packageVersionDetail.versionId;
           packageInfo.versionNumber = packageVersionDetail.versionNumber;
 
@@ -319,9 +319,9 @@ export default class Install extends SFPowerkitCommand {
         //Build up options
         let flags = {};
         // USERNAME
-        flags["-u"] = username;
+        flags["targetusername"] = username;
         // PACKAGE ID
-        flags["--package"] = packageInfo.packageVersionId;
+        flags["package"] = packageInfo.packageVersionId;
 
         // INSTALLATION KEY
         if (
@@ -334,11 +334,11 @@ export default class Install extends SFPowerkitCommand {
 
         // WAIT
         const wait = this.flags.wait ? this.flags.wait.trim() : defaultWait;
-        flags["--wait"] = wait;
-        flags["--publishwait"] = wait;
+        flags["wait"] = wait;
+        flags["publishwait"] = wait;
 
         if (this.flags.apexcompileonlypackage) {
-          flags["--apexcompile"] = "package";
+          flags["apexcompile"] = "package";
         }
 
         let opts = [];
@@ -359,13 +359,12 @@ export default class Install extends SFPowerkitCommand {
           }`
         );
 
-        // Flag string iterator
-        let flagArray = []
-        Object.keys(flags).forEach(function(key){
-          flagArray.push(key, flags[key])
-        });
+        let serializedFlags = "";
+        for (const key in flags) {
+          serializedFlags += ` --${key} ${flags[key]}`
+        }
 
-        const sfdxPackageInstallCommand = `sfdx force:package:install ${opts.join(" ")} ${flagArray.join(" ")}`;
+        const sfdxPackageInstallCommand = `sfdx force:package:install ${opts.join(" ")} ${serializedFlags}`;
         child_process.execSync(sfdxPackageInstallCommand, { encoding: "utf8", stdio: "inherit" });
 
         let endTime = new Date().valueOf();
@@ -400,7 +399,7 @@ export default class Install extends SFPowerkitCommand {
     // Keeping original name so that it can be used in error message if needed
     let packageName = name;
 
- 
+
 
     // TODO: Some stuff are duplicated here, some code don't need to be executed for every package
     // First look if it's an alias
@@ -409,7 +408,7 @@ export default class Install extends SFPowerkitCommand {
     }
 
 
-    
+
     if (packageName.startsWith(packageVersionIdPrefix)) {
       // Package2VersionId is set directly
       packageDetail = {
