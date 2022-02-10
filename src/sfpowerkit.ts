@@ -86,7 +86,6 @@ export class SFPowerkit {
     this.logLevel = LoggerLevel[logLevel.toUpperCase()];
     this.logLevelString=logLevel;
     this.isJsonFormatEnabled = isJsonFormatEnabled?true:false;
-    console.log(this.logLevel,this.isJsonFormatEnabled);
   }
 
   public static setProjectDirectories(packagedirectories: string[]) {
