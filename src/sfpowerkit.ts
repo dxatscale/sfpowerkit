@@ -1,10 +1,10 @@
 import { SfdxProject } from "@salesforce/core";
 import { UX } from "@salesforce/command";
 import chalk = require("chalk");
-const Logger = require("pino");
 import * as fs from "fs-extra";
 //import pino from 'pino'
 import SQLITEKeyValue from "./utils/sqlitekv"
+import SFPLogger from "./utils/sfpLogger";
 const NodeCache = require("node-cache");
 
 export enum LoggerLevel {
@@ -83,27 +83,10 @@ export class SFPowerkit {
 
 
   public static setLogLevel(logLevel: string, isJsonFormatEnabled: boolean) {
-    logLevel = logLevel.toLowerCase();
+    this.logLevel = LoggerLevel[logLevel.toUpperCase()];
     this.logLevelString=logLevel;
-    this.isJsonFormatEnabled = isJsonFormatEnabled;
-    if (!isJsonFormatEnabled) {
-      
-      SFPowerkit.logger = Logger({
-        name: "sfpowerkit",
-        level: logLevel,
-        transport: {
-          target: 'pino-pretty',
-          options: {
-            levelFirst: true, // --levelFirst
-            colorize: true,
-            translateTime: true,
-            ignore: "pid,hostname", // --ignore
-          }
-        }
-      });
-    } else {
-      //do nothing for now, need to put pino to move to file
-    }
+    this.isJsonFormatEnabled = isJsonFormatEnabled?true:false;
+    console.log(this.logLevel,this.isJsonFormatEnabled);
   }
 
   public static setProjectDirectories(packagedirectories: string[]) {
@@ -164,28 +147,9 @@ export class SFPowerkit {
    * @param messageLoglevel Log level for the message
    */
   public static log(message: any, logLevel: LoggerLevel) {
-    if (!this.logger) return;
+  
     if (this.isJsonFormatEnabled) return;
-    switch (logLevel) {
-      case LoggerLevel.TRACE:
-        this.logger.trace(message);
-        break;
-      case LoggerLevel.DEBUG:
-        this.logger.debug(message);
-        break;
-      case LoggerLevel.INFO:
-        this.logger.info(message);
-        break;
-      case LoggerLevel.WARN:
-        this.logger.warn(message);
-        break;
-      case LoggerLevel.ERROR:
-        this.logger.error(message);
-        break;
-      case LoggerLevel.FATAL:
-        this.logger.fatal(message);
-        break;
-    }
+    SFPLogger.log(message,logLevel);
   }
   public static setUx(ux: UX) {
     this.ux = ux;
