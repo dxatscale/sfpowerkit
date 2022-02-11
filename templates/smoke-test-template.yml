@@ -34,7 +34,7 @@ steps:
       secureFile: 'authFile.json'
 
   - script: |
-        sfdx auth:sfdxurl:store -f $(hubOrgAuthFile.secureFilePath) -a HubOrg -d
+        sfdx auth:sfdxurl:store -f $(hubOrgAuthFile.secureFilePath) -a HubOrg
     displayName: 'Authenticate HubOrg'
 
   - task: CmdLine@2
