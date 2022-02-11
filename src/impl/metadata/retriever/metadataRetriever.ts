@@ -30,7 +30,7 @@ export default class MetadataRetriever {
     }
 
     let key = parent ? this._componentType + "_" + parent : this._componentType;
-    if (SFPowerkit.getCache().get(key)==null) {
+    if (SFPowerkit.getFromCache(key)==null) {
       let items;
       if (this._componentType === "UserLicense") {
         items = await this.getUserLicense();
@@ -53,17 +53,17 @@ export default class MetadataRetriever {
       }
 
       //Set Full.. 
-      SFPowerkit.getCache().set(key, items);
+      SFPowerkit.addToCache(key, items);
 
         
       for (const item of items) {
-        SFPowerkit.getCache().set(
+        SFPowerkit.addToCache(
           `${this.componentType}_${item.fullName}`,
           true
         );
       }
     }
-    return SFPowerkit.getCache().get(key);
+    return SFPowerkit.getFromCache(key);
   }
 
   private async getUserLicense() {
@@ -113,7 +113,7 @@ export default class MetadataRetriever {
     let items = await this.getComponents(parent);
     //Do a cache hit before deep interospection
     let foundItem = item
-      ? SFPowerkit.getCache().get(`${this.componentType}_${item}`)
+      ? SFPowerkit.getFromCache(`${this.componentType}_${item}`)
       : null;
     if (_.isNil(foundItem) && !_.isNil(items) && Array.isArray(items)) {
       foundItem = items.find((p) => {
@@ -131,7 +131,7 @@ export default class MetadataRetriever {
       !_.isNil(this._metadataInProjectDirectory[this._componentType].components)
     ) {
       if (
-        !SFPowerkit.getCache().get(
+        !SFPowerkit.getFromCache(
           `${this.componentType}_SOURCE_CACHE_AVAILABLE`
         )
       ) {
@@ -139,13 +139,13 @@ export default class MetadataRetriever {
         for (const component of this._metadataInProjectDirectory[
           this._componentType
         ].components) {
-          SFPowerkit.getCache().set(
+          SFPowerkit.addToCache(
             `SOURCE_${this.componentType}_${component}`,
             true
           );
         }
        
-        SFPowerkit.getCache().set(
+        SFPowerkit.addToCache(
           `${this.componentType}_SOURCE_CACHE_AVAILABLE`,
           true
         );
@@ -155,7 +155,7 @@ export default class MetadataRetriever {
 
       if (
         !_.isNil(
-          SFPowerkit.getCache().get(`SOURCE_${this.componentType}_${item}`)
+          SFPowerkit.getFromCache(`SOURCE_${this.componentType}_${item}`)
         )
       )
       {

@@ -5,6 +5,7 @@ const Logger = require("pino");
 import * as fs from "fs-extra";
 //import pino from 'pino'
 import SQLITEKeyValue from "./utils/sqlitekv"
+const NodeCache = require("node-cache");
 
 export enum LoggerLevel {
   TRACE = 10,
@@ -36,7 +37,7 @@ export class SFPowerkit {
   private static logger;
   public static logLevel;
   public static logLevelString;
-  private static cache:SQLITEKeyValue;
+  private static cache;
 
   static enableColor() {
     chalk.level = 2;
@@ -56,12 +57,26 @@ export class SFPowerkit {
 
   public static initCache()
   {
+    try
+    {
     SFPowerkit.cache = new SQLITEKeyValue('./sfpowerkit-cache.db');
     SFPowerkit.cache.init();
+    }
+    catch(error)
+    {
+      //Fallback to NodeCache, as sqlite cache cant be lazily loaded
+      //Retreive and Merge doesnt have workers so sqlite cant be loaded.. need further investigation
+      SFPowerkit.cache = new NodeCache();
+    }
   }
 
-  public static getCache() {
-    return SFPowerkit.cache;
+  public static getFromCache(key: string): any  {
+    return SFPowerkit.cache.get(key);
+  }
+
+
+  public static addToCache(key: string, value: any) {
+    return SFPowerkit.cache.set(key, value);
   }
 
 

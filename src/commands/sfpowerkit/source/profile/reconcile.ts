@@ -120,7 +120,7 @@ export default class Reconcile extends SFPowerkitCommand {
       }
     }
 
-    SFPowerkit.initCache();
+   
     MetadataFiles.sourceOnly = this.flags.sourceonly;
 
     if (!_.isNil(argFolder) && argFolder.length !== 0) {

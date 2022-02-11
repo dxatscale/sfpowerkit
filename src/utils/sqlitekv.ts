@@ -1,6 +1,8 @@
+//Adapted from https://github.com/nickadam/kv
+//Original Author Nick Vissari
+
 "use strict";
 const better_sqlite3 = require("better-sqlite3");
-
 
 export default class SQLITEKeyValue {
   private sqlite;
@@ -20,7 +22,16 @@ export default class SQLITEKeyValue {
     let q = "SELECT * FROM kv WHERE k = ?";
 
     let data = [];
-    data = this.sqlite.prepare(q).all(key);
+
+    // eslint-disable-next-line no-constant-condition
+    while (true) {
+      try {
+        data = this.sqlite.prepare(q).all(key);
+        break;
+      } catch (err) {
+        continue;
+      }
+    }
 
     // parse the values
     data = data.map((x) => {

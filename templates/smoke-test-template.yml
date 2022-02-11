@@ -51,7 +51,10 @@ steps:
   - task: CmdLine@2
     displayName: Smoke Test Profile Commands
     inputs:
-      script: "sfdx sfpowerkit:source:profile:retrieve -u HubOrg"
+      script: |
+       set -euo pipefail
+       sfdx sfpowerkit:source:profile:retrieve -u HubOrg
+       sfdx sfpowerkit:source:profile:reconcile -u HubOrg
       workingDirectory: "src_saleforce_packages/scratchorgpool"
 
   - task: CmdLine@2
