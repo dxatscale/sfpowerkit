@@ -34,8 +34,6 @@
     "ignore": "^5.1.8",
     "nested-object-diff": "^1.1.0",
     "node-cache": "^5.1.2",
-    "pino": "^7.6.2",
-    "pino-pretty": "^7.3.0",
     "request": "^2.88.2",
     "request-promise-native": "^1.0.9",
     "simple-git": "2.38.0",
