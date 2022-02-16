@@ -16,8 +16,8 @@ export default class Refresh extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
-    `$ sfdx sfpowerkit:org:sandbox:refresh -n test2 -f sitSandbox -v myOrg@example.com`,
-    `$ sfdx sfpowerkit:org:sandbox:refresh -n test2 -l DEVELOPER -v myOrg@example.com`
+    `$ sfdx sfpowerkit:org:sandbox:refresh -d Testsandbox -n test2 -f sitSandbox -v myOrg@example.com`,
+    `$ sfdx sfpowerkit:org:sandbox:refresh -d Testsandbox -n test2 -l DEVELOPER -v myOrg@example.com`
   ];
 
   protected static flagsConfig = {
@@ -31,6 +31,11 @@ export default class Refresh extends SFPowerkitCommand {
       char: "f",
       default: "",
       description: messages.getMessage("cloneFromFlagDescripton")
+    }), 
+    description: flags.string({
+      required: true,
+      char: "d",
+      description: messages.getMessage("descriptionFlagDescription")
     }),
     licensetype: flags.string({
       required: false,
@@ -109,7 +114,7 @@ export default class Refresh extends SFPowerkitCommand {
   }
 
   public async getSandboxId(conn: Connection, name: string) {
-    const query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=SELECT+Id,SandboxName,Description+FROM+SandboxInfo+WHERE+SandboxName+in+('${name}')`;
+    const query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=SELECT+Id,SandboxName+FROM+SandboxInfo+WHERE+SandboxName+in+('${name}')`;
 
     const sandbox_query_result = await request({
       method: "get",
@@ -136,7 +141,7 @@ export default class Refresh extends SFPowerkitCommand {
   }
 
   public async getSandboxDescription(conn: Connection, name: string) {
-    const query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=SELECT+Id,SandboxName,Description+FROM+SandboxInfo+WHERE+SandboxName+in+('${name}')`;
+    const query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=SELECT+Description+FROM+SandboxInfo+WHERE+SandboxName+in+('${name}')`;
 
     const sandbox_query_result = await request({
       method: "get",
