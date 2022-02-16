@@ -56,6 +56,7 @@ export default class Refresh extends SFPowerkitCommand {
     let result;
 
     const sandboxId = await this.getSandboxId(conn, this.flags.name);
+    const sandboxDescription = await this.getSandboxDescription(conn, this.flags.name);
     const uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/sobjects/SandboxInfo/${sandboxId}/`;
 
     if (this.flags.clonefrom) {
@@ -72,7 +73,8 @@ export default class Refresh extends SFPowerkitCommand {
         },
         body: {
           AutoActivate: "true",
-          SourceId: `${sourceSandboxId}`
+          SourceId: `${sourceSandboxId}`,
+          Description: `${sandboxDescription}`
         },
         json: true
       });
@@ -91,7 +93,8 @@ export default class Refresh extends SFPowerkitCommand {
         },
         body: {
           AutoActivate: "true",
-          LicenseType: `${this.flags.licensetype}`
+          LicenseType: `${this.flags.licensetype}`,
+          Description: `${sandboxDescription}`
         },
         json: true
       });
@@ -106,7 +109,7 @@ export default class Refresh extends SFPowerkitCommand {
   }
 
   public async getSandboxId(conn: Connection, name: string) {
-    const query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=SELECT+Id,SandboxName+FROM+SandboxInfo+WHERE+SandboxName+in+('${name}')`;
+    const query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=SELECT+Id,SandboxName,Description+FROM+SandboxInfo+WHERE+SandboxName+in+('${name}')`;
 
     const sandbox_query_result = await request({
       method: "get",
@@ -130,5 +133,20 @@ export default class Refresh extends SFPowerkitCommand {
     );
 
     return sandbox_query_result.records[0].Id;
+  }
+
+  public async getSandboxDescription(conn: Connection, name: string) {
+    const query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=SELECT+Id,SandboxName,Description+FROM+SandboxInfo+WHERE+SandboxName+in+('${name}')`;
+
+    const sandbox_query_result = await request({
+      method: "get",
+      url: query_uri,
+      headers: {
+        Authorization: `Bearer ${conn.accessToken}`
+      },
+      json: true
+    });
+
+    return sandbox_query_result.records[0].Description;
   }
 }
