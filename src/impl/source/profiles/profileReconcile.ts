@@ -97,7 +97,7 @@ export default class ProfileReconcile extends ProfileActions {
           workerData: {
             profileChunk: temparray,
             destFolder: destFolder,
-            targetOrg: this.org.getUsername(),
+            targetOrg: this.org?.getUsername(), //Org can be null during source only reconcile
             loglevel: SFPowerkit.logLevelString,
             isJsonFormatEnabled: SFPowerkit.isJsonFormatEnabled,
             path: reconcileWorkerFile,
