@@ -16,6 +16,8 @@ export default class Refresh extends SFPowerkitCommand {
   public static description = messages.getMessage("commandDescription");
 
   public static examples = [
+    `$ sfdx sfpowerkit:org:sandbox:refresh -n test2 -f sitSandbox -v myOrg@example.com`,
+    `$ sfdx sfpowerkit:org:sandbox:refresh -n test2 -l DEVELOPER -v myOrg@example.com`,
     `$ sfdx sfpowerkit:org:sandbox:refresh -d Testsandbox -n test2 -f sitSandbox -v myOrg@example.com`,
     `$ sfdx sfpowerkit:org:sandbox:refresh -d Testsandbox -n test2 -l DEVELOPER -v myOrg@example.com`
   ];
@@ -33,7 +35,7 @@ export default class Refresh extends SFPowerkitCommand {
       description: messages.getMessage("cloneFromFlagDescripton")
     }), 
     description: flags.string({
-      required: true,
+      required: false,
       char: "d",
       description: messages.getMessage("descriptionFlagDescription")
     }),
@@ -69,40 +71,73 @@ export default class Refresh extends SFPowerkitCommand {
         conn,
         this.flags.clonefrom
       );
-
-      result = await request({
-        method: "patch",
-        url: uri,
-        headers: {
-          Authorization: `Bearer ${conn.accessToken}`
-        },
-        body: {
-          AutoActivate: "true",
-          SourceId: `${sourceSandboxId}`,
-          Description: `${sandboxDescription}`
-        },
-        json: true
-      });
+    
+      if (this.flags.description) {
+        result = await request({
+          method: "patch",
+          url: uri,
+          headers: {
+            Authorization: `Bearer ${conn.accessToken}`
+          },
+          body: {
+            AutoActivate: "true",
+            SourceId: `${sourceSandboxId}`,
+            Description: `${this.flags.description}`
+          },
+          json: true
+        });
+      }else{
+        result = await request({
+          method: "patch",
+          url: uri,
+          headers: {
+            Authorization: `Bearer ${conn.accessToken}`
+          },
+          body: {
+            AutoActivate: "true",
+            SourceId: `${sourceSandboxId}`,
+            Description: `${sandboxDescription}`
+          },
+          json: true
+        });
+      }   
+      
     } else {
       if (!this.flags.licensetype) {
         throw new SfdxError(
           "License type is required when clonefrom source org is not provided. you may need to provide -l | --licensetype"
         );
       }
-
-      result = await request({
-        method: "patch",
-        url: uri,
-        headers: {
-          Authorization: `Bearer ${conn.accessToken}`
-        },
-        body: {
-          AutoActivate: "true",
-          LicenseType: `${this.flags.licensetype}`,
-          Description: `${sandboxDescription}`
-        },
-        json: true
-      });
+      if (this.flags.description) {
+        result = await request({
+          method: "patch",
+          url: uri,
+          headers: {
+            Authorization: `Bearer ${conn.accessToken}`
+          },
+          body: {
+            AutoActivate: "true",
+            LicenseType: `${this.flags.licensetype}`,
+            Description: `${this.flags.description}`
+          },
+          json: true
+        });
+      }else {
+        result = await request({
+          method: "patch",
+          url: uri,
+          headers: {
+            Authorization: `Bearer ${conn.accessToken}`
+          },
+          body: {
+            AutoActivate: "true",
+            LicenseType: `${this.flags.licensetype}`,
+            Description: `${sandboxDescription}`
+          },
+          json: true
+        });
+      }
+      
     }
 
     SFPowerkit.log(
