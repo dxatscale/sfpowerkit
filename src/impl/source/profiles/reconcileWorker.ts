@@ -28,10 +28,11 @@ export default class ReconcileWorker{
         SFPowerkit.initCache();
         
 
-        let org = await Org.create({ aliasOrUsername: this.targetOrg });
-        this.conn = org.getConnection()
-
-
+        if(this.targetOrg)
+        {
+         let org = await Org.create({ aliasOrUsername: this.targetOrg });
+         this.conn = org.getConnection()
+        }
 
         let result: string[] = [];
         for (let count = 0; count < profilesToReconcile.length; count++) {
