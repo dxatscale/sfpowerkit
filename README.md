@@ -2,6 +2,7 @@
 A Salesforce DX Plugin with multiple functionalities aimed at improving development and operational workflows
 
 [![NPM](https://img.shields.io/npm/v/sfpowerkit.svg)](https://www.npmjs.com/package/sfpowerkit) ![npm (tag)](https://img.shields.io/npm/v/sfpowerkit/beta) [![Build Status](https://dev.azure.com/dxatscale/sfpowerkit/_apis/build/status/Release?branchName=main)](https://dev.azure.com/dxatscale/sfpowerkit/_build/latest?definitionId=48&branchName=main) ![npm](https://img.shields.io/npm/dw/sfpowerkit)[![CodeFactor](https://www.codefactor.io/repository/github/accenture/sfpowerkit/badge)](https://www.codefactor.io/repository/github/accenture/sfpowerkit)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FAccenture%2Fsfpowerkit.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2FAccenture%2Fsfpowerkit?ref=badge_shield)
 
 [![Join slack](https://i.imgur.com/FZZmA3g.png)](https://launchpass.com/dxatscale)
 
@@ -1200,6 +1201,9 @@ EXAMPLE
 ```
 
 _See code: [src\commands\sfpowerkit\org\sandbox\create.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/sandbox/create.ts)_
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FAccenture%2Fsfpowerkit.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FAccenture%2Fsfpowerkit?ref=badge_large)
 
 ### `sfpowerkit:org:sandbox:info`
 
