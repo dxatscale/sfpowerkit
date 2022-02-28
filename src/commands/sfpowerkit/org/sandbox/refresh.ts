@@ -4,6 +4,7 @@ const request = require("request-promise-native");
 import { Connection, Messages, SfdxError } from "@salesforce/core";
 import { SFPowerkit, LoggerLevel } from "../../../../sfpowerkit";
 import SFPowerkitCommand from "../../../../sfpowerkitCommand";
+import QueryExecutor from "../../../../utils/queryExecutor";
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -61,13 +62,11 @@ export default class Refresh extends SFPowerkitCommand {
       this.flags.apiversion || (await conn.retrieveMaxApiVersion());
 
     let result;
-
-    const sandboxId = await this.getSandboxId(conn, this.flags.name);
-    const sandboxDescription = await this.getSandboxDescription(conn, this.flags.name);
+    let [sandboxId, sandboxDescription] = await this.getSandboxDetails(conn, this.flags.name);
     const uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/sobjects/SandboxInfo/${sandboxId}/`;
 
     if (this.flags.clonefrom) {
-      const sourceSandboxId = await this.getSandboxId(
+      const sourceSandboxId = await this.getSandboxDetails(
         conn,
         this.flags.clonefrom
       );
@@ -148,45 +147,24 @@ export default class Refresh extends SFPowerkitCommand {
     return result;
   }
 
-  public async getSandboxId(conn: Connection, name: string) {
-    const query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=SELECT+Id,SandboxName+FROM+SandboxInfo+WHERE+SandboxName+in+('${name}')`;
+  public async getSandboxDetails(conn: Connection, name: string) {
+    let queryUtil = new QueryExecutor(conn);
+    const query = `SELECT Id, Description FROM SandboxInfo WHERE SandboxName in ('${name}')`;
+    let sandbox_query_result = await queryUtil.executeQuery(query, true);
 
-    const sandbox_query_result = await request({
-      method: "get",
-      url: query_uri,
-      headers: {
-        Authorization: `Bearer ${conn.accessToken}`
-      },
-      json: true
-    });
-
-    if (sandbox_query_result.records[0] == undefined)
-      throw new SfdxError(
-        `Unable to continue, Please check your sandbox name: ${name}`
+   if (sandbox_query_result[0] == undefined)
+     throw new SfdxError(
+       `Unable to continue, Please check your sandbox name: ${name}`
       );
 
     this.ux.log();
 
     SFPowerkit.log(
-      `Fetched Sandbox Id for sandbox  ${name}  is ${sandbox_query_result.records[0].Id}`,
+      `Fetched Sandbox Id, Description for sandbox  ${name}  is ${sandbox_query_result[0].Id}, ${sandbox_query_result[0].Description}`,
       LoggerLevel.INFO
     );
 
-    return sandbox_query_result.records[0].Id;
+    return [sandbox_query_result[0].Id, sandbox_query_result[0].Description];
   }
 
-  public async getSandboxDescription(conn: Connection, name: string) {
-    const query_uri = `${conn.instanceUrl}/services/data/v${this.flags.apiversion}/tooling/query?q=SELECT+Description+FROM+SandboxInfo+WHERE+SandboxName+in+('${name}')`;
-
-    const sandbox_query_result = await request({
-      method: "get",
-      url: query_uri,
-      headers: {
-        Authorization: `Bearer ${conn.accessToken}`
-      },
-      json: true
-    });
-
-    return sandbox_query_result.records[0].Description;
-  }
 }
