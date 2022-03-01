@@ -5,8 +5,7 @@ import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
 import SFPowerkitCommand from "../../../sfpowerkitCommand";
 import { chunkArray } from "../../../utils/chunkArray";
 
-// Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
-// or any library that is using the messages framework can also be loaded this way.
+
 const CODECOVAGG_QUERY = `SELECT Id FROM ApexCodeCoverageAggregate`;
 const APEXTESTRESULT_QUERY = `SELECT Id FROM ApexTestResult`;
 
