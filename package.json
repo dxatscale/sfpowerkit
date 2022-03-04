@@ -144,7 +144,8 @@
     "posttest": "eslint . --ext .js,.jsx,.ts,.tsx ",
     "prepare": "rimraf tsconfig.tsbuildinfo && rimraf lib && tsc -b && oclif-dev manifest && npm shrinkwrap",
     "test": "nyc --extension .ts mocha --forbid-only \"test/**/*.test.ts\"",
-    "version": "git add README.md"
+    "version": "git add README.md",
+    "format": "npx prettier --write ."
   },
   "husky": {
     "hooks": {

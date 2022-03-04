@@ -1,0 +1,12 @@
+lib
+tsconfig.tsbuildinfo
+node_modules
+build
+dist
+.npmrc
+**/README.md
+Third Party Notices.md
+*.yml
+CONTRIBUTING.md
+src_saleforce_packages/**
+schemas/**
