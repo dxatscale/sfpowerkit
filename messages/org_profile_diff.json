@@ -1,6 +1,6 @@
 {
-  "commandDescription": "Compare profiles from project against target org or between two orgs (source and target)",
-  "profileListFlagDescription": "List of profiles to compare, comma separated profile names. If not provided and no sourceusername is provided, all profiles from the source folder will be processed.",
-  "sourceUsernameDescription": "Source org. If no profile is provided in the profilelist parameter, all the profile from this org will be fetched",
-  "outputFolderDescription": "Output folder. Provide the output folder if comparing profiles from source org."
+    "commandDescription": "Compare profiles from project against target org or between two orgs (source and target)",
+    "profileListFlagDescription": "List of profiles to compare, comma separated profile names. If not provided and no sourceusername is provided, all profiles from the source folder will be processed.",
+    "sourceUsernameDescription": "Source org. If no profile is provided in the profilelist parameter, all the profile from this org will be fetched",
+    "outputFolderDescription": "Output folder. Provide the output folder if comparing profiles from source org."
 }

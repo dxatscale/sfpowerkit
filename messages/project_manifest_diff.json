@@ -1,9 +1,9 @@
 {
-  "commandDescription": "run diff between two package.xml and get the difference",
-  "sourcepathFlagDescription": "Paths to the source package.xml file",
-  "targetpathFlagDescription": "Paths to the target package.xml file",
-  "outputFlagDescription": "path to the diff output package.xml",
-  "formatFlagDescription": "[default: json] The format for the output, Possible values are json/csv/xml",
-  "apiversion": "The api version to be used create package.xml",
-  "loglevel": "[default: info] logging level for this command invocation"
+    "commandDescription": "run diff between two package.xml and get the difference",
+    "sourcepathFlagDescription": "Paths to the source package.xml file",
+    "targetpathFlagDescription": "Paths to the target package.xml file",
+    "outputFlagDescription": "path to the diff output package.xml",
+    "formatFlagDescription": "[default: json] The format for the output, Possible values are json/csv/xml",
+    "apiversion": "The api version to be used create package.xml",
+    "loglevel": "[default: info] logging level for this command invocation"
 }

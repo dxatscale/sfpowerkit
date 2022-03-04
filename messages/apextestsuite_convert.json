@@ -1,6 +1,6 @@
 {
-  "commandDescription": "Converts an apex test suite to its consituent apex classes as a single line separated by commas, so that it can be used for metadata api deployment",
-  "nameFlagDescription": "The name of the apextestsuite (the file name minus the apex test suite)",
-  "packageFlagDescription": "The package where the apex test suite exists",
-  "pathFlagDescription": "The path to be overriden in case test suite are in a different folder in the target package"
+    "commandDescription": "Converts an apex test suite to its consituent apex classes as a single line separated by commas, so that it can be used for metadata api deployment",
+    "nameFlagDescription": "The name of the apextestsuite (the file name minus the apex test suite)",
+    "packageFlagDescription": "The package where the apex test suite exists",
+    "pathFlagDescription": "The path to be overriden in case test suite are in a different folder in the target package"
 }

@@ -1,11 +1,11 @@
 {
-  "commandDescription": "Custom Labels are org wide, hence when the metadata is pulled down from scratch org, the entire custom label metadata file is updated in a package repo. This command is a helper command to create customlabel with pacakage names prepended for easy reconcilation.",
-  "fullnameFlagDescription": "Name of the custom label (API Name)",
-  "valueFlagDescription": "Value of the custom label",
-  "categoriesFlagDescription": "Comma Separated Category Values",
-  "languageFlagDescription": "Language of the custom label (Default: en_US)",
-  "protectedFlagDescription": "Protected State of the custom label (Default: false)",
-  "shortdescriptionFlagDescription": "Short Description of the custom label",
-  "packageFlagDescription": "The name of the package that needs to be appended",
-  "ignorepackageFlagDescription": "Ignores the addition of the package into the fullname (API Name)"
+    "commandDescription": "Custom Labels are org wide, hence when the metadata is pulled down from scratch org, the entire custom label metadata file is updated in a package repo. This command is a helper command to create customlabel with pacakage names prepended for easy reconcilation.",
+    "fullnameFlagDescription": "Name of the custom label (API Name)",
+    "valueFlagDescription": "Value of the custom label",
+    "categoriesFlagDescription": "Comma Separated Category Values",
+    "languageFlagDescription": "Language of the custom label (Default: en_US)",
+    "protectedFlagDescription": "Protected State of the custom label (Default: false)",
+    "shortdescriptionFlagDescription": "Short Description of the custom label",
+    "packageFlagDescription": "The name of the package that needs to be appended",
+    "ignorepackageFlagDescription": "Ignores the addition of the package into the fullname (API Name)"
 }

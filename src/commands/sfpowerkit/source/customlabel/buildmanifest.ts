@@ -1,142 +1,135 @@
-import { flags } from "@salesforce/command";
-import { AnyJson } from "@salesforce/ts-types";
-import * as fs from "fs-extra";
-import * as path from "path";
-import SFPowerkitCommand from "../../../../sfpowerkitCommand";
-import xmlUtil from "../../../../utils/xmlUtil";
-import getDefaults from "../../../../utils/getDefaults";
-import { Messages } from "@salesforce/core";
+import { flags } from '@salesforce/command';
+import { AnyJson } from '@salesforce/ts-types';
+import * as fs from 'fs-extra';
+import * as path from 'path';
+import SFPowerkitCommand from '../../../../sfpowerkitCommand';
+import xmlUtil from '../../../../utils/xmlUtil';
+import getDefaults from '../../../../utils/getDefaults';
+import { Messages } from '@salesforce/core';
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = Messages.loadMessages(
-  "sfpowerkit",
-  "source_customlabel_buildmanifest"
-);
+const messages = Messages.loadMessages('sfpowerkit', 'source_customlabel_buildmanifest');
 
 export default class Buildmanifest extends SFPowerkitCommand {
-  public output: string[];
-  public static description = messages.getMessage("commandDescription");
+    public output: string[];
+    public static description = messages.getMessage('commandDescription');
 
-  public static examples = [
-    `$ sfdx sfpowerkit:source:customlabel:buildmanifest -p project1/path/to/customlabelfile.xml -x mdapiout/package.xml\n` +
-      `$ sfdx sfpowerkit:source:customlabel:buildmanifest -p project1/path/to/customlabelfile.xml,project2/path/to/customlabelfile.xml -x mdapiout/package.xml`
-  ];
+    public static examples = [
+        `$ sfdx sfpowerkit:source:customlabel:buildmanifest -p project1/path/to/customlabelfile.xml -x mdapiout/package.xml\n` +
+            `$ sfdx sfpowerkit:source:customlabel:buildmanifest -p project1/path/to/customlabelfile.xml,project2/path/to/customlabelfile.xml -x mdapiout/package.xml`,
+    ];
 
-  protected static flagsConfig = {
-    path: flags.array({
-      required: true,
-      char: "p",
-      description: messages.getMessage("pathFlagDescription")
-    }),
-    manifest: flags.string({
-      required: true,
-      char: "x",
-      description: messages.getMessage("manifestFlagDescription")
-    }),
-    apiversion: flags.builtin({
-      description: messages.getMessage("apiversion")
-    }),
-    loglevel: flags.enum({
-      description: messages.getMessage("loglevel"),
-      default: "info",
-      required: false,
-      options: [
-        "trace",
-        "debug",
-        "info",
-        "warn",
-        "error",
-        "fatal",
-        "TRACE",
-        "DEBUG",
-        "INFO",
-        "WARN",
-        "ERROR",
-        "FATAL"
-      ]
-    })
-  };
+    protected static flagsConfig = {
+        path: flags.array({
+            required: true,
+            char: 'p',
+            description: messages.getMessage('pathFlagDescription'),
+        }),
+        manifest: flags.string({
+            required: true,
+            char: 'x',
+            description: messages.getMessage('manifestFlagDescription'),
+        }),
+        apiversion: flags.builtin({
+            description: messages.getMessage('apiversion'),
+        }),
+        loglevel: flags.enum({
+            description: messages.getMessage('loglevel'),
+            default: 'info',
+            required: false,
+            options: [
+                'trace',
+                'debug',
+                'info',
+                'warn',
+                'error',
+                'fatal',
+                'TRACE',
+                'DEBUG',
+                'INFO',
+                'WARN',
+                'ERROR',
+                'FATAL',
+            ],
+        }),
+    };
 
-  public async execute(): Promise<AnyJson> {
-    this.flags.apiversion =
-      this.flags.apiversion || getDefaults.getApiVersion();
+    public async execute(): Promise<AnyJson> {
+        this.flags.apiversion = this.flags.apiversion || getDefaults.getApiVersion();
 
-    let paths = [];
-    if (this.flags.path.constructor === Array) {
-      paths = this.flags.path;
-    } else {
-      paths.push(this.flags.path);
-    }
-
-    this.output = [];
-    for (const element of paths) {
-      if (
-        fs.existsSync(path.resolve(element)) &&
-        (element.endsWith("CustomLabels.labels") ||
-          element.endsWith("CustomLabels.labels-meta.xml"))
-      ) {
-        await this.getlabels(element);
-      } else {
-        throw new Error(`Error : ${element} is not valid custom label file`);
-      }
-    }
-    this.flags.manifest = await this.validatepackagexml(this.flags.manifest);
-    await this.setlabels(this.flags.manifest);
-
-    if (!this.flags.json) {
-      let result = [];
-      for (let i = 0; i < this.output.length; i++) {
-        result.push({ sno: i + 1, label: this.output[i] });
-      }
-      this.ux.table(result, ["sno", "label"]);
-    }
-    return this.output;
-  }
-  setoutput(label: string) {
-    if (!this.output.includes(label) && label !== "*") {
-      this.output.push(label);
-    }
-  }
-
-  public async getlabels(labelpath: string) {
-    let retrieved_customlabels = await xmlUtil.xmlToJSON(labelpath);
-    let labels = retrieved_customlabels.CustomLabels.labels;
-    if (labels.constructor === Array) {
-      labels.forEach(label => {
-        this.setoutput(label.fullName);
-      });
-    } else {
-      this.setoutput(labels.fullName);
-    }
-  }
-  public async validatepackagexml(manifest: string) {
-    let fileOrFolder = path.normalize(manifest);
-    if (fs.existsSync(fileOrFolder)) {
-      let stats = fs.statSync(fileOrFolder);
-      if (stats.isFile()) {
-        if (path.extname(fileOrFolder) != ".xml") {
-          throw new Error(`Error : ${fileOrFolder} is not valid package.xml`);
+        let paths = [];
+        if (this.flags.path.constructor === Array) {
+            paths = this.flags.path;
         } else {
-          await this.checklabelspackagexml(manifest);
+            paths.push(this.flags.path);
         }
-      } else if (stats.isDirectory()) {
-        manifest = `${manifest}/package.xml`;
-        this.createpackagexml(manifest);
-      }
-    } else {
-      manifest = manifest.endsWith(`package.xml`)
-        ? `${manifest}`
-        : `${manifest}/package.xml`;
-      this.createpackagexml(manifest);
+
+        this.output = [];
+        for (const element of paths) {
+            if (
+                fs.existsSync(path.resolve(element)) &&
+                (element.endsWith('CustomLabels.labels') || element.endsWith('CustomLabels.labels-meta.xml'))
+            ) {
+                await this.getlabels(element);
+            } else {
+                throw new Error(`Error : ${element} is not valid custom label file`);
+            }
+        }
+        this.flags.manifest = await this.validatepackagexml(this.flags.manifest);
+        await this.setlabels(this.flags.manifest);
+
+        if (!this.flags.json) {
+            let result = [];
+            for (let i = 0; i < this.output.length; i++) {
+                result.push({ sno: i + 1, label: this.output[i] });
+            }
+            this.ux.table(result, ['sno', 'label']);
+        }
+        return this.output;
     }
-    return manifest;
-  }
-  createpackagexml(manifest: string) {
-    let package_xml = `<?xml version="1.0" encoding="UTF-8"?>
+    setoutput(label: string) {
+        if (!this.output.includes(label) && label !== '*') {
+            this.output.push(label);
+        }
+    }
+
+    public async getlabels(labelpath: string) {
+        let retrieved_customlabels = await xmlUtil.xmlToJSON(labelpath);
+        let labels = retrieved_customlabels.CustomLabels.labels;
+        if (labels.constructor === Array) {
+            labels.forEach((label) => {
+                this.setoutput(label.fullName);
+            });
+        } else {
+            this.setoutput(labels.fullName);
+        }
+    }
+    public async validatepackagexml(manifest: string) {
+        let fileOrFolder = path.normalize(manifest);
+        if (fs.existsSync(fileOrFolder)) {
+            let stats = fs.statSync(fileOrFolder);
+            if (stats.isFile()) {
+                if (path.extname(fileOrFolder) != '.xml') {
+                    throw new Error(`Error : ${fileOrFolder} is not valid package.xml`);
+                } else {
+                    await this.checklabelspackagexml(manifest);
+                }
+            } else if (stats.isDirectory()) {
+                manifest = `${manifest}/package.xml`;
+                this.createpackagexml(manifest);
+            }
+        } else {
+            manifest = manifest.endsWith(`package.xml`) ? `${manifest}` : `${manifest}/package.xml`;
+            this.createpackagexml(manifest);
+        }
+        return manifest;
+    }
+    createpackagexml(manifest: string) {
+        let package_xml = `<?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
   <types>
       <members>*</members>
@@ -144,52 +137,52 @@ export default class Buildmanifest extends SFPowerkitCommand {
   </types>
   <version>${this.flags.apiversion}</version>
 </Package>`;
-    fs.outputFileSync(manifest, package_xml);
-  }
-  public async checklabelspackagexml(manifest: string) {
-    let package_xml = await xmlUtil.xmlToJSON(manifest);
-    let isLabelexist = false;
-    if (package_xml.Package.types.constructor === Array) {
-      for (const item of package_xml.Package.types) {
-        if (item.name === "CustomLabel") {
-          this.setlabelutil(item.members);
-          item.members = "*";
-          isLabelexist = true;
-          break;
+        fs.outputFileSync(manifest, package_xml);
+    }
+    public async checklabelspackagexml(manifest: string) {
+        let package_xml = await xmlUtil.xmlToJSON(manifest);
+        let isLabelexist = false;
+        if (package_xml.Package.types.constructor === Array) {
+            for (const item of package_xml.Package.types) {
+                if (item.name === 'CustomLabel') {
+                    this.setlabelutil(item.members);
+                    item.members = '*';
+                    isLabelexist = true;
+                    break;
+                }
+            }
+        } else if (package_xml.Package.types.name === 'CustomLabel') {
+            this.setlabelutil(package_xml.Package.types.members);
+            package_xml.Package.types.members = '*';
+            isLabelexist = true;
         }
-      }
-    } else if (package_xml.Package.types.name === "CustomLabel") {
-      this.setlabelutil(package_xml.Package.types.members);
-      package_xml.Package.types.members = "*";
-      isLabelexist = true;
-    }
-    if (!isLabelexist) {
-      let label = { name: "CustomLabel", members: "*" };
-      package_xml.Package.types.push(label);
-    }
-    fs.outputFileSync(manifest, xmlUtil.jSONToXML(package_xml));
-  }
-  setlabelutil(members: any) {
-    if (members.constructor === Array) {
-      for (const label of members) {
-        this.setoutput(label);
-      }
-    } else {
-      this.setoutput(members);
-    }
-  }
-  public async setlabels(manifest: string) {
-    let package_xml = await xmlUtil.xmlToJSON(manifest);
-    if (package_xml.Package.types.constructor === Array) {
-      for (const item of package_xml.Package.types) {
-        if (item.name === "CustomLabel") {
-          item.members = this.output;
-          break;
+        if (!isLabelexist) {
+            let label = { name: 'CustomLabel', members: '*' };
+            package_xml.Package.types.push(label);
         }
-      }
-    } else if (package_xml.Package.types.name === "CustomLabel") {
-      package_xml.Package.types.members = this.output;
+        fs.outputFileSync(manifest, xmlUtil.jSONToXML(package_xml));
     }
-    fs.outputFileSync(manifest, xmlUtil.jSONToXML(package_xml));
-  }
+    setlabelutil(members: any) {
+        if (members.constructor === Array) {
+            for (const label of members) {
+                this.setoutput(label);
+            }
+        } else {
+            this.setoutput(members);
+        }
+    }
+    public async setlabels(manifest: string) {
+        let package_xml = await xmlUtil.xmlToJSON(manifest);
+        if (package_xml.Package.types.constructor === Array) {
+            for (const item of package_xml.Package.types) {
+                if (item.name === 'CustomLabel') {
+                    item.members = this.output;
+                    break;
+                }
+            }
+        } else if (package_xml.Package.types.name === 'CustomLabel') {
+            package_xml.Package.types.members = this.output;
+        }
+        fs.outputFileSync(manifest, xmlUtil.jSONToXML(package_xml));
+    }
 }

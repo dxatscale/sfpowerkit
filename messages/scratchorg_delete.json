@@ -1,7 +1,7 @@
 {
-  "commandDescription": "Deletes the active count of scratch org by given usermame/email in a devhub",
-  "emailFlagDescription": "Email of the user account that has created the scratch org",
-  "usernameFlagDescription": "Username of the scratch org to be deleted",
-  "ignorePoolFlagDescription": "Ignore scratch orgs which belong to a pool",
-  "dryRunFlagDescription": "Perform a dry run, without deleting the scratch orgs"
+    "commandDescription": "Deletes the active count of scratch org by given usermame/email in a devhub",
+    "emailFlagDescription": "Email of the user account that has created the scratch org",
+    "usernameFlagDescription": "Username of the scratch org to be deleted",
+    "ignorePoolFlagDescription": "Ignore scratch orgs which belong to a pool",
+    "dryRunFlagDescription": "Perform a dry run, without deleting the scratch orgs"
 }

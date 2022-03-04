@@ -1,5 +1,5 @@
 {
-  "commandDescription": "Gets the status of a sandbox",
-  "nameFlagDescription": "Name of the sandbox",
-  "showOnlyLatestFlagDescription" : "Shows only the latest info of the sandbox record"
+    "commandDescription": "Gets the status of a sandbox",
+    "nameFlagDescription": "Name of the sandbox",
+    "showOnlyLatestFlagDescription": "Shows only the latest info of the sandbox record"
 }

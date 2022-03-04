@@ -1,5 +1,5 @@
 {
-  "commandDescription": "Gets the apex test coverage details of an org",
-  "outputFolderDescription": " The output dir where the output will be created",
-  "formatFlagDescription": " The format for the test result output, Possible values are json/csv"
+    "commandDescription": "Gets the apex test coverage details of an org",
+    "outputFolderDescription": " The output dir where the output will be created",
+    "formatFlagDescription": " The format for the test result output, Possible values are json/csv"
 }

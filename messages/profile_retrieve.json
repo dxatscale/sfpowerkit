@@ -1,6 +1,6 @@
 {
-  "commandDescription": "Retrieve profiles from the salesforce org with all its associated permissions. Common use case for this command is  to migrate profile changes from a integration environment to other higher environments [overcomes SFDX CLI Profile retrieve issue where it doesnt fetch the full profile unless the entire metadata is present in source], or retrieving profiles from production to lower environments for testing.",
-  "folderFlagDescription": "retrieve only updated versions of profiles found in this directory, If ignored, all profiles will be retrieved.",
-  "profileListFlagDescription": "comma separated list of profiles to be retrieved. Use it for selectively retrieving an existing profile or retrieving a new profile",
-  "deleteFlagDescription": "set this flag to delete profile files that does not exist in the org, when retrieving in bulk"
+    "commandDescription": "Retrieve profiles from the salesforce org with all its associated permissions. Common use case for this command is  to migrate profile changes from a integration environment to other higher environments [overcomes SFDX CLI Profile retrieve issue where it doesnt fetch the full profile unless the entire metadata is present in source], or retrieving profiles from production to lower environments for testing.",
+    "folderFlagDescription": "retrieve only updated versions of profiles found in this directory, If ignored, all profiles will be retrieved.",
+    "profileListFlagDescription": "comma separated list of profiles to be retrieved. Use it for selectively retrieving an existing profile or retrieving a new profile",
+    "deleteFlagDescription": "set this flag to delete profile files that does not exist in the org, when retrieving in bulk"
 }

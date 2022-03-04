@@ -1,11 +1,10 @@
 {
-  "commandDescription": "Updates a shared variable in the Azure Pipelines",
-  "usernameFlagDescription": "Username of the azure pipelines account",
-  "patFlagDescription" : "PAT for the userpipelines",
-  "keyFlagDescription" : "Key of the variable to be updated",
-  "valueFlagDescription": "Value of the variable to be updated",
-  "variablegroupIdFlagDescription":"Id of the variale group in which the variable has to be updated",
-  "orgFlagDescription":"Azue Pipeline Org",
-  "projectFlagDescription":"Project in Azure Pipelines"
-
+    "commandDescription": "Updates a shared variable in the Azure Pipelines",
+    "usernameFlagDescription": "Username of the azure pipelines account",
+    "patFlagDescription": "PAT for the userpipelines",
+    "keyFlagDescription": "Key of the variable to be updated",
+    "valueFlagDescription": "Value of the variable to be updated",
+    "variablegroupIdFlagDescription": "Id of the variale group in which the variable has to be updated",
+    "orgFlagDescription": "Azue Pipeline Org",
+    "projectFlagDescription": "Project in Azure Pipelines"
 }

@@ -5,18 +5,16 @@ import classnames from 'classnames';
 import './style.css';
 
 export default class plugins extends Component {
-  // static propTypes = {}
-  // static defaultProps = {}
-  // state = {}
+    // static propTypes = {}
+    // static defaultProps = {}
+    // state = {}
 
-  render() {
-    const { className, ...props } = this.props;
-    return (
-      <div className={classnames('plugins', className)} {...props}>
-        <h1>
-          plugins
-        </h1>
-      </div>
-    );
-  }
+    render() {
+        const { className, ...props } = this.props;
+        return (
+            <div className={classnames('plugins', className)} {...props}>
+                <h1>plugins</h1>
+            </div>
+        );
+    }
 }

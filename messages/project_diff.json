@@ -1,11 +1,11 @@
 {
-  "commandDescription": "Generate a delta 'changeset' between two diff commits so that  the incremental changes can be deployed to the target org.To be used for an org based deployment and the size of the metadata is large that the project cannot not be deployed in a single attempt./nThis command works with a source format based repository only. Utilize the command during a transition phase where an org is transformed to a modular architecture composing of multiple projects.",
-  "outputFolderDescription": " The output dir where the incremental project will be created",
-  "revisionFromDescription": "Base revision from where diff is to be generated, required if diff file is ommited",
-  "revisionToDescription": " [default:HEAD] Target revision to generate the diff ",
-  "sameCommitErrorMessage": "Same commit: Please provide to differents revisions",
-  "generativeDestructiveManifestDescription": "If set to true, the command will also generate a destructiveChangePost.xml file in the output folder.",
-  "itemsToBypass": "[EXPERIMENTAL] Ignore comma seperated paths from the diff being generated, the  diff command doesnt generate a diff on the following paths",
-  "packagedirectories": "[EXPERIMENTAL] Run diff only on specific paths, also generate a sfdx-project.json to support the corresponding package directory",
-  "apiversion": "override the api version used for api requests made by this command"
+    "commandDescription": "Generate a delta 'changeset' between two diff commits so that  the incremental changes can be deployed to the target org.To be used for an org based deployment and the size of the metadata is large that the project cannot not be deployed in a single attempt./nThis command works with a source format based repository only. Utilize the command during a transition phase where an org is transformed to a modular architecture composing of multiple projects.",
+    "outputFolderDescription": " The output dir where the incremental project will be created",
+    "revisionFromDescription": "Base revision from where diff is to be generated, required if diff file is ommited",
+    "revisionToDescription": " [default:HEAD] Target revision to generate the diff ",
+    "sameCommitErrorMessage": "Same commit: Please provide to differents revisions",
+    "generativeDestructiveManifestDescription": "If set to true, the command will also generate a destructiveChangePost.xml file in the output folder.",
+    "itemsToBypass": "[EXPERIMENTAL] Ignore comma seperated paths from the diff being generated, the  diff command doesnt generate a diff on the following paths",
+    "packagedirectories": "[EXPERIMENTAL] Run diff only on specific paths, also generate a sfdx-project.json to support the corresponding package directory",
+    "apiversion": "override the api version used for api requests made by this command"
 }

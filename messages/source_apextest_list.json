@@ -1,6 +1,6 @@
 {
-  "commandDescription": "This command helps to get list of all apex text classes located in source path",
-  "pathFlagDescription": "Source path to get all the apex test",
-  "resultasstringDescription": "Use this flag to get comma separated list of apex test as a string",
-  "loglevel": "[default: info] logging level for this command invocation"
+    "commandDescription": "This command helps to get list of all apex text classes located in source path",
+    "pathFlagDescription": "Source path to get all the apex test",
+    "resultasstringDescription": "Use this flag to get comma separated list of apex test as a string",
+    "loglevel": "[default: info] logging level for this command invocation"
 }

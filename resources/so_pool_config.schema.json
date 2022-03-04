@@ -4,10 +4,7 @@
     "properties": {
         "pool": {
             "type": "object",
-            "required":[
-                "config_file_path",
-                "tag"
-            ],
+            "required": ["config_file_path", "tag"],
             "additionalProperties": false,
             "properties": {
                 "expiry": {
@@ -57,13 +54,7 @@
             "items": [
                 {
                     "type": "object",
-                    "required": [
-                        "max_allocation",
-                        "min_allocation",
-                        "username",
-                        "expiry",
-                        "priority"
-                    ],
+                    "required": ["max_allocation", "min_allocation", "username", "expiry", "priority"],
                     "additionalProperties": false,
                     "properties": {
                         "max_allocation": {

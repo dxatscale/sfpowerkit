@@ -1,4 +1,4 @@
 {
-  "commandDescription": "Activates a trigger in the target org",
-  "nameFlagDescription": "Name of the trigger that has to be activated"
+    "commandDescription": "Activates a trigger in the target org",
+    "nameFlagDescription": "Name of the trigger that has to be activated"
 }

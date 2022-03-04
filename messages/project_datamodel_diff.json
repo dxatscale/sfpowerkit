@@ -1,8 +1,8 @@
 {
-  "commandDescription": "Provides an audit history of the metadata change between two commit ID's for data model ( CustomFields, RecordTypes, BusinessProcess)",
-  "revisionFromDescription": "Base revision from which to generate the diff",
-  "revisionToDescription": "Target revision from which to generate the diff",
-  "packageDirectoriesDescription": "Run diff only for specified package directories",
-  "outputDirDescription": "Directory to output the results",
-  "csvDescription": "Output to csv file"
+    "commandDescription": "Provides an audit history of the metadata change between two commit ID's for data model ( CustomFields, RecordTypes, BusinessProcess)",
+    "revisionFromDescription": "Base revision from which to generate the diff",
+    "revisionToDescription": "Target revision from which to generate the diff",
+    "packageDirectoriesDescription": "Run diff only for specified package directories",
+    "outputDirDescription": "Directory to output the results",
+    "csvDescription": "Output to csv file"
 }
