@@ -71,7 +71,6 @@ export default class Refresh extends SFPowerkitCommand {
         this.flags.clonefrom
       );
     
-      if (this.flags.description) {
         result = await request({
           method: "patch",
           url: uri,
@@ -81,25 +80,10 @@ export default class Refresh extends SFPowerkitCommand {
           body: {
             AutoActivate: "true",
             SourceId: `${sourceSandboxId}`,
-            Description: `${this.flags.description}`
+            Description: this.flags.description?`${this.flags.description}`: `${sandboxDescription}`
           },
           json: true
-        });
-      }else{
-        result = await request({
-          method: "patch",
-          url: uri,
-          headers: {
-            Authorization: `Bearer ${conn.accessToken}`
-          },
-          body: {
-            AutoActivate: "true",
-            SourceId: `${sourceSandboxId}`,
-            Description: `${sandboxDescription}`
-          },
-          json: true
-        });
-      }   
+        });   
       
     } else {
       if (!this.flags.licensetype) {
@@ -107,7 +91,6 @@ export default class Refresh extends SFPowerkitCommand {
           "License type is required when clonefrom source org is not provided. you may need to provide -l | --licensetype"
         );
       }
-      if (this.flags.description) {
         result = await request({
           method: "patch",
           url: uri,
@@ -117,27 +100,12 @@ export default class Refresh extends SFPowerkitCommand {
           body: {
             AutoActivate: "true",
             LicenseType: `${this.flags.licensetype}`,
-            Description: `${this.flags.description}`
-          },
-          json: true
-        });
-      }else {
-        result = await request({
-          method: "patch",
-          url: uri,
-          headers: {
-            Authorization: `Bearer ${conn.accessToken}`
-          },
-          body: {
-            AutoActivate: "true",
-            LicenseType: `${this.flags.licensetype}`,
-            Description: `${sandboxDescription}`
+            Description: this.flags.description?`${this.flags.description}`: `${sandboxDescription}`
           },
           json: true
         });
       }
       
-    }
 
     SFPowerkit.log(
       `Successfully Enqueued Refresh of Sandbox`,
