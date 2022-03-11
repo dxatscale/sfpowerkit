@@ -57,7 +57,7 @@ export default class RelaxIPRangeImpl {
 
     let retriveLocation = `temp_sfpowerkit_${retrievedId}`;
     //Extract Matching Rule
-    var zipFileName = `${retriveLocation}/unpackaged.zip`;
+    let zipFileName = `${retriveLocation}/unpackaged.zip`;
     fs.mkdirSync(retriveLocation);
     fs.writeFileSync(zipFileName, metadata_retrieve_result.zipFile, {
       encoding: "base64"
