@@ -44,10 +44,12 @@ export default class PoolCreateImpl {
     public async poolScratchOrgs(): Promise<boolean> {
         await ScratchOrgUtils.checkForNewVersionCompatible(this.hubOrg);
         let scriptExecPromises: Array<Promise<ScriptExecutionResult>> = new Array();
-        let ipRangeExecPromises: Array<Promise<{
-            username: string;
-            success: boolean;
-        }>> = new Array();
+        let ipRangeExecPromises: Array<
+            Promise<{
+                username: string;
+                success: boolean;
+            }>
+        > = new Array();
 
         await this.hubOrg.refreshAuth();
         this.hubConn = this.hubOrg.getConnection();

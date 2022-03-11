@@ -107,7 +107,7 @@ export default class ScratchOrgUtils {
         config_file_path: string,
         expiry: number,
         hubOrg: Org,
-        alias_prefix?: string,
+        alias_prefix?: string
     ): Promise<ScratchOrg> {
         SFPowerkit.log(
             'Parameters: ' + id + ' ' + adminEmail + ' ' + config_file_path + ' ' + expiry + ' ',
@@ -122,9 +122,9 @@ export default class ScratchOrgUtils {
         }
 
         if (alias_prefix) {
-            getSFDXCommand += ` --setalias ${alias_prefix}${id}`
+            getSFDXCommand += ` --setalias ${alias_prefix}${id}`;
         } else {
-            getSFDXCommand += ` --setalias SO${id}`
+            getSFDXCommand += ` --setalias SO${id}`;
         }
 
         result = child_process.execSync(getSFDXCommand, { stdio: 'pipe' });
