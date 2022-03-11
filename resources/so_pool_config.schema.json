@@ -26,6 +26,10 @@
                     "description": "(Required) Identifier for the pool created",
                     "type": "string"
                 },
+                "alias_prefix": {
+                    "description": "Identifier for the pool of scratch orgs created",
+                    "type": "string"
+                },
                 "relax_all_ip_ranges": {
                     "description": "Relax all IP ranges",
                     "type": "boolean"
