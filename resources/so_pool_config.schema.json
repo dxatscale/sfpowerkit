@@ -27,6 +27,10 @@
                     "description": "Relax all IP ranges",
                     "type": "boolean"
                 },
+                "alias_prefix": {
+                    "description": "Identifier for the pool of scratch orgs created",
+                    "type": "string"
+                },
                 "relax_ip_ranges": {
                     "type": "array",
                     "items": [

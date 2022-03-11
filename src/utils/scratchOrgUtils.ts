@@ -106,7 +106,8 @@ export default class ScratchOrgUtils {
         adminEmail: string,
         config_file_path: string,
         expiry: number,
-        hubOrg: Org
+        hubOrg: Org,
+        alias_prefix?: string,
     ): Promise<ScratchOrg> {
         SFPowerkit.log(
             'Parameters: ' + id + ' ' + adminEmail + ' ' + config_file_path + ' ' + expiry + ' ',
@@ -114,10 +115,16 @@ export default class ScratchOrgUtils {
         );
 
         let result;
-        let getSFDXCommand = `sfdx force:org:create -f ${config_file_path} -d ${expiry} -a SO${id} -w 10 -v ${hubOrg.getUsername()} --json`;
+        let getSFDXCommand = `sfdx force:org:create -f ${config_file_path} -d ${expiry} -w 10 -v ${hubOrg.getUsername()} --json`;
 
         if (adminEmail) {
             getSFDXCommand += ` adminEmail=${adminEmail}`;
+        }
+
+        if (alias_prefix) {
+            getSFDXCommand += ` --setalias ${alias_prefix}${id}`
+        } else {
+            getSFDXCommand += ` --setalias SO${id}`
         }
 
         result = child_process.execSync(getSFDXCommand, { stdio: 'pipe' });
@@ -126,7 +133,7 @@ export default class ScratchOrgUtils {
         SFPowerkit.log(JSON.stringify(result), LoggerLevel.TRACE);
 
         let scratchOrg: ScratchOrg = {
-            alias: `SO${id}`,
+            alias: resultObject.result.alias,
             orgId: resultObject.result.orgId,
             username: resultObject.result.username,
             signupEmail: adminEmail ? adminEmail : '',
