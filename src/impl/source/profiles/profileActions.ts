@@ -20,9 +20,7 @@ export default abstract class ProfileActions {
         this.debugFlag = debugFlag;
     }
 
-    protected async getProfileFullNamesWithLocalStatus(
-        profileNames: string[]
-    ): Promise<{
+    protected async getProfileFullNamesWithLocalStatus(profileNames: string[]): Promise<{
         added: string[];
         deleted: string[];
         updated: string[];
