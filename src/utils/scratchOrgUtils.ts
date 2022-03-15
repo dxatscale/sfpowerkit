@@ -5,6 +5,7 @@ import { SFPowerkit } from '../sfpowerkit';
 let retry = require('async-retry');
 import { isNullOrUndefined } from 'util';
 import Passwordgenerateimpl from '../impl/user/passwordgenerateimpl';
+import queryApi from '../utils/queryExecutor';
 const child_process = require('child_process');
 
 const ORDER_BY_FILTER = ' ORDER BY CreatedDate ASC';
@@ -306,30 +307,26 @@ export default class ScratchOrgUtils {
     public static async getCountOfActiveScratchOrgsByTag(tag: string, hubOrg: Org): Promise<number> {
         let hubConn = hubOrg.getConnection();
 
-        return await retry(
-            async (bail) => {
-                let query = `SELECT Id, CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE Pooltag__c = '${tag}' AND Status = 'Active' `;
-                SFPowerkit.log('QUERY:' + query, LoggerLevel.TRACE);
-                const results = (await hubConn.query(query)) as any;
-                SFPowerkit.log('RESULT:' + JSON.stringify(results), LoggerLevel.TRACE);
-                return results.totalSize;
-            },
-            { retries: 3, minTimeout: 3000 }
-        );
+        let query = `SELECT Id, CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE Pooltag__c = '${tag}' AND Status = 'Active' `;
+        SFPowerkit.log('QUERY:' + query, LoggerLevel.TRACE);
+        
+        let queryUtil = new queryApi(hubConn);
+        let result = await queryUtil.executeQuery(query, false);
+
+        SFPowerkit.log('RESULT:' + JSON.stringify(result), LoggerLevel.TRACE);
+
+        return result.length ;
+
     }
 
     public static async getCountOfActiveScratchOrgsByTagAndUsername(tag: string, hubOrg: Org): Promise<number> {
         let hubConn = hubOrg.getConnection();
+        let queryUtil = new queryApi(hubConn);
+        let query = `SELECT Id, CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE Pooltag__c = '${tag}' AND Status = 'Active' `;
 
-        return await retry(
-            async (bail) => {
-                let query = `SELECT Id, CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE Pooltag__c = '${tag}' AND Status = 'Active' `;
-                SFPowerkit.log('QUERY:' + query, LoggerLevel.TRACE);
-                const results = (await hubConn.query(query)) as any;
-                return results.totalSize;
-            },
-            { retries: 3, minTimeout: 3000 }
-        );
+        let result = await queryUtil.executeQuery(query, false);
+
+        return result.length ;
     }
 
     public static async getActiveScratchOrgRecordIdGivenScratchOrg(
@@ -339,24 +336,11 @@ export default class ScratchOrgUtils {
     ): Promise<any> {
         let hubConn = hubOrg.getConnection();
 
-        return await retry(
-            async (bail) => {
-                let query_uri = `${hubConn.instanceUrl}/services/data/v${apiversion}/query?q=SELECT+Id+FROM+ActiveScratchOrg+WHERE+ScratchOrg+=+'${scratchOrgId}'`;
-
-                const result = await request({
-                    method: 'get',
-                    url: query_uri,
-                    headers: {
-                        Authorization: `Bearer ${hubConn.accessToken}`,
-                    },
-                    json: true,
-                });
-
-                SFPowerkit.log('Retrieve Active ScratchOrg Id:' + JSON.stringify(result), LoggerLevel.TRACE);
-                return result.records[0].Id;
-            },
-            { retries: 3, minTimeout: 3000 }
-        );
+        let query = `SELECT Id FROM ActiveScratchOrg WHERE ScratchOrg = '${scratchOrgId}'`;
+        let queryUtil = new queryApi(hubConn);
+        let result = await queryUtil.executeQuery(query, false);
+        SFPowerkit.log('Retrieve Active ScratchOrg Id:' + JSON.stringify(result), LoggerLevel.TRACE);
+        return result[0].Id;
     }
 
     public static async deleteScratchOrg(hubOrg: Org, scratchOrgIds: string[]) {
@@ -382,14 +366,10 @@ export default class ScratchOrgUtils {
         let query = `SELECT QualifiedApiName FROM FieldDefinition WHERE EntityDefinition.QualifiedApiName = 'ScratchOrgInfo' AND QualifiedApiName = 'Allocation_status__c'`;
         SFPowerkit.log('QUERY:' + query, LoggerLevel.TRACE);
 
-        return await retry(
-            async (bail) => {
-                const results = (await hubConn.tooling.query(query)) as any;
+        let queryUtil = new queryApi(hubConn);
+        let result = await queryUtil.executeQuery(query, true);
 
-                return results?.records?.length > 0;
-            },
-            { retries: 3, minTimeout: 3000 }
-        );
+        return result.length > 0;
     }
 }
 
