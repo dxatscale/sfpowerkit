@@ -379,19 +379,17 @@ export default class ScratchOrgUtils {
     public static async checkForPreRequisite(hubOrg: Org) {
         let hubConn = hubOrg.getConnection();
 
+        let query = `SELECT QualifiedApiName FROM FieldDefinition WHERE EntityDefinition.QualifiedApiName = 'ScratchOrgInfo' AND QualifiedApiName = 'Allocation_status__c'`;
+        SFPowerkit.log('QUERY:' + query, LoggerLevel.TRACE);
+
         return await retry(
             async (bail) => {
-                const results: any = await hubConn.metadata.read('CustomObject', 'ScratchOrgInfo');
+                const results = (await hubConn.tooling.query(query)) as any;
 
-                const checker = (element) => element.fullName === 'Allocation_status__c';
-                SFPowerkit.log(JSON.stringify(results), LoggerLevel.TRACE);
-                if (results['fields'].some(checker)) {
-                    return true;
-                } else {
-                    return false;
-                }
+                 return results?.records?.length > 0;
+
             },
-            { retries: 3, minTimeout: 2000 }
+            { retries: 3, minTimeout: 3000 }
         );
     }
 }
