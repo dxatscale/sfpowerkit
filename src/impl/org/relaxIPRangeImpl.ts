@@ -111,15 +111,16 @@ export default class RelaxIPRangeImpl {
             let deployId: AsyncResult;
 
             let zipStream = fs.createReadStream(zipFile);
-            await conn.metadata.deploy(zipStream, { rollbackOnError: true, singlePackage: true }, function (
-                error,
-                result: AsyncResult
-            ) {
-                if (error) {
-                    return console.error(error);
+            await conn.metadata.deploy(
+                zipStream,
+                { rollbackOnError: true, singlePackage: true },
+                function (error, result: AsyncResult) {
+                    if (error) {
+                        return console.error(error);
+                    }
+                    deployId = result;
                 }
-                deployId = result;
-            });
+            );
 
             SFPowerkit.log(
                 `${removeall ? 'Removing all' : 'Setting'} Ip range with ID  ${deployId.id} to ${conn.getUsername()}`,

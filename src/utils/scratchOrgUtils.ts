@@ -386,8 +386,7 @@ export default class ScratchOrgUtils {
             async (bail) => {
                 const results = (await hubConn.tooling.query(query)) as any;
 
-                 return results?.records?.length > 0;
-
+                return results?.records?.length > 0;
             },
             { retries: 3, minTimeout: 3000 }
         );

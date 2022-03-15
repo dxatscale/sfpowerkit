@@ -138,15 +138,16 @@ export default class Activate extends SFPowerkitCommand {
             let deployId: AsyncResult;
 
             let zipStream = fs.createReadStream(zipFile);
-            await conn.metadata.deploy(zipStream, { rollbackOnError: true, singlePackage: true }, function (
-                error,
-                result: AsyncResult
-            ) {
-                if (error) {
-                    return console.error(error);
+            await conn.metadata.deploy(
+                zipStream,
+                { rollbackOnError: true, singlePackage: true },
+                function (error, result: AsyncResult) {
+                    if (error) {
+                        return console.error(error);
+                    }
+                    deployId = result;
                 }
-                deployId = result;
-            });
+            );
 
             this.ux.log(`Deploying Activated Matching Rule with ID  ${deployId.id}  to ${this.org.getUsername()}`);
             let metadata_deploy_result: DeployResult = await checkDeploymentStatus(conn, deployId.id);
