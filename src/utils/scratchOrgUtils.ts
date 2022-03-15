@@ -309,14 +309,13 @@ export default class ScratchOrgUtils {
 
         let query = `SELECT Id, CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE Pooltag__c = '${tag}' AND Status = 'Active' `;
         SFPowerkit.log('QUERY:' + query, LoggerLevel.TRACE);
-        
+
         let queryUtil = new queryApi(hubConn);
         let result = await queryUtil.executeQuery(query, false);
 
         SFPowerkit.log('RESULT:' + JSON.stringify(result), LoggerLevel.TRACE);
 
-        return result.length ;
-
+        return result.length;
     }
 
     public static async getCountOfActiveScratchOrgsByTagAndUsername(tag: string, hubOrg: Org): Promise<number> {
@@ -326,7 +325,7 @@ export default class ScratchOrgUtils {
 
         let result = await queryUtil.executeQuery(query, false);
 
-        return result.length ;
+        return result.length;
     }
 
     public static async getActiveScratchOrgRecordIdGivenScratchOrg(
