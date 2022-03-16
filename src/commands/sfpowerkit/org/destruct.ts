@@ -143,15 +143,16 @@ export default class Destruct extends SFPowerkitCommand {
         let deployId: AsyncResult;
 
         const zipStream = fs.createReadStream(zipFile);
-        await conn.metadata.deploy(zipStream, { rollbackOnError: true, singlePackage: true }, function (
-            error,
-            result: AsyncResult
-        ) {
-            if (error) {
-                SFPowerkit.log(error.message, LoggerLevel.ERROR);
+        await conn.metadata.deploy(
+            zipStream,
+            { rollbackOnError: true, singlePackage: true },
+            function (error, result: AsyncResult) {
+                if (error) {
+                    SFPowerkit.log(error.message, LoggerLevel.ERROR);
+                }
+                deployId = result;
             }
-            deployId = result;
-        });
+        );
 
         SFPowerkit.log(
             `Deploying Destructive Changes with ID ${deployId.id} to ${this.org.getUsername()}`,
