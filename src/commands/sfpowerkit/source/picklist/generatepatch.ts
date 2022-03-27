@@ -232,13 +232,11 @@ export default class Generatepatch extends SFPowerkitCommand {
             fs.copyFileSync(zipFile, `${dir}${packageToBeUsed.package}_picklist.zip`);
 
             //Store it to static resources
-            const metadata = `
-                            <?xml version="1.0" encoding="UTF-8"?>
-                                <StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
-                                    <cacheControl>Public</cacheControl>
-                                    <contentType>application/zip</contentType>
-                                </StaticResource>
-                            `;
+            const metadata = `<?xml version="1.0" encoding="UTF-8"?>
+      <StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
+          <cacheControl>Public</cacheControl>
+          <contentType>application/zip</contentType>
+      </StaticResource>`;
 
             let targetmetadatapath = `${dir}${packageToBeUsed.package}_picklist.resource-meta.xml`;
 
