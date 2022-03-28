@@ -22,7 +22,7 @@ import CustomLabelsDiff from './customLabelsDiff';
 import DiffUtil, { DiffFile, DiffFileStatus } from './diffUtil';
 import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
 import { DXProjectManifestUtils } from '../../../utils/dxProjectManifestUtils';
-import simplegit from 'simple-git/promise';
+import simplegit from 'simple-git';
 import { Messages } from '@salesforce/core';
 
 Messages.importMessagesDirectory(__dirname);
