@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { Connection } from 'jsforce/connection';
-import { LoggerLevel, SFPowerkit } from '../sfpowerkit';
+import { LoggerLevel, Sfpowerkit } from '../sfpowerkit';
 
 const retry = require('async-retry');
 
@@ -23,7 +23,7 @@ export default class QueryExecutor {
                     retries: 5,
                     minTimeout: 2000,
                     onRetry: (error) => {
-                        SFPowerkit.log(`Retrying Network call due to ${error.message}`, LoggerLevel.INFO);
+                        Sfpowerkit.log(`Retrying Network call due to ${error.message}`, LoggerLevel.INFO);
                     },
                 }
             );
@@ -40,7 +40,7 @@ export default class QueryExecutor {
                     retries: 5,
                     minTimeout: 2000,
                     onRetry: (error) => {
-                        SFPowerkit.log(`Retrying Network call due to ${error.message}`, LoggerLevel.INFO);
+                        Sfpowerkit.log(`Retrying Network call due to ${error.message}`, LoggerLevel.INFO);
                     },
                 }
             );
@@ -72,7 +72,7 @@ export default class QueryExecutor {
                     retries: 5,
                     minTimeout: 2000,
                     onRetry: (error) => {
-                        SFPowerkit.log(`Retrying Network call due to ${error.message}`, LoggerLevel.INFO);
+                        Sfpowerkit.log(`Retrying Network call due to ${error.message}`, LoggerLevel.INFO);
                     },
                 }
             );
@@ -89,7 +89,7 @@ export default class QueryExecutor {
                     retries: 5,
                     minTimeout: 2000,
                     onRetry: (error) => {
-                        SFPowerkit.log(`Retrying Network call due to ${error.message}`, LoggerLevel.INFO);
+                        Sfpowerkit.log(`Retrying Network call due to ${error.message}`, LoggerLevel.INFO);
                     },
                 }
             );

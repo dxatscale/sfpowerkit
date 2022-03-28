@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-array-constructor */
 import ScratchOrgUtils, { ScratchOrg } from '../../../utils/scratchOrgUtils';
 import { Connection, LoggerLevel, Org, AuthInfo } from '@salesforce/core';
-import { SFPowerkit } from '../../../sfpowerkit';
+import { Sfpowerkit } from '../../../sfpowerkit';
 import * as fs from 'fs-extra';
 import { exec } from 'child_process';
 import Bottleneck from 'bottleneck';
@@ -57,7 +57,7 @@ export default class PoolCreateImpl {
         let preRequisiteCheck = await ScratchOrgUtils.checkForPreRequisite(this.hubOrg);
 
         if (!preRequisiteCheck) {
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 'Required Prerequisite fields are missing in the DevHub, Please look into the wiki to getting the fields deployed in DevHub',
                 LoggerLevel.ERROR
             );
@@ -67,7 +67,7 @@ export default class PoolCreateImpl {
         //Read pool config file
 
         if (!fs.existsSync(this.poolconfigFilePath)) {
-            SFPowerkit.log('Poll Config Path not provided, Unable to create pool without this file', LoggerLevel.ERROR);
+            Sfpowerkit.log('Poll Config Path not provided, Unable to create pool without this file', LoggerLevel.ERROR);
             return false;
         }
 
@@ -78,7 +78,7 @@ export default class PoolCreateImpl {
 
         //Validate Inputs
         if (isNullOrUndefined(this.poolConfig.pool.config_file_path)) {
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 'Scratch Org Config Path not provided, Unable to create pool without this file',
                 LoggerLevel.ERROR
             );
@@ -86,7 +86,7 @@ export default class PoolCreateImpl {
         }
 
         if (isNullOrUndefined(this.poolConfig.pool.expiry) || isNullOrUndefined(this.poolConfig.pool.tag)) {
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 'Some Key parameters are missing in the schema,Please consult the documentation',
                 LoggerLevel.ERROR
             );
@@ -101,14 +101,14 @@ export default class PoolCreateImpl {
         //Set Tag Only mode activated for the default use case
         if (this.poolConfig.pool.user_mode == false) this.setASingleUserForTagOnlyMode();
 
-        SFPowerkit.log('Pool Config:' + JSON.stringify(this.poolConfig), LoggerLevel.TRACE);
+        Sfpowerkit.log('Pool Config:' + JSON.stringify(this.poolConfig), LoggerLevel.TRACE);
 
         if (
             !this.poolConfig.pool.relax_all_ip_ranges &&
             isNullOrUndefined(this.poolConfig.pool.relax_ip_ranges) &&
             !this.poolConfig.pool.user_mode
         ) {
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 "IP Ranges are not relaxed, The created scratch org's will have the pool creators email as Admin Email and has to be verifed before use",
                 LoggerLevel.WARN
             );
@@ -122,12 +122,12 @@ export default class PoolCreateImpl {
 
         if (this.totalToBeAllocated === 0) {
             if (this.limits.ActiveScratchOrgs.Remaining > 0)
-                SFPowerkit.log(
+                Sfpowerkit.log(
                     `The tag provided ${this.poolConfig.pool.tag} is currently at the maximum capacity , No scratch orgs will be allocated`,
                     LoggerLevel.INFO
                 );
             else
-                SFPowerkit.log(
+                Sfpowerkit.log(
                     `There is no capacity to create a pool at this time, Please try again later`,
                     LoggerLevel.INFO
                 );
@@ -145,7 +145,7 @@ export default class PoolCreateImpl {
         let ts = Math.floor(Date.now() / 1000);
         for (let poolUser of this.poolConfig.poolUsers) {
             for (let scratchOrg of poolUser.scratchOrgs) {
-                SFPowerkit.log(JSON.stringify(scratchOrg), LoggerLevel.DEBUG);
+                Sfpowerkit.log(JSON.stringify(scratchOrg), LoggerLevel.DEBUG);
 
                 if (this.poolConfig.pool.relax_all_ip_ranges || this.poolConfig.pool.relax_ip_ranges) {
                     let resultForIPRelaxation = this.ipRangeRelaxerWrappedForBottleneck(scratchOrg);
@@ -185,9 +185,9 @@ export default class PoolCreateImpl {
         let scriptExecResults = await Promise.all(scriptExecPromises);
 
         if (this.scriptFileExists) {
-            SFPowerkit.log(JSON.stringify(scriptExecResults), LoggerLevel.TRACE);
+            Sfpowerkit.log(JSON.stringify(scriptExecResults), LoggerLevel.TRACE);
             ts = Math.floor(Date.now() / 1000) - ts;
-            SFPowerkit.log(`Pool Execution completed in ${ts} Seconds`, LoggerLevel.INFO);
+            Sfpowerkit.log(`Pool Execution completed in ${ts} Seconds`, LoggerLevel.INFO);
         }
 
         //Commit Succesfull Scratch Orgs
@@ -197,12 +197,12 @@ export default class PoolCreateImpl {
         } = await this.finalizeGeneratedScratchOrgs();
 
         if (this.totalAllocated > 0) {
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `Request for provisioning ${this.totalToBeAllocated} scratchOrgs of which ${this.totalAllocated} were allocated with ${commit_result.success} success and ${commit_result.failed} failures`,
                 LoggerLevel.INFO
             );
         } else {
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `Request for provisioning ${this.totalToBeAllocated} scratchOrgs not successfull.`,
                 LoggerLevel.ERROR
             );
@@ -212,7 +212,7 @@ export default class PoolCreateImpl {
 
     private validateScriptFile() {
         if (isNullOrUndefined(this.poolConfig.pool.script_file_path)) {
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 'Script Path not provided, will create a pool of scratch orgs without any post creation steps',
                 LoggerLevel.WARN
             );
@@ -220,7 +220,7 @@ export default class PoolCreateImpl {
         } else if (fs.existsSync(this.poolConfig.pool.script_file_path)) {
             this.scriptFileExists = true;
         } else {
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 'Unable to locate Script File path, will crete a pool of scratch orgs without any post creation steps',
                 LoggerLevel.WARN
             );
@@ -249,11 +249,11 @@ export default class PoolCreateImpl {
         try {
             this.limits = await ScratchOrgUtils.getScratchOrgLimits(this.hubOrg, this.apiversion);
         } catch (error) {
-            SFPowerkit.log('Unable to connect to DevHub', LoggerLevel.ERROR);
+            Sfpowerkit.log('Unable to connect to DevHub', LoggerLevel.ERROR);
             return;
         }
 
-        SFPowerkit.log(
+        Sfpowerkit.log(
             `Active Scratch Orgs Remaining: ${this.limits.ActiveScratchOrgs.Remaining} out of ${this.limits.ActiveScratchOrgs.Max}`,
             LoggerLevel.TRACE
         );
@@ -277,7 +277,7 @@ export default class PoolCreateImpl {
                 return obj;
             }, {});
 
-            SFPowerkit.log(JSON.stringify(scratchOrgsRecordAsMapByUser), LoggerLevel.TRACE);
+            Sfpowerkit.log(JSON.stringify(scratchOrgsRecordAsMapByUser), LoggerLevel.TRACE);
 
             return this.allocateScratchOrgsPerUser(
                 this.limits.ActiveScratchOrgs.Remaining,
@@ -305,9 +305,9 @@ export default class PoolCreateImpl {
             let userCount = 1;
             poolUser.scratchOrgs = new Array<ScratchOrg>();
             for (let i = 0; i < poolUser.to_allocate; i++) {
-                SFPowerkit.log(`Creating Scratch  Org ${soCount}/${this.totalToBeAllocated}`, LoggerLevel.INFO);
+                Sfpowerkit.log(`Creating Scratch  Org ${soCount}/${this.totalToBeAllocated}`, LoggerLevel.INFO);
                 if (this.poolConfig.pool.user_mode) {
-                    SFPowerkit.log(
+                    Sfpowerkit.log(
                         `Scratch  Org allocation:${poolUser.username}  alias:${soCount} count:${userCount}/${poolUser.to_allocate}`,
                         LoggerLevel.INFO
                     );
@@ -325,7 +325,7 @@ export default class PoolCreateImpl {
                     poolUser.scratchOrgs.push(scratchOrg);
                     this.totalAllocated++;
                 } catch (error) {
-                    SFPowerkit.log(
+                    Sfpowerkit.log(
                         `Unable to provision scratch org  ${soCount} . Due to following Error: ${error.message}`,
                         LoggerLevel.INFO
                     );
@@ -370,7 +370,7 @@ export default class PoolCreateImpl {
                     continue;
                 }
 
-                SFPowerkit.log(
+                Sfpowerkit.log(
                     `Failed to execute scripts for ${scratchOrg.username} with alias ${scratchOrg.alias}.. Returning to Pool`,
                     LoggerLevel.ERROR
                 );
@@ -385,9 +385,9 @@ export default class PoolCreateImpl {
                     );
 
                     await ScratchOrgUtils.deleteScratchOrg(this.hubOrg, [activeScratchOrgRecordId]);
-                    SFPowerkit.log(`Succesfully deleted scratchorg  ${scratchOrg.username}`, LoggerLevel.TRACE);
+                    Sfpowerkit.log(`Succesfully deleted scratchorg  ${scratchOrg.username}`, LoggerLevel.TRACE);
                 } catch (error) {
-                    SFPowerkit.log(`Unable to delete the scratchorg ${scratchOrg.username}..`, LoggerLevel.WARN);
+                    Sfpowerkit.log(`Unable to delete the scratchorg ${scratchOrg.username}..`, LoggerLevel.WARN);
                 }
 
                 failed++;
@@ -403,7 +403,7 @@ export default class PoolCreateImpl {
         tag: string,
         poolUser: PoolUser
     ) {
-        SFPowerkit.log('Remaining ScratchOrgs' + remainingScratchOrgs, LoggerLevel.TRACE);
+        Sfpowerkit.log('Remaining ScratchOrgs' + remainingScratchOrgs, LoggerLevel.TRACE);
         poolUser.current_allocation = countOfActiveScratchOrgs;
         poolUser.to_allocate = 0;
         poolUser.to_satisfy_max =
@@ -417,7 +417,7 @@ export default class PoolCreateImpl {
             poolUser.to_allocate = remainingScratchOrgs;
         }
 
-        SFPowerkit.log('Computed Allocation' + JSON.stringify(poolUser), LoggerLevel.TRACE);
+        Sfpowerkit.log('Computed Allocation' + JSON.stringify(poolUser), LoggerLevel.TRACE);
         return poolUser.to_allocate;
     }
 
@@ -434,7 +434,7 @@ export default class PoolCreateImpl {
             totalMinOrgRequired = 0;
 
         poolUsers.forEach((pooluser) => {
-            SFPowerkit.log(pooluser, LoggerLevel.TRACE);
+            Sfpowerkit.log(pooluser, LoggerLevel.TRACE);
             pooluser.to_allocate = 0;
 
             if (scratchOrgsRecordAsMapByUser[pooluser.username]) {
@@ -510,7 +510,7 @@ export default class PoolCreateImpl {
 
     private async ipRangeRelaxer(scratchOrg: ScratchOrg): Promise<{ username: string; success: boolean }> {
         //executue using bash
-        SFPowerkit.log(`Relaxing ip ranges for scratchOrg with user ${scratchOrg.username}`, LoggerLevel.INFO);
+        Sfpowerkit.log(`Relaxing ip ranges for scratchOrg with user ${scratchOrg.username}`, LoggerLevel.INFO);
         const connection = await Connection.create({
             authInfo: await AuthInfo.create({ username: scratchOrg.username }),
         });
@@ -536,7 +536,7 @@ export default class PoolCreateImpl {
         //executue using bash
         let cmd;
 
-        SFPowerkit.log(`Script File Path: ${scriptFilePath}`, LoggerLevel.TRACE);
+        Sfpowerkit.log(`Script File Path: ${scriptFilePath}`, LoggerLevel.TRACE);
 
         scriptFilePath = path.normalize(scriptFilePath);
 
@@ -545,14 +545,14 @@ export default class PoolCreateImpl {
         } else {
             cmd = `cmd.exe /c ${scriptFilePath}  ${scratchOrg.username}  ${hubOrgUserName}`;
         }
-        SFPowerkit.log(`Executing command: ${cmd}`, LoggerLevel.INFO);
+        Sfpowerkit.log(`Executing command: ${cmd}`, LoggerLevel.INFO);
 
-        SFPowerkit.log(
+        Sfpowerkit.log(
             `Executing script for ${scratchOrg.alias} with username: ${scratchOrg.username}`,
             LoggerLevel.INFO
         );
 
-        SFPowerkit.log(
+        Sfpowerkit.log(
             `Script Execution result is being written to script_exec_outputs/${scratchOrg.alias}.log, Please note this will take a significant time depending on the  script being executed`,
             LoggerLevel.INFO
         );
@@ -562,7 +562,7 @@ export default class PoolCreateImpl {
         return new Promise((resolve, reject) => {
             let ls = exec(cmd, { cwd: process.cwd() }, (error, stdout, stderr) => {
                 if (error) {
-                    SFPowerkit.log(`Failed to execute script for ${scratchOrg.username}`, LoggerLevel.WARN);
+                    Sfpowerkit.log(`Failed to execute script for ${scratchOrg.username}`, LoggerLevel.WARN);
                     scratchOrg.isScriptExecuted = false;
 
                     resolve({
@@ -583,7 +583,7 @@ export default class PoolCreateImpl {
                     scratchOrg.isScriptExecuted = false;
 
                 if (scratchOrg.isScriptExecuted) {
-                    SFPowerkit.log(
+                    Sfpowerkit.log(
                         `Script Execution completed for ${scratchOrg.username} with alias ${scratchOrg.alias}`,
                         LoggerLevel.INFO
                     );

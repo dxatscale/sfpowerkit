@@ -1,12 +1,12 @@
 import cli from 'cli-ux';
 import { isNullOrUndefined } from 'util';
-import { SFPowerkit } from '../sfpowerkit';
+import { Sfpowerkit } from '../sfpowerkit';
 
 export class ProgressBar {
     private progressBarImpl;
 
     public create(title: string, unit: string, displayTillLogLevel: number): ProgressBar {
-        if (SFPowerkit.logLevel <= displayTillLogLevel && !SFPowerkit.isJsonFormatEnabled) {
+        if (Sfpowerkit.logLevel <= displayTillLogLevel && !Sfpowerkit.isJsonFormatEnabled) {
             this.progressBarImpl = cli.progress({
                 format: `${title} - PROGRESS  | {bar} | {value}/{total} ${unit}`,
                 barCompleteChar: '\u2588',

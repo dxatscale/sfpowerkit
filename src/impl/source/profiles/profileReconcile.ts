@@ -1,4 +1,4 @@
-import { LoggerLevel, SFPowerkit } from '../../../sfpowerkit';
+import { LoggerLevel, Sfpowerkit } from '../../../sfpowerkit';
 import MetadataFiles from '../../metadata/metadataFiles';
 import * as path from 'path';
 import { METADATA_INFO } from '../../metadata/metadataInfo';
@@ -16,22 +16,22 @@ export default class ProfileReconcile extends ProfileActions {
         //Get supported permissions from the org
 
         this.createDestinationFolder(destFolder);
-        SFPowerkit.log(`ProfileList ${JSON.stringify(profileList)}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`ProfileList ${JSON.stringify(profileList)}`, LoggerLevel.DEBUG);
 
         if (_.isNil(srcFolders) || srcFolders.length === 0) {
-            srcFolders = await SFPowerkit.getProjectDirectories();
+            srcFolders = await Sfpowerkit.getProjectDirectories();
         }
 
         //Fetch all the metadata in the project directory
         this.metadataFiles = this.fetchMetadataFilesFromAllPackageDirectories(srcFolders);
-        SFPowerkit.log(`Project Directories ${JSON.stringify(srcFolders)}`, LoggerLevel.TRACE);
+        Sfpowerkit.log(`Project Directories ${JSON.stringify(srcFolders)}`, LoggerLevel.TRACE);
 
         //Translate the provided profileList if any with proper extension
         profileList = profileList.map((element) => {
             return element + METADATA_INFO.Profile.sourceExtension;
         });
 
-        SFPowerkit.log(`Profiles Found in Entire Drirectory ${METADATA_INFO.Profile.files.length}`, LoggerLevel.INFO);
+        Sfpowerkit.log(`Profiles Found in Entire Drirectory ${METADATA_INFO.Profile.files.length}`, LoggerLevel.INFO);
 
         //Find Profiles to Reconcile
         let profilesToReconcile: string[] = this.findProfilesToReconcile(profileList);
@@ -58,12 +58,12 @@ export default class ProfileReconcile extends ProfileActions {
                 workerCount++;
                 let temparray: string[] = profilesToReconcile.slice(i, i + chunk);
 
-                SFPowerkit.log(
+                Sfpowerkit.log(
                     `Initiated Profile reconcile thread :${workerCount}  with a chunk of ${temparray.length} profiles`,
                     LoggerLevel.INFO
                 );
-                SFPowerkit.log(`Profiles queued in thread :${workerCount} :`, LoggerLevel.INFO);
-                SFPowerkit.log(`${JSON.stringify(temparray)}`, LoggerLevel.INFO);
+                Sfpowerkit.log(`Profiles queued in thread :${workerCount} :`, LoggerLevel.INFO);
+                Sfpowerkit.log(`${JSON.stringify(temparray)}`, LoggerLevel.INFO);
                 let reconcileWorkerFile;
 
                 //Switch to typescript while run locally using sfdx link, for debugging, else switch to js
@@ -78,8 +78,8 @@ export default class ProfileReconcile extends ProfileActions {
                         profileChunk: temparray,
                         destFolder: destFolder,
                         targetOrg: this.org?.getUsername(), //Org can be null during source only reconcile
-                        loglevel: SFPowerkit.logLevelString,
-                        isJsonFormatEnabled: SFPowerkit.isJsonFormatEnabled,
+                        loglevel: Sfpowerkit.logLevelString,
+                        isJsonFormatEnabled: Sfpowerkit.isJsonFormatEnabled,
                         path: reconcileWorkerFile,
                     },
                 });
@@ -89,7 +89,7 @@ export default class ProfileReconcile extends ProfileActions {
                     let completedProfiles: string[] = new Array();
                     completedProfiles.push(...data);
                     for (const profile of completedProfiles) {
-                        SFPowerkit.log(`Reconciled Profile ${profile}`, LoggerLevel.INFO);
+                        Sfpowerkit.log(`Reconciled Profile ${profile}`, LoggerLevel.INFO);
                     }
                     result.push(...data);
                 });
@@ -99,7 +99,7 @@ export default class ProfileReconcile extends ProfileActions {
                     finishedWorkerCount++;
                     if (code !== 0)
                         //reject(new Error(`Worker stopped with exit code ${code}`));
-                        SFPowerkit.log(`Worker stopped with exit code ${code}`, LoggerLevel.ERROR);
+                        Sfpowerkit.log(`Worker stopped with exit code ${code}`, LoggerLevel.ERROR);
 
                     if (workerCount === finishedWorkerCount) {
                         resolve(result);

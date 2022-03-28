@@ -14,7 +14,7 @@ import { checkRetrievalStatus } from '../../../../utils/checkRetrievalStatus';
 import { checkDeploymentStatus } from '../../../../utils/checkDeploymentStatus';
 import { extract } from '../../../../utils/extract';
 import { zipDirectory } from '../../../../utils/zipDirectory';
-import { SFPowerkit } from '../../../../sfpowerkit';
+import { Sfpowerkit } from '../../../../sfpowerkit';
 import SFPowerkitCommand from '../../../../sfpowerkitCommand';
 
 // Initialize Messages with the current plugin directory
@@ -71,7 +71,7 @@ export default class Deactivate extends SFPowerkitCommand {
 
     public async execute(): Promise<AnyJson> {
         rimraf.sync('temp_sfpowerkit');
-        SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
+        Sfpowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
         //Connect to the org
 

@@ -1,6 +1,6 @@
 import { flags } from '@salesforce/command';
 import { AnyJson } from '@salesforce/ts-types';
-import { SFPowerkit } from '../../../../sfpowerkit';
+import { Sfpowerkit } from '../../../../sfpowerkit';
 import { Messages } from '@salesforce/core';
 import PackageVersionCoverage from '../../../../impl/package/version/packageVersionCoverage';
 import SFPowerkitCommand from '../../../../sfpowerkitCommand';
@@ -64,7 +64,7 @@ export default class CodeCoverage extends SFPowerkitCommand {
     // Comment this out if your command does not require an org username
     protected static requiresDevhubUsername = true;
     public async execute(): Promise<AnyJson> {
-        SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
+        Sfpowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
         await this.hubOrg.refreshAuth();
 

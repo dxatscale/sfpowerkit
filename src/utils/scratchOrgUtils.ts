@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { LoggerLevel, AuthInfo, Org } from '@salesforce/core';
 let request = require('request-promise-native');
-import { SFPowerkit } from '../sfpowerkit';
+import { Sfpowerkit } from '../sfpowerkit';
 let retry = require('async-retry');
 import { isNullOrUndefined } from 'util';
 import Passwordgenerateimpl from '../impl/user/passwordgenerateimpl';
@@ -51,7 +51,7 @@ export default class ScratchOrgUtils {
                     : false;
 
             if (!this.isNewVersionCompatible) {
-                SFPowerkit.log(
+                Sfpowerkit.log(
                     `Required Prerequisite values in ScratchOrgInfo.Allocation_status__c field is missing in the DevHub, expected values are : ${expectedValues}\n` +
                         `Switching back to previous version, we request you to update ScratchOrgInfo.Allocation_status__c field in the DevHub \n` +
                         `For more information Please refer https://github.com/Accenture/sfpowerkit/blob/main/src_saleforce_packages/scratchorgpool/force-app/main/default/objects/ScratchOrgInfo/fields/Allocation_status__c.field-meta.xml \n`,
@@ -76,7 +76,7 @@ export default class ScratchOrgUtils {
             json: true,
         });
 
-        SFPowerkit.log(`Limits Fetched: ${JSON.stringify(limits)}`, LoggerLevel.TRACE);
+        Sfpowerkit.log(`Limits Fetched: ${JSON.stringify(limits)}`, LoggerLevel.TRACE);
         return limits;
     }
 
@@ -85,7 +85,7 @@ export default class ScratchOrgUtils {
         let query =
             'SELECT count(id) In_Use, SignupEmail FROM ActiveScratchOrg GROUP BY SignupEmail ORDER BY count(id) DESC';
         const results = (await conn.query(query)) as any;
-        SFPowerkit.log(`Info Fetched: ${JSON.stringify(results)}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`Info Fetched: ${JSON.stringify(results)}`, LoggerLevel.DEBUG);
 
         let scratchOrgRecordAsMapByUser = ScratchOrgUtils.arrayToObject(results.records, 'SignupEmail');
         return scratchOrgRecordAsMapByUser;
@@ -95,9 +95,9 @@ export default class ScratchOrgUtils {
         let conn = hubOrg.getConnection();
 
         let query = `SELECT Id, SignupUsername, LoginUrl FROM ScratchOrgInfo WHERE SignupUsername = '${username}'`;
-        SFPowerkit.log('QUERY:' + query, LoggerLevel.DEBUG);
+        Sfpowerkit.log('QUERY:' + query, LoggerLevel.DEBUG);
         const results = (await conn.query(query)) as any;
-        SFPowerkit.log(`Login URL Fetched: ${JSON.stringify(results)}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`Login URL Fetched: ${JSON.stringify(results)}`, LoggerLevel.DEBUG);
 
         return results.records[0].LoginUrl;
     }
@@ -110,7 +110,7 @@ export default class ScratchOrgUtils {
         hubOrg: Org,
         alias_prefix?: string
     ): Promise<ScratchOrg> {
-        SFPowerkit.log(
+        Sfpowerkit.log(
             'Parameters: ' + id + ' ' + adminEmail + ' ' + config_file_path + ' ' + expiry + ' ',
             LoggerLevel.TRACE
         );
@@ -131,7 +131,7 @@ export default class ScratchOrgUtils {
         result = child_process.execSync(getSFDXCommand, { stdio: 'pipe' });
         const resultObject = JSON.parse(result);
 
-        SFPowerkit.log(JSON.stringify(result), LoggerLevel.TRACE);
+        Sfpowerkit.log(JSON.stringify(result), LoggerLevel.TRACE);
 
         let scratchOrg: ScratchOrg = {
             alias: resultObject.result.alias,
@@ -153,7 +153,7 @@ export default class ScratchOrgUtils {
             const authInfo = await AuthInfo.create({ username: scratchOrg.username });
             scratchOrg.sfdxAuthUrl = authInfo.getSfdxAuthUrl();
         } catch (error) {
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `Unable to fetch authURL for ${scratchOrg.username}. Only Scratch Orgs created from DevHub using authenticated using auth:sfdxurl or auth:web will have access token and enabled for autoLogin`,
                 LoggerLevel.INFO
             );
@@ -162,7 +162,7 @@ export default class ScratchOrgUtils {
         if (!passwordData.password) {
             throw new Error('Unable to setup password to scratch org');
         } else {
-            SFPowerkit.log(`Password successfully set for ${passwordData.username}`, LoggerLevel.INFO);
+            Sfpowerkit.log(`Password successfully set for ${passwordData.username}`, LoggerLevel.INFO);
         }
 
         return scratchOrg;
@@ -200,7 +200,7 @@ export default class ScratchOrgUtils {
             { retries: 3, minTimeout: 30000 }
         );
 
-        SFPowerkit.log(`Succesfully send email to ${emailId} for ${scratchOrg.username}`, LoggerLevel.INFO);
+        Sfpowerkit.log(`Succesfully send email to ${emailId} for ${scratchOrg.username}`, LoggerLevel.INFO);
     }
 
     public static async getScratchOrgRecordId(scratchOrgs: ScratchOrg[], hubOrg: Org) {
@@ -216,14 +216,14 @@ export default class ScratchOrgUtils {
             .join(',');
 
         let query = `SELECT Id, ScratchOrg FROM ScratchOrgInfo WHERE ScratchOrg IN ( ${scratchOrgIds} )`;
-        SFPowerkit.log('QUERY:' + query, LoggerLevel.TRACE);
+        Sfpowerkit.log('QUERY:' + query, LoggerLevel.TRACE);
 
         return await retry(
             async (bail) => {
                 const results = (await hubConn.query(query)) as any;
                 let resultAsObject = this.arrayToObject(results.records, 'ScratchOrg');
 
-                SFPowerkit.log(JSON.stringify(resultAsObject), LoggerLevel.TRACE);
+                Sfpowerkit.log(JSON.stringify(resultAsObject), LoggerLevel.TRACE);
 
                 scratchOrgs.forEach((scratchOrg) => {
                     scratchOrg.recordId = resultAsObject[scratchOrg.orgId]['Id'];
@@ -240,18 +240,18 @@ export default class ScratchOrgUtils {
 
         if (!this.sfdxAuthUrlFieldExists) {
             delete soInfo.SfdxAuthUrl__c;
-            SFPowerkit.log('Removed sfdxAuthUrl info as SfdxAuthUrl__c field is not found on Org', LoggerLevel.TRACE);
+            Sfpowerkit.log('Removed sfdxAuthUrl info as SfdxAuthUrl__c field is not found on Org', LoggerLevel.TRACE);
         }
 
-        SFPowerkit.log(JSON.stringify(soInfo), LoggerLevel.TRACE);
+        Sfpowerkit.log(JSON.stringify(soInfo), LoggerLevel.TRACE);
         return await retry(
             async (bail) => {
                 try {
                     let result = await hubConn.sobject('ScratchOrgInfo').update(soInfo);
-                    SFPowerkit.log('Setting Scratch Org Info:' + JSON.stringify(result), LoggerLevel.TRACE);
+                    Sfpowerkit.log('Setting Scratch Org Info:' + JSON.stringify(result), LoggerLevel.TRACE);
                     return result.constructor !== Array ? result.success : true;
                 } catch (err) {
-                    SFPowerkit.log('Failure at setting ScratchOrg Info' + err, LoggerLevel.TRACE);
+                    Sfpowerkit.log('Failure at setting ScratchOrg Info' + err, LoggerLevel.TRACE);
                     return false;
                 }
             },
@@ -289,7 +289,7 @@ export default class ScratchOrgUtils {
                     query = query + `AND Allocation_status__c !='Assigned' `;
                 }
                 query = query + ORDER_BY_FILTER;
-                SFPowerkit.log('QUERY:' + query, LoggerLevel.TRACE);
+                Sfpowerkit.log('QUERY:' + query, LoggerLevel.TRACE);
                 const results = (await hubConn.query(query)) as any;
                 return results;
             },
@@ -304,7 +304,7 @@ export default class ScratchOrgUtils {
             async (bail) => {
                 let query = `SELECT Id, SignupUsername FROM ActiveScratchOrg WHERE ScratchOrgInfoId IN (${scrathOrgIds}) `;
 
-                SFPowerkit.log('QUERY:' + query, LoggerLevel.TRACE);
+                Sfpowerkit.log('QUERY:' + query, LoggerLevel.TRACE);
                 const results = (await hubConn.query(query)) as any;
                 return results;
             },
@@ -315,12 +315,12 @@ export default class ScratchOrgUtils {
         let hubConn = hubOrg.getConnection();
 
         let query = `SELECT Id, CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE Pooltag__c = '${tag}' AND Status = 'Active' `;
-        SFPowerkit.log('QUERY:' + query, LoggerLevel.TRACE);
+        Sfpowerkit.log('QUERY:' + query, LoggerLevel.TRACE);
 
         let queryUtil = new queryApi(hubConn);
         let result = await queryUtil.executeQuery(query, false);
 
-        SFPowerkit.log('RESULT:' + JSON.stringify(result), LoggerLevel.TRACE);
+        Sfpowerkit.log('RESULT:' + JSON.stringify(result), LoggerLevel.TRACE);
 
         return result.length;
     }
@@ -345,7 +345,7 @@ export default class ScratchOrgUtils {
         let query = `SELECT Id FROM ActiveScratchOrg WHERE ScratchOrg = '${scratchOrgId}'`;
         let queryUtil = new queryApi(hubConn);
         let result = await queryUtil.executeQuery(query, false);
-        SFPowerkit.log('Retrieve Active ScratchOrg Id:' + JSON.stringify(result), LoggerLevel.TRACE);
+        Sfpowerkit.log('Retrieve Active ScratchOrg Id:' + JSON.stringify(result), LoggerLevel.TRACE);
         return result[0].Id;
     }
 
@@ -370,7 +370,7 @@ export default class ScratchOrgUtils {
         let hubConn = hubOrg.getConnection();
 
         let query = `SELECT QualifiedApiName FROM FieldDefinition WHERE EntityDefinition.QualifiedApiName = 'ScratchOrgInfo' AND QualifiedApiName = 'Allocation_status__c'`;
-        SFPowerkit.log('QUERY:' + query, LoggerLevel.TRACE);
+        Sfpowerkit.log('QUERY:' + query, LoggerLevel.TRACE);
 
         let queryUtil = new queryApi(hubConn);
         let result = await queryUtil.executeQuery(query, true);

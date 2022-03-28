@@ -10,7 +10,7 @@ import { searchFilesInDirectory } from '../../../../utils/searchFilesInDirectory
 
 import { zipDirectory } from '../../../../utils/zipDirectory';
 import MetadataFiles from '../../../../impl/metadata/metadataFiles';
-import { SFPowerkit, LoggerLevel } from '../../../../sfpowerkit';
+import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
 import FileUtils from '../../../../utils/fileutils';
 import SFPowerkitCommand from '../../../../sfpowerkitCommand';
 
@@ -104,7 +104,7 @@ export default class Generatepatch extends SFPowerkitCommand {
 
     private async generatePatchForCustomPicklistField(objectsDirPath: string) {
         let result = [];
-        SFPowerkit.log(`Scanning for picklist fields in ${objectsDirPath}`, LoggerLevel.INFO);
+        Sfpowerkit.log(`Scanning for picklist fields in ${objectsDirPath}`, LoggerLevel.INFO);
 
         //search picklist
         let customFieldsWithPicklist: any[] = searchFilesInDirectory(objectsDirPath, '<type>Picklist</type>', '.xml');
@@ -121,12 +121,12 @@ export default class Generatepatch extends SFPowerkitCommand {
         }
 
         if (customFieldsWithPicklist && customFieldsWithPicklist.length > 0) {
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `Found ${customFieldsWithPicklist.length} picklist fields in ${objectsDirPath}`,
                 LoggerLevel.INFO
             );
 
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `Processing and adding the following fields to patch in ${objectsDirPath}`,
                 LoggerLevel.DEBUG
             );
@@ -140,31 +140,31 @@ export default class Generatepatch extends SFPowerkitCommand {
                 try {
                     field_metadata = await parseString(fs.readFileSync(path.resolve(file)));
                 } catch (e) {
-                    SFPowerkit.log(`Unable to parse file ${file} due to ${e}`, LoggerLevel.FATAL);
+                    Sfpowerkit.log(`Unable to parse file ${file} due to ${e}`, LoggerLevel.FATAL);
                     return Promise.reject(e);
                 }
 
                 if (field_metadata.CustomField.valueSet && !field_metadata.CustomField.fieldManageability) {
                     result.push(file);
-                    SFPowerkit.log(`Copied Original to Patch: ${file}`, LoggerLevel.INFO);
+                    Sfpowerkit.log(`Copied Original to Patch: ${file}`, LoggerLevel.INFO);
                     MetadataFiles.copyFile(file, this.folderPath);
                 }
             }
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `Added ${result.length} picklist fields into patch from ${objectsDirPath}`,
                 LoggerLevel.INFO
             );
         } else {
-            SFPowerkit.log(`No picklist fields found in ${objectsDirPath}`, LoggerLevel.INFO);
+            Sfpowerkit.log(`No picklist fields found in ${objectsDirPath}`, LoggerLevel.INFO);
         }
-        SFPowerkit.log(
+        Sfpowerkit.log(
             '--------------------------------------------------------------------------------',
             LoggerLevel.INFO
         );
         return result;
     }
     private async generatePatchForRecordTypes(objectsDirPath: string): Promise<boolean> {
-        SFPowerkit.log(`Scanning for recordtypes in ${objectsDirPath}`, LoggerLevel.INFO);
+        Sfpowerkit.log(`Scanning for recordtypes in ${objectsDirPath}`, LoggerLevel.INFO);
         let recordTypes: any[] = searchFilesInDirectory(
             objectsDirPath,
             '<RecordType xmlns="http://soap.sforce.com/2006/04/metadata">',
@@ -172,19 +172,19 @@ export default class Generatepatch extends SFPowerkitCommand {
         );
 
         if (recordTypes && recordTypes.length > 0) {
-            SFPowerkit.log(`Found ${recordTypes.length} RecordTypes in ${objectsDirPath}`, LoggerLevel.INFO);
+            Sfpowerkit.log(`Found ${recordTypes.length} RecordTypes in ${objectsDirPath}`, LoggerLevel.INFO);
 
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `Processing and adding the following recordtypes to patch in ${objectsDirPath}`,
                 LoggerLevel.INFO
             );
 
             for (const file of recordTypes) {
-                SFPowerkit.log(`Copied Original to Patch: ${file}`, LoggerLevel.INFO);
+                Sfpowerkit.log(`Copied Original to Patch: ${file}`, LoggerLevel.INFO);
                 MetadataFiles.copyFile(file, this.folderPath);
             }
         }
-        SFPowerkit.log(
+        Sfpowerkit.log(
             '--------------------------------------------------------------------------------',
             LoggerLevel.INFO
         );
@@ -239,13 +239,13 @@ export default class Generatepatch extends SFPowerkitCommand {
       </StaticResource>`;
             let targetmetadatapath = `${dir}${packageToBeUsed.package}_picklist.resource-meta.xml`;
 
-            SFPowerkit.log(`Generating static resource file : ${targetmetadatapath}`, LoggerLevel.INFO);
+            Sfpowerkit.log(`Generating static resource file : ${targetmetadatapath}`, LoggerLevel.INFO);
 
             fs.outputFileSync(targetmetadatapath, metadata);
 
-            SFPowerkit.log(`Patch ${packageToBeUsed.package}_picklist generated successfully.`, LoggerLevel.INFO);
+            Sfpowerkit.log(`Patch ${packageToBeUsed.package}_picklist generated successfully.`, LoggerLevel.INFO);
         } else {
-            SFPowerkit.log(`No picklist fields found in package ${packageToBeUsed.package}`, LoggerLevel.WARN);
+            Sfpowerkit.log(`No picklist fields found in package ${packageToBeUsed.package}`, LoggerLevel.WARN);
         }
     }
 }

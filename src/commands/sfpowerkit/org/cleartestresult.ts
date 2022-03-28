@@ -1,7 +1,7 @@
 import { Connection, SfdxError } from '@salesforce/core';
 import { AnyJson } from '@salesforce/ts-types';
 import queryApi from '../../../utils/queryExecutor';
-import { SFPowerkit, LoggerLevel } from '../../../sfpowerkit';
+import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
 import SFPowerkitCommand from '../../../sfpowerkitCommand';
 import { chunkArray } from '../../../utils/chunkArray';
 
@@ -17,7 +17,7 @@ export default class Cleartestresult extends SFPowerkitCommand {
     protected static requiresUsername = true;
 
     public async execute(): Promise<AnyJson> {
-        SFPowerkit.setLogLevel('Info', this.flags.json);
+        Sfpowerkit.setLogLevel('Info', this.flags.json);
         await this.org.refreshAuth();
 
         const conn = this.org.getConnection();
@@ -33,7 +33,7 @@ export default class Cleartestresult extends SFPowerkitCommand {
 
         this.ux.stopSpinner();
 
-        SFPowerkit.log(`Test results cleared in ${this.org.getUsername()} successfully.`, LoggerLevel.INFO);
+        Sfpowerkit.log(`Test results cleared in ${this.org.getUsername()} successfully.`, LoggerLevel.INFO);
 
         return true;
     }

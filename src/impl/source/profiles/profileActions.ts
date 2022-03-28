@@ -1,5 +1,5 @@
 import { METADATA_INFO } from '../../metadata/metadataInfo';
-import { SFPowerkit, LoggerLevel } from '../../../sfpowerkit';
+import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
 import * as path from 'path';
 import FileUtils from '../../../utils/fileutils';
 import { retrieveMetadata } from '../../../utils/retrieveMetadata';
@@ -33,7 +33,7 @@ export default abstract class ProfileActions {
         let metadataFiles = METADATA_INFO.Profile.files || [];
 
         //generate path for new profiles
-        let profilePath = path.join(process.cwd(), await SFPowerkit.getDefaultFolder(), 'main', 'default', 'profiles');
+        let profilePath = path.join(process.cwd(), await Sfpowerkit.getDefaultFolder(), 'main', 'default', 'profiles');
         if (metadataFiles && metadataFiles.length > 0) {
             profilePath = path.dirname(metadataFiles[0]);
         } else {
@@ -77,11 +77,11 @@ export default abstract class ProfileActions {
                 }
                 if (!found) {
                     profilesStatus.deleted.push(profileName);
-                    SFPowerkit.log(`Profile ${profileName} not found in the org`, LoggerLevel.WARN);
+                    Sfpowerkit.log(`Profile ${profileName} not found in the org`, LoggerLevel.WARN);
                 }
             }
         } else {
-            SFPowerkit.log('Load new profiles from server into the project directory', LoggerLevel.DEBUG);
+            Sfpowerkit.log('Load new profiles from server into the project directory', LoggerLevel.DEBUG);
 
             profilesStatus.deleted = metadataFiles.filter((file) => {
                 let retrievedProfileFileName = path.basename(file, METADATA_INFO.Profile.sourceExtension);
@@ -109,9 +109,9 @@ export default abstract class ProfileActions {
                     return !found;
                 });
                 if (newProfiles && newProfiles.length > 0) {
-                    SFPowerkit.log('New profiles founds', LoggerLevel.DEBUG);
+                    Sfpowerkit.log('New profiles founds', LoggerLevel.DEBUG);
                     for (let i = 0; i < newProfiles.length; i++) {
-                        SFPowerkit.log(newProfiles[i], LoggerLevel.DEBUG);
+                        Sfpowerkit.log(newProfiles[i], LoggerLevel.DEBUG);
                         let newProfilePath = path.join(
                             profilePath,
                             newProfiles[i] + METADATA_INFO.Profile.sourceExtension
@@ -119,7 +119,7 @@ export default abstract class ProfileActions {
                         profilesStatus.added.push(newProfilePath);
                     }
                 } else {
-                    SFPowerkit.log('No new profile found, Updating existing profiles', LoggerLevel.INFO);
+                    Sfpowerkit.log('No new profile found, Updating existing profiles', LoggerLevel.INFO);
                 }
             }
         }

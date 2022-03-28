@@ -1,5 +1,5 @@
 import * as path from 'path';
-import { SFPowerkit, LoggerLevel } from '../sfpowerkit';
+import { Sfpowerkit, LoggerLevel } from '../sfpowerkit';
 import * as fs from 'fs-extra';
 import FileUtils from './fileutils';
 
@@ -11,7 +11,7 @@ export default class OutputGenerator {
             FileUtils.mkDirByPathSync(dir);
         }
         fs.writeFileSync(outputJsonPath, JSON.stringify(result));
-        SFPowerkit.log(`Output ${outputDir}/output.json is generated successfully`, LoggerLevel.INFO);
+        Sfpowerkit.log(`Output ${outputDir}/output.json is generated successfully`, LoggerLevel.INFO);
     }
 
     public async generateCSVOutput(result: string, outputDir: string) {
@@ -23,6 +23,6 @@ export default class OutputGenerator {
         }
 
         fs.writeFileSync(outputcsvPath, result);
-        SFPowerkit.log(`Output ${outputDir}/output.csv is generated successfully`, LoggerLevel.INFO);
+        Sfpowerkit.log(`Output ${outputDir}/output.csv is generated successfully`, LoggerLevel.INFO);
     }
 }

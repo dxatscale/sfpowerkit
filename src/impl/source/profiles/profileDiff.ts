@@ -6,7 +6,7 @@ import { METADATA_INFO, MetadataInfo } from '../../../impl/metadata/metadataInfo
 import ProfileRetriever from '../../../impl/metadata/retriever/profileRetriever';
 import ProfileWriter from '../../../impl/metadata/writer/profileWriter';
 import Profile from '../../../impl/metadata/schema';
-import { SFPowerkit } from '../../../sfpowerkit';
+import { Sfpowerkit } from '../../../sfpowerkit';
 import MetadataFiles from '../../../impl/metadata/metadataFiles';
 
 import { diff_match_patch } from 'diff-match-patch';
@@ -34,14 +34,14 @@ export default class ProfileDiffImpl {
         this.targetLabel = this.targetOrg.getConnection().getUsername();
     }
     public async diff() {
-        SFPowerkit.log('Profile diff start. ', LoggerLevel.INFO);
+        Sfpowerkit.log('Profile diff start. ', LoggerLevel.INFO);
         if (this.outputFolder) {
             rimraf.sync(this.outputFolder);
         }
         let profileSource: Promise<any[]> = null;
         //let profileXmlMapPromise: Promise<string[]> = null;
         if (this.sourceOrgStr) {
-            SFPowerkit.log('Creating source org ', LoggerLevel.INFO);
+            Sfpowerkit.log('Creating source org ', LoggerLevel.INFO);
             this.sourceOrg = await Org.create({
                 aliasOrUsername: this.sourceOrgStr,
                 isDevHub: false,
@@ -49,7 +49,7 @@ export default class ProfileDiffImpl {
         }
         if ((!this.profileList || this.profileList.length === 0) && this.sourceOrgStr) {
             this.sourceLabel = this.sourceOrg.getConnection().getUsername();
-            SFPowerkit.log('No profile provided, loading all profiles from source org. ', LoggerLevel.INFO);
+            Sfpowerkit.log('No profile provided, loading all profiles from source org. ', LoggerLevel.INFO);
             let conn = this.sourceOrg.getConnection();
 
             let profileNamesPromise = retrieveMetadata([{ type: 'Profile', folder: null }], conn);
@@ -57,13 +57,13 @@ export default class ProfileDiffImpl {
                 return this.retrieveProfiles(profileNames, this.sourceOrg);
             });
         } else {
-            SFPowerkit.log('Reading profiles from file system. ', LoggerLevel.INFO);
+            Sfpowerkit.log('Reading profiles from file system. ', LoggerLevel.INFO);
 
-            let srcFolders = await SFPowerkit.getProjectDirectories();
+            let srcFolders = await Sfpowerkit.getProjectDirectories();
 
             let metadataFiles = new MetadataFiles();
 
-            SFPowerkit.log('Source Folders are', LoggerLevel.DEBUG);
+            Sfpowerkit.log('Source Folders are', LoggerLevel.DEBUG);
             for (let i = 0; i < srcFolders.length; i++) {
                 let srcFolder = srcFolders[i];
                 let normalizedPath = path.join(process.cwd(), srcFolder);
@@ -78,7 +78,7 @@ export default class ProfileDiffImpl {
                         return apiName === profilename;
                     });
                     if (!foundFile) {
-                        SFPowerkit.log('No profile found with name  ' + profilename, LoggerLevel.INFO);
+                        Sfpowerkit.log('No profile found with name  ' + profilename, LoggerLevel.INFO);
                     }
                     return foundFile;
                 });
@@ -89,7 +89,7 @@ export default class ProfileDiffImpl {
             }
 
             if (!this.profileList || this.profileList.length === 0) {
-                SFPowerkit.log('No profile to process ', LoggerLevel.INFO);
+                Sfpowerkit.log('No profile to process ', LoggerLevel.INFO);
                 return null;
             }
 
@@ -106,7 +106,7 @@ export default class ProfileDiffImpl {
 
             for (let i = 0; i < this.profileList.length; i++) {
                 let profilepath = this.profileList[i];
-                SFPowerkit.log('Reading profile from path ' + profilepath, LoggerLevel.DEBUG);
+                Sfpowerkit.log('Reading profile from path ' + profilepath, LoggerLevel.DEBUG);
                 let profileXml = fs.readFileSync(profilepath);
                 let profileName = path.basename(profilepath, METADATA_INFO.Profile.sourceExtension);
                 profilesMap.push({
@@ -147,7 +147,7 @@ export default class ProfileDiffImpl {
 
             return profileTarget
                 .then((profilesTargetMap) => {
-                    SFPowerkit.log('Handling diff ', LoggerLevel.INFO);
+                    Sfpowerkit.log('Handling diff ', LoggerLevel.INFO);
                     let progressBar = new ProgressBar().create('Diff processing ', 'Profiles', LoggerLevel.INFO);
 
                     progressBar.start(profilesSourceMap.length);
@@ -161,7 +161,7 @@ export default class ProfileDiffImpl {
                             let targetProfileName = targetKeys[0];
                             return targetProfileName === sourceProfileName;
                         });
-                        SFPowerkit.log('Processing profile ' + sourceProfileName, LoggerLevel.DEBUG);
+                        Sfpowerkit.log('Processing profile ' + sourceProfileName, LoggerLevel.DEBUG);
                         let sourceContent = sourceProfileXml[sourceProfileName];
                         let targetContent = '';
                         if (targetProfileXml) {
@@ -169,7 +169,7 @@ export default class ProfileDiffImpl {
                         }
                         let filePath =
                             this.outputFolder + path.sep + sourceProfileName + METADATA_INFO.Profile.sourceExtension;
-                        SFPowerkit.log('Processing diff for profile ' + sourceProfileName, LoggerLevel.DEBUG);
+                        Sfpowerkit.log('Processing diff for profile ' + sourceProfileName, LoggerLevel.DEBUG);
                         this.processDiff(filePath, sourceContent, targetContent);
                         progressBar.increment(1);
                     }
@@ -272,10 +272,10 @@ export default class ProfileDiffImpl {
             contentTarget = contentTarget + lineEnd;
         }
 
-        SFPowerkit.log('Running diff', LoggerLevel.DEBUG);
+        Sfpowerkit.log('Running diff', LoggerLevel.DEBUG);
         //let diffResult = jsdiff.diffLines(contentSource, contentTarget);
         const diffResult = dmp.diff_lineMode(contentSource, contentTarget);
-        SFPowerkit.log('Diff run completed. Processing result', LoggerLevel.DEBUG);
+        Sfpowerkit.log('Diff run completed. Processing result', LoggerLevel.DEBUG);
         for (let i = 0; i < diffResult.length; i++) {
             let result = diffResult[i];
             let index = i;
@@ -323,7 +323,7 @@ export default class ProfileDiffImpl {
                 content = content + value;
             }
         }
-        SFPowerkit.log('Result processed', LoggerLevel.DEBUG);
+        Sfpowerkit.log('Result processed', LoggerLevel.DEBUG);
 
         fs.writeFileSync(filePath, content);
 

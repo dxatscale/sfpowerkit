@@ -20,7 +20,7 @@ import WorkflowDiff from './workflowDiff';
 import SharingRuleDiff from './sharingRuleDiff';
 import CustomLabelsDiff from './customLabelsDiff';
 import DiffUtil, { DiffFile, DiffFileStatus } from './diffUtil';
-import { SFPowerkit, LoggerLevel } from '../../../sfpowerkit';
+import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
 import { DXProjectManifestUtils } from '../../../utils/dxProjectManifestUtils';
 import simplegit from 'simple-git/promise';
 import { Messages } from '@salesforce/core';
@@ -72,10 +72,10 @@ export default class DiffImpl {
         rimraf.sync(outputFolder);
 
         if (packagedirectories) {
-            SFPowerkit.setProjectDirectories(packagedirectories);
+            Sfpowerkit.setProjectDirectories(packagedirectories);
         }
         if (apiversion) {
-            SFPowerkit.setapiversion(apiversion);
+            Sfpowerkit.setapiversion(apiversion);
         }
         //const sepRegex=/\t| |\n/;
         const sepRegex = /\n|\r/;
@@ -90,10 +90,10 @@ export default class DiffImpl {
         }
         //Make it relative to make the command works from a project created as a subfolder in a repository
         data = await git.diff(['--raw', this.revisionFrom, this.revisionTo, '--relative']);
-        SFPowerkit.log(`Input Param: From: ${this.revisionFrom}  To: ${this.revisionTo} `, LoggerLevel.INFO);
-        SFPowerkit.log(`SHA Found From: ${commitFrom} To:  ${commitTo} `, LoggerLevel.INFO);
+        Sfpowerkit.log(`Input Param: From: ${this.revisionFrom}  To: ${this.revisionTo} `, LoggerLevel.INFO);
+        Sfpowerkit.log(`SHA Found From: ${commitFrom} To:  ${commitTo} `, LoggerLevel.INFO);
 
-        SFPowerkit.log(data, LoggerLevel.TRACE);
+        Sfpowerkit.log(data, LoggerLevel.TRACE);
 
         let content = data.split(sepRegex);
         let diffFile: DiffFile = await DiffUtil.parseContent(content);
@@ -119,8 +119,8 @@ export default class DiffImpl {
             fs.mkdirSync(outputFolder);
         }
 
-        SFPowerkit.log('Files to be copied', LoggerLevel.DEBUG);
-        SFPowerkit.log(filesToCopy, LoggerLevel.DEBUG);
+        Sfpowerkit.log('Files to be copied', LoggerLevel.DEBUG);
+        Sfpowerkit.log(filesToCopy, LoggerLevel.DEBUG);
 
         if (filesToCopy && filesToCopy.length > 0) {
             for (let i = 0; i < filesToCopy.length; i++) {
@@ -141,7 +141,7 @@ export default class DiffImpl {
                         } else {
                             await DiffUtil.copyFile(filePath, outputFolder);
 
-                            SFPowerkit.log(`Copied file ${filePath} to ${outputFolder}`, LoggerLevel.DEBUG);
+                            Sfpowerkit.log(`Copied file ${filePath} to ${outputFolder}`, LoggerLevel.DEBUG);
                         }
                     }
                 } catch (ex) {
@@ -157,11 +157,11 @@ export default class DiffImpl {
         }
 
         if (this.isDestructive) {
-            SFPowerkit.log('Creating Destructive Manifest..', LoggerLevel.INFO);
+            Sfpowerkit.log('Creating Destructive Manifest..', LoggerLevel.INFO);
             await this.createDestructiveChanges(deletedFiles, outputFolder);
         }
 
-        SFPowerkit.log(`Generating output summary`, LoggerLevel.INFO);
+        Sfpowerkit.log(`Generating output summary`, LoggerLevel.INFO);
 
         this.buildOutput(outputFolder);
 
@@ -169,12 +169,12 @@ export default class DiffImpl {
             try {
                 await DiffUtil.copyFile('.forceignore', outputFolder);
             } catch (e) {
-                SFPowerkit.log(`.forceignore not found, skipping..`, LoggerLevel.INFO);
+                Sfpowerkit.log(`.forceignore not found, skipping..`, LoggerLevel.INFO);
             }
             try {
                 //check if package path is provided
                 if (packagedirectories) {
-                    let sourceApiVersion = await SFPowerkit.getApiVersion();
+                    let sourceApiVersion = await Sfpowerkit.getApiVersion();
                     let packageDirectorieslist = [];
                     packagedirectories.forEach((path) => {
                         packageDirectorieslist.push({
@@ -197,7 +197,7 @@ export default class DiffImpl {
                 let dxProjectManifestUtils: DXProjectManifestUtils = new DXProjectManifestUtils(outputFolder);
                 dxProjectManifestUtils.removePackagesNotInDirectory();
             } catch (e) {
-                SFPowerkit.log(`sfdx-project.json not found, skipping..`, LoggerLevel.INFO);
+                Sfpowerkit.log(`sfdx-project.json not found, skipping..`, LoggerLevel.INFO);
             }
         }
 
@@ -325,7 +325,7 @@ export default class DiffImpl {
             if (content1 === '') {
                 await DiffUtil.copyFile(diffFile.path, outputFolder);
 
-                SFPowerkit.log(`Copied file ${diffFile.path} to ${outputFolder}`, LoggerLevel.DEBUG);
+                Sfpowerkit.log(`Copied file ${diffFile.path} to ${outputFolder}`, LoggerLevel.DEBUG);
             } else if (content2 === '') {
                 //The profile is deleted or marked as renamed.
                 //Delete the renamed one
@@ -348,11 +348,11 @@ export default class DiffImpl {
             }
         }
         if (diffFile.path.endsWith(METADATA_INFO.PermissionSet.sourceExtension)) {
-            let sourceApiVersion = await SFPowerkit.getApiVersion();
+            let sourceApiVersion = await Sfpowerkit.getApiVersion();
             if (content1 === '') {
                 await DiffUtil.copyFile(diffFile.path, outputFolder);
 
-                SFPowerkit.log(`Copied file ${diffFile.path} to ${outputFolder}`, LoggerLevel.DEBUG);
+                Sfpowerkit.log(`Copied file ${diffFile.path} to ${outputFolder}`, LoggerLevel.DEBUG);
             } else if (sourceApiVersion <= 39.0) {
                 // in API 39 and erliar PermissionSet deployment are merged. deploy only what changed
                 if (content2 === '') {
@@ -383,7 +383,7 @@ export default class DiffImpl {
                 //So deploy the whole file
 
                 await DiffUtil.copyFile(diffFile.path, outputFolder);
-                SFPowerkit.log(`Copied file ${diffFile.path} to ${outputFolder}`, LoggerLevel.DEBUG);
+                Sfpowerkit.log(`Copied file ${diffFile.path} to ${outputFolder}`, LoggerLevel.DEBUG);
             }
         }
     }
@@ -443,7 +443,7 @@ export default class DiffImpl {
                                 member
                             );
 
-                            SFPowerkit.log(
+                            Sfpowerkit.log(
                                 `${filePath} ${MetadataFiles.isCustomMetadata(filePath, name)}`,
                                 LoggerLevel.DEBUG
                             );
@@ -462,7 +462,7 @@ export default class DiffImpl {
                                 member
                             );
                         }
-                        SFPowerkit.log(
+                        Sfpowerkit.log(
                             `${filePath} ${MetadataFiles.isCustomMetadata(filePath, name)}`,
                             LoggerLevel.DEBUG
                         );

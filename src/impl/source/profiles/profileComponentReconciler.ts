@@ -1,7 +1,7 @@
 import { Connection, LoggerLevel } from '@salesforce/core';
 import MetadataFiles from '../../../impl/metadata/metadataFiles';
 import { METADATA_INFO } from '../../../impl/metadata/metadataInfo';
-import { SFPowerkit } from '../../../sfpowerkit';
+import { Sfpowerkit } from '../../../sfpowerkit';
 import UserPermissionBuilder from '../../metadata/builder/userPermissionBuilder';
 import MetadataRetriever from '../../metadata/retriever/metadataRetriever';
 import ProfileRetriever from '../../metadata/retriever/profileRetriever';
@@ -13,40 +13,40 @@ export default class ProfileComponentReconciler {
     public constructor(private conn: Connection) {}
 
     public async reconcileProfileComponents(profileObj: Profile, profileName: string): Promise<Profile> {
-        SFPowerkit.log(`Reconciling App: ${profileName}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`Reconciling App: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileApp(profileObj);
-        SFPowerkit.log(`Reconciling Classes: ${profileName}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`Reconciling Classes: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileClasses(profileObj);
-        SFPowerkit.log(`Reconciling Fields: ${profileName}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`Reconciling Fields: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileFields(profileObj);
-        SFPowerkit.log(`Reconciling Objects: ${profileName}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`Reconciling Objects: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileObjects(profileObj);
-        SFPowerkit.log(`Reconciling Pages: ${profileName}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`Reconciling Pages: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcilePages(profileObj);
-        SFPowerkit.log(`Reconciling Layouts: ${profileName}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`Reconciling Layouts: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileLayouts(profileObj);
-        SFPowerkit.log(`Reconciling Record Types: ${profileName}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`Reconciling Record Types: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileRecordTypes(profileObj);
-        SFPowerkit.log(`Reconciling  Tabs: ${profileName}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`Reconciling  Tabs: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileTabs(profileObj);
-        SFPowerkit.log(`Reconciling  ExternalDataSources: ${profileName}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`Reconciling  ExternalDataSources: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileExternalDataSource(profileObj);
-        SFPowerkit.log(`Reconciling  CustomPermissions: ${profileName}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`Reconciling  CustomPermissions: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileCustomPermission(profileObj);
-        SFPowerkit.log(`Reconciling  CustomMetadata: ${profileName}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`Reconciling  CustomMetadata: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileCustomMetadata(profileObj);
-        SFPowerkit.log(`Reconciling  CustomSettings: ${profileName}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`Reconciling  CustomSettings: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileCustomSettings(profileObj);
-        SFPowerkit.log(`Reconciling  Flow: ${profileName}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`Reconciling  Flow: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileFlow(profileObj);
-        SFPowerkit.log(`Reconciling  Login Flows: ${profileName}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`Reconciling  Login Flows: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileLoginFlow(profileObj);
-        SFPowerkit.log(`Reconciling  User Licenses: ${profileName}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`Reconciling  User Licenses: ${profileName}`, LoggerLevel.DEBUG);
         await this.cleanupUserLicenses(profileObj);
-        SFPowerkit.log(`Reconciling  User Permissions: ${profileName}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`Reconciling  User Permissions: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileUserPermissions(profileObj);
 
-        SFPowerkit.log(`All Components for ${profileName} reconciled`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`All Components for ${profileName} reconciled`, LoggerLevel.DEBUG);
         return profileObj;
     }
 
@@ -61,7 +61,7 @@ export default class ProfileComponentReconciler {
     }
 
     private async removePermissionsBasedOnProjectConfig(profileObj: Profile) {
-        let pluginConfig = await SFPowerkit.getConfig();
+        let pluginConfig = await Sfpowerkit.getConfig();
         let ignorePermissions = pluginConfig.ignoredPermissions || [];
         if (profileObj.userPermissions !== undefined && profileObj.userPermissions.length > 0) {
             profileObj.userPermissions = profileObj.userPermissions.filter((permission) => {
@@ -114,7 +114,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(cmpObj);
                 }
             }
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `Application Visiblitilties reduced from ${profileObj.applicationVisibilities.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -138,7 +138,7 @@ export default class ProfileComponentReconciler {
                 }
             }
 
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `Class Access reduced from ${profileObj.classAccesses.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -161,7 +161,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(cmpObj);
                 }
             }
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `Fields Level Permissions reduced from ${profileObj.fieldPermissions.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -186,7 +186,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(cmpObj);
                 }
             }
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `Layout Assignnments reduced from ${profileObj.layoutAssignments.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -214,7 +214,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(cmpObj);
                 }
             }
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `Object Permissions reduced from ${profileObj.objectPermissions.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -237,7 +237,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(cmpCM);
                 }
             }
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `CustomMetadata Access reduced from ${profileObj.customMetadataTypeAccesses.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -260,7 +260,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(cmpCS);
                 }
             }
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `CustomSettings Access reduced from ${profileObj.customSettingAccesses.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -289,7 +289,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(dts);
                 }
             }
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `ExternalDataSource Access reduced from ${profileObj.externalDataSourceAccesses.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -312,7 +312,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(flow);
                 }
             }
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `Flow Access reduced from ${profileObj.flowAccesses.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -344,7 +344,7 @@ export default class ProfileComponentReconciler {
                     }
                 }
             }
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `LoginFlows reduced from ${profileObj.loginFlows.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -373,7 +373,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(customPermission);
                 }
             }
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `CustomPermission reduced from ${profileObj.customPermissions.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -396,7 +396,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(cmpObj);
                 }
             }
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `Page Access Permissions reduced from ${profileObj.pageAccesses.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -419,7 +419,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(cmpObj);
                 }
             }
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `Record Type Visibilities reduced from ${profileObj.recordTypeVisibilities.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -442,7 +442,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(cmpObj);
                 }
             }
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `Tab Visibilities reduced from ${profileObj.tabVisibilities.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -474,7 +474,7 @@ export default class ProfileComponentReconciler {
         //Remove unsupported userPermission
         this.removeUnsupportedUserPermissions(profileObj);
 
-        SFPowerkit.log('Removed Unsupported User Pemrmisions ', LoggerLevel.TRACE);
+        Sfpowerkit.log('Removed Unsupported User Pemrmisions ', LoggerLevel.TRACE);
         let userPermissionBuilder: UserPermissionBuilder = new UserPermissionBuilder();
         //IS sourceonly, use ignorePermission set in sfdxProject.json file
         if (MetadataFiles.sourceOnly) {

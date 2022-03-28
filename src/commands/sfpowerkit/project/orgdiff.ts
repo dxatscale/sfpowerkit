@@ -1,5 +1,5 @@
 import { FlagsConfig, flags, SfdxResult } from '@salesforce/command';
-import { SFPowerkit } from '../../../sfpowerkit';
+import { Sfpowerkit } from '../../../sfpowerkit';
 import SFPowerkitCommand from '../../../sfpowerkitCommand';
 import OrgDiffImpl from '../../../impl/project/orgdiff/orgDiffImpl';
 import { fs, Messages } from '@salesforce/core';
@@ -78,7 +78,7 @@ export default class OrgDiff extends SFPowerkitCommand {
     protected static requiresProject = true;
 
     public async execute(): Promise<any> {
-        SFPowerkit.setUx(this.ux);
+        Sfpowerkit.setUx(this.ux);
         this.ux.startSpinner('Running...');
 
         let filesOrFolders = this.flags.filesorfolders;

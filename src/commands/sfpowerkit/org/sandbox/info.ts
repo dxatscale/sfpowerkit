@@ -2,7 +2,7 @@ import { flags } from '@salesforce/command';
 import { AnyJson } from '@salesforce/ts-types';
 let request = require('request-promise-native');
 import { Messages, SfdxError } from '@salesforce/core';
-import { SFPowerkit, LoggerLevel } from '../../../../sfpowerkit';
+import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
 import SFPowerkitCommand from '../../../../sfpowerkitCommand';
 import { Connection } from 'jsforce';
 
@@ -40,7 +40,7 @@ export default class Info extends SFPowerkitCommand {
     protected static requiresDevhubUsername = true;
 
     public async execute(): Promise<AnyJson> {
-        SFPowerkit.setLogLevel('INFO', false);
+        Sfpowerkit.setLogLevel('INFO', false);
         await this.hubOrg.refreshAuth();
 
         const conn = this.hubOrg.getConnection();
@@ -49,7 +49,7 @@ export default class Info extends SFPowerkitCommand {
 
         let result = await this.getSandboxInfo(conn, this.flags.name);
 
-        SFPowerkit.log(`Successfully Retrieved Sandbox Details`, LoggerLevel.INFO);
+        Sfpowerkit.log(`Successfully Retrieved Sandbox Details`, LoggerLevel.INFO);
 
         if (!this.flags.json) this.ux.logJson(result);
 

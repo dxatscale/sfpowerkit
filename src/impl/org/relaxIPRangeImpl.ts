@@ -11,7 +11,7 @@ import { checkRetrievalStatus } from '../../utils/checkRetrievalStatus';
 import { checkDeploymentStatus } from '../../utils/checkDeploymentStatus';
 import { extract } from '../../utils/extract';
 import { zipDirectory } from '../../utils/zipDirectory';
-import { SFPowerkit, LoggerLevel } from '../../sfpowerkit';
+import { Sfpowerkit, LoggerLevel } from '../../sfpowerkit';
 
 export default class RelaxIPRangeImpl {
     public static async setIp(
@@ -40,10 +40,10 @@ export default class RelaxIPRangeImpl {
             }
             retrievedId = result.id;
         });
-        SFPowerkit.log(`Fetching Ip range from ${conn.getUsername()}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`Fetching Ip range from ${conn.getUsername()}`, LoggerLevel.DEBUG);
 
         let metadata_retrieve_result = await checkRetrievalStatus(conn, retrievedId);
-        if (!metadata_retrieve_result.zipFile) SFPowerkit.log('Unable to find the settings', LoggerLevel.ERROR);
+        if (!metadata_retrieve_result.zipFile) Sfpowerkit.log('Unable to find the settings', LoggerLevel.ERROR);
 
         let retriveLocation = `temp_sfpowerkit_${retrievedId}`;
         //Extract Matching Rule
@@ -65,26 +65,26 @@ export default class RelaxIPRangeImpl {
 
             if (addall) {
                 ipRangeToSet = this.getFullRange();
-                SFPowerkit.log(`Ip range to set : 0.0.0.0-255.255.255.255`, LoggerLevel.INFO);
+                Sfpowerkit.log(`Ip range to set : 0.0.0.0-255.255.255.255`, LoggerLevel.INFO);
             } else if (ipRangeToSet.length > 0) {
-                SFPowerkit.log(`Ip range to set :` + JSON.stringify(ipRangeToSet), LoggerLevel.INFO);
+                Sfpowerkit.log(`Ip range to set :` + JSON.stringify(ipRangeToSet), LoggerLevel.INFO);
             }
 
             if (!retrieve_securitySetting.SecuritySettings.networkAccess) {
                 if (removeall) {
-                    SFPowerkit.log(`Currently No Ip range set in ${conn.getUsername()} to remove.`, LoggerLevel.INFO);
+                    Sfpowerkit.log(`Currently No Ip range set in ${conn.getUsername()} to remove.`, LoggerLevel.INFO);
                     rimraf.sync(retriveLocation);
                     return { username: username, success: true };
                 } else {
                     retrieve_securitySetting.SecuritySettings.networkAccess = {
                         ipRanges: ipRangeToSet,
                     };
-                    SFPowerkit.log(`Currently No Ip range set in ${conn.getUsername()}.`, LoggerLevel.DEBUG);
+                    Sfpowerkit.log(`Currently No Ip range set in ${conn.getUsername()}.`, LoggerLevel.DEBUG);
                 }
             } else {
                 let currentRange = retrieve_securitySetting.SecuritySettings.networkAccess.ipRanges;
 
-                SFPowerkit.log(
+                Sfpowerkit.log(
                     `Org ${conn.getUsername()} has current range : ` + JSON.stringify(currentRange),
                     LoggerLevel.DEBUG
                 );
@@ -122,7 +122,7 @@ export default class RelaxIPRangeImpl {
                 }
             );
 
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `${removeall ? 'Removing all' : 'Setting'} Ip range with ID  ${deployId.id} to ${conn.getUsername()}`,
                 LoggerLevel.DEBUG
             );
@@ -131,7 +131,7 @@ export default class RelaxIPRangeImpl {
             rimraf.sync(retriveLocation);
 
             if (!metadata_deploy_result.success) {
-                SFPowerkit.log(
+                Sfpowerkit.log(
                     `Unable to ${removeall ? 'remove' : 'set'} ip range : ${
                         metadata_deploy_result.details['componentFailures']['problem']
                     }`,
@@ -139,7 +139,7 @@ export default class RelaxIPRangeImpl {
                 );
                 return { username: username, success: false };
             } else {
-                SFPowerkit.log(
+                Sfpowerkit.log(
                     `Ip range is successfully ${removeall ? 'removed' : 'set'} in ${conn.getUsername()}`,
                     LoggerLevel.INFO
                 );

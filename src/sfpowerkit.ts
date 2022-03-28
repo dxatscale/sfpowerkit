@@ -27,7 +27,7 @@ export const COLOR_TIME = chalk.magentaBright;
 export const COLOR_KEY_MESSAGE = chalk.magentaBright.bold;
 export const COLOR_KEY_VALUE = chalk.black.bold.bgGreenBright;
 
-export class SFPowerkit {
+export class Sfpowerkit {
     private static defaultFolder: string;
     private static projectDirectories: string[];
     private static pluginConfig;
@@ -53,21 +53,21 @@ export class SFPowerkit {
 
     public static initCache() {
         try {
-            SFPowerkit.cache = new SQLITEKeyValue('./sfpowerkit-cache.db');
-            SFPowerkit.cache.init();
+            Sfpowerkit.cache = new SQLITEKeyValue('./sfpowerkit-cache.db');
+            Sfpowerkit.cache.init();
         } catch (error) {
             //Fallback to NodeCache, as sqlite cache cant be lazily loaded
             //Retreive and Merge doesnt have workers so sqlite cant be loaded.. need further investigation
-            SFPowerkit.cache = new NodeCache();
+            Sfpowerkit.cache = new NodeCache();
         }
     }
 
     public static getFromCache(key: string): any {
-        return SFPowerkit.cache.get(key);
+        return Sfpowerkit.cache.get(key);
     }
 
     public static addToCache(key: string, value: any) {
-        return SFPowerkit.cache.set(key, value);
+        return Sfpowerkit.cache.set(key, value);
     }
 
     public static setLogLevel(logLevel: string, isJsonFormatEnabled: boolean) {
@@ -77,56 +77,56 @@ export class SFPowerkit {
     }
 
     public static setProjectDirectories(packagedirectories: string[]) {
-        SFPowerkit.projectDirectories = packagedirectories;
+        Sfpowerkit.projectDirectories = packagedirectories;
     }
 
     public static async getProjectDirectories() {
-        if (!SFPowerkit.projectDirectories) {
-            SFPowerkit.projectDirectories = [];
+        if (!Sfpowerkit.projectDirectories) {
+            Sfpowerkit.projectDirectories = [];
             const dxProject = await SfdxProject.resolve();
             const project = await dxProject.retrieveSfdxProjectJson();
             let packages = (project.get('packageDirectories') as any[]) || [];
             packages.forEach((element) => {
-                SFPowerkit.projectDirectories.push(element.path);
+                Sfpowerkit.projectDirectories.push(element.path);
                 if (element.default) {
-                    SFPowerkit.defaultFolder = element.path;
+                    Sfpowerkit.defaultFolder = element.path;
                 }
             });
         }
-        return SFPowerkit.projectDirectories;
+        return Sfpowerkit.projectDirectories;
     }
 
     public static async getDefaultFolder() {
-        if (!SFPowerkit.defaultFolder) {
-            await SFPowerkit.getProjectDirectories();
+        if (!Sfpowerkit.defaultFolder) {
+            await Sfpowerkit.getProjectDirectories();
         }
-        return SFPowerkit.defaultFolder;
+        return Sfpowerkit.defaultFolder;
     }
     public static setDefaultFolder(defaultFolder: string) {
-        SFPowerkit.defaultFolder = defaultFolder;
+        Sfpowerkit.defaultFolder = defaultFolder;
     }
 
     public static async getConfig() {
-        if (!SFPowerkit.pluginConfig) {
+        if (!Sfpowerkit.pluginConfig) {
             const dxProject = await SfdxProject.resolve();
             const project = await dxProject.retrieveSfdxProjectJson();
             let plugins = project.get('plugins') || {};
             let sfpowerkitConfig = plugins['sfpowerkit'];
-            SFPowerkit.pluginConfig = sfpowerkitConfig || {};
+            Sfpowerkit.pluginConfig = sfpowerkitConfig || {};
         }
-        return SFPowerkit.pluginConfig;
+        return Sfpowerkit.pluginConfig;
     }
     public static setapiversion(apiversion: any) {
-        SFPowerkit.sourceApiVersion = apiversion;
+        Sfpowerkit.sourceApiVersion = apiversion;
     }
 
     public static async getApiVersion(): Promise<any> {
-        if (!SFPowerkit.sourceApiVersion) {
+        if (!Sfpowerkit.sourceApiVersion) {
             const dxProject = await SfdxProject.resolve();
             const project = await dxProject.retrieveSfdxProjectJson();
-            SFPowerkit.sourceApiVersion = project.get('sourceApiVersion');
+            Sfpowerkit.sourceApiVersion = project.get('sourceApiVersion');
         }
-        return SFPowerkit.sourceApiVersion;
+        return Sfpowerkit.sourceApiVersion;
     }
     /**
      * Print log only if the log level for this commamnd matches the log level for the message

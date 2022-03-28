@@ -1,5 +1,5 @@
 import { LoggerLevel, Org } from '@salesforce/core';
-import { SFPowerkit } from '../../../sfpowerkit';
+import { Sfpowerkit } from '../../../sfpowerkit';
 import ScratchOrgUtils, { ScratchOrg } from '../../../utils/scratchOrgUtils';
 export default class PoolDeleteImpl {
     private hubOrg: Org;
@@ -36,7 +36,7 @@ export default class PoolDeleteImpl {
 
         let scratchOrgToDelete: ScratchOrg[] = new Array<ScratchOrg>();
         if (results.records.length > 0) {
-            SFPowerkit.log(`${this.tag} pool has ${results.records.length} Scratch orgs.`, LoggerLevel.TRACE);
+            Sfpowerkit.log(`${this.tag} pool has ${results.records.length} Scratch orgs.`, LoggerLevel.TRACE);
 
             let scrathOrgIds: string[] = [];
 
@@ -63,7 +63,7 @@ export default class PoolDeleteImpl {
                 if (activeScrathOrgs.records.length > 0) {
                     let scratchOrgIds: string[] = activeScrathOrgs.records.map((elem) => elem.Id);
                     await ScratchOrgUtils.deleteScratchOrg(this.hubOrg, scratchOrgIds);
-                    SFPowerkit.log('Scratch Org(s) deleted successfully.', LoggerLevel.TRACE);
+                    Sfpowerkit.log('Scratch Org(s) deleted successfully.', LoggerLevel.TRACE);
                 }
             }
         }

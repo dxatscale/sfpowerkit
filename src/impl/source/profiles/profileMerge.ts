@@ -1,4 +1,4 @@
-import { SFPowerkit, LoggerLevel } from '../../../sfpowerkit';
+import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
 import MetadataFiles from '../../metadata/metadataFiles';
 import * as fs from 'fs-extra';
 import * as path from 'path';
@@ -673,11 +673,11 @@ export default class ProfileMerge extends ProfileActions {
         deleted: string[];
         updated: string[];
     }> {
-        SFPowerkit.log('Merging profiles...', LoggerLevel.DEBUG);
+        Sfpowerkit.log('Merging profiles...', LoggerLevel.DEBUG);
 
         let fetchNewProfiles = _.isNil(srcFolders) || srcFolders.length === 0;
         if (fetchNewProfiles) {
-            srcFolders = await SFPowerkit.getProjectDirectories();
+            srcFolders = await Sfpowerkit.getProjectDirectories();
         }
         this.metadataFiles = new MetadataFiles();
         for (let i = 0; i < srcFolders.length; i++) {
@@ -711,13 +711,13 @@ export default class ProfileMerge extends ProfileActions {
             j: number,
             chunk = 10;
         let temparray;
-        SFPowerkit.log(`${profileNames.length}  profiles found in the directory `, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`${profileNames.length}  profiles found in the directory `, LoggerLevel.DEBUG);
         for (i = 0, j = profileNames.length; i < j; i += chunk) {
             temparray = profileNames.slice(i, i + chunk);
             //SfPowerKit.ux.log(temparray.length);
             let start = i + 1;
             let end = i + chunk;
-            SFPowerkit.log('Loading a chunk of profiles ' + start + ' to ' + end, LoggerLevel.INFO);
+            Sfpowerkit.log('Loading a chunk of profiles ' + start + ' to ' + end, LoggerLevel.INFO);
             let profileList: string[] = [];
             let metadataList = await this.profileRetriever.loadProfiles(temparray);
 
@@ -736,7 +736,7 @@ export default class ProfileMerge extends ProfileActions {
 
                 let exists = fs.existsSync(filePath);
                 if (exists) {
-                    SFPowerkit.log('Merging profile ' + profileObjFromServer.fullName, LoggerLevel.DEBUG);
+                    Sfpowerkit.log('Merging profile ' + profileObjFromServer.fullName, LoggerLevel.DEBUG);
                     let profileXml = fs.readFileSync(filePath);
 
                     const parser = new xml2js.Parser({ explicitArray: false });
@@ -746,13 +746,13 @@ export default class ProfileMerge extends ProfileActions {
                     profileObj = profileWriter.toProfile(parseResult.Profile);
                     await this.mergeProfile(profileObj, profileObjFromServer);
                 } else {
-                    SFPowerkit.log('New Profile found in server ' + profileObjFromServer.fullName, LoggerLevel.DEBUG);
+                    Sfpowerkit.log('New Profile found in server ' + profileObjFromServer.fullName, LoggerLevel.DEBUG);
                 }
 
                 profileObj.fullName = profileObjFromServer.fullName;
                 profileWriter.writeProfile(profileObj, filePath);
 
-                SFPowerkit.log('Profile ' + profileObj.fullName + ' merged', LoggerLevel.DEBUG);
+                Sfpowerkit.log('Profile ' + profileObj.fullName + ' merged', LoggerLevel.DEBUG);
                 profileList.push(profileObj.fullName);
             }
             profileListToReturn.push(...profileList);

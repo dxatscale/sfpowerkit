@@ -7,7 +7,7 @@ import { SfdxError, LoggerLevel, Messages } from '@salesforce/core';
 import * as xml2js from 'xml2js';
 import * as util from 'util';
 const fg = require('fast-glob');
-import { SFPowerkit } from '../../../../sfpowerkit';
+import { Sfpowerkit } from '../../../../sfpowerkit';
 const path = require('path');
 
 // Initialize Messages with the current plugin directory
@@ -67,7 +67,7 @@ export default class Convert extends SFPowerkitCommand {
 
         if (!entries[0]) throw new SfdxError(`Apex Test Suite ${this.flags.name} not found`);
 
-        SFPowerkit.log(`Apex Test Suite File Path ${entries[0]}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`Apex Test Suite File Path ${entries[0]}`, LoggerLevel.DEBUG);
 
         if (fs.existsSync(path.resolve(entries[0]))) {
             const parser = new xml2js.Parser({ explicitArray: false });

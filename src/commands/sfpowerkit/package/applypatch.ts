@@ -9,7 +9,7 @@ const path = require('path');
 import { checkRetrievalStatus } from '../../../utils/checkRetrievalStatus';
 import { checkDeploymentStatus } from '../../../utils/checkDeploymentStatus';
 import { extract } from '../../../utils/extract';
-import { SFPowerkit, LoggerLevel } from '../../../sfpowerkit';
+import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
 import SFPowerkitCommand from '../../../sfpowerkitCommand';
 import FileUtils from '../../../utils/fileutils';
 
@@ -98,7 +98,7 @@ export default class Applypatch extends SFPowerkitCommand {
             let resultFile = `${this.folderPath}/staticresources/${this.flags.name}.resource`;
 
             if (fs.existsSync(path.resolve(resultFile))) {
-                SFPowerkit.log(`Preparing Patch ${this.flags.name}`, LoggerLevel.INFO);
+                Sfpowerkit.log(`Preparing Patch ${this.flags.name}`, LoggerLevel.INFO);
                 fs.copyFileSync(resultFile, `${this.folderPath}/unpackaged.zip`);
 
                 //Deploy patch using mdapi
@@ -117,7 +117,7 @@ export default class Applypatch extends SFPowerkitCommand {
                     }
                 );
 
-                SFPowerkit.log(
+                Sfpowerkit.log(
                     `Deploying Patch with ID  ${deployId.id} to ${this.org.getUsername()}`,
                     LoggerLevel.INFO
                 );
@@ -128,15 +128,15 @@ export default class Applypatch extends SFPowerkitCommand {
                     throw new SfdxError(`Unable to deploy the Patch : ${JSON.stringify(componentFailures)}`);
                 }
 
-                SFPowerkit.log(`Patch ${this.flags.name} Deployed successfully.`, LoggerLevel.INFO);
+                Sfpowerkit.log(`Patch ${this.flags.name} Deployed successfully.`, LoggerLevel.INFO);
                 rimraf.sync(this.folderPath);
                 return 1;
             } else {
-                SFPowerkit.log(`Patch ${this.flags.name} not found in the org`, LoggerLevel.INFO);
+                Sfpowerkit.log(`Patch ${this.flags.name} not found in the org`, LoggerLevel.INFO);
                 rimraf.sync(this.folderPath);
             }
         } else {
-            SFPowerkit.log(`Patch ${this.flags.name} not found in the org`, LoggerLevel.INFO);
+            Sfpowerkit.log(`Patch ${this.flags.name} not found in the org`, LoggerLevel.INFO);
             rimraf.sync(this.folderPath);
         }
     }

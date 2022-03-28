@@ -2,7 +2,7 @@
 // eslint-disable-next-line no-useless-escape
 import { Connection, User, AuthInfo } from '@salesforce/core';
 import queryApi from '../../utils/queryExecutor';
-import { SFPowerkit, LoggerLevel } from '../../sfpowerkit';
+import { Sfpowerkit, LoggerLevel } from '../../sfpowerkit';
 
 export default class Passwordgenerateimpl {
     public static async run(userName: string) {
@@ -26,12 +26,12 @@ export default class Passwordgenerateimpl {
             } catch (e) {
                 pwd = undefined;
                 if (e.message === 'INSUFFICIENT_ACCESS: Cannot set password for self') {
-                    SFPowerkit.log(
+                    Sfpowerkit.log(
                         `${e.message}. Incase of scratch org, Add "features": ["EnableSetPasswordInApi"] in your project-scratch-def.json then create your scratch org.`,
                         LoggerLevel.WARN
                     );
                 } else {
-                    SFPowerkit.log(`${e.message}`, LoggerLevel.WARN);
+                    Sfpowerkit.log(`${e.message}`, LoggerLevel.WARN);
                 }
             }
         });

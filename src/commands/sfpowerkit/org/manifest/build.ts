@@ -2,7 +2,7 @@ import { flags } from '@salesforce/command';
 import { Messages } from '@salesforce/core';
 import { AnyJson } from '@salesforce/ts-types';
 import { BuildConfig, Packagexml } from '../../../../impl/metadata/packageBuilder';
-import { SFPowerkit, LoggerLevel } from '../../../../sfpowerkit';
+import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
 import SFPowerkitCommand from '../../../../sfpowerkitCommand';
 
 // Initialize Messages with the current plugin directory
@@ -58,17 +58,17 @@ export default class Build extends SFPowerkitCommand {
     protected static requiresProject = false;
 
     public async execute(): Promise<AnyJson> {
-        SFPowerkit.setLogLevel('Info', this.flags.json);
+        Sfpowerkit.setLogLevel('Info', this.flags.json);
 
         if (this.flags.quickfilter) {
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `Flag -q| --quickfilter is deprecated, consider using -e| --excludefilter`,
                 LoggerLevel.WARN
             );
         }
 
         if (this.flags.quickfilter && this.flags.excludefilter) {
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `Both -q| --quickfilter and -e| --excludefilter serves same purpose. since both flag is passed we will merge and consider for excluding filter`,
                 LoggerLevel.WARN
             );

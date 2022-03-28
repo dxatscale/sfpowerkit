@@ -1,6 +1,6 @@
 import { flags } from '@salesforce/command';
 import { AnyJson } from '@salesforce/ts-types';
-import { SFPowerkit, LoggerLevel } from '../../../sfpowerkit';
+import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
 import SFPowerkitCommand from '../../../sfpowerkitCommand';
 import poolListImpl from '../../../impl/pool/scratchorg/poolListImpl';
 import { isNullOrUndefined } from 'util';
@@ -114,7 +114,7 @@ export default class List extends SFPowerkitCommand {
                     this.ux.table(result, ['tag', 'orgId', 'username', 'expiryDate', 'status', 'loginURL']);
                 }
             } else {
-                SFPowerkit.log(
+                Sfpowerkit.log(
                     `${this.flags.tag} pool has No Scratch orgs available, time to create your pool.`,
                     LoggerLevel.INFO
                 );

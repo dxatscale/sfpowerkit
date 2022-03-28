@@ -3,7 +3,7 @@ import { flags, FlagsConfig, SfdxResult } from '@salesforce/command';
 import { Messages, SfdxError } from '@salesforce/core';
 
 import * as _ from 'lodash';
-import { SFPowerkit } from '../../../../sfpowerkit';
+import { Sfpowerkit } from '../../../../sfpowerkit';
 import * as path from 'path';
 import { METADATA_INFO } from '../../../../impl/metadata/metadataInfo';
 import ProfileRetriever from '../../../../impl/metadata/retriever/profileRetriever';
@@ -111,7 +111,7 @@ export default class Merge extends SFPowerkitCommand {
         let argProfileList = this.flags.profilelist;
         let argMetadatas = this.flags.metadata;
 
-        SFPowerkit.initCache();
+        Sfpowerkit.initCache();
 
         let metadatas = undefined;
         let invalidArguments = [];
@@ -137,7 +137,7 @@ export default class Merge extends SFPowerkitCommand {
         }
 
         if (!_.isNil(argFolder) && argFolder.length !== 0) {
-            SFPowerkit.setDefaultFolder(argFolder[0]);
+            Sfpowerkit.setDefaultFolder(argFolder[0]);
         }
         ``;
 

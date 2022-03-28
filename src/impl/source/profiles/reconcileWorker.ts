@@ -1,5 +1,5 @@
 import { Connection, Org } from '@salesforce/core';
-import { LoggerLevel, SFPowerkit } from '../../../sfpowerkit';
+import { LoggerLevel, Sfpowerkit } from '../../../sfpowerkit';
 import { parentPort, workerData } from 'worker_threads';
 import * as fs from 'fs-extra';
 import * as path from 'path';
@@ -17,7 +17,7 @@ export default class ReconcileWorker {
     public async reconcile(profilesToReconcile: string[], destFolder) {
         //Init Cache for each worker thread from file system
 
-        SFPowerkit.initCache();
+        Sfpowerkit.initCache();
 
         if (this.targetOrg) {
             let org = await Org.create({ aliasOrUsername: this.targetOrg });
@@ -65,7 +65,7 @@ export default class ReconcileWorker {
                     return result;
                 })
                 .catch((error) => {
-                    SFPowerkit.log(
+                    Sfpowerkit.log(
                         'Error while processing file ' + profileComponent + '. ERROR Message: ' + error.message,
                         LoggerLevel.ERROR
                     );
@@ -75,7 +75,7 @@ export default class ReconcileWorker {
     }
 }
 
-SFPowerkit.setLogLevel(workerData.loglevel, workerData.isJsonFormatEnabled);
+Sfpowerkit.setLogLevel(workerData.loglevel, workerData.isJsonFormatEnabled);
 
 let reconcileWorker = new ReconcileWorker(workerData.targetOrg);
 reconcileWorker.reconcile(workerData.profileChunk, workerData.destFolder).then((result) => {

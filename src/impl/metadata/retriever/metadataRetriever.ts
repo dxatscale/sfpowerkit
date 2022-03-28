@@ -1,4 +1,4 @@
-import { LoggerLevel, SFPowerkit } from '../../../sfpowerkit';
+import { LoggerLevel, Sfpowerkit } from '../../../sfpowerkit';
 import * as _ from 'lodash';
 import { Connection } from 'jsforce';
 import { MetadataInfo, METADATA_INFO } from '../metadataInfo';
@@ -26,7 +26,7 @@ export default class MetadataRetriever {
         }
 
         let key = parent ? this._componentType + '_' + parent : this._componentType;
-        if (SFPowerkit.getFromCache(key) == null) {
+        if (Sfpowerkit.getFromCache(key) == null) {
             let items;
             if (this._componentType === 'UserLicense') {
                 items = await this.getUserLicense();
@@ -51,13 +51,13 @@ export default class MetadataRetriever {
             }
 
             //Set Full..
-            SFPowerkit.addToCache(key, items);
+            Sfpowerkit.addToCache(key, items);
 
             for (const item of items) {
-                SFPowerkit.addToCache(`${this.componentType}_${item.fullName}`, true);
+                Sfpowerkit.addToCache(`${this.componentType}_${item.fullName}`, true);
             }
         }
-        return SFPowerkit.getFromCache(key);
+        return Sfpowerkit.getFromCache(key);
     }
 
     private async getUserLicense() {
@@ -104,7 +104,7 @@ export default class MetadataRetriever {
     public async isComponentExistsInTheOrg(item: string, parent?: string): Promise<boolean> {
         let items = await this.getComponents(parent);
         //Do a cache hit before deep interospection
-        let foundItem = item ? SFPowerkit.getFromCache(`${this.componentType}_${item}`) : null;
+        let foundItem = item ? Sfpowerkit.getFromCache(`${this.componentType}_${item}`) : null;
         if (_.isNil(foundItem) && !_.isNil(items) && Array.isArray(items)) {
             foundItem = items.find((p) => {
                 return p?.fullName === item;
@@ -116,18 +116,18 @@ export default class MetadataRetriever {
 
     public async isComponentExistsInProjectDirectory(item: string): Promise<boolean> {
         if (!_.isNil(this._metadataInProjectDirectory[this._componentType].components)) {
-            if (!SFPowerkit.getFromCache(`${this.componentType}_SOURCE_CACHE_AVAILABLE`)) {
+            if (!Sfpowerkit.getFromCache(`${this.componentType}_SOURCE_CACHE_AVAILABLE`)) {
                 //Do a one time update
                 for (const component of this._metadataInProjectDirectory[this._componentType].components) {
-                    SFPowerkit.addToCache(`SOURCE_${this.componentType}_${component}`, true);
+                    Sfpowerkit.addToCache(`SOURCE_${this.componentType}_${component}`, true);
                 }
 
-                SFPowerkit.addToCache(`${this.componentType}_SOURCE_CACHE_AVAILABLE`, true);
+                Sfpowerkit.addToCache(`${this.componentType}_SOURCE_CACHE_AVAILABLE`, true);
             }
 
             let found = false;
 
-            if (!_.isNil(SFPowerkit.getFromCache(`SOURCE_${this.componentType}_${item}`))) {
+            if (!_.isNil(Sfpowerkit.getFromCache(`SOURCE_${this.componentType}_${item}`))) {
                 found = true;
             }
 
@@ -139,10 +139,10 @@ export default class MetadataRetriever {
         let found = false;
         //First check in directory
         found = await this.isComponentExistsInProjectDirectory(item);
-        SFPowerkit.log(`Found in Directory? ${item} ${found}`, LoggerLevel.TRACE);
+        Sfpowerkit.log(`Found in Directory? ${item} ${found}`, LoggerLevel.TRACE);
         if (found === false) {
             found = await this.isComponentExistsInTheOrg(item, parent);
-            SFPowerkit.log(`Found in Org? ${item} ${found}`, LoggerLevel.TRACE);
+            Sfpowerkit.log(`Found in Org? ${item} ${found}`, LoggerLevel.TRACE);
         }
         return found;
     }
@@ -190,7 +190,7 @@ export default class MetadataRetriever {
     private async getFieldsByObjectName(objectName: string): Promise<any[]> {
         let fields = [];
         try {
-            SFPowerkit.log(`Fetching Field of Object ${objectName}`, LoggerLevel.TRACE);
+            Sfpowerkit.log(`Fetching Field of Object ${objectName}`, LoggerLevel.TRACE);
 
             let query = `SELECT Id, QualifiedApiName, EntityDefinitionId, DeveloperName, NameSpacePrefix FROM FieldDefinition WHERE EntityDefinition.QualifiedApiName='${objectName}'`;
             let queryUtil = new QueryExecutor(this._conn);
@@ -200,7 +200,7 @@ export default class MetadataRetriever {
                 return { fullName: `${objectName}.${field.QualifiedApiName}` };
             });
         } catch (error) {
-            SFPowerkit.log(`Object not found ${objectName}..skipping`, LoggerLevel.TRACE);
+            Sfpowerkit.log(`Object not found ${objectName}..skipping`, LoggerLevel.TRACE);
         }
         return fields;
     }
@@ -208,7 +208,7 @@ export default class MetadataRetriever {
     private async getRecordTypes(): Promise<any[]> {
         let recordTypes = [];
         try {
-            SFPowerkit.log(`Fetching RecordTypes`, LoggerLevel.TRACE);
+            Sfpowerkit.log(`Fetching RecordTypes`, LoggerLevel.TRACE);
 
             let queryUtil = new QueryExecutor(this._conn);
 
@@ -246,15 +246,15 @@ export default class MetadataRetriever {
                 return rtObj;
             });
         } catch (error) {
-            SFPowerkit.log(`Error fetching record types...`, LoggerLevel.DEBUG);
-            SFPowerkit.log(error.message, LoggerLevel.DEBUG);
+            Sfpowerkit.log(`Error fetching record types...`, LoggerLevel.DEBUG);
+            Sfpowerkit.log(error.message, LoggerLevel.DEBUG);
         }
         return recordTypes;
     }
 
     private async getLayouts(): Promise<any[]> {
-        SFPowerkit.log(`Fetching Layouts`, LoggerLevel.TRACE);
-        let apiversion: string = await SFPowerkit.getApiVersion();
+        Sfpowerkit.log(`Fetching Layouts`, LoggerLevel.TRACE);
+        let apiversion: string = await Sfpowerkit.getApiVersion();
         let layouts = await this._conn.metadata.list(
             {
                 type: METADATA_INFO.Layout.xmlName,

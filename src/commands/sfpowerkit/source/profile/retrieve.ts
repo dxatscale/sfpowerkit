@@ -4,7 +4,7 @@ import { SfdxError, Messages } from '@salesforce/core';
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
 import * as path from 'path';
-import { SFPowerkit } from '../../../../sfpowerkit';
+import { Sfpowerkit } from '../../../../sfpowerkit';
 import { METADATA_INFO } from '../../../../impl/metadata/metadataInfo';
 import ProfileSync from '../../../../impl/source/profiles/profileSync';
 import SFPowerkitCommand from '../../../../sfpowerkitCommand';
@@ -102,7 +102,7 @@ export default class Retrieve extends SFPowerkitCommand {
             folders.push(...argFolder);
         }
 
-        SFPowerkit.initCache();
+        Sfpowerkit.initCache();
 
         const profileUtils = new ProfileSync(this.org, this.flags.loglevel == 'debug');
 

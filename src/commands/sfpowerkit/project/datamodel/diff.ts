@@ -1,5 +1,5 @@
 import { FlagsConfig, flags } from '@salesforce/command';
-import { SFPowerkit, LoggerLevel } from '../../../../sfpowerkit';
+import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
 import SFPowerkitCommand from '../../../../sfpowerkitCommand';
 import * as fs from 'fs-extra';
 import simpleGit, { SimpleGit } from 'simple-git';
@@ -107,11 +107,11 @@ export default class Diff extends SFPowerkitCommand {
         let sourceDiffResult = await dataModelSourceDiffImpl.exec();
 
         if (sourceDiffResult.length < 1) {
-            SFPowerkit.log(`No Datamodel change found between ${revisionFrom} and ${revisionTo}`, LoggerLevel.WARN);
+            Sfpowerkit.log(`No Datamodel change found between ${revisionFrom} and ${revisionTo}`, LoggerLevel.WARN);
             return sourceDiffResult;
         }
 
-        SFPowerkit.log(
+        Sfpowerkit.log(
             `Found ${sourceDiffResult.length} Datamodel change between ${revisionFrom} and ${revisionTo} \n`,
             LoggerLevel.INFO
         );
@@ -161,13 +161,13 @@ export default class Diff extends SFPowerkitCommand {
         ]);
         this.ux.log('\n');
         if (rowsToDisplay.length > 50) {
-            SFPowerkit.log('Displaying output limited to 50 rows', LoggerLevel.WARN);
+            Sfpowerkit.log('Displaying output limited to 50 rows', LoggerLevel.WARN);
         }
 
-        SFPowerkit.log(`JSON output written to ${outputDirectory}/datamodel-diff-output.json`, LoggerLevel.INFO);
+        Sfpowerkit.log(`JSON output written to ${outputDirectory}/datamodel-diff-output.json`, LoggerLevel.INFO);
 
         if (isOutputCSV) {
-            SFPowerkit.log(`CSV output written to ${outputDirectory}/datamodel-diff-output.csv`, LoggerLevel.INFO);
+            Sfpowerkit.log(`CSV output written to ${outputDirectory}/datamodel-diff-output.csv`, LoggerLevel.INFO);
         }
         return sourceDiffResult;
     }

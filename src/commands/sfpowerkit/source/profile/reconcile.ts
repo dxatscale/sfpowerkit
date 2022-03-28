@@ -2,7 +2,7 @@ import { flags, FlagsConfig, SfdxResult } from '@salesforce/command';
 
 import { Messages, Org } from '@salesforce/core';
 import * as _ from 'lodash';
-import { SFPowerkit, LoggerLevel } from '../../../../sfpowerkit';
+import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
 import { METADATA_INFO } from '../../../../impl/metadata/metadataInfo';
 import * as path from 'path';
 import ProfileReconcile from '../../../../impl/source/profiles/profileReconcile';
@@ -117,7 +117,7 @@ export default class Reconcile extends SFPowerkitCommand {
         MetadataFiles.sourceOnly = this.flags.sourceonly;
 
         if (!_.isNil(argFolder) && argFolder.length !== 0) {
-            SFPowerkit.setDefaultFolder(argFolder[0]);
+            Sfpowerkit.setDefaultFolder(argFolder[0]);
         }
 
         let result = [];
@@ -141,9 +141,9 @@ export default class Reconcile extends SFPowerkitCommand {
                 });
             });
         } catch (err) {
-            SFPowerkit.log(err, LoggerLevel.ERROR);
+            Sfpowerkit.log(err, LoggerLevel.ERROR);
 
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 'An error occured during profile reconcile. You can rerun the command after a moment.',
                 LoggerLevel.ERROR
             );

@@ -5,7 +5,7 @@ import { flags } from '@salesforce/command';
 import { JsonArray, JsonMap } from '@salesforce/ts-types';
 import { Messages, SfdxError, SfdxProject } from '@salesforce/core';
 import child_process = require('child_process');
-import { SFPowerkit, LoggerLevel } from '../../../../sfpowerkit';
+import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
 import SFPowerkitCommand from '../../../../sfpowerkitCommand';
 import { get18DigitSalesforceId } from './../../../../utils/get18DigitSalesforceId';
 let retry = require('async-retry');
@@ -138,7 +138,7 @@ export default class Install extends SFPowerkitCommand {
         try {
             installedpackages = await this.getInstalledPackages(username);
         } catch (error) {
-            SFPowerkit.log('Unable to retrieve the packages installed in the org, Proceeding', LoggerLevel.WARN);
+            Sfpowerkit.log('Unable to retrieve the packages installed in the org, Proceeding', LoggerLevel.WARN);
         }
 
         if (!installedpackages || installedpackages.length == 0) {
@@ -432,7 +432,7 @@ export default class Install extends SFPowerkitCommand {
 
         return await retry(
             async (bail) => {
-                SFPowerkit.log('QUERY:' + installedPackagesQuery, LoggerLevel.TRACE);
+                Sfpowerkit.log('QUERY:' + installedPackagesQuery, LoggerLevel.TRACE);
 
                 const results = (await conn.tooling.query(installedPackagesQuery)) as any;
 

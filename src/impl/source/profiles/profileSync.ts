@@ -1,4 +1,4 @@
-import { SFPowerkit, LoggerLevel } from '../../../sfpowerkit';
+import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
 import MetadataFiles from '../../metadata/metadataFiles';
 import * as fs from 'fs-extra';
 import * as path from 'path';
@@ -24,21 +24,21 @@ export default class ProfileSync extends ProfileActions {
         deleted: string[];
         updated: string[];
     }> {
-        SFPowerkit.log('Retrieving profiles', LoggerLevel.DEBUG);
+        Sfpowerkit.log('Retrieving profiles', LoggerLevel.DEBUG);
         if (!_.isNil(profiles) && profiles.length !== 0) {
-            SFPowerkit.log('Requested  profiles are..', LoggerLevel.DEBUG);
-            SFPowerkit.log(profiles, LoggerLevel.DEBUG);
+            Sfpowerkit.log('Requested  profiles are..', LoggerLevel.DEBUG);
+            Sfpowerkit.log(profiles, LoggerLevel.DEBUG);
         }
 
         let fetchNewProfiles = _.isNil(srcFolders) || srcFolders.length === 0;
         if (fetchNewProfiles) {
-            srcFolders = await SFPowerkit.getProjectDirectories();
+            srcFolders = await Sfpowerkit.getProjectDirectories();
         }
 
         this.metadataFiles = new MetadataFiles();
 
-        SFPowerkit.log('Source Folders are', LoggerLevel.DEBUG);
-        SFPowerkit.log(srcFolders, LoggerLevel.DEBUG);
+        Sfpowerkit.log('Source Folders are', LoggerLevel.DEBUG);
+        Sfpowerkit.log(srcFolders, LoggerLevel.DEBUG);
 
         for (let i = 0; i < srcFolders.length; i++) {
             let srcFolder = srcFolders[i];
@@ -69,9 +69,9 @@ export default class ProfileSync extends ProfileActions {
             profileStatus.added = [];
         }
         metadataFiles.sort();
-        SFPowerkit.log(profileStatus, LoggerLevel.DEBUG);
+        Sfpowerkit.log(profileStatus, LoggerLevel.DEBUG);
 
-        SFPowerkit.log(metadataFiles, LoggerLevel.TRACE);
+        Sfpowerkit.log(metadataFiles, LoggerLevel.TRACE);
 
         if (metadataFiles.length > 0) {
             for (let i = 0; i < metadataFiles.length; i++) {
@@ -89,7 +89,7 @@ export default class ProfileSync extends ProfileActions {
                 j: number,
                 chunk = 10;
             let temparray;
-            SFPowerkit.log(`Number of profiles found in the target org ${profileNames.length}`, LoggerLevel.INFO);
+            Sfpowerkit.log(`Number of profiles found in the target org ${profileNames.length}`, LoggerLevel.INFO);
 
             let progressBar = new ProgressBar().create(`Loading profiles in batches `, ` Profiles`, LoggerLevel.INFO);
             progressBar.start(profileNames.length);
@@ -101,13 +101,13 @@ export default class ProfileSync extends ProfileActions {
                 let profileWriter = new ProfileWriter();
                 for (let count = 0; count < metadataList.length; count++) {
                     let profileObj = metadataList[count] as Profile;
-                    SFPowerkit.log('Reconciling  Tabs', LoggerLevel.DEBUG);
+                    Sfpowerkit.log('Reconciling  Tabs', LoggerLevel.DEBUG);
                     await this.reconcileTabs(profileObj);
                     let filePath = profilePathAssoc[profileObj.fullName];
                     if (filePath) {
                         profileWriter.writeProfile(profileObj, profilePathAssoc[profileObj.fullName]);
                     } else {
-                        SFPowerkit.log('File path not found...', LoggerLevel.DEBUG);
+                        Sfpowerkit.log('File path not found...', LoggerLevel.DEBUG);
                     }
                     //profileList.push(profileObj.fullName);
                 }
@@ -115,7 +115,7 @@ export default class ProfileSync extends ProfileActions {
             }
             progressBar.stop();
         } else {
-            SFPowerkit.log(`No Profiles found to retrieve`, LoggerLevel.INFO);
+            Sfpowerkit.log(`No Profiles found to retrieve`, LoggerLevel.INFO);
         }
 
         if (profileStatus.deleted && isdelete) {
@@ -147,7 +147,7 @@ export default class ProfileSync extends ProfileActions {
                     validArray.push(cmpObj);
                 }
             }
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 `Tab Visibilities reduced from ${profileObj.tabVisibilities.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );

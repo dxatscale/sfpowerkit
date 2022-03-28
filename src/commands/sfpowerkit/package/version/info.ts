@@ -1,6 +1,6 @@
 import { flags } from '@salesforce/command';
 import { AnyJson } from '@salesforce/ts-types';
-import { SFPowerkit } from '../../../../sfpowerkit';
+import { Sfpowerkit } from '../../../../sfpowerkit';
 import PackageInfo from '../../../../impl/package/version/packageInfo';
 import SFPowerkitCommand from '../../../../sfpowerkitCommand';
 import { Messages } from '@salesforce/core';
@@ -46,7 +46,7 @@ export default class Info extends SFPowerkitCommand {
     protected static requiresUsername = true;
     public static readonly supportsDevhubUsername = true;
     public async execute(): Promise<AnyJson> {
-        SFPowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
+        Sfpowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
 
         await this.org.refreshAuth();
 
