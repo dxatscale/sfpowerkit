@@ -1,6 +1,6 @@
 import { FlagsConfig, flags } from '@salesforce/command';
 import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
-import SFPowerkitCommand from '../../../../sfpowerkitCommand';
+import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 import * as fs from 'fs-extra';
 import simpleGit, { SimpleGit } from 'simple-git';
 import { isNullOrUndefined } from 'util';
@@ -17,7 +17,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'project_datamodel_diff');
 
-export default class Diff extends SFPowerkitCommand {
+export default class Diff extends SfpowerkitCommand {
     public static description = messages.getMessage('commandDescription');
 
     public static examples = [

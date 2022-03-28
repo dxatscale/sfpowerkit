@@ -5,7 +5,7 @@ import * as path from 'path';
 import { Sfpowerkit } from '../../../../sfpowerkit';
 import xmlUtil from '../../../../utils/xmlUtil';
 import getDefaults from '../../../../utils/getDefaults';
-import SFPowerkitCommand from '../../../../sfpowerkitCommand';
+import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 import { Messages } from '@salesforce/core';
 
 // Initialize Messages with the current plugin directory
@@ -15,7 +15,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'project_manifest_merge');
 
-export default class Merge extends SFPowerkitCommand {
+export default class Merge extends SfpowerkitCommand {
     public output: Map<string, string[]>;
 
     public static description = messages.getMessage('commandDescription');

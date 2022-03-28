@@ -2,7 +2,7 @@ import { flags } from '@salesforce/command';
 import { AnyJson } from '@salesforce/ts-types';
 import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
 import poolHydrateImpl from '../../../impl/pool/scratchorg/PoolDeleteImpl';
-import SFPowerkitCommand from '../../../sfpowerkitCommand';
+import SfpowerkitCommand from '../../../sfpowerkitCommand';
 import { Messages } from '@salesforce/core';
 
 // Initialize Messages with the current plugin directory
@@ -12,7 +12,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'scratchorg_poolhydrate');
 
-export default class Delete extends SFPowerkitCommand {
+export default class Delete extends SfpowerkitCommand {
     public static description = messages.getMessage('commandDescription');
 
     protected static requiresDevhubUsername = true;

@@ -3,7 +3,7 @@ import { Messages } from '@salesforce/core';
 import { AnyJson } from '@salesforce/ts-types';
 import { BuildConfig, Packagexml } from '../../../../impl/metadata/packageBuilder';
 import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
-import SFPowerkitCommand from '../../../../sfpowerkitCommand';
+import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -12,7 +12,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'package_build');
 
-export default class Build extends SFPowerkitCommand {
+export default class Build extends SfpowerkitCommand {
     public static description = messages.getMessage('commandDescription');
 
     public static examples = [

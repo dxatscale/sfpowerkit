@@ -24,7 +24,7 @@ import { checkDeploymentStatus } from '../../../../utils/checkDeploymentStatus';
 import { extract } from '../../../../utils/extract';
 import { zipDirectory } from '../../../../utils/zipDirectory';
 import { Sfpowerkit } from '../../../../sfpowerkit';
-import SFPowerkitCommand from '../../../../sfpowerkitCommand';
+import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -33,7 +33,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'trigger_activate');
 
-export default class Activate extends SFPowerkitCommand {
+export default class Activate extends SfpowerkitCommand {
     public connectedapp_consumerKey: string;
     public static description = messages.getMessage('commandDescription');
 

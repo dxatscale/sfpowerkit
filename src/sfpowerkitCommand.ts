@@ -6,7 +6,7 @@ import { Sfpowerkit, COLOR_HEADER } from './sfpowerkit';
  *
  * @extends SfdxCommand
  */
-export default abstract class SFPowerkitCommand extends SfdxCommand {
+export default abstract class SfpowerkitCommand extends SfdxCommand {
     public static isJsonFormatEnabled: boolean;
     public static logLevel;
     private sfpowerkitConfig;

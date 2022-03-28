@@ -7,7 +7,7 @@ import * as path from 'path';
 import { Sfpowerkit } from '../../../../sfpowerkit';
 import { METADATA_INFO } from '../../../../impl/metadata/metadataInfo';
 import ProfileSync from '../../../../impl/source/profiles/profileSync';
-import SFPowerkitCommand from '../../../../sfpowerkitCommand';
+import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -16,7 +16,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'profile_retrieve');
 
-export default class Retrieve extends SFPowerkitCommand {
+export default class Retrieve extends SfpowerkitCommand {
     public static description = messages.getMessage('commandDescription');
 
     public static examples = [

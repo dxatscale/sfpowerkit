@@ -1,7 +1,7 @@
 import { AnyJson } from '@salesforce/ts-types';
 import * as fs from 'fs-extra';
 import { flags } from '@salesforce/command';
-import SFPowerkitCommand from '../../../../sfpowerkitCommand';
+import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 import * as rimraf from 'rimraf';
 import { SfdxError, LoggerLevel, Messages } from '@salesforce/core';
 import * as xml2js from 'xml2js';
@@ -17,7 +17,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'apextestsuite_convert');
 
-export default class Convert extends SFPowerkitCommand {
+export default class Convert extends SfpowerkitCommand {
     // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
     protected static requiresProject = true;
 

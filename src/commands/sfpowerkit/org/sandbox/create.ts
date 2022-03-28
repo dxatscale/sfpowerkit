@@ -3,7 +3,7 @@ import { AnyJson } from '@salesforce/ts-types';
 let request = require('request-promise-native');
 import { Messages, SfdxError } from '@salesforce/core';
 import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
-import SFPowerkitCommand from '../../../../sfpowerkitCommand';
+import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 import { Connection } from 'jsforce';
 
 // Initialize Messages with the current plugin directory
@@ -13,7 +13,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'sandbox_create');
 
-export default class Create extends SFPowerkitCommand {
+export default class Create extends SfpowerkitCommand {
     public static description = messages.getMessage('commandDescription');
 
     public static examples = [

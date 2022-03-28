@@ -1,5 +1,5 @@
 import { flags } from '@salesforce/command';
-import SFPowerkitCommand from '../../../../sfpowerkitCommand';
+import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 import { SfdxError, Messages } from '@salesforce/core';
 import DependencyImpl from '../../../../impl/dependency/dependencyImpl';
 import MetadataSummaryInfoFetcher, {
@@ -23,7 +23,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'dependency_tree_package');
 
-export default class Tree extends SFPowerkitCommand {
+export default class Tree extends SfpowerkitCommand {
     public static description = messages.getMessage('commandDescription');
 
     public static examples = [

@@ -2,7 +2,7 @@ import { AnyJson } from '@salesforce/ts-types';
 import { existsSync } from 'fs';
 import { flags } from '@salesforce/command';
 import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
-import SFPowerkitCommand from '../../../../sfpowerkitCommand';
+import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 import { Messages, SfdxError } from '@salesforce/core';
 import ApexTypeFetcher, { ApexSortedByType } from '../../../../impl/parser/ApexTypeFetcher';
 
@@ -13,7 +13,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'source_apextest_list');
 
-export default class List extends SFPowerkitCommand {
+export default class List extends SfpowerkitCommand {
     // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
     protected static requiresProject = true;
     public static description = messages.getMessage('commandDescription');

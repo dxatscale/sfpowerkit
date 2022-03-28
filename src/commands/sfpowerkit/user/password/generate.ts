@@ -3,9 +3,9 @@ import { AnyJson } from '@salesforce/ts-types';
 import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
 import Passwordgenerateimpl from '../../../../impl/user/passwordgenerateimpl';
 import { SfdxError } from '@salesforce/core';
-import SFPowerkitCommand from '../../../../sfpowerkitCommand';
+import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 
-export default class Generate extends SFPowerkitCommand {
+export default class Generate extends SfpowerkitCommand {
     public static description = 'Generates password for a given user in a salesforce org.';
 
     public static examples = [`$ sfdx sfpowerkit:user:password:generate -u sandbox1`];

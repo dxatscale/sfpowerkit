@@ -5,7 +5,7 @@ import { SfdxProject, SfdxError, Messages } from '@salesforce/core';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import { Sfpowerkit, LoggerLevel, COLOR_WARNING, COLOR_SUCCESS, COLOR_KEY_MESSAGE } from '../../../sfpowerkit';
-import SFPowerkitCommand from '../../../sfpowerkitCommand';
+import SfpowerkitCommand from '../../../sfpowerkitCommand';
 import { MetadataResolver } from '@salesforce/source-deploy-retrieve';
 
 //JSON Update from the below api
@@ -18,7 +18,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'valid');
 
-export default class Valid extends SFPowerkitCommand {
+export default class Valid extends SfpowerkitCommand {
     public static description = messages.getMessage('commandDescription');
 
     public static examples = [

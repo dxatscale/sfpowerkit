@@ -7,7 +7,7 @@ import { METADATA_INFO } from '../../../../impl/metadata/metadataInfo';
 import * as path from 'path';
 import ProfileReconcile from '../../../../impl/source/profiles/profileReconcile';
 import MetadataFiles from '../../../../impl/metadata/metadataFiles';
-import SFPowerkitCommand from '../../../../sfpowerkitCommand';
+import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -16,7 +16,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'profile_reconcile');
 
-export default class Reconcile extends SFPowerkitCommand {
+export default class Reconcile extends SfpowerkitCommand {
     public static description = messages.getMessage('commandDescription');
 
     public static examples = [

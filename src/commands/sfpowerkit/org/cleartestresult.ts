@@ -2,13 +2,13 @@ import { Connection, SfdxError } from '@salesforce/core';
 import { AnyJson } from '@salesforce/ts-types';
 import queryApi from '../../../utils/queryExecutor';
 import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
-import SFPowerkitCommand from '../../../sfpowerkitCommand';
+import SfpowerkitCommand from '../../../sfpowerkitCommand';
 import { chunkArray } from '../../../utils/chunkArray';
 
 const CODECOVAGG_QUERY = `SELECT Id FROM ApexCodeCoverageAggregate`;
 const APEXTESTRESULT_QUERY = `SELECT Id FROM ApexTestResult`;
 
-export default class Cleartestresult extends SFPowerkitCommand {
+export default class Cleartestresult extends SfpowerkitCommand {
     public static description = `This command helps to clear any test results and code coverage in the org to get fresh and enhanced coverage everytime`;
 
     public static examples = [`$ sfdx sfpowerkit:org:cleartestresult -u myOrg@example.com`];

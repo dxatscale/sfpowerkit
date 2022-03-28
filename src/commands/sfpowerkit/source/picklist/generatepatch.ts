@@ -12,7 +12,7 @@ import { zipDirectory } from '../../../../utils/zipDirectory';
 import MetadataFiles from '../../../../impl/metadata/metadataFiles';
 import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
 import FileUtils from '../../../../utils/fileutils';
-import SFPowerkitCommand from '../../../../sfpowerkitCommand';
+import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 
 const path = require('path');
 const glob = require('glob');
@@ -25,7 +25,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'source_picklist_generatepatch');
 
-export default class Generatepatch extends SFPowerkitCommand {
+export default class Generatepatch extends SfpowerkitCommand {
     // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
     protected static requiresProject = true;
     private folderPath: string;

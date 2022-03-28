@@ -10,7 +10,7 @@ import { checkRetrievalStatus } from '../../../utils/checkRetrievalStatus';
 import { checkDeploymentStatus } from '../../../utils/checkDeploymentStatus';
 import { extract } from '../../../utils/extract';
 import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
-import SFPowerkitCommand from '../../../sfpowerkitCommand';
+import SfpowerkitCommand from '../../../sfpowerkitCommand';
 import FileUtils from '../../../utils/fileutils';
 
 // Initialize Messages with the current plugin directory
@@ -20,7 +20,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'package_applypatch');
 
-export default class Applypatch extends SFPowerkitCommand {
+export default class Applypatch extends SfpowerkitCommand {
     public static description = messages.getMessage('commandDescription');
 
     public static examples = [`$ sfdx sfpowerkit:package:applypatch -n customer_picklist -u sandbox`];

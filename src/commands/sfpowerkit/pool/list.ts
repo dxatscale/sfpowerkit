@@ -1,7 +1,7 @@
 import { flags } from '@salesforce/command';
 import { AnyJson } from '@salesforce/ts-types';
 import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
-import SFPowerkitCommand from '../../../sfpowerkitCommand';
+import SfpowerkitCommand from '../../../sfpowerkitCommand';
 import poolListImpl from '../../../impl/pool/scratchorg/poolListImpl';
 import { isNullOrUndefined } from 'util';
 import { ScratchOrg } from '../../../utils/scratchOrgUtils';
@@ -14,7 +14,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'scratchorg_poollist');
 
-export default class List extends SFPowerkitCommand {
+export default class List extends SfpowerkitCommand {
     public static description = messages.getMessage('commandDescription');
 
     protected static requiresDevhubUsername = true;
