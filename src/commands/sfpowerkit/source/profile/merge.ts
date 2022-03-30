@@ -1,11 +1,8 @@
 import { flags, FlagsConfig, SfdxResult } from '@salesforce/command';
 
 import { Messages, SfdxError } from '@salesforce/core';
-
 import * as _ from 'lodash';
 import { Sfpowerkit } from '../../../../sfpowerkit';
-import * as path from 'path';
-import { METADATA_INFO } from '../../../../impl/metadata/metadataInfo';
 import ProfileRetriever from '../../../../impl/metadata/retriever/profileRetriever';
 import ProfileMerge from '../../../../impl/source/profiles/profileMerge';
 import SfpowerkitCommand from '../../../../sfpowerkitCommand';
@@ -141,50 +138,50 @@ export default class Merge extends SfpowerkitCommand {
         }
         ``;
 
-        const profileUtils = new ProfileMerge(this.org, this.flags.loglevel == 'debug');
+        const profileUtils = new ProfileMerge(this.org);
 
         let mergedProfiles = await profileUtils.merge(argFolder, argProfileList || [], metadatas, this.flags.delete);
 
         let result = [];
         if (mergedProfiles.added) {
-            mergedProfiles.added.forEach((file) => {
+            mergedProfiles.added.forEach((profile) => {
                 result.push({
                     state: 'Add',
-                    fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
+                    fullName: profile.name,
                     type: 'Profile',
-                    path: path.relative(process.cwd(), file),
+                    path: profile.path,
                 });
             });
         }
         if (mergedProfiles.updated) {
-            mergedProfiles.updated.forEach((file) => {
+            mergedProfiles.updated.forEach((profile) => {
                 result.push({
                     state: 'Merged',
-                    fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
+                    fullName: profile.name,
                     type: 'Profile',
-                    path: path.relative(process.cwd(), file),
+                    path: profile.path,
                 });
             });
         }
         if (this.flags.delete) {
             if (mergedProfiles.deleted) {
-                mergedProfiles.deleted.forEach((file) => {
+                mergedProfiles.deleted.forEach((profile) => {
                     result.push({
                         state: 'Deleted',
-                        fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
+                        fullName: profile.name,
                         type: 'Profile',
-                        path: path.relative(process.cwd(), file),
+                        path: profile.path,
                     });
                 });
             }
         } else {
             if (mergedProfiles.deleted) {
-                mergedProfiles.deleted.forEach((file) => {
+                mergedProfiles.deleted.forEach((profile) => {
                     result.push({
                         state: 'Skipped',
-                        fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
+                        fullName: profile.name,
                         type: 'Profile',
-                        path: path.relative(process.cwd(), file),
+                        path: profile.path,
                     });
                 });
             }

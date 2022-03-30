@@ -1,6 +1,6 @@
 import { Connection, LoggerLevel } from '@salesforce/core';
+import { registry } from '@salesforce/source-deploy-retrieve';
 import MetadataFiles from '../../../impl/metadata/metadataFiles';
-import { METADATA_INFO } from '../../../impl/metadata/metadataInfo';
 import { Sfpowerkit } from '../../../sfpowerkit';
 import UserPermissionBuilder from '../../metadata/builder/userPermissionBuilder';
 import MetadataRetriever from '../../metadata/retriever/metadataRetriever';
@@ -75,9 +75,9 @@ export default class ProfileComponentReconciler {
         let profileRetriever;
         //if sourceonly mode load profileRetriever
         if (MetadataFiles.sourceOnly) {
-            profileRetriever = new ProfileRetriever(null, false);
+            profileRetriever = new ProfileRetriever(null);
         } else {
-            profileRetriever = new ProfileRetriever(this.conn, false);
+            profileRetriever = new ProfileRetriever(this.conn);
         }
         let unsupportedLicencePermissions = profileRetriever.getUnsupportedLicencePermissions(profileObj.userLicense);
         if (profileObj.userPermissions != null && profileObj.userPermissions.length > 0) {
@@ -91,7 +91,7 @@ export default class ProfileComponentReconciler {
     private async cleanupUserLicenses(profileObj: Profile) {
         if (!MetadataFiles.sourceOnly) {
             //Manage licences
-            let userLicenseRetriever = new MetadataRetriever(this.conn, 'UserLicense', METADATA_INFO);
+            let userLicenseRetriever = new MetadataRetriever(this.conn, 'UserLicense');
             const isSupportedLicence = await userLicenseRetriever.isComponentExistsInTheOrg(profileObj.userLicense);
             if (!isSupportedLicence) {
                 delete profileObj.userLicense;
@@ -100,11 +100,7 @@ export default class ProfileComponentReconciler {
     }
 
     private async reconcileApp(profileObj: Profile): Promise<void> {
-        let customApplications = new MetadataRetriever(
-            this.conn,
-            METADATA_INFO.CustomApplication.xmlName,
-            METADATA_INFO
-        );
+        let customApplications = new MetadataRetriever(this.conn, registry.types.customapplication.name);
         if (profileObj.applicationVisibilities !== undefined) {
             let validArray = [];
             for (let i = 0; i < profileObj.applicationVisibilities.length; i++) {
@@ -123,7 +119,7 @@ export default class ProfileComponentReconciler {
     }
 
     private async reconcileClasses(profileObj: Profile): Promise<void> {
-        let apexClasses = new MetadataRetriever(this.conn, METADATA_INFO.ApexClass.xmlName, METADATA_INFO);
+        let apexClasses = new MetadataRetriever(this.conn, registry.types.apexclass.name);
 
         if (profileObj.classAccesses !== undefined) {
             if (!Array.isArray(profileObj.classAccesses)) {
@@ -153,7 +149,10 @@ export default class ProfileComponentReconciler {
             }
             let validArray: ProfileFieldLevelSecurity[] = [];
             for (let i = 0; i < profileObj.fieldPermissions.length; i++) {
-                let fieldRetriever = new MetadataRetriever(this.conn, METADATA_INFO.CustomField.xmlName, METADATA_INFO);
+                let fieldRetriever = new MetadataRetriever(
+                    this.conn,
+                    registry.types.customobject.children.types.customfield.name
+                );
                 let cmpObj = profileObj.fieldPermissions[i];
                 let parent = cmpObj.field.split('.')[0];
                 let exists = await fieldRetriever.isComponentExistsInProjectDirectoryOrInOrg(cmpObj.field, parent);
@@ -170,8 +169,11 @@ export default class ProfileComponentReconciler {
     }
 
     private async reconcileLayouts(profileObj: Profile): Promise<void> {
-        let layoutRetreiver = new MetadataRetriever(this.conn, METADATA_INFO.Layout.xmlName, METADATA_INFO);
-        let recordTypeRetriever = new MetadataRetriever(this.conn, METADATA_INFO.RecordType.xmlName, METADATA_INFO);
+        let layoutRetreiver = new MetadataRetriever(this.conn, registry.types.layout.name);
+        let recordTypeRetriever = new MetadataRetriever(
+            this.conn,
+            registry.types.customobject.children.types.recordtype.name
+        );
 
         if (profileObj.layoutAssignments !== undefined) {
             let validArray = [];
@@ -195,8 +197,8 @@ export default class ProfileComponentReconciler {
     }
 
     private async reconcileObjects(profileObj: Profile): Promise<void> {
-        let objectPermissionRetriever = new MetadataRetriever(this.conn, 'ObjectPermissions', METADATA_INFO);
-        let objectRetriever = new MetadataRetriever(this.conn, METADATA_INFO.CustomObject.xmlName, METADATA_INFO);
+        let objectPermissionRetriever = new MetadataRetriever(this.conn, 'ObjectPermissions');
+        let objectRetriever = new MetadataRetriever(this.conn, registry.types.customobject.name);
 
         if (profileObj.objectPermissions !== undefined) {
             if (!Array.isArray(profileObj.objectPermissions)) {
@@ -223,7 +225,7 @@ export default class ProfileComponentReconciler {
     }
 
     private async reconcileCustomMetadata(profileObj: Profile): Promise<void> {
-        let objectRetriever = new MetadataRetriever(this.conn, METADATA_INFO.CustomObject.xmlName, METADATA_INFO);
+        let objectRetriever = new MetadataRetriever(this.conn, registry.types.customobject.name);
 
         if (profileObj.customMetadataTypeAccesses !== undefined) {
             if (!Array.isArray(profileObj.customMetadataTypeAccesses)) {
@@ -246,7 +248,7 @@ export default class ProfileComponentReconciler {
     }
 
     private async reconcileCustomSettings(profileObj: Profile): Promise<void> {
-        let objectRetriever = new MetadataRetriever(this.conn, METADATA_INFO.CustomObject.xmlName, METADATA_INFO);
+        let objectRetriever = new MetadataRetriever(this.conn, registry.types.customobject.name);
 
         if (profileObj.customSettingAccesses !== undefined) {
             if (!Array.isArray(profileObj.customSettingAccesses)) {
@@ -269,11 +271,7 @@ export default class ProfileComponentReconciler {
     }
 
     private async reconcileExternalDataSource(profileObj: Profile): Promise<void> {
-        let externalDataSourceRetriever = new MetadataRetriever(
-            this.conn,
-            METADATA_INFO.ExternalDataSource.xmlName,
-            METADATA_INFO
-        );
+        let externalDataSourceRetriever = new MetadataRetriever(this.conn, registry.types.externaldatasource.name);
 
         if (profileObj.externalDataSourceAccesses !== undefined) {
             if (!Array.isArray(profileObj.externalDataSourceAccesses)) {
@@ -298,7 +296,7 @@ export default class ProfileComponentReconciler {
     }
 
     private async reconcileFlow(profileObj: Profile): Promise<void> {
-        let flowRetreiver = new MetadataRetriever(this.conn, METADATA_INFO.Flow.xmlName, METADATA_INFO);
+        let flowRetreiver = new MetadataRetriever(this.conn, registry.types.flow.name);
 
         if (profileObj.flowAccesses !== undefined) {
             if (!Array.isArray(profileObj.flowAccesses)) {
@@ -321,9 +319,9 @@ export default class ProfileComponentReconciler {
     }
 
     private async reconcileLoginFlow(profileObj: Profile): Promise<void> {
-        let apexPageRetriver = new MetadataRetriever(this.conn, METADATA_INFO.ApexPage.xmlName, METADATA_INFO);
+        let apexPageRetriver = new MetadataRetriever(this.conn, registry.types.apexpage.name);
 
-        let flowRetreiver = new MetadataRetriever(this.conn, METADATA_INFO.Flow.xmlName, METADATA_INFO);
+        let flowRetreiver = new MetadataRetriever(this.conn, registry.types.flow.name);
 
         if (profileObj.loginFlows !== undefined) {
             if (!Array.isArray(profileObj.loginFlows)) {
@@ -353,11 +351,7 @@ export default class ProfileComponentReconciler {
     }
 
     private async reconcileCustomPermission(profileObj: Profile): Promise<void> {
-        let customPermissionsRetriever = new MetadataRetriever(
-            this.conn,
-            METADATA_INFO.CustomPermission.xmlName,
-            METADATA_INFO
-        );
+        let customPermissionsRetriever = new MetadataRetriever(this.conn, registry.types.custompermission.name);
 
         if (profileObj.customPermissions !== undefined) {
             if (!Array.isArray(profileObj.customPermissions)) {
@@ -382,7 +376,7 @@ export default class ProfileComponentReconciler {
     }
 
     private async reconcilePages(profileObj: Profile): Promise<void> {
-        let apexPageRetriver = new MetadataRetriever(this.conn, METADATA_INFO.ApexPage.xmlName, METADATA_INFO);
+        let apexPageRetriver = new MetadataRetriever(this.conn, registry.types.apexpage.name);
 
         if (profileObj.pageAccesses !== undefined) {
             if (!Array.isArray(profileObj.pageAccesses)) {
@@ -405,7 +399,10 @@ export default class ProfileComponentReconciler {
     }
 
     private async reconcileRecordTypes(profileObj: Profile): Promise<void> {
-        let recordTypeRetriever = new MetadataRetriever(this.conn, METADATA_INFO.RecordType.xmlName, METADATA_INFO);
+        let recordTypeRetriever = new MetadataRetriever(
+            this.conn,
+            registry.types.customobject.children.types.recordtype.name
+        );
 
         if (profileObj.recordTypeVisibilities !== undefined) {
             if (!Array.isArray(profileObj.recordTypeVisibilities)) {
@@ -428,7 +425,7 @@ export default class ProfileComponentReconciler {
     }
 
     private async reconcileTabs(profileObj: Profile): Promise<void> {
-        let tabRetriever = new MetadataRetriever(this.conn, METADATA_INFO.CustomTab.xmlName, METADATA_INFO);
+        let tabRetriever = new MetadataRetriever(this.conn, registry.types.customtab.name);
 
         if (profileObj.tabVisibilities !== undefined) {
             if (!Array.isArray(profileObj.tabVisibilities)) {
@@ -451,7 +448,7 @@ export default class ProfileComponentReconciler {
     }
 
     private async fetchPermissions() {
-        let permissionRetriever = new MetadataRetriever(this.conn, 'UserPermissions', METADATA_INFO);
+        let permissionRetriever = new MetadataRetriever(this.conn, 'UserPermissions');
         let permissionSets = await permissionRetriever.getComponents();
         let supportedPermissions = permissionSets.map((elem) => {
             return elem.fullName;
