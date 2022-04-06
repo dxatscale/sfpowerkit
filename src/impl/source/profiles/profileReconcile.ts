@@ -6,6 +6,7 @@ import FileUtils from '../../../utils/fileutils';
 import * as fs from 'fs-extra';
 
 import { Worker } from 'worker_threads';
+import SFPLogger from '../../../utils/sfpLogger';
 
 export default class ProfileReconcile extends ProfileActions {
     public async reconcile(srcFolders: string[], profileList: string[], destFolder: string): Promise<string[]> {
@@ -70,7 +71,7 @@ export default class ProfileReconcile extends ProfileActions {
                         profileChunk: temparray,
                         destFolder: destFolder,
                         targetOrg: this.org?.getUsername(), //Org can be null during source only reconcile
-                        loglevel: Sfpowerkit.logLevelString,
+                        loglevel: SFPLogger.getLogLevelAsString(),
                         isJsonFormatEnabled: Sfpowerkit.isJsonFormatEnabled,
                         path: reconcileWorkerFile,
                     },
