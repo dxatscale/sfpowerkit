@@ -24,7 +24,7 @@ export default class ProfileReconcile extends ProfileActions {
         //Find Profiles to Reconcile
         let profilesToReconcile: ProfileSourceFile[] = this.findProfilesToReconcile(profileList, localProfiles);
 
-        Sfpowerkit.log(`Profiles Found in Project Drirectory ${profilesToReconcile.length}`, LoggerLevel.INFO);
+        Sfpowerkit.log(`Profiles Found in Project Directory ${profilesToReconcile.length}`, LoggerLevel.INFO);
 
         let reconciledProfiles = [];
         //Reconcile one first, then do the rest later to use cache for subsequent one
