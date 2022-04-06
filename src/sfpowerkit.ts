@@ -27,7 +27,7 @@ export const COLOR_SUCCESS = chalk.green.bold;
 export const COLOR_TIME = chalk.magentaBright;
 export const COLOR_KEY_MESSAGE = chalk.magentaBright.bold;
 export const COLOR_KEY_VALUE = chalk.black.bold.bgGreenBright;
-export const SFPOWERKIT_SQLITE_CACHE_PATH = path.join(os.tmpdir(),'./sfpowerkit-cache.db');
+export const SFPOWERKIT_SQLITE_CACHE_PATH = path.join(os.tmpdir(), './sfpowerkit-cache.db');
 
 export class Sfpowerkit {
     private static defaultFolder: string;
@@ -50,8 +50,7 @@ export class Sfpowerkit {
     }
 
     public static resetCache() {
-        if (fs.existsSync(SFPOWERKIT_SQLITE_CACHE_PATH)) 
-             fs.unlinkSync(SFPOWERKIT_SQLITE_CACHE_PATH);
+        if (fs.existsSync(SFPOWERKIT_SQLITE_CACHE_PATH)) fs.unlinkSync(SFPOWERKIT_SQLITE_CACHE_PATH);
     }
 
     public static initCache() {
