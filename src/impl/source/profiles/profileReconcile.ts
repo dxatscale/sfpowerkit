@@ -1,17 +1,13 @@
 import { LoggerLevel, Sfpowerkit } from '../../../sfpowerkit';
-import MetadataFiles from '../../metadata/metadataFiles';
 import * as path from 'path';
-import { METADATA_INFO } from '../../metadata/metadataInfo';
 import * as _ from 'lodash';
-import ProfileActions from './profileActions';
+import ProfileActions, { ProfileSourceFile } from './profileActions';
 import FileUtils from '../../../utils/fileutils';
 import * as fs from 'fs-extra';
 
 import { Worker } from 'worker_threads';
 
 export default class ProfileReconcile extends ProfileActions {
-    metadataFiles: MetadataFiles;
-
     public async reconcile(srcFolders: string[], profileList: string[], destFolder: string): Promise<string[]> {
         //Get supported permissions from the org
 
@@ -22,30 +18,26 @@ export default class ProfileReconcile extends ProfileActions {
             srcFolders = await Sfpowerkit.getProjectDirectories();
         }
 
-        //Fetch all the metadata in the project directory
-        this.metadataFiles = this.fetchMetadataFilesFromAllPackageDirectories(srcFolders);
         Sfpowerkit.log(`Project Directories ${JSON.stringify(srcFolders)}`, LoggerLevel.TRACE);
-
-        //Translate the provided profileList if any with proper extension
-        profileList = profileList.map((element) => {
-            return element + METADATA_INFO.Profile.sourceExtension;
-        });
-
-        Sfpowerkit.log(`Profiles Found in Entire Drirectory ${METADATA_INFO.Profile.files.length}`, LoggerLevel.INFO);
+        let localProfiles = await this.loadProfileFromPackageDirectories(srcFolders);
 
         //Find Profiles to Reconcile
-        let profilesToReconcile: string[] = this.findProfilesToReconcile(profileList);
+        let profilesToReconcile: ProfileSourceFile[] = this.findProfilesToReconcile(profileList, localProfiles);
 
+        Sfpowerkit.log(`Profiles Found in Project Drirectory ${profilesToReconcile.length}`, LoggerLevel.INFO);
+
+        let reconciledProfiles = [];
         //Reconcile one first, then do the rest later to use cache for subsequent one
         if (profilesToReconcile.length > 1) {
-            await this.runWorkers([profilesToReconcile[0]], destFolder);
+            reconciledProfiles = await this.runWorkers([profilesToReconcile[0]], destFolder);
             profilesToReconcile.shift();
         }
 
-        return await this.runWorkers(profilesToReconcile, destFolder);
+        reconciledProfiles = reconciledProfiles.concat(await this.runWorkers(profilesToReconcile, destFolder));
+        return reconciledProfiles;
     }
 
-    private runWorkers(profilesToReconcile: string[], destFolder) {
+    private runWorkers(profilesToReconcile: ProfileSourceFile[], destFolder) {
         let workerCount = 0;
         let finishedWorkerCount = 0;
         let chunk = 10; // One worker to process 10 profiles
@@ -56,7 +48,7 @@ export default class ProfileReconcile extends ProfileActions {
         let workerPromise = new Promise<string[]>((resolve, reject) => {
             for (i = 0; i < profileCount; i += chunk) {
                 workerCount++;
-                let temparray: string[] = profilesToReconcile.slice(i, i + chunk);
+                let temparray: ProfileSourceFile[] = profilesToReconcile.slice(i, i + chunk);
 
                 Sfpowerkit.log(
                     `Initiated Profile reconcile thread :${workerCount}  with a chunk of ${temparray.length} profiles`,
@@ -110,30 +102,16 @@ export default class ProfileReconcile extends ProfileActions {
         return workerPromise;
     }
 
-    private findProfilesToReconcile(profileList: string[]) {
+    private findProfilesToReconcile(profileList: string[], localProfiles: ProfileSourceFile[]) {
         let profilesToReconcile;
         if (profileList.length > 0) {
-            profilesToReconcile = [];
-            profileList.forEach((profile) => {
-                METADATA_INFO.Profile.files.forEach((file) => {
-                    if (path.basename(file) === profile) {
-                        profilesToReconcile.push(file);
-                    }
-                });
+            profilesToReconcile = localProfiles.filter((elem) => {
+                if (profileList.includes(elem.name)) return true;
             });
         } else {
-            profilesToReconcile = METADATA_INFO.Profile.files;
+            profilesToReconcile = localProfiles;
         }
         return profilesToReconcile;
-    }
-
-    private fetchMetadataFilesFromAllPackageDirectories(srcFolders: string[]) {
-        let metadataFiles = new MetadataFiles();
-        srcFolders.forEach((srcFolder) => {
-            let normalizedPath = path.join(process.cwd(), srcFolder);
-            metadataFiles.loadComponents(normalizedPath);
-        });
-        return metadataFiles;
     }
 
     private createDestinationFolder(destFolder: string) {

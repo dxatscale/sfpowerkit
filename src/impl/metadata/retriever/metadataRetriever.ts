@@ -1,19 +1,17 @@
 import { LoggerLevel, Sfpowerkit } from '../../../sfpowerkit';
 import * as _ from 'lodash';
 import { Connection } from 'jsforce';
-import { MetadataInfo, METADATA_INFO } from '../metadataInfo';
 import QueryExecutor from '../../../utils/queryExecutor';
 import MetadataOperation from '../../../utils/metadataOperation';
+import { registry } from '@salesforce/source-deploy-retrieve';
 
 export default class MetadataRetriever {
     protected _componentType;
     protected _conn;
-    private _metadataInProjectDirectory: MetadataInfo;
 
-    public constructor(conn: Connection, componentType: string, metadataInProjectDirectory?: MetadataInfo) {
+    public constructor(conn: Connection, componentType: string) {
         this._conn = conn;
         this._componentType = componentType;
-        this._metadataInProjectDirectory = metadataInProjectDirectory;
     }
 
     public get componentType() {
@@ -21,28 +19,29 @@ export default class MetadataRetriever {
     }
 
     public async getComponents(parent?: string) {
+        let key = parent ? this._componentType + '_' + parent : this._componentType;
+
         if (!this._conn) {
             return [];
         }
 
-        let key = parent ? this._componentType + '_' + parent : this._componentType;
         if (Sfpowerkit.getFromCache(key) == null) {
             let items;
             if (this._componentType === 'UserLicense') {
                 items = await this.getUserLicense();
-            } else if (this._componentType === METADATA_INFO.CustomObject.xmlName) {
+            } else if (this._componentType === registry.types.customobject.name) {
                 items = await this.getCustomObjects();
             } else if (this._componentType === 'ObjectPermissions') {
                 items = await this.getObjectPermissions();
-            } else if (this._componentType === METADATA_INFO.CustomField.xmlName) {
+            } else if (this._componentType === registry.types.customobject.children.types.customfield.name) {
                 items = await this.getFieldsByObjectName(parent);
             } else if (this._componentType === 'UserPermissions') {
                 items = await this.getUserPermissions();
-            } else if (this._componentType === METADATA_INFO.Layout.xmlName) {
+            } else if (this._componentType === registry.types.layout.name) {
                 items = await this.getLayouts();
-            } else if (this._componentType === METADATA_INFO.CustomTab.xmlName) {
+            } else if (this._componentType === registry.types.customtab.name) {
                 items = await this.getTabs();
-            } else if (this._componentType === METADATA_INFO.RecordType.xmlName) {
+            } else if (this._componentType === registry.types.customobject.children.types.recordtype.name) {
                 items = await this.getRecordTypes();
             } else {
                 items = await new MetadataOperation(this._conn).getComponentsFromOrgUsingListMetadata(
@@ -115,31 +114,17 @@ export default class MetadataRetriever {
     }
 
     public async isComponentExistsInProjectDirectory(item: string): Promise<boolean> {
-        if (!_.isNil(this._metadataInProjectDirectory[this._componentType].components)) {
-            if (!Sfpowerkit.getFromCache(`${this.componentType}_SOURCE_CACHE_AVAILABLE`)) {
-                //Do a one time update
-                for (const component of this._metadataInProjectDirectory[this._componentType].components) {
-                    Sfpowerkit.addToCache(`SOURCE_${this.componentType}_${component}`, true);
-                }
-
-                Sfpowerkit.addToCache(`${this.componentType}_SOURCE_CACHE_AVAILABLE`, true);
-            }
-
-            let found = false;
-
-            if (!_.isNil(Sfpowerkit.getFromCache(`SOURCE_${this.componentType}_${item}`))) {
-                found = true;
-            }
-
-            return found;
-        } else return false;
+        let found = false;
+        if (!_.isNil(Sfpowerkit.getFromCache(`SOURCE_${this.componentType}_${item}`))) {
+            found = true;
+        }
+        return found;
     }
 
     public async isComponentExistsInProjectDirectoryOrInOrg(item: string, parent?: string): Promise<boolean> {
         let found = false;
         //First check in directory
         found = await this.isComponentExistsInProjectDirectory(item);
-        Sfpowerkit.log(`Found in Directory? ${item} ${found}`, LoggerLevel.TRACE);
         if (found === false) {
             found = await this.isComponentExistsInTheOrg(item, parent);
             Sfpowerkit.log(`Found in Org? ${item} ${found}`, LoggerLevel.TRACE);
@@ -257,7 +242,7 @@ export default class MetadataRetriever {
         let apiversion: string = await Sfpowerkit.getApiVersion();
         let layouts = await this._conn.metadata.list(
             {
-                type: METADATA_INFO.Layout.xmlName,
+                type: registry.types.layout.name,
             },
             apiversion
         );

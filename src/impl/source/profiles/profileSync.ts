@@ -1,115 +1,92 @@
 import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
-import MetadataFiles from '../../metadata/metadataFiles';
 import * as fs from 'fs-extra';
-import * as path from 'path';
-import { METADATA_INFO } from '../../metadata/metadataInfo';
 import Profile from '../../../impl/metadata/schema';
 import * as _ from 'lodash';
-import ProfileActions from './profileActions';
+import ProfileActions, { ProfileStatus, ProfileSourceFile } from './profileActions';
 import ProfileWriter from '../../../impl/metadata/writer/profileWriter';
 import { ProgressBar } from '../../../ui/progressBar';
 import MetadataRetriever from '../../metadata/retriever/metadataRetriever';
-
-const unsupportedprofiles = [];
+import { registry } from '@salesforce/source-deploy-retrieve';
+import * as path from 'path';
 
 export default class ProfileSync extends ProfileActions {
-    metadataFiles: MetadataFiles;
-
-    public async sync(
-        srcFolders: string[],
-        profiles?: string[],
-        isdelete?: boolean
-    ): Promise<{
-        added: string[];
-        deleted: string[];
-        updated: string[];
-    }> {
+    public async sync(srcFolders: string[], profilesToSync?: string[], isdelete?: boolean): Promise<ProfileStatus> {
         Sfpowerkit.log('Retrieving profiles', LoggerLevel.DEBUG);
-        if (!_.isNil(profiles) && profiles.length !== 0) {
+
+        //Display provided profiles if any
+        if (!_.isNil(profilesToSync) && profilesToSync.length !== 0) {
             Sfpowerkit.log('Requested  profiles are..', LoggerLevel.DEBUG);
-            Sfpowerkit.log(profiles, LoggerLevel.DEBUG);
+            Sfpowerkit.log(profilesToSync, LoggerLevel.DEBUG);
         }
 
-        let fetchNewProfiles = _.isNil(srcFolders) || srcFolders.length === 0;
-        if (fetchNewProfiles) {
-            srcFolders = await Sfpowerkit.getProjectDirectories();
-        }
-
-        this.metadataFiles = new MetadataFiles();
+        //Fetch all profiles if source folders if not provided
+        let isToFetchNewProfiles = _.isNil(srcFolders) || srcFolders.length === 0;
 
         Sfpowerkit.log('Source Folders are', LoggerLevel.DEBUG);
         Sfpowerkit.log(srcFolders, LoggerLevel.DEBUG);
 
-        for (let i = 0; i < srcFolders.length; i++) {
-            let srcFolder = srcFolders[i];
-            let normalizedPath = path.join(process.cwd(), srcFolder);
-            this.metadataFiles.loadComponents(normalizedPath);
-        }
-
         //get local profiles when profile path is provided
-        if (!fetchNewProfiles && profiles.length < 1) {
-            METADATA_INFO.Profile.files.forEach((element) => {
-                let oneName = path.basename(element, METADATA_INFO.Profile.sourceExtension);
-                profiles.push(oneName);
+        let profilesInProjectDir = await this.loadProfileFromPackageDirectories(srcFolders);
+
+        //If dont fetch add those to profilesToSync
+        if (!isToFetchNewProfiles && profilesToSync.length < 1) {
+            profilesInProjectDir.forEach((element) => {
+                profilesToSync.push(element.name);
             });
         }
 
-        //let profileList: string[] = [];
-        let profileNames: string[] = [];
-        let profilePathAssoc = {};
-        let profileStatus = await this.getProfileFullNamesWithLocalStatus(profiles);
+        //Grab status of the profiles (Add, Update or Delete)
+        let profileStatus = await this.getRemoteProfilesWithLocalStatus(profilesToSync, srcFolders);
 
-        let metadataFiles = [];
-        if (fetchNewProfiles) {
+        let profilesToRetrieve: ProfileSourceFile[] = [];
+        if (isToFetchNewProfiles) {
             //Retriving local profiles and anything extra found in the org
-            metadataFiles = _.union(profileStatus.added, profileStatus.updated);
+            profilesToRetrieve = _.union(profileStatus.added, profileStatus.updated);
         } else {
             //Retriving only local profiles
-            metadataFiles = profileStatus.updated;
+            profilesToRetrieve = profileStatus.updated;
             profileStatus.added = [];
         }
-        metadataFiles.sort();
-        Sfpowerkit.log(profileStatus, LoggerLevel.DEBUG);
+        profilesToRetrieve.sort((a, b) => a.name.localeCompare(b.name));
+        Sfpowerkit.log(`Number of profiles to retrieve ${profilesToRetrieve.length}`, LoggerLevel.INFO);
 
-        Sfpowerkit.log(metadataFiles, LoggerLevel.TRACE);
-
-        if (metadataFiles.length > 0) {
-            for (let i = 0; i < metadataFiles.length; i++) {
-                let profileComponent = metadataFiles[i];
-                let profileName = path.basename(profileComponent, METADATA_INFO.Profile.sourceExtension);
-
-                let supported = !unsupportedprofiles.includes(profileName);
-                if (supported) {
-                    profilePathAssoc[profileName] = profileComponent;
-                    profileNames.push(profileName);
-                }
-            }
-
+        if (profilesToRetrieve.length > 0) {
             let i: number,
                 j: number,
                 chunk = 10;
-            let temparray;
-            Sfpowerkit.log(`Number of profiles found in the target org ${profileNames.length}`, LoggerLevel.INFO);
+            let profilesToRetrieveChunked: any[] = [];
 
             let progressBar = new ProgressBar().create(`Loading profiles in batches `, ` Profiles`, LoggerLevel.INFO);
-            progressBar.start(profileNames.length);
-            for (i = 0, j = profileNames.length; i < j; i += chunk) {
-                temparray = profileNames.slice(i, i + chunk);
-
-                let metadataList = await this.profileRetriever.loadProfiles(temparray);
+            progressBar.start(profilesToRetrieve.length);
+            for (i = 0, j = profilesToRetrieve.length; i < j; i += chunk) {
+                //slice profilesToRetrieve in chunk
+                profilesToRetrieveChunked = profilesToRetrieve.slice(i, i + chunk);
+                let remoteProfiles = await this.profileRetriever.loadProfiles(
+                    _.uniq(
+                        profilesToRetrieveChunked.map((elem) => {
+                            return elem.name;
+                        })
+                    )
+                );
 
                 let profileWriter = new ProfileWriter();
-                for (let count = 0; count < metadataList.length; count++) {
-                    let profileObj = metadataList[count] as Profile;
+                for (let count = 0; count < remoteProfiles.length; count++) {
+                    let profileObj = remoteProfiles[count] as Profile;
                     Sfpowerkit.log('Reconciling  Tabs', LoggerLevel.DEBUG);
                     await this.reconcileTabs(profileObj);
-                    let filePath = profilePathAssoc[profileObj.fullName];
-                    if (filePath) {
-                        profileWriter.writeProfile(profileObj, profilePathAssoc[profileObj.fullName]);
-                    } else {
-                        Sfpowerkit.log('File path not found...', LoggerLevel.DEBUG);
+                    //Find correct profile path, so that remote could be overlaid
+                    let indices = _.keys(_.pickBy(profilesToRetrieveChunked, { name: profileObj.fullName }));
+                    for (const index of indices) {
+                        let filePath = profilesToRetrieveChunked[index].path;
+                        if (filePath) {
+                            profileWriter.writeProfile(
+                                profileObj,
+                                path.join(process.cwd(), profilesToRetrieveChunked[index].path)
+                            );
+                        } else {
+                            Sfpowerkit.log('File path not found...', LoggerLevel.DEBUG);
+                        }
                     }
-                    //profileList.push(profileObj.fullName);
                 }
                 progressBar.increment(j - i > chunk ? chunk : j - i);
             }
@@ -119,21 +96,18 @@ export default class ProfileSync extends ProfileActions {
         }
 
         if (profileStatus.deleted && isdelete) {
-            profileStatus.deleted.forEach((file) => {
-                if (fs.existsSync(file)) {
-                    fs.unlinkSync(file);
+            profileStatus.deleted.forEach((profile) => {
+                if (fs.existsSync(path.join(process.cwd(), profile.path))) {
+                    fs.unlinkSync(path.join(process.cwd(), profile.path));
                 }
             });
         }
-        return Promise.resolve(profileStatus);
+        //Retun final status
+        return profileStatus;
     }
 
     private async reconcileTabs(profileObj: Profile): Promise<void> {
-        let tabRetriever = new MetadataRetriever(
-            this.org.getConnection(),
-            METADATA_INFO.CustomTab.xmlName,
-            METADATA_INFO
-        );
+        let tabRetriever = new MetadataRetriever(this.org.getConnection(), registry.types.customtab.name);
 
         if (profileObj.tabVisibilities !== undefined) {
             if (!Array.isArray(profileObj.tabVisibilities)) {

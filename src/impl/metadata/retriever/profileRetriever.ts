@@ -4,7 +4,6 @@ import { Connection } from 'jsforce';
 import { MetadataInfo } from 'jsforce';
 import * as _ from 'lodash';
 import MetadataRetriever from './metadataRetriever';
-import { METADATA_INFO } from '../metadataInfo';
 import QueryExecutor from '../../../utils/queryExecutor';
 import MetadataOperation from '../../../utils/metadataOperation';
 
@@ -34,7 +33,7 @@ export default class ProfileRetriever {
         'SystemPermissions',
     ];
 
-    public constructor(private conn: Connection, private debugFlag?: boolean) {}
+    public constructor(private conn: Connection) {}
 
     public async loadProfiles(profileNames: string[]): Promise<MetadataInfo[]> {
         let profilePermissions = await this.fetchPermissionsWithValue(profileNames);
@@ -162,7 +161,7 @@ export default class ProfileRetriever {
             objPerm = [objPerm];
         }
 
-        let objectPermissionsRetriever = new MetadataRetriever(this.conn, 'ObjectPermissions', METADATA_INFO);
+        let objectPermissionsRetriever = new MetadataRetriever(this.conn, 'ObjectPermissions');
         let objectPermissions = await objectPermissionsRetriever.getComponents();
 
         objectPermissions.forEach((obj) => {
@@ -299,7 +298,7 @@ export default class ProfileRetriever {
     }
 
     private async fetchPermissions() {
-        let permissionRetriever = new MetadataRetriever(this.conn, 'UserPermissions', METADATA_INFO);
+        let permissionRetriever = new MetadataRetriever(this.conn, 'UserPermissions');
         let permissionSets = await permissionRetriever.getComponents();
         let supportedPermissions = permissionSets.map((elem) => {
             return elem.fullName;

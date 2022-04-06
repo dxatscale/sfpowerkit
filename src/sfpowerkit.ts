@@ -2,9 +2,9 @@ import { SfdxProject } from '@salesforce/core';
 import { UX } from '@salesforce/command';
 import chalk = require('chalk');
 import * as fs from 'fs-extra';
-//import pino from 'pino'
 import SQLITEKeyValue from './utils/sqlitekv';
 import SFPLogger from './utils/sfpLogger';
+import FileUtils from './utils/fileutils';
 const NodeCache = require('node-cache');
 
 export enum LoggerLevel {
@@ -38,6 +38,8 @@ export class Sfpowerkit {
     public static logLevel;
     public static logLevelString;
     private static cache;
+    private static  SFPOWERKIT_SQLITE_CACHE_PATH;
+
 
     static enableColor() {
         chalk.level = 2;
@@ -48,12 +50,14 @@ export class Sfpowerkit {
     }
 
     public static resetCache() {
-        if (fs.existsSync('./sfpowerkit-cache.db')) fs.unlinkSync('./sfpowerkit-cache.db');
+        if (fs.existsSync(Sfpowerkit.SFPOWERKIT_SQLITE_CACHE_PATH)) fs.unlinkSync(Sfpowerkit.SFPOWERKIT_SQLITE_CACHE_PATH);
     }
 
     public static initCache() {
         try {
-            Sfpowerkit.cache = new SQLITEKeyValue('./sfpowerkit-cache.db');
+            //Set the cache path on init
+            Sfpowerkit.SFPOWERKIT_SQLITE_CACHE_PATH = FileUtils.getGlobalCachePath('sfpowerkit-cache.db');
+            Sfpowerkit.cache = new SQLITEKeyValue(Sfpowerkit.SFPOWERKIT_SQLITE_CACHE_PATH);
             Sfpowerkit.cache.init();
         } catch (error) {
             //Fallback to NodeCache, as sqlite cache cant be lazily loaded

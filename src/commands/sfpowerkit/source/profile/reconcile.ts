@@ -123,8 +123,8 @@ export default class Reconcile extends SfpowerkitCommand {
         let result = [];
 
         try {
-            let profileUtils = new ProfileReconcile(this.org, this.flags.loglevel == 'debug');
-            let reconcileProfiles = await profileUtils.reconcile(
+            let profileReconciler = new ProfileReconcile(this.org);
+            let reconcileProfiles = await profileReconciler.reconcile(
                 argFolder,
                 argProfileList || [],
                 this.flags.destfolder
