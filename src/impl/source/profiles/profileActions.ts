@@ -5,13 +5,14 @@ import { retrieveMetadata } from '../../../utils/retrieveMetadata';
 import { Connection, Org, SfdxProject } from '@salesforce/core';
 import ProfileRetriever from '../../metadata/retriever/profileRetriever';
 import { ComponentSet, MetadataResolver, registry, SourceComponent } from '@salesforce/source-deploy-retrieve';
+import { META_XML_SUFFIX } from '@salesforce/source-deploy-retrieve/lib/src/common';
 
 export default abstract class ProfileActions {
     protected conn: Connection;
     protected profileRetriever: ProfileRetriever;
 
     //TODO: Figure out from registry?
-    profileFileExtension = '.' + registry.types.profile.suffix + '-meta.xml';
+    profileFileExtension = '.' + registry.types.profile.suffix + META_XML_SUFFIX;
 
     public constructor(public org: Org) {
         if (this.org) {
