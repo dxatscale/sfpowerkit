@@ -1,7 +1,5 @@
 import { LoggerLevel, Sfpowerkit } from '../../../sfpowerkit';
-import MetadataFiles from '../../metadata/metadataFiles';
 import * as path from 'path';
-import { METADATA_INFO } from '../../metadata/metadataInfo';
 import * as _ from 'lodash';
 import ProfileActions, { ProfileSourceFile } from './profileActions';
 import FileUtils from '../../../utils/fileutils';

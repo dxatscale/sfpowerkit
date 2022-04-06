@@ -3,7 +3,6 @@ import MetadataFiles from '../../metadata/metadataFiles';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as xml2js from 'xml2js';
-import { METADATA_INFO } from '../../metadata/metadataInfo';
 import * as _ from 'lodash';
 import Profile, {
     ApplicationVisibility,
