@@ -105,6 +105,6 @@ export default class SFPLogger {
     }
     static getLogLevelAsString()
     {
-        return LoggerLevel[this.logLevel]; 
+        return LoggerLevel[this.logLevel];
     }
 }
