@@ -3,6 +3,7 @@ import { flags, FlagsConfig, SfdxResult } from '@salesforce/command';
 import { SfdxError, Messages } from '@salesforce/core';
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
+import { Sfpowerkit } from '../../../../sfpowerkit';
 import ProfileSync from '../../../../impl/source/profiles/profileSync';
 import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 
