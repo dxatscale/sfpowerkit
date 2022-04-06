@@ -4,8 +4,7 @@ import chalk = require('chalk');
 import * as fs from 'fs-extra';
 import SQLITEKeyValue from './utils/sqlitekv';
 import SFPLogger from './utils/sfpLogger';
-import os = require('os');
-import path = require('path');
+import FileUtils from './utils/fileutils';
 const NodeCache = require('node-cache');
 
 export enum LoggerLevel {
@@ -27,7 +26,7 @@ export const COLOR_SUCCESS = chalk.green.bold;
 export const COLOR_TIME = chalk.magentaBright;
 export const COLOR_KEY_MESSAGE = chalk.magentaBright.bold;
 export const COLOR_KEY_VALUE = chalk.black.bold.bgGreenBright;
-export const SFPOWERKIT_SQLITE_CACHE_PATH = path.join(os.tmpdir(), './sfpowerkit-cache.db');
+export const SFPOWERKIT_SQLITE_CACHE_PATH = FileUtils.getGlobalCachePath('sfpowerkit-cache.db');
 
 export class Sfpowerkit {
     private static defaultFolder: string;
