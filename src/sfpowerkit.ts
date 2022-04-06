@@ -38,7 +38,7 @@ export class Sfpowerkit {
     public static logLevel;
     public static logLevelString;
     private static cache;
-    private static  SFPOWERKIT_SQLITE_CACHE_PATH = FileUtils.getGlobalCachePath('sfpowerkit-cache.db');
+    private static  SFPOWERKIT_SQLITE_CACHE_PATH;
 
 
     static enableColor() {
@@ -55,6 +55,8 @@ export class Sfpowerkit {
 
     public static initCache() {
         try {
+            //Set the cache path on init
+            Sfpowerkit.SFPOWERKIT_SQLITE_CACHE_PATH = FileUtils.getGlobalCachePath('sfpowerkit-cache.db');
             Sfpowerkit.cache = new SQLITEKeyValue(Sfpowerkit.SFPOWERKIT_SQLITE_CACHE_PATH);
             Sfpowerkit.cache.init();
         } catch (error) {
