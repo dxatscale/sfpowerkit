@@ -1,13 +1,13 @@
 import { AnyJson } from '@salesforce/ts-types';
 import * as fs from 'fs-extra';
 import { flags } from '@salesforce/command';
-import SFPowerkitCommand from '../../../../sfpowerkitCommand';
+import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 import * as rimraf from 'rimraf';
 import { SfdxError, LoggerLevel, Messages } from '@salesforce/core';
 import * as xml2js from 'xml2js';
 import * as util from 'util';
 const fg = require('fast-glob');
-import { SFPowerkit } from '../../../../sfpowerkit';
+import { Sfpowerkit } from '../../../../sfpowerkit';
 const path = require('path');
 
 // Initialize Messages with the current plugin directory
@@ -17,7 +17,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'apextestsuite_convert');
 
-export default class Convert extends SFPowerkitCommand {
+export default class Convert extends SfpowerkitCommand {
     // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
     protected static requiresProject = true;
 
@@ -67,7 +67,7 @@ export default class Convert extends SFPowerkitCommand {
 
         if (!entries[0]) throw new SfdxError(`Apex Test Suite ${this.flags.name} not found`);
 
-        SFPowerkit.log(`Apex Test Suite File Path ${entries[0]}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`Apex Test Suite File Path ${entries[0]}`, LoggerLevel.DEBUG);
 
         if (fs.existsSync(path.resolve(entries[0]))) {
             const parser = new xml2js.Parser({ explicitArray: false });

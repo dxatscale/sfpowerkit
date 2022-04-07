@@ -1,7 +1,7 @@
 import { flags } from '@salesforce/command';
 import { AnyJson } from '@salesforce/ts-types';
-import { SFPowerkit, LoggerLevel } from '../../../sfpowerkit';
-import SFPowerkitCommand from '../../../sfpowerkitCommand';
+import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
+import SfpowerkitCommand from '../../../sfpowerkitCommand';
 import poolListImpl from '../../../impl/pool/scratchorg/poolListImpl';
 import { isNullOrUndefined } from 'util';
 import { ScratchOrg } from '../../../utils/scratchOrgUtils';
@@ -14,7 +14,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'scratchorg_poollist');
 
-export default class List extends SFPowerkitCommand {
+export default class List extends SfpowerkitCommand {
     public static description = messages.getMessage('commandDescription');
 
     protected static requiresDevhubUsername = true;
@@ -114,7 +114,7 @@ export default class List extends SFPowerkitCommand {
                     this.ux.table(result, ['tag', 'orgId', 'username', 'expiryDate', 'status', 'loginURL']);
                 }
             } else {
-                SFPowerkit.log(
+                Sfpowerkit.log(
                     `${this.flags.tag} pool has No Scratch orgs available, time to create your pool.`,
                     LoggerLevel.INFO
                 );

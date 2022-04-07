@@ -9,7 +9,7 @@ import {
 
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { SFPowerkit, LoggerLevel } from '../../../sfpowerkit';
+import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
 import FileUtils from '../../../utils/fileutils';
 import MetadataFiles from '../../../impl/metadata/metadataFiles';
 import DiffUtil from '../diff/diffUtil';
@@ -40,9 +40,9 @@ export default class OrgDiffImpl {
 
     public async orgDiff() {
         let packageobj = new Array();
-        SFPowerkit.setStatus('Building package metadata for retrieve');
+        Sfpowerkit.setStatus('Building package metadata for retrieve');
         this.filesOrFolders.forEach(async (fileOrFolder) => {
-            SFPowerkit.log('Processing ' + fileOrFolder, LoggerLevel.DEBUG);
+            Sfpowerkit.log('Processing ' + fileOrFolder, LoggerLevel.DEBUG);
             fileOrFolder = path.normalize(fileOrFolder);
 
             let pathExists = fs.existsSync(fileOrFolder);
@@ -59,16 +59,16 @@ export default class OrgDiffImpl {
                     });
                 }
             } else {
-                SFPowerkit.log(`Path ${fileOrFolder} does not exists. `, LoggerLevel.ERROR);
+                Sfpowerkit.log(`Path ${fileOrFolder} does not exists. `, LoggerLevel.ERROR);
             }
         });
 
         if (!packageobj || packageobj.length < 1) {
             throw new Error('you must pass atleast one valid path.');
         }
-        SFPowerkit.setStatus('Retrieving metadata');
+        Sfpowerkit.setStatus('Retrieving metadata');
         await this.retrievePackage(packageobj);
-        SFPowerkit.setStatus('Comparing files');
+        Sfpowerkit.setStatus('Comparing files');
         this.compare();
         rimraf.sync('temp_sfpowerkit');
         return this.output;
@@ -159,7 +159,7 @@ export default class OrgDiffImpl {
     }
 
     private processFile(localFile: string, fetchedFiles: string[]) {
-        SFPowerkit.log('Compare:  Processing ' + localFile, LoggerLevel.DEBUG);
+        Sfpowerkit.log('Compare:  Processing ' + localFile, LoggerLevel.DEBUG);
         let metaType = MetadataInfo.getMetadataName(localFile, false);
         let member = MetadataFiles.getMemberNameFromFilepath(localFile, metaType);
         // let extension = path.parse(localFile).ext;
@@ -321,7 +321,7 @@ export default class OrgDiffImpl {
     }
 
     private async retrievePackage(packageObj) {
-        SFPowerkit.log('Clear temp folder ', LoggerLevel.INFO);
+        Sfpowerkit.log('Clear temp folder ', LoggerLevel.INFO);
         rimraf.sync('temp_sfpowerkit');
         const apiversion = await this.org.getConnection().retrieveMaxApiVersion();
         let retrieveRequest = {
@@ -343,18 +343,18 @@ export default class OrgDiffImpl {
         conn.metadata.pollTimeout = 60;
 
         let retrievedId;
-        SFPowerkit.log('Retrieve request sent ', LoggerLevel.INFO);
+        Sfpowerkit.log('Retrieve request sent ', LoggerLevel.INFO);
         await conn.metadata.retrieve(retrieveRequest, function (error, result: AsyncResult) {
             if (error) {
                 return console.error(error);
             }
             retrievedId = result.id;
         });
-        SFPowerkit.setStatus('Retrieving metadata | WAITING for retrieve request ');
+        Sfpowerkit.setStatus('Retrieving metadata | WAITING for retrieve request ');
         let metadata_retrieve_result = await checkRetrievalStatus(conn, retrievedId, false);
 
-        SFPowerkit.setStatus('Retrieving metadata');
-        SFPowerkit.log('Retrieve completed. Writing retrieved metadata to disk ', LoggerLevel.DEBUG);
+        Sfpowerkit.setStatus('Retrieving metadata');
+        Sfpowerkit.log('Retrieve completed. Writing retrieved metadata to disk ', LoggerLevel.DEBUG);
         if (!metadata_retrieve_result.zipFile) throw new Error('Error while retrieveing metadata');
 
         const zipFileName = 'temp_sfpowerkit/unpackaged.zip';
@@ -364,13 +364,13 @@ export default class OrgDiffImpl {
             encoding: 'base64',
         });
 
-        SFPowerkit.log('Extracting retrieved metadata ', LoggerLevel.DEBUG);
+        Sfpowerkit.log('Extracting retrieved metadata ', LoggerLevel.DEBUG);
         await extract(`./temp_sfpowerkit/unpackaged.zip`, 'temp_sfpowerkit/mdapi');
 
         let maxApiVersion = await this.org.retrieveMaxApiVersion();
 
         fs.mkdirSync('temp_sfpowerkit/source');
-        SFPowerkit.log('Converting retrieved metadata to dx format', LoggerLevel.INFO);
+        Sfpowerkit.log('Converting retrieved metadata to dx format', LoggerLevel.INFO);
 
         let sfdxProjectJson = `{
         "packageDirectories": [

@@ -2,8 +2,8 @@ import { flags } from '@salesforce/command';
 import { AnyJson } from '@salesforce/ts-types';
 const request = require('request-promise-native');
 import { Connection, Messages, SfdxError } from '@salesforce/core';
-import { SFPowerkit, LoggerLevel } from '../../../../sfpowerkit';
-import SFPowerkitCommand from '../../../../sfpowerkitCommand';
+import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
+import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -12,7 +12,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'sandbox_refresh');
 
-export default class Refresh extends SFPowerkitCommand {
+export default class Refresh extends SfpowerkitCommand {
     public static description = messages.getMessage('commandDescription');
 
     public static examples = [
@@ -44,7 +44,7 @@ export default class Refresh extends SFPowerkitCommand {
     protected static requiresDevhubUsername = true;
 
     public async execute(): Promise<AnyJson> {
-        SFPowerkit.setLogLevel('INFO', false);
+        Sfpowerkit.setLogLevel('INFO', false);
 
         await this.hubOrg.refreshAuth();
 
@@ -93,7 +93,7 @@ export default class Refresh extends SFPowerkitCommand {
             });
         }
 
-        SFPowerkit.log(`Successfully Enqueued Refresh of Sandbox`, LoggerLevel.INFO);
+        Sfpowerkit.log(`Successfully Enqueued Refresh of Sandbox`, LoggerLevel.INFO);
 
         return result;
     }
@@ -115,7 +115,7 @@ export default class Refresh extends SFPowerkitCommand {
 
         this.ux.log();
 
-        SFPowerkit.log(
+        Sfpowerkit.log(
             `Fetched Sandbox Id for sandbox  ${name}  is ${sandbox_query_result.records[0].Id}`,
             LoggerLevel.INFO
         );

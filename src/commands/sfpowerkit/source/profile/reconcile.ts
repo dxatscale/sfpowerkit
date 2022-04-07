@@ -2,12 +2,12 @@ import { flags, FlagsConfig, SfdxResult } from '@salesforce/command';
 
 import { Messages, Org } from '@salesforce/core';
 import * as _ from 'lodash';
-import { SFPowerkit, LoggerLevel } from '../../../../sfpowerkit';
+import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
 import { METADATA_INFO } from '../../../../impl/metadata/metadataInfo';
 import * as path from 'path';
 import ProfileReconcile from '../../../../impl/source/profiles/profileReconcile';
 import MetadataFiles from '../../../../impl/metadata/metadataFiles';
-import SFPowerkitCommand from '../../../../sfpowerkitCommand';
+import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -16,7 +16,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'profile_reconcile');
 
-export default class Reconcile extends SFPowerkitCommand {
+export default class Reconcile extends SfpowerkitCommand {
     public static description = messages.getMessage('commandDescription');
 
     public static examples = [
@@ -117,14 +117,14 @@ export default class Reconcile extends SFPowerkitCommand {
         MetadataFiles.sourceOnly = this.flags.sourceonly;
 
         if (!_.isNil(argFolder) && argFolder.length !== 0) {
-            SFPowerkit.setDefaultFolder(argFolder[0]);
+            Sfpowerkit.setDefaultFolder(argFolder[0]);
         }
 
         let result = [];
 
         try {
-            let profileUtils = new ProfileReconcile(this.org, this.flags.loglevel == 'debug');
-            let reconcileProfiles = await profileUtils.reconcile(
+            let profileReconciler = new ProfileReconcile(this.org);
+            let reconcileProfiles = await profileReconciler.reconcile(
                 argFolder,
                 argProfileList || [],
                 this.flags.destfolder
@@ -141,9 +141,9 @@ export default class Reconcile extends SFPowerkitCommand {
                 });
             });
         } catch (err) {
-            SFPowerkit.log(err, LoggerLevel.ERROR);
+            Sfpowerkit.log(err, LoggerLevel.ERROR);
 
-            SFPowerkit.log(
+            Sfpowerkit.log(
                 'An error occured during profile reconcile. You can rerun the command after a moment.',
                 LoggerLevel.ERROR
             );

@@ -1,14 +1,11 @@
 import { flags, FlagsConfig, SfdxResult } from '@salesforce/command';
 
 import { Messages, SfdxError } from '@salesforce/core';
-
 import * as _ from 'lodash';
-import { SFPowerkit } from '../../../../sfpowerkit';
-import * as path from 'path';
-import { METADATA_INFO } from '../../../../impl/metadata/metadataInfo';
+import { Sfpowerkit } from '../../../../sfpowerkit';
 import ProfileRetriever from '../../../../impl/metadata/retriever/profileRetriever';
 import ProfileMerge from '../../../../impl/source/profiles/profileMerge';
-import SFPowerkitCommand from '../../../../sfpowerkitCommand';
+import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -17,7 +14,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'profile_merge');
 
-export default class Merge extends SFPowerkitCommand {
+export default class Merge extends SfpowerkitCommand {
     public static description = messages.getMessage('commandDescription');
 
     public static examples = [
@@ -111,7 +108,7 @@ export default class Merge extends SFPowerkitCommand {
         let argProfileList = this.flags.profilelist;
         let argMetadatas = this.flags.metadata;
 
-        SFPowerkit.initCache();
+        Sfpowerkit.initCache();
 
         let metadatas = undefined;
         let invalidArguments = [];
@@ -137,54 +134,54 @@ export default class Merge extends SFPowerkitCommand {
         }
 
         if (!_.isNil(argFolder) && argFolder.length !== 0) {
-            SFPowerkit.setDefaultFolder(argFolder[0]);
+            Sfpowerkit.setDefaultFolder(argFolder[0]);
         }
         ``;
 
-        const profileUtils = new ProfileMerge(this.org, this.flags.loglevel == 'debug');
+        const profileUtils = new ProfileMerge(this.org);
 
         let mergedProfiles = await profileUtils.merge(argFolder, argProfileList || [], metadatas, this.flags.delete);
 
         let result = [];
         if (mergedProfiles.added) {
-            mergedProfiles.added.forEach((file) => {
+            mergedProfiles.added.forEach((profile) => {
                 result.push({
                     state: 'Add',
-                    fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
+                    fullName: profile.name,
                     type: 'Profile',
-                    path: path.relative(process.cwd(), file),
+                    path: profile.path,
                 });
             });
         }
         if (mergedProfiles.updated) {
-            mergedProfiles.updated.forEach((file) => {
+            mergedProfiles.updated.forEach((profile) => {
                 result.push({
                     state: 'Merged',
-                    fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
+                    fullName: profile.name,
                     type: 'Profile',
-                    path: path.relative(process.cwd(), file),
+                    path: profile.path,
                 });
             });
         }
         if (this.flags.delete) {
             if (mergedProfiles.deleted) {
-                mergedProfiles.deleted.forEach((file) => {
+                mergedProfiles.deleted.forEach((profile) => {
                     result.push({
                         state: 'Deleted',
-                        fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
+                        fullName: profile.name,
                         type: 'Profile',
-                        path: path.relative(process.cwd(), file),
+                        path: profile.path,
                     });
                 });
             }
         } else {
             if (mergedProfiles.deleted) {
-                mergedProfiles.deleted.forEach((file) => {
+                mergedProfiles.deleted.forEach((profile) => {
                     result.push({
                         state: 'Skipped',
-                        fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
+                        fullName: profile.name,
                         type: 'Profile',
-                        path: path.relative(process.cwd(), file),
+                        path: profile.path,
                     });
                 });
             }

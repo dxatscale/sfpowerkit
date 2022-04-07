@@ -1,6 +1,6 @@
 import { FlagsConfig, flags, SfdxResult } from '@salesforce/command';
-import { SFPowerkit } from '../../../sfpowerkit';
-import SFPowerkitCommand from '../../../sfpowerkitCommand';
+import { Sfpowerkit } from '../../../sfpowerkit';
+import SfpowerkitCommand from '../../../sfpowerkitCommand';
 import OrgDiffImpl from '../../../impl/project/orgdiff/orgDiffImpl';
 import { fs, Messages } from '@salesforce/core';
 
@@ -11,7 +11,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'project_orgdiff');
 
-export default class OrgDiff extends SFPowerkitCommand {
+export default class OrgDiff extends SfpowerkitCommand {
     public static description = messages.getMessage('commandDescription');
 
     public static examples = [
@@ -78,7 +78,7 @@ export default class OrgDiff extends SFPowerkitCommand {
     protected static requiresProject = true;
 
     public async execute(): Promise<any> {
-        SFPowerkit.setUx(this.ux);
+        Sfpowerkit.setUx(this.ux);
         this.ux.startSpinner('Running...');
 
         let filesOrFolders = this.flags.filesorfolders;

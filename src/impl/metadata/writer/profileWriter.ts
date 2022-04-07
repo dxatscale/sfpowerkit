@@ -1,5 +1,5 @@
 import Profile from '../schema';
-import { SFPowerkit } from '../../../sfpowerkit';
+import { Sfpowerkit } from '../../../sfpowerkit';
 import * as fs from 'fs-extra';
 import * as xml2js from 'xml2js';
 const format = require('xml-formatter');

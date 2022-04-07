@@ -1,14 +1,14 @@
 import { Connection, SfdxError } from '@salesforce/core';
 import { AnyJson } from '@salesforce/ts-types';
 import queryApi from '../../../utils/queryExecutor';
-import { SFPowerkit, LoggerLevel } from '../../../sfpowerkit';
-import SFPowerkitCommand from '../../../sfpowerkitCommand';
+import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
+import SfpowerkitCommand from '../../../sfpowerkitCommand';
 import { chunkArray } from '../../../utils/chunkArray';
 
 const CODECOVAGG_QUERY = `SELECT Id FROM ApexCodeCoverageAggregate`;
 const APEXTESTRESULT_QUERY = `SELECT Id FROM ApexTestResult`;
 
-export default class Cleartestresult extends SFPowerkitCommand {
+export default class Cleartestresult extends SfpowerkitCommand {
     public static description = `This command helps to clear any test results and code coverage in the org to get fresh and enhanced coverage everytime`;
 
     public static examples = [`$ sfdx sfpowerkit:org:cleartestresult -u myOrg@example.com`];
@@ -17,7 +17,7 @@ export default class Cleartestresult extends SFPowerkitCommand {
     protected static requiresUsername = true;
 
     public async execute(): Promise<AnyJson> {
-        SFPowerkit.setLogLevel('Info', this.flags.json);
+        Sfpowerkit.setLogLevel('Info', this.flags.json);
         await this.org.refreshAuth();
 
         const conn = this.org.getConnection();
@@ -33,7 +33,7 @@ export default class Cleartestresult extends SFPowerkitCommand {
 
         this.ux.stopSpinner();
 
-        SFPowerkit.log(`Test results cleared in ${this.org.getUsername()} successfully.`, LoggerLevel.INFO);
+        Sfpowerkit.log(`Test results cleared in ${this.org.getUsername()} successfully.`, LoggerLevel.INFO);
 
         return true;
     }

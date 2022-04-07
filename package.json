@@ -1,7 +1,7 @@
 {
     "name": "sfpowerkit",
-    "version": "4.2.1",
-    "release": "March 22",
+    "version": "4.2.4",
+    "release": "April 22",
     "author": {
         "name": "DXatScale",
         "email": "dxatscale@accenture.com"
@@ -36,7 +36,7 @@
         "node-cache": "^5.1.2",
         "request": "^2.88.2",
         "request-promise-native": "^1.0.9",
-        "simple-git": "2.38.0",
+        "simple-git": "3.3.0",
         "ts-node": "^9.1.1",
         "tslib": "2.1.0",
         "unzip-stream": "0.3.1",

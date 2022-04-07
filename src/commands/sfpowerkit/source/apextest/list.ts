@@ -1,8 +1,8 @@
 import { AnyJson } from '@salesforce/ts-types';
 import { existsSync } from 'fs';
 import { flags } from '@salesforce/command';
-import { SFPowerkit, LoggerLevel } from '../../../../sfpowerkit';
-import SFPowerkitCommand from '../../../../sfpowerkitCommand';
+import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
+import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 import { Messages, SfdxError } from '@salesforce/core';
 import ApexTypeFetcher, { ApexSortedByType } from '../../../../impl/parser/ApexTypeFetcher';
 
@@ -13,7 +13,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'source_apextest_list');
 
-export default class List extends SFPowerkitCommand {
+export default class List extends SfpowerkitCommand {
     // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
     protected static requiresProject = true;
     public static description = messages.getMessage('commandDescription');
@@ -64,14 +64,14 @@ export default class List extends SFPowerkitCommand {
         let testClassesList = testClasses.map((cls) => cls.name);
 
         if (testClasses.length > 0) {
-            SFPowerkit.log(`Found ${testClasses.length} apex test classes in ${this.flags.path}`, LoggerLevel.INFO);
+            Sfpowerkit.log(`Found ${testClasses.length} apex test classes in ${this.flags.path}`, LoggerLevel.INFO);
             if (this.flags.resultasstring) {
                 this.ux.log(testClassesList.join(','));
             } else {
                 this.ux.table(testClasses, ['name', 'filepath']);
             }
         } else {
-            SFPowerkit.log(`No apex test classes found in ${this.flags.path}`, LoggerLevel.INFO);
+            Sfpowerkit.log(`No apex test classes found in ${this.flags.path}`, LoggerLevel.INFO);
         }
 
         return this.flags.resultasstring ? testClassesList.join(',') : testClassesList;

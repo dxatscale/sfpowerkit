@@ -1,12 +1,12 @@
 import { Connection } from 'jsforce/connection';
-import { LoggerLevel, SFPowerkit } from '../sfpowerkit';
+import { LoggerLevel, Sfpowerkit } from '../sfpowerkit';
 const retry = require('async-retry');
 
 export default class MetadataOperation {
     constructor(private conn: Connection) {}
 
     public async getComponentsFromOrgUsingListMetadata(componentType: string) {
-        const apiversion: string = await SFPowerkit.getApiVersion();
+        const apiversion: string = await Sfpowerkit.getApiVersion();
 
         return await retry(
             async () => {
@@ -35,7 +35,7 @@ export default class MetadataOperation {
                 retries: 5,
                 minTimeout: 2000,
                 onRetry: (error) => {
-                    SFPowerkit.log(`Retrying Network call due to ${error.message}`, LoggerLevel.INFO);
+                    Sfpowerkit.log(`Retrying Network call due to ${error.message}`, LoggerLevel.INFO);
                 },
             }
         );
@@ -54,7 +54,7 @@ export default class MetadataOperation {
                 retries: 5,
                 minTimeout: 2000,
                 onRetry: (error) => {
-                    SFPowerkit.log(`Retrying Network call due to ${error.message}`, LoggerLevel.INFO);
+                    Sfpowerkit.log(`Retrying Network call due to ${error.message}`, LoggerLevel.INFO);
                 },
             }
         );

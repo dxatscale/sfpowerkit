@@ -5,7 +5,7 @@ import * as _ from 'lodash';
 import ignore from 'ignore';
 import * as fs from 'fs-extra';
 import * as glob from 'glob';
-import { SFPowerkit } from '../../sfpowerkit';
+import { Sfpowerkit } from '../../sfpowerkit';
 import { LoggerLevel } from '@salesforce/core';
 
 const SEP = /\/|\\/;
@@ -192,7 +192,7 @@ export default class MetadataFiles {
     }
 
     public async isInModuleFolder(filePath: string) {
-        const packageDirectories = await SFPowerkit.getProjectDirectories();
+        const packageDirectories = await Sfpowerkit.getProjectDirectories();
         if (!packageDirectories || packageDirectories.length == 0) {
             return false;
         }
@@ -212,7 +212,7 @@ export default class MetadataFiles {
      * @param outputFolder
      */
     public static copyFile(filePath: string, outputFolder: string) {
-        SFPowerkit.log(`Copying file ${filePath} from file system to ${outputFolder}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`Copying file ${filePath} from file system to ${outputFolder}`, LoggerLevel.DEBUG);
         const LWC_IGNORE_FILES = ['jsconfig.json', '.eslintrc.json'];
         const pairStatResources = METADATA_INFO.StaticResource.directoryName;
         const pairStatResourcesRegExp = new RegExp(pairStatResources);

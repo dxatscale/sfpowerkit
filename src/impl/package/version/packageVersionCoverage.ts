@@ -1,4 +1,4 @@
-import { SFPowerkit } from '../../../sfpowerkit';
+import { Sfpowerkit } from '../../../sfpowerkit';
 import { LoggerLevel } from '@salesforce/core';
 import { Connection } from 'jsforce';
 
@@ -36,7 +36,7 @@ export default class PackageVersionCoverage {
                 output.push(packageCoverage);
             });
 
-            SFPowerkit.log(`Successfully Retrieved the Apex Test Coverage of the package version`, LoggerLevel.INFO);
+            Sfpowerkit.log(`Successfully Retrieved the Apex Test Coverage of the package version`, LoggerLevel.INFO);
         } else {
             throw new Error(`Package version doesnot exist, Please check the version details`);
         }

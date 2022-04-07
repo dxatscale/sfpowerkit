@@ -1,4 +1,4 @@
-import { SFPowerkit } from '../../../sfpowerkit';
+import { Sfpowerkit } from '../../../sfpowerkit';
 import { Connection } from 'jsforce';
 import { LoggerLevel } from '@salesforce/core';
 import { getInstalledPackages, PackageDetail } from '../../../utils/packageUtils';
@@ -17,7 +17,7 @@ export default class PackageInfo {
         //await this.getInstalledPackageInfo();
         let packageDetails = await getInstalledPackages(this.conn, true);
 
-        SFPowerkit.log('PackageDetails:' + JSON.stringify(packageDetails), LoggerLevel.TRACE);
+        Sfpowerkit.log('PackageDetails:' + JSON.stringify(packageDetails), LoggerLevel.TRACE);
         return packageDetails;
     }
     public async getPackagesDetailsfromDevHub(

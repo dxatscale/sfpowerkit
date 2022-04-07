@@ -2,8 +2,8 @@ import { flags } from '@salesforce/command';
 import { AnyJson } from '@salesforce/ts-types';
 let request = require('request-promise-native');
 import { Messages, SfdxError } from '@salesforce/core';
-import { SFPowerkit, LoggerLevel } from '../../../../sfpowerkit';
-import SFPowerkitCommand from '../../../../sfpowerkitCommand';
+import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
+import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 import { Connection } from 'jsforce';
 
 // Initialize Messages with the current plugin directory
@@ -13,7 +13,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'sandbox_create');
 
-export default class Create extends SFPowerkitCommand {
+export default class Create extends SfpowerkitCommand {
     public static description = messages.getMessage('commandDescription');
 
     public static examples = [
@@ -56,7 +56,7 @@ export default class Create extends SFPowerkitCommand {
     protected static requiresDevhubUsername = true;
 
     public async execute(): Promise<AnyJson> {
-        SFPowerkit.setLogLevel('INFO', false);
+        Sfpowerkit.setLogLevel('INFO', false);
 
         await this.hubOrg.refreshAuth();
 
@@ -111,7 +111,7 @@ export default class Create extends SFPowerkitCommand {
         }
 
         if (result.success) {
-            SFPowerkit.log(`Successfully Enqueued Creation of Sandbox`, LoggerLevel.INFO);
+            Sfpowerkit.log(`Successfully Enqueued Creation of Sandbox`, LoggerLevel.INFO);
 
             if (!this.flags.json) this.ux.logJson(result);
         } else {
@@ -136,7 +136,7 @@ export default class Create extends SFPowerkitCommand {
         if (sandbox_query_result.records[0] == undefined)
             throw new SfdxError(`Unable to continue, Please check your sandbox name: ${name}`);
 
-        SFPowerkit.log(
+        Sfpowerkit.log(
             `Fetched Sandbox Id for sandbox  ${name}  is ${sandbox_query_result.records[0].Id}`,
             LoggerLevel.INFO
         );

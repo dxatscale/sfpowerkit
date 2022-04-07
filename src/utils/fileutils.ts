@@ -1,4 +1,4 @@
-import { SFPowerkit, LoggerLevel } from '../sfpowerkit';
+import { Sfpowerkit, LoggerLevel } from '../sfpowerkit';
 
 const fs = require('fs');
 const path = require('path');
@@ -35,7 +35,7 @@ export default class FileUtils {
         let pathExists = fs.existsSync(folder);
         let folderName = path.basename(folder);
         if (!pathExists) {
-            SFPowerkit.log('Folder not exists: ' + folderName, LoggerLevel.ERROR);
+            Sfpowerkit.log('Folder not exists: ' + folderName, LoggerLevel.ERROR);
             return result;
         }
         let content: string[] = fs.readdirSync(folder);
@@ -58,7 +58,7 @@ export default class FileUtils {
         let homedir = os.homedir();
         let configDir = homedir + path.sep + PLUGIN_CACHE_FOLDER;
         if (!fs.existsSync(configDir)) {
-            SFPowerkit.log('Config folder does not exists, Creating Folder', LoggerLevel.INFO);
+            Sfpowerkit.log('Config folder does not exists, Creating Folder', LoggerLevel.INFO);
             fs.mkdirSync(configDir);
         }
 
@@ -73,7 +73,7 @@ export default class FileUtils {
         let homedir = os.homedir();
         let configDir = homedir + path.sep + PLUGIN_CACHE_FOLDER;
         if (!fs.existsSync(configDir)) {
-            SFPowerkit.log('Config folder does not exists, Creating Folder', LoggerLevel.INFO);
+            Sfpowerkit.log('Config folder does not exists, Creating Folder', LoggerLevel.INFO);
             fs.mkdirSync(configDir);
         }
         return configDir + path.sep + fileName;

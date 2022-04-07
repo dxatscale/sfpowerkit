@@ -1,7 +1,7 @@
 import { FlagsConfig, flags } from '@salesforce/command';
 import FileUtils from '../../../utils/fileutils';
-import { SFPowerkit, LoggerLevel } from '../../../sfpowerkit';
-import SFPowerkitCommand from '../../../sfpowerkitCommand';
+import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
+import SfpowerkitCommand from '../../../sfpowerkitCommand';
 import * as xml2js from 'xml2js';
 import * as rimraf from 'rimraf';
 import * as util from 'util';
@@ -21,7 +21,7 @@ Messages.importMessagesDirectory(__dirname);
 // or any library that is using the messages framework can also be loaded this way.
 const messages = Messages.loadMessages('sfpowerkit', 'org_destruct');
 
-export default class Destruct extends SFPowerkitCommand {
+export default class Destruct extends SfpowerkitCommand {
     public static description = messages.getMessage('commandDescription');
 
     public static examples = [`$ sfdx sfpowerkit:org:destruct -m destructiveChanges.xml -u prod@prod3.com`];
@@ -113,7 +113,7 @@ export default class Destruct extends SFPowerkitCommand {
             throw new SfdxError('Invalid Destructive Change Definitiion Encountered');
         }
 
-        SFPowerkit.log(destructiveChanges['Package']['types'], LoggerLevel.TRACE);
+        Sfpowerkit.log(destructiveChanges['Package']['types'], LoggerLevel.TRACE);
     }
 
     private generateEmptyPackageXml(workingDirectory: string, apiversion: string) {
@@ -129,7 +129,7 @@ export default class Destruct extends SFPowerkitCommand {
         let packageXmlPath = path.join(workingDirectory, 'package.xml');
         fs.outputFileSync(packageXmlPath, packageXml);
 
-        SFPowerkit.log(`Empty Package.xml with ${apiversion} created at ${workingDirectory}`, LoggerLevel.DEBUG);
+        Sfpowerkit.log(`Empty Package.xml with ${apiversion} created at ${workingDirectory}`, LoggerLevel.DEBUG);
     }
 
     private async generateDeploymentZipFile(workingDirectory: string) {
@@ -148,13 +148,13 @@ export default class Destruct extends SFPowerkitCommand {
             { rollbackOnError: true, singlePackage: true },
             function (error, result: AsyncResult) {
                 if (error) {
-                    SFPowerkit.log(error.message, LoggerLevel.ERROR);
+                    Sfpowerkit.log(error.message, LoggerLevel.ERROR);
                 }
                 deployId = result;
             }
         );
 
-        SFPowerkit.log(
+        Sfpowerkit.log(
             `Deploying Destructive Changes with ID ${deployId.id} to ${this.org.getUsername()}`,
             LoggerLevel.INFO
         );
@@ -162,7 +162,7 @@ export default class Destruct extends SFPowerkitCommand {
 
         if (metadata_deploy_result.success) {
             if (metadata_deploy_result.success)
-                SFPowerkit.log(
+                Sfpowerkit.log(
                     `Deployed Destructive Changes  in target org ${this.org.getUsername()} succesfully`,
                     LoggerLevel.INFO
                 );

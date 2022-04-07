@@ -1,11 +1,11 @@
 import { flags } from '@salesforce/command';
 import { AnyJson } from '@salesforce/ts-types';
-import { SFPowerkit, LoggerLevel } from '../../../../sfpowerkit';
+import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
 import Passwordgenerateimpl from '../../../../impl/user/passwordgenerateimpl';
 import { SfdxError } from '@salesforce/core';
-import SFPowerkitCommand from '../../../../sfpowerkitCommand';
+import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 
-export default class Generate extends SFPowerkitCommand {
+export default class Generate extends SfpowerkitCommand {
     public static description = 'Generates password for a given user in a salesforce org.';
 
     public static examples = [`$ sfdx sfpowerkit:user:password:generate -u sandbox1`];
@@ -45,7 +45,7 @@ export default class Generate extends SFPowerkitCommand {
             throw new SfdxError(`Error occured unable to set password at the moment, please try later.`);
         }
 
-        SFPowerkit.log(`Password successfully set for ${result.username} : ${result.password}`, LoggerLevel.INFO);
+        Sfpowerkit.log(`Password successfully set for ${result.username} : ${result.password}`, LoggerLevel.INFO);
 
         return result;
     }
