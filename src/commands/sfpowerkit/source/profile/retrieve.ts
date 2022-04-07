@@ -3,9 +3,7 @@ import { flags, FlagsConfig, SfdxResult } from '@salesforce/command';
 import { SfdxError, Messages } from '@salesforce/core';
 import * as fs from 'fs-extra';
 import * as _ from 'lodash';
-import * as path from 'path';
 import { Sfpowerkit } from '../../../../sfpowerkit';
-import { METADATA_INFO } from '../../../../impl/metadata/metadataInfo';
 import ProfileSync from '../../../../impl/source/profiles/profileSync';
 import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 
@@ -104,50 +102,50 @@ export default class Retrieve extends SfpowerkitCommand {
 
         Sfpowerkit.initCache();
 
-        const profileUtils = new ProfileSync(this.org, this.flags.loglevel == 'debug');
+        const profileUtils = new ProfileSync(this.org);
 
         let syncPofles = await profileUtils.sync(folders, argProfileList || [], this.flags.delete);
 
         let result = [];
         if (syncPofles.added) {
-            syncPofles.added.forEach((file) => {
+            syncPofles.added.forEach((profile) => {
                 result.push({
                     state: 'Add',
-                    fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
+                    fullName: profile.name,
                     type: 'Profile',
-                    path: path.relative(process.cwd(), file),
+                    path: profile.path,
                 });
             });
         }
         if (syncPofles.updated) {
-            syncPofles.updated.forEach((file) => {
+            syncPofles.updated.forEach((profile) => {
                 result.push({
                     state: 'Updated',
-                    fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
+                    fullName: profile.name,
                     type: 'Profile',
-                    path: path.relative(process.cwd(), file),
+                    path: profile.path,
                 });
             });
         }
         if (this.flags.delete) {
             if (syncPofles.deleted) {
-                syncPofles.deleted.forEach((file) => {
+                syncPofles.deleted.forEach((profile) => {
                     result.push({
                         state: 'Deleted',
-                        fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
+                        fullName: profile.name,
                         type: 'Profile',
-                        path: path.relative(process.cwd(), file),
+                        path: profile.path,
                     });
                 });
             }
         } else {
             if (syncPofles.deleted) {
-                syncPofles.deleted.forEach((file) => {
+                syncPofles.deleted.forEach((profile) => {
                     result.push({
                         state: 'Skipped',
-                        fullName: path.basename(file, METADATA_INFO.Profile.sourceExtension),
+                        fullName: profile.name,
                         type: 'Profile',
-                        path: path.relative(process.cwd(), file),
+                        path: profile.path,
                     });
                 });
             }

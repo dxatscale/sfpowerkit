@@ -192,7 +192,7 @@ export default class ProfileDiffImpl {
             j: number,
             chunk = 10,
             temparray: string[];
-        let profileRetriever = new ProfileRetriever(retrieveOrg, false);
+        let profileRetriever = new ProfileRetriever(retrieveOrg);
         let retrievePromises = [];
         let connection = retrieveOrg.getConnection();
 

@@ -3,7 +3,6 @@ import MetadataFiles from '../../metadata/metadataFiles';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as xml2js from 'xml2js';
-import { METADATA_INFO } from '../../metadata/metadataInfo';
 import * as _ from 'lodash';
 import Profile, {
     ApplicationVisibility,
@@ -23,7 +22,7 @@ import Profile, {
     ProfileLoginFlows,
 } from '../../../impl/metadata/schema';
 import * as util from 'util';
-import ProfileActions from './profileActions';
+import ProfileActions, { ProfileStatus } from './profileActions';
 import ProfileWriter from '../../../impl/metadata/writer/profileWriter';
 
 const unsupportedprofiles = [];
@@ -668,11 +667,7 @@ export default class ProfileMerge extends ProfileActions {
         profiles: string[],
         metadatas: any,
         isdelete?: boolean
-    ): Promise<{
-        added: string[];
-        deleted: string[];
-        updated: string[];
-    }> {
+    ): Promise<ProfileStatus> {
         Sfpowerkit.log('Merging profiles...', LoggerLevel.DEBUG);
 
         let fetchNewProfiles = _.isNil(srcFolders) || srcFolders.length === 0;
@@ -687,22 +682,20 @@ export default class ProfileMerge extends ProfileActions {
         }
         let profileListToReturn: string[] = [];
         let profileNames: string[] = [];
-        let profilePathAssoc = {};
-        let profileStatus = await this.getProfileFullNamesWithLocalStatus(profiles);
-        let metadataFiles = profileStatus.updated || [];
+
+        let localProfilesWithStatus = await this.getRemoteProfilesWithLocalStatus(profiles);
+        let localProfiles = localProfilesWithStatus.updated || [];
         if (fetchNewProfiles) {
-            metadataFiles = _.union(profileStatus.added, profileStatus.updated);
+            localProfiles = _.union(localProfilesWithStatus.added, localProfilesWithStatus.updated);
         } else {
-            profileStatus.added = [];
+            localProfilesWithStatus.added = [];
         }
-        metadataFiles.sort();
-        for (let i = 0; i < metadataFiles.length; i++) {
-            let profileComponent = metadataFiles[i];
-            let profileName = path.basename(profileComponent, METADATA_INFO.Profile.sourceExtension);
-            let supported = !unsupportedprofiles.includes(profileName);
+        localProfiles.sort();
+        for (let i = 0; i < localProfiles.length; i++) {
+            let profileComponent = localProfiles[i];
+            let supported = !unsupportedprofiles.includes(profileComponent.name);
             if (supported) {
-                profilePathAssoc[profileName] = profileComponent;
-                profileNames.push(profileName);
+                profileNames.push(profileComponent.name);
             }
         }
 
@@ -730,42 +723,45 @@ export default class ProfileMerge extends ProfileActions {
                     profileObjFromServer = this.removeUnwantedPermissions(profileObjFromServer, metadatas);
                 }
                 //Check if the component exists in the file system
-                let filePath = profilePathAssoc[profileObjFromServer.fullName];
-                let profileObj: Profile = profileObjFromServer;
+
                 let profileWriter = new ProfileWriter();
+                let profileObj: Profile;
+                let indices = _.keys(_.pickBy(localProfiles, { name: profileObjFromServer.fullName }));
+                for (const index of indices) {
+                    let filePath = localProfiles[index].path;
+                    if (filePath && fs.existsSync(filePath)) {
+                        Sfpowerkit.log('Merging profile ' + profileObjFromServer.fullName, LoggerLevel.DEBUG);
+                        let profileXml = fs.readFileSync(filePath);
 
-                let exists = fs.existsSync(filePath);
-                if (exists) {
-                    Sfpowerkit.log('Merging profile ' + profileObjFromServer.fullName, LoggerLevel.DEBUG);
-                    let profileXml = fs.readFileSync(filePath);
+                        const parser = new xml2js.Parser({ explicitArray: false });
+                        const parseString = util.promisify(parser.parseString);
+                        let parseResult = await parseString(profileXml);
 
-                    const parser = new xml2js.Parser({ explicitArray: false });
-                    const parseString = util.promisify(parser.parseString);
-                    let parseResult = await parseString(profileXml);
-
-                    profileObj = profileWriter.toProfile(parseResult.Profile);
-                    await this.mergeProfile(profileObj, profileObjFromServer);
-                } else {
-                    Sfpowerkit.log('New Profile found in server ' + profileObjFromServer.fullName, LoggerLevel.DEBUG);
+                        profileObj = profileWriter.toProfile(parseResult.Profile);
+                        profileObj = await this.mergeProfile(profileObj, profileObjFromServer);
+                    } else {
+                        Sfpowerkit.log(
+                            'New Profile found in server ' + profileObjFromServer.fullName,
+                            LoggerLevel.DEBUG
+                        );
+                    }
+                    profileObj.fullName = profileObjFromServer.fullName;
+                    profileWriter.writeProfile(profileObj, filePath);
+                    Sfpowerkit.log('Profile ' + profileObj.fullName + ' merged', LoggerLevel.DEBUG);
+                    profileList.push(profileObj.fullName);
                 }
-
-                profileObj.fullName = profileObjFromServer.fullName;
-                profileWriter.writeProfile(profileObj, filePath);
-
-                Sfpowerkit.log('Profile ' + profileObj.fullName + ' merged', LoggerLevel.DEBUG);
-                profileList.push(profileObj.fullName);
             }
             profileListToReturn.push(...profileList);
         }
 
-        if (profileStatus.deleted && isdelete) {
-            profileStatus.deleted.forEach((file) => {
-                if (fs.existsSync(file)) {
-                    fs.unlinkSync(file);
+        if (localProfilesWithStatus.deleted && isdelete) {
+            localProfilesWithStatus.deleted.forEach((profile) => {
+                if (fs.existsSync(profile.path)) {
+                    fs.unlinkSync(profile.path);
                 }
             });
         }
-        return Promise.resolve(profileStatus);
+        return Promise.resolve(localProfilesWithStatus);
     }
 
     private removeUnwantedPermissions(profileObjFromServer: Profile, metadatas: any) {

@@ -49,7 +49,7 @@ export default abstract class SfpowerkitCommand extends SfdxCommand {
             );
             console.log(
                 COLOR_HEADER(
-                    `sfpowerkit  -- The DX@Scale Developer Toolkit -Version:${this.sfpowerkitConfig.version} -Release:${this.sfpowerkitConfig.pjson.release}`
+                    `sfpowerkit  -- The DX@Scale Developer Toolkit - Version:${this.sfpowerkitConfig.version} - Release:${this.sfpowerkitConfig.pjson.release}`
                 )
             );
 

@@ -1,4 +1,5 @@
 import cli from 'cli-ux';
+import SFPLogger from '../utils/sfpLogger';
 import { isNullOrUndefined } from 'util';
 import { Sfpowerkit } from '../sfpowerkit';
 
@@ -6,7 +7,7 @@ export class ProgressBar {
     private progressBarImpl;
 
     public create(title: string, unit: string, displayTillLogLevel: number): ProgressBar {
-        if (Sfpowerkit.logLevel <= displayTillLogLevel && !Sfpowerkit.isJsonFormatEnabled) {
+        if (SFPLogger.logLevel <= displayTillLogLevel && !Sfpowerkit.isJsonFormatEnabled) {
             this.progressBarImpl = cli.progress({
                 format: `${title} - PROGRESS  | {bar} | {value}/{total} ${unit}`,
                 barCompleteChar: '\u2588',
