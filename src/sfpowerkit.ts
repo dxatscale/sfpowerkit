@@ -34,9 +34,6 @@ export class Sfpowerkit {
     public static isJsonFormatEnabled: boolean;
     private static ux: UX;
     private static sourceApiVersion: any;
-    private static logger;
-    public static logLevel;
-    public static logLevelString;
     private static cache;
     private static  SFPOWERKIT_SQLITE_CACHE_PATH;
 
@@ -75,8 +72,7 @@ export class Sfpowerkit {
     }
 
     public static setLogLevel(logLevel: string, isJsonFormatEnabled: boolean) {
-        this.logLevel = LoggerLevel[logLevel.toUpperCase()];
-        this.logLevelString = logLevel;
+        SFPLogger.logLevel = LoggerLevel[logLevel.toUpperCase()];
         this.isJsonFormatEnabled = isJsonFormatEnabled ? true : false;
     }
 
