@@ -193,15 +193,15 @@ export default class Generatepatch extends SfpowerkitCommand {
 
     private async generateStaticResource(packageToBeUsed: any) {
         // sfdx project json file running force source command
-        let sfdx_project_json = `{	
-      "packageDirectories": [	
-        {	
-          "path": "${packageToBeUsed.path}",	
-          "default": true	
-        }	
-      ],	
-      "namespace": "",	
-      "sourceApiVersion": "${this.flags.apiversion}"	
+        let sfdx_project_json = `{
+      "packageDirectories": [
+        {
+          "path": "${packageToBeUsed.path}",
+          "default": true
+        }
+      ],
+      "namespace": "",
+      "sourceApiVersion": "${this.flags.apiversion}"
     }`;
 
         fs.outputFileSync(`${this.folderPath}/sfdx-project.json`, sfdx_project_json);
@@ -232,11 +232,12 @@ export default class Generatepatch extends SfpowerkitCommand {
             fs.copyFileSync(zipFile, `${dir}${packageToBeUsed.package}_picklist.zip`);
 
             //Store it to static resources
-            const metadata = `<?xml version="1.0" encoding="UTF-8"?>	
-      <StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">	
-          <cacheControl>Public</cacheControl>	
-          <contentType>application/zip</contentType>	
+            const metadata = `<?xml version="1.0" encoding="UTF-8"?>
+      <StaticResource xmlns="http://soap.sforce.com/2006/04/metadata">
+          <cacheControl>Public</cacheControl>
+          <contentType>application/zip</contentType>
       </StaticResource>`;
+
             let targetmetadatapath = `${dir}${packageToBeUsed.package}_picklist.resource-meta.xml`;
 
             Sfpowerkit.log(`Generating static resource file : ${targetmetadatapath}`, LoggerLevel.INFO);
