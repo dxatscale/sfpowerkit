@@ -35,8 +35,7 @@ export class Sfpowerkit {
     private static ux: UX;
     private static sourceApiVersion: any;
     private static cache;
-    private static  SFPOWERKIT_SQLITE_CACHE_PATH;
-
+    private static SFPOWERKIT_SQLITE_CACHE_PATH;
 
     static enableColor() {
         chalk.level = 2;
@@ -47,7 +46,8 @@ export class Sfpowerkit {
     }
 
     public static resetCache() {
-        if (fs.existsSync(Sfpowerkit.SFPOWERKIT_SQLITE_CACHE_PATH)) fs.unlinkSync(Sfpowerkit.SFPOWERKIT_SQLITE_CACHE_PATH);
+        if (fs.existsSync(Sfpowerkit.SFPOWERKIT_SQLITE_CACHE_PATH))
+            fs.unlinkSync(Sfpowerkit.SFPOWERKIT_SQLITE_CACHE_PATH);
     }
 
     public static initCache() {

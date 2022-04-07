@@ -55,7 +55,9 @@ export default class DiffUtil {
         return DiffUtil.gitTreeRevisionTo;
     }
 
-    public static async getRelativeFiles(filePath: string): Promise<
+    public static async getRelativeFiles(
+        filePath: string
+    ): Promise<
         {
             revision: string;
             path: string;

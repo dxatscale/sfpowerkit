@@ -64,7 +64,6 @@ export default class SFPLogger {
     static log(message: string, logLevel = LoggerLevel.INFO, logger?: Logger) {
         if (logLevel == null) logLevel = LoggerLevel.INFO;
 
-        
         if (logLevel < this.logLevel) return;
 
         //Todo: Proper fix
@@ -103,8 +102,7 @@ export default class SFPLogger {
             }
         }
     }
-    static getLogLevelAsString()
-    {
+    static getLogLevelAsString() {
         return LoggerLevel[this.logLevel];
     }
 }

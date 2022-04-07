@@ -138,7 +138,7 @@ Elements supported included in your package testPackage
                 if (element.valid == false) throw new SfdxError('Analysis Failed, Unsupported metadata present');
             });
         }
-        return { packages: result_store } as unknown as AnyJson;
+        return ({ packages: result_store } as unknown) as AnyJson;
     }
 
     public async validate(packageToBeScanned: AnyJson) {
