@@ -1203,7 +1203,6 @@ EXAMPLE
 _See code: [src\commands\sfpowerkit\org\sandbox\create.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/sandbox/create.ts)_
 
 
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FAccenture%2Fsfpowerkit.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FAccenture%2Fsfpowerkit?ref=badge_large)
 
 ### `sfpowerkit:org:sandbox:info`
 
@@ -1512,3 +1511,6 @@ EXAMPLES
   $ sfdx sfpowerkit:pool:delete -t core -v devhub -m
   $ sfdx sfpowerkit:pool:delete -t core -v devhub -m -a
 ```
+
+
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2FAccenture%2Fsfpowerkit.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2FAccenture%2Fsfpowerkit?ref=badge_large)
