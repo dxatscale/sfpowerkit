@@ -1,9 +1,9 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ""
-labels: ""
-assignees: ""
+title: ''
+labels: ''
+assignees: ''
 ---
 
 **Describe the bug**
@@ -22,10 +22,10 @@ If applicable, add screenshots to help explain your problem.
 
 **Desktop (please complete the following information):**
 
-- OS: [e.g. Windows/Linux]
-- Node Version
-- Version of sfpowerkit[e.g 1.45.0]
-- Salesforce Org Version [ In case of pre release window ]
+-   OS: [e.g. Windows/Linux]
+-   Node Version
+-   Version of sfpowerkit[e.g 1.45.0]
+-   Salesforce Org Version [ In case of pre release window ]
 
 **Additional context**
 Add any other context about the problem here.

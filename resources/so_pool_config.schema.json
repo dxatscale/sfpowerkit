@@ -4,10 +4,7 @@
     "properties": {
         "pool": {
             "type": "object",
-            "required":[
-                "config_file_path",
-                "tag"
-            ],
+            "required": ["config_file_path", "tag"],
             "additionalProperties": false,
             "properties": {
                 "expiry": {
@@ -29,6 +26,10 @@
                 "relax_all_ip_ranges": {
                     "description": "Relax all IP ranges",
                     "type": "boolean"
+                },
+                "alias_prefix": {
+                    "description": "Identifier for the pool of scratch orgs created",
+                    "type": "string"
                 },
                 "relax_ip_ranges": {
                     "type": "array",
@@ -57,13 +58,7 @@
             "items": [
                 {
                     "type": "object",
-                    "required": [
-                        "max_allocation",
-                        "min_allocation",
-                        "username",
-                        "expiry",
-                        "priority"
-                    ],
+                    "required": ["max_allocation", "min_allocation", "username", "expiry", "priority"],
                     "additionalProperties": false,
                     "properties": {
                         "max_allocation": {

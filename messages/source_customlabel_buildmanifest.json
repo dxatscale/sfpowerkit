@@ -1,7 +1,7 @@
 {
-  "commandDescription": "This Command is used to build package.xml with all customlabels as members rather than wildcard *. sfdx force:source:convert creates a package.xml with customlabels wildcard, this command helps to update the package.xml with list of label names.",
-  "pathFlagDescription": "Path to the CustomLabels.labels-meta.xml file",
-  "manifestFlagDescription": "path to existing package.xml file or create new package.xml",
-  "apiversion": "The api version to be used create package.xml",
-  "loglevel": "[default: info] logging level for this command invocation"
+    "commandDescription": "This Command is used to build package.xml with all customlabels as members rather than wildcard *. sfdx force:source:convert creates a package.xml with customlabels wildcard, this command helps to update the package.xml with list of label names.",
+    "pathFlagDescription": "Path to the CustomLabels.labels-meta.xml file",
+    "manifestFlagDescription": "path to existing package.xml file or create new package.xml",
+    "apiversion": "The api version to be used create package.xml",
+    "loglevel": "[default: info] logging level for this command invocation"
 }

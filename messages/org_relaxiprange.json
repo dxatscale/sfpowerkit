@@ -1,6 +1,6 @@
 {
-  "commandDescription": "This command sets or removes ip range in Network access to relax security setting for a particular salesforce environment",
-  "rangeFlagDescription": "List of ip range with comma separated. eg, 122.0.0.0-122.255.255.255,49.0.0.0-49.255.255.255",
-  "allDescription": "Relax full iprange 0.0.0.0-255.255.255.255 in the target org",
-  "noneDescription": "Remove any existing iprange relaxations in the target org"
+    "commandDescription": "This command sets or removes ip range in Network access to relax security setting for a particular salesforce environment",
+    "rangeFlagDescription": "List of ip range with comma separated. eg, 122.0.0.0-122.255.255.255,49.0.0.0-49.255.255.255",
+    "allDescription": "Relax full iprange 0.0.0.0-255.255.255.255 in the target org",
+    "noneDescription": "Remove any existing iprange relaxations in the target org"
 }

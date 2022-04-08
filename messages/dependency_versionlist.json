@@ -1,6 +1,6 @@
 {
-  "commandDescription": "List the  dependencies of each package. The command also resolves the .LATEST to the buildversion number that is available in DevHub, and has an additional option to only list validated dependencies of a given package. This is useful during a CI package build process, to list the exact version numbers the package was built on.",
-  "usedependencyvalidatedpackagesDescription": "use dependency validated packages that matches the version number schema provide",
-  "updateprojectDescription": "overwrite the sfdx-project.json with resolved dependencies (replace .LATEST)",
-  "filterpathsDescription": "filter packageDirectories using path to get dependent packages details only for the specified path"
+    "commandDescription": "List the  dependencies of each package. The command also resolves the .LATEST to the buildversion number that is available in DevHub, and has an additional option to only list validated dependencies of a given package. This is useful during a CI package build process, to list the exact version numbers the package was built on.",
+    "usedependencyvalidatedpackagesDescription": "use dependency validated packages that matches the version number schema provide",
+    "updateprojectDescription": "overwrite the sfdx-project.json with resolved dependencies (replace .LATEST)",
+    "filterpathsDescription": "filter packageDirectories using path to get dependent packages details only for the specified path"
 }

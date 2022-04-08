@@ -1,5 +1,5 @@
 {
-  "commandDescription": "Search picklist fields inside project and create a static resource file with picklist fields, used to solve the picklist upgrade issue in dx unlock package https://trailblazer.salesforce.com/issues_view?id=a1p3A0000003Uk2QAE",
-  "packageFlagDescription": "Name of the package to generate the picklist patch",
-  "loglevel": "[default: info] logging level for this command invocation"
+    "commandDescription": "Search picklist fields inside project and create a static resource file with picklist fields, used to solve the picklist upgrade issue in dx unlock package https://trailblazer.salesforce.com/issues_view?id=a1p3A0000003Uk2QAE",
+    "packageFlagDescription": "Name of the package to generate the picklist patch",
+    "loglevel": "[default: info] logging level for this command invocation"
 }

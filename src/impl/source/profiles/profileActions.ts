@@ -1,157 +1,149 @@
-import { METADATA_INFO } from "../../metadata/metadataInfo";
-import { SFPowerkit, LoggerLevel } from "../../../sfpowerkit";
-import * as path from "path";
-import FileUtils from "../../../utils/fileutils";
-import { retrieveMetadata } from "../../../utils/retrieveMetadata";
-
-import { Connection, Org } from "@salesforce/core";
-import ProfileRetriever from "../../metadata/retriever/profileRetriever";
+import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
+import * as path from 'path';
+import FileUtils from '../../../utils/fileutils';
+import { retrieveMetadata } from '../../../utils/retrieveMetadata';
+import { Connection, Org, SfdxProject } from '@salesforce/core';
+import ProfileRetriever from '../../metadata/retriever/profileRetriever';
+import { ComponentSet, MetadataResolver, registry, SourceComponent } from '@salesforce/source-deploy-retrieve';
+import { META_XML_SUFFIX } from '@salesforce/source-deploy-retrieve/lib/src/common';
 
 export default abstract class ProfileActions {
-  protected conn: Connection;
-  private debugFlag: boolean;
-  protected profileRetriever: ProfileRetriever;
+    protected conn: Connection;
+    protected profileRetriever: ProfileRetriever;
 
-  public constructor(public org: Org, debugFlag?: boolean) {
-    if (this.org) {
-      this.conn = this.org.getConnection();
-      this.profileRetriever = new ProfileRetriever(
-        org.getConnection(),
-        debugFlag
-      );
-    }
-    this.debugFlag = debugFlag;
-  }
+    //TODO: Figure out from registry?
+    profileFileExtension = '.' + registry.types.profile.suffix + META_XML_SUFFIX;
 
-  protected async getProfileFullNamesWithLocalStatus(
-    profileNames: string[]
-  ): Promise<{
-    added: string[];
-    deleted: string[];
-    updated: string[];
-  }> {
-    let profilesStatus = {
-      added: [],
-      deleted: [],
-      updated: [],
-    };
-    let metadataFiles = METADATA_INFO.Profile.files || [];
-
-    //generate path for new profiles
-    let profilePath = path.join(
-      process.cwd(),
-      await SFPowerkit.getDefaultFolder(),
-      "main",
-      "default",
-      "profiles"
-    );
-    if (metadataFiles && metadataFiles.length > 0) {
-      profilePath = path.dirname(metadataFiles[0]);
-    } else {
-      //create folder structure
-      FileUtils.mkDirByPathSync(profilePath);
+    public constructor(public org: Org) {
+        if (this.org) {
+            this.conn = this.org.getConnection();
+            this.profileRetriever = new ProfileRetriever(org.getConnection());
+        }
     }
 
-    // Query the profiles from org
-    const profiles = await retrieveMetadata(
-      [{ type: "Profile", folder: null }],
-      this.conn
-    );
+    protected async getRemoteProfilesWithLocalStatus(
+        profileNames: string[],
+        packageDirectories?: string[]
+    ): Promise<ProfileStatus> {
+        let profilesStatus: ProfileStatus = {} as ProfileStatus;
+        profilesStatus.added = [];
+        profilesStatus.updated = [];
+        profilesStatus.deleted = [];
 
-    if (profileNames && profileNames.length > 0) {
-      for (let i = 0; i < profileNames.length; i++) {
-        let profileName = profileNames[i];
-        let found = false;
+        //Load all local profiles
+        let localProfiles = await this.loadProfileFromPackageDirectories(packageDirectories);
 
-        for (let j = 0; j < metadataFiles.length; j++) {
-          let profileComponent = metadataFiles[j];
-          let retrievedProfileFileName = path.basename(
-            profileComponent,
-            METADATA_INFO.Profile.sourceExtension
-          );
-          if (profileName === retrievedProfileFileName && profiles.includes(profileName)) {
-            profilesStatus.updated.push(profileComponent);
-            found = true;
-            break;
-          }
-        }
+        //generate default path for new profiles
+        let profilePath = path.join(await Sfpowerkit.getDefaultFolder(), 'main', 'default', 'profiles');
+        //create folder structure
+        FileUtils.mkDirByPathSync(profilePath);
 
-        if (!found) {
-          for (let k = 0; k < profiles.length; k++) {
-            if (profiles[k] === profileName) {
-              let newProfilePath = path.join(
-                profilePath,
-                profiles[k] + METADATA_INFO.Profile.sourceExtension
-              );
-              profilesStatus.added.push(newProfilePath);
-              found = true;
-              break;
+        // Query the profiles from org
+        const remoteProfiles = await retrieveMetadata([{ type: 'Profile', folder: null }], this.conn);
+
+        if (profileNames && profileNames.length > 0) {
+            for (let i = 0; i < profileNames.length; i++) {
+                let profileName = profileNames[i];
+                let found = false;
+
+                for (let j = 0; j < localProfiles.length; j++) {
+                    if (profileName === localProfiles[j].name && remoteProfiles.includes(profileName)) {
+                        profilesStatus.updated.push(localProfiles[j]);
+                        found = true;
+                    }
+                }
+
+                if (!found) {
+                    for (let k = 0; k < remoteProfiles.length; k++) {
+                        if (remoteProfiles[k] === profileName) {
+                            let newProfilePath = path.join(profilePath, remoteProfiles[k] + this.profileFileExtension);
+                            profilesStatus.added.push({ path: newProfilePath, name: profileName });
+                            found = true;
+                            break;
+                        }
+                    }
+                }
+                if (!found) {
+                    profilesStatus.deleted.push({ name: profileName });
+                    Sfpowerkit.log(`Profile ${profileName} not found in the org`, LoggerLevel.WARN);
+                }
             }
-          }
-        }
-        if (!found) {
-          profilesStatus.deleted.push(profileName);
-          SFPowerkit.log(`Profile ${profileName} not found in the org`,LoggerLevel.WARN);
-        }
-      }
-    } else {
-      SFPowerkit.log(
-        "Load new profiles from server into the project directory",
-        LoggerLevel.DEBUG
-      );
-
-      profilesStatus.deleted = metadataFiles.filter((file) => {
-        let retrievedProfileFileName = path.basename(
-          file,
-          METADATA_INFO.Profile.sourceExtension
-        );
-        return !profiles.includes(retrievedProfileFileName);
-      });
-      profilesStatus.updated = metadataFiles.filter((file) => {
-        let retrievedProfileFileName = path.basename(
-          file,
-          METADATA_INFO.Profile.sourceExtension
-        );
-        return profiles.includes(retrievedProfileFileName);
-      });
-
-      if (profiles && profiles.length > 0) {
-        let newProfiles = profiles.filter((profileObj) => {
-          let found = false;
-          for (let i = 0; i < profilesStatus.updated.length; i++) {
-            let profileComponent = profilesStatus.updated[i];
-            let fileName = path.basename(
-              profileComponent,
-              METADATA_INFO.Profile.sourceExtension
-            );
-            //escape some caracters
-            let onlineName = profileObj.replace("'", "%27");
-            onlineName = onlineName.replace("/", "%2F");
-            if (onlineName === fileName) {
-              found = true;
-              break;
-            }
-          }
-          return !found;
-        });
-        if (newProfiles && newProfiles.length > 0) {
-          SFPowerkit.log("New profiles founds", LoggerLevel.DEBUG);
-          for (let i = 0; i < newProfiles.length; i++) {
-            SFPowerkit.log(newProfiles[i], LoggerLevel.DEBUG);
-            let newProfilePath = path.join(
-              profilePath,
-              newProfiles[i] + METADATA_INFO.Profile.sourceExtension
-            );
-            profilesStatus.added.push(newProfilePath);
-          }
         } else {
-          SFPowerkit.log(
-            "No new profile found, Updating existing profiles",
-            LoggerLevel.INFO
-          );
+            Sfpowerkit.log('Load new profiles from server into the project directory', LoggerLevel.DEBUG);
+
+            profilesStatus.deleted = localProfiles.filter((profile) => {
+                return !remoteProfiles.includes(profile.name);
+            });
+            profilesStatus.updated = localProfiles.filter((profile) => {
+                return remoteProfiles.includes(profile.name);
+            });
+
+            if (remoteProfiles && remoteProfiles.length > 0) {
+                let newProfiles = remoteProfiles.filter((profileObj) => {
+                    let found = false;
+                    for (let i = 0; i < profilesStatus.updated.length; i++) {
+                        let fileName = profilesStatus.updated[i].name;
+                        //escape some caracters
+                        let onlineName = profileObj.replace("'", '%27');
+                        onlineName = onlineName.replace('/', '%2F');
+                        if (onlineName === fileName) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    return !found;
+                });
+                if (newProfiles && newProfiles.length > 0) {
+                    Sfpowerkit.log('New profiles founds', LoggerLevel.DEBUG);
+                    for (let i = 0; i < newProfiles.length; i++) {
+                        Sfpowerkit.log(newProfiles[i], LoggerLevel.DEBUG);
+                        let newProfilePath = path.join(profilePath, newProfiles[i] + this.profileFileExtension);
+                        profilesStatus.added.push({ path: newProfilePath, name: newProfiles[i] });
+                    }
+                } else {
+                    Sfpowerkit.log('No new profile found, Updating existing profiles', LoggerLevel.INFO);
+                }
+            }
         }
-      }
+        return profilesStatus;
     }
-    return Promise.resolve(profilesStatus);
-  }
+
+    protected async loadProfileFromPackageDirectories(packageDirectories?: string[]): Promise<ProfileSourceFile[]> {
+        let resolver = new MetadataResolver();
+        let profiles: SourceComponent[] = [];
+
+        //If packageDirectories are not mentioned, fetch all package directories
+        if (!packageDirectories || packageDirectories.length == 0) {
+            const project = await SfdxProject.resolve();
+            packageDirectories = new Array<string>();
+            for (const packageDirectory of project.getPackageDirectories()) {
+                packageDirectories.push(packageDirectory.path);
+            }
+        }
+
+        //For each package directory, collect profiles
+        for (const packageDirectory of packageDirectories) {
+            profiles = profiles.concat(
+                resolver.getComponentsFromPath(
+                    packageDirectory,
+                    new ComponentSet([{ fullName: '*', type: registry.types.profile.name }])
+                )
+            );
+        }
+
+        let profileSourceFile = profiles.map((elem) => {
+            return { path: elem.xml, name: elem.name };
+        });
+        return profileSourceFile;
+    }
+}
+
+export interface ProfileSourceFile {
+    path?: string;
+    name?: string;
+}
+export interface ProfileStatus {
+    added: ProfileSourceFile[];
+    deleted: ProfileSourceFile[];
+    updated: ProfileSourceFile[];
 }

@@ -1,1 +1,1 @@
-export { SourceDiffGenerator } from "./sourceDiffGenerator";
+export { SourceDiffGenerator } from './sourceDiffGenerator';

@@ -1,7 +1,7 @@
 {
-  "commandDescription": "Merge multiple package.xml into single collective package.xml",
-  "pathFlagDescription": "Paths to the package.xml file",
-  "manifestFlagDescription": "output path to create collective package.xml",
-  "apiversion": "The api version to be used create package.xml",
-  "loglevel": "[default: info] logging level for this command invocation"
+    "commandDescription": "Merge multiple package.xml into single collective package.xml",
+    "pathFlagDescription": "Paths to the package.xml file",
+    "manifestFlagDescription": "output path to create collective package.xml",
+    "apiversion": "The api version to be used create package.xml",
+    "loglevel": "[default: info] logging level for this command invocation"
 }

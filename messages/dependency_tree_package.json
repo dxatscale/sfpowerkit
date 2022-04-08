@@ -1,9 +1,9 @@
 {
-  "commandDescription": "This command is used to compute the dependency tree details of an unlocked package",
-  "packageDescription": "package name, package version id, subscriber id that is installed in the org",
-  "packagefilterDescription": "output result will filter only dependent packages",
-  "showallDescription": "Indclude all items with/without dependency in the result",
-  "formatDescription": "format of the output file to create",
-  "outputDescription": "path to create the output",
-  "loglevelDescription": "[default: info] logging level for this command invocation"
+    "commandDescription": "This command is used to compute the dependency tree details of an unlocked package",
+    "packageDescription": "package name, package version id, subscriber id that is installed in the org",
+    "packagefilterDescription": "output result will filter only dependent packages",
+    "showallDescription": "Indclude all items with/without dependency in the result",
+    "formatDescription": "format of the output file to create",
+    "outputDescription": "path to create the output",
+    "loglevelDescription": "[default: info] logging level for this command invocation"
 }

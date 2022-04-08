@@ -1,17 +1,17 @@
-const archiver = require("archiver");
-import * as fs from "fs-extra";
+const archiver = require('archiver');
+import * as fs from 'fs-extra';
 
 export async function zipDirectory(source, out) {
-  const archive = archiver("zip", { zlib: { level: 9 } });
-  const stream = fs.createWriteStream(out);
+    const archive = archiver('zip', { zlib: { level: 9 } });
+    const stream = fs.createWriteStream(out);
 
-  return new Promise<void>((resolve, reject) => {
-    archive
-      .directory(source, false)
-      .on("error", err => reject(err))
-      .pipe(stream);
+    return new Promise<void>((resolve, reject) => {
+        archive
+            .directory(source, false)
+            .on('error', (err) => reject(err))
+            .pipe(stream);
 
-    stream.on("close", () => resolve());
-    archive.finalize();
-  });
+        stream.on('close', () => resolve());
+        archive.finalize();
+    });
 }

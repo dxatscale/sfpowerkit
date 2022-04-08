@@ -1,113 +1,105 @@
-import {
-  FlagsConfig,
-  flags,
-  SfdxResult
-} from "@salesforce/command";
-import { SFPowerkit } from "../../../sfpowerkit";
-import SFPowerkitCommand from "../../../sfpowerkitCommand";
-import OrgDiffImpl from "../../../impl/project/orgdiff/orgDiffImpl";
-import { fs, Messages } from "@salesforce/core";
+import { FlagsConfig, flags, SfdxResult } from '@salesforce/command';
+import { Sfpowerkit } from '../../../sfpowerkit';
+import SfpowerkitCommand from '../../../sfpowerkitCommand';
+import OrgDiffImpl from '../../../impl/project/orgdiff/orgDiffImpl';
+import { fs, Messages } from '@salesforce/core';
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
 
 // Load the specific messages for this file. Messages from @salesforce/command, @salesforce/core,
 // or any library that is using the messages framework can also be loaded this way.
-const messages = Messages.loadMessages("sfpowerkit", "project_orgdiff");
+const messages = Messages.loadMessages('sfpowerkit', 'project_orgdiff');
 
-export default class OrgDiff extends SFPowerkitCommand {
-  public static description = messages.getMessage("commandDescription");
+export default class OrgDiff extends SfpowerkitCommand {
+    public static description = messages.getMessage('commandDescription');
 
-  public static examples = [
-    `$ sfdx sfpowerkit:project:orgdiff --filesorfolders directory --noconflictmarkers --targetusername sandbox`,
-    `$ sfdx sfpowerkit:project:orgdiff -f fileName --targetusername sandbox`
-  ];
+    public static examples = [
+        `$ sfdx sfpowerkit:project:orgdiff --filesorfolders directory --noconflictmarkers --targetusername sandbox`,
+        `$ sfdx sfpowerkit:project:orgdiff -f fileName --targetusername sandbox`,
+    ];
 
-  protected static flagsConfig: FlagsConfig = {
-    filesorfolders: flags.array({
-      char: "f",
-      description: messages.getMessage("filesOrFoldersFlagDescription"),
-      required: true,
-      map: (f: string) => f.trim()
-    }),
-    noconflictmarkers: flags.boolean({
-      char: "c",
-      description: messages.getMessage("noConflictMarkersDescription"),
-      required: false
-    }),
-    loglevel: flags.enum({
-      description: "logging level for this command invocation",
-      default: "info",
-      required: false,
-      options: [
-        "trace",
-        "debug",
-        "info",
-        "warn",
-        "error",
-        "fatal",
-        "TRACE",
-        "DEBUG",
-        "INFO",
-        "WARN",
-        "ERROR",
-        "FATAL"
-      ]
-    }),
-    outputformat: flags.enum({
-      required: false,
-      char: "o",
-      description: messages.getMessage("outputFormatFlagDescription"),
-      options: ["json", "csv"]
-    })
-  };
+    protected static flagsConfig: FlagsConfig = {
+        filesorfolders: flags.array({
+            char: 'f',
+            description: messages.getMessage('filesOrFoldersFlagDescription'),
+            required: true,
+            map: (f: string) => f.trim(),
+        }),
+        noconflictmarkers: flags.boolean({
+            char: 'c',
+            description: messages.getMessage('noConflictMarkersDescription'),
+            required: false,
+        }),
+        loglevel: flags.enum({
+            description: 'logging level for this command invocation',
+            default: 'info',
+            required: false,
+            options: [
+                'trace',
+                'debug',
+                'info',
+                'warn',
+                'error',
+                'fatal',
+                'TRACE',
+                'DEBUG',
+                'INFO',
+                'WARN',
+                'ERROR',
+                'FATAL',
+            ],
+        }),
+        outputformat: flags.enum({
+            required: false,
+            char: 'o',
+            description: messages.getMessage('outputFormatFlagDescription'),
+            options: ['json', 'csv'],
+        }),
+    };
 
-  public static result: SfdxResult = {
-    tableColumnData: {
-      columns: [
-        { key: "status", label: "Status" },
-        { key: "metadataType", label: "Type" },
-        { key: "componentName", label: "Component Name" },
-        { key: "path", label: "Path" }
-      ]
-    },
-    display() {
-      if (Array.isArray(this.data) && this.data.length) {
-        this.ux.table(this.data, this.tableColumnData);
-      }
+    public static result: SfdxResult = {
+        tableColumnData: {
+            columns: [
+                { key: 'status', label: 'Status' },
+                { key: 'metadataType', label: 'Type' },
+                { key: 'componentName', label: 'Component Name' },
+                { key: 'path', label: 'Path' },
+            ],
+        },
+        display() {
+            if (Array.isArray(this.data) && this.data.length) {
+                this.ux.table(this.data, this.tableColumnData);
+            }
+        },
+    };
+
+    protected static requiresUsername = true;
+    protected static requiresProject = true;
+
+    public async execute(): Promise<any> {
+        Sfpowerkit.setUx(this.ux);
+        this.ux.startSpinner('Running...');
+
+        let filesOrFolders = this.flags.filesorfolders;
+
+        let orgDiff = new OrgDiffImpl(filesOrFolders, this.org, !this.flags.noconflictmarkers);
+
+        let output = await orgDiff.orgDiff();
+        this.ux.stopSpinner('Completed');
+        if (!this.flags.outputformat || this.flags.outputformat == 'json') {
+            fs.writeJson('orgdiff.json', output);
+        } else if (this.flags.outputformat == 'csv') {
+            await this.generateCSVOutput(output);
+        }
+        return output;
     }
-  };
-
-  protected static requiresUsername = true;
-  protected static requiresProject = true;
-
-  public async execute(): Promise<any> {
-    SFPowerkit.setUx(this.ux);
-    this.ux.startSpinner("Running...");
-
-    let filesOrFolders = this.flags.filesorfolders;
-
-    let orgDiff = new OrgDiffImpl(
-      filesOrFolders,
-      this.org,
-      !this.flags.noconflictmarkers
-    );
-
-    let output = await orgDiff.orgDiff();
-    this.ux.stopSpinner("Completed");
-    if (!this.flags.outputformat || this.flags.outputformat == "json") {
-      fs.writeJson("orgdiff.json", output);
-    } else if (this.flags.outputformat == "csv") {
-      await this.generateCSVOutput(output);
+    public async generateCSVOutput(result: any[]) {
+        let newLine = '\r\n';
+        let output = 'status,metadataType,componentName,path' + newLine;
+        result.forEach((element) => {
+            output = `${output}${element.status},${element.metadataType},${element.componentName},${element.path}${newLine}`;
+        });
+        fs.writeFile('orgdiff.csv', output);
     }
-    return output;
-  }
-  public async generateCSVOutput(result: any[]) {
-    let newLine = "\r\n";
-    let output = "status,metadataType,componentName,path" + newLine;
-    result.forEach(element => {
-      output = `${output}${element.status},${element.metadataType},${element.componentName},${element.path}${newLine}`;
-    });
-    fs.writeFile("orgdiff.csv", output);
-  }
 }
