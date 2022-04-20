@@ -782,7 +782,7 @@ export default class ProfileMerge extends ProfileActions {
         }) : [];
         profileObjFromServer.pageAccesses = profileObjFromServer.pageAccesses ? profileObjFromServer.pageAccesses.filter((elem) => {
             return metadatas['ApexPage'].includes(elem.apexPage) || metadatas['ApexPage'].includes('*');
-        } : [];
+        }) : [];
         profileObjFromServer.fieldPermissions = profileObjFromServer.fieldPermissions ? profileObjFromServer.fieldPermissions.filter((elem) => {
             return metadatas['CustomField'].includes(elem.field);
         }) : [];
