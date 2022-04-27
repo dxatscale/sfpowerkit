@@ -89,7 +89,8 @@ export default class DiffImpl {
             throw new Error(messages.getMessage('sameCommitErrorMessage'));
         }
         //Make it relative to make the command works from a project created as a subfolder in a repository
-        data = await git.diff(['--raw', this.revisionFrom, this.revisionTo, '--relative']);
+        git.addConfig('core.quotepath','false');
+        data = await git.diff(["--no-renames", '--raw', this.revisionFrom, this.revisionTo, '--relative']);
         Sfpowerkit.log(`Input Param: From: ${this.revisionFrom}  To: ${this.revisionTo} `, LoggerLevel.INFO);
         Sfpowerkit.log(`SHA Found From: ${commitFrom} To:  ${commitTo} `, LoggerLevel.INFO);
 
