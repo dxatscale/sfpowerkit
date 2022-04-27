@@ -765,33 +765,33 @@ export default class ProfileMerge extends ProfileActions {
     }
 
     private removeUnwantedPermissions(profileObjFromServer: Profile, metadatas: any) {
-        profileObjFromServer.applicationVisibilities = profileObjFromServer.applicationVisibilities.filter((elem) => {
+        profileObjFromServer.applicationVisibilities = profileObjFromServer.applicationVisibilities ? profileObjFromServer.applicationVisibilities.filter((elem) => {
             return (
                 metadatas['CustomApplication'].includes(elem.application) ||
                 metadatas['CustomApplication'].includes('*')
             );
-        });
-        profileObjFromServer.classAccesses = profileObjFromServer.classAccesses.filter((elem) => {
+        }) : [];
+        profileObjFromServer.classAccesses = profileObjFromServer.classAccesses ? profileObjFromServer.classAccesses.filter((elem) => {
             return metadatas['ApexClass'].includes(elem.apexClass) || metadatas['ApexClass'].includes('*');
-        });
-        profileObjFromServer.layoutAssignments = profileObjFromServer.layoutAssignments.filter((elem) => {
+        }) : [];
+        profileObjFromServer.layoutAssignments = profileObjFromServer.layoutAssignments ? profileObjFromServer.layoutAssignments.filter((elem) => {
             return metadatas['Layout'].includes(elem.layout) || metadatas['Layout'].includes('*');
-        });
-        profileObjFromServer.objectPermissions = profileObjFromServer.objectPermissions.filter((elem) => {
+        }) : [];
+        profileObjFromServer.objectPermissions = profileObjFromServer.objectPermissions ? profileObjFromServer.objectPermissions.filter((elem) => {
             return metadatas['CustomObject'].includes(elem.object) || metadatas['CustomObject'].includes('*');
-        });
-        profileObjFromServer.pageAccesses = profileObjFromServer.pageAccesses.filter((elem) => {
+        }) : [];
+        profileObjFromServer.pageAccesses = profileObjFromServer.pageAccesses ? profileObjFromServer.pageAccesses.filter((elem) => {
             return metadatas['ApexPage'].includes(elem.apexPage) || metadatas['ApexPage'].includes('*');
-        });
-        profileObjFromServer.fieldPermissions = profileObjFromServer.fieldPermissions.filter((elem) => {
+        }) : [];
+        profileObjFromServer.fieldPermissions = profileObjFromServer.fieldPermissions ? profileObjFromServer.fieldPermissions.filter((elem) => {
             return metadatas['CustomField'].includes(elem.field);
-        });
-        profileObjFromServer.recordTypeVisibilities = profileObjFromServer.recordTypeVisibilities.filter((elem) => {
+        }) : [];
+        profileObjFromServer.recordTypeVisibilities = profileObjFromServer.recordTypeVisibilities ? profileObjFromServer.recordTypeVisibilities.filter((elem) => {
             return metadatas['RecordType'].includes(elem.recordType);
-        });
-        profileObjFromServer.tabVisibilities = profileObjFromServer.tabVisibilities.filter((elem) => {
+        }) : [];
+        profileObjFromServer.tabVisibilities = profileObjFromServer.tabVisibilities ? profileObjFromServer.tabVisibilities.filter((elem) => {
             return metadatas['CustomTab'].includes(elem.tab) || metadatas['CustomTab'].includes('*');
-        });
+        }) : [];
         if (metadatas['SystemPermissions'].length == 0) {
             delete profileObjFromServer.userPermissions;
         }
