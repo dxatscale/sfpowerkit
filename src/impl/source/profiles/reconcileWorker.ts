@@ -9,7 +9,7 @@ import ProfileWriter from '../../metadata/writer/profileWriter';
 import Profile from '../../metadata/schema';
 
 import ProfileComponentReconciler from './profileComponentReconciler';
-import { MetadataResolver } from '@salesforce/source-deploy-retrieve';
+import { MetadataResolver, SourceComponent } from '@salesforce/source-deploy-retrieve';
 import { ProfileSourceFile } from './profileActions';
 
 export default class ReconcileWorker {
@@ -45,12 +45,20 @@ export default class ReconcileWorker {
         for (const packageDirectory of packageDirectories) {
             const components = resolver.getComponentsFromPath(packageDirectory.path);
             for (const component of components) {
-                Sfpowerkit.addToCache(`SOURCE_${component.type.name}_${component.fullName}`, true);
-                Sfpowerkit.addToCache(`${component.type.name}_SOURCE_CACHE_AVAILABLE`, true);
+                this.loadComponentsTocache(component);
             }
         }
     }
 
+    private loadComponentsTocache(component:SourceComponent){
+        Sfpowerkit.addToCache(`SOURCE_${component.type.name}_${component.fullName}`, true);
+        Sfpowerkit.addToCache(`${component.type.name}_SOURCE_CACHE_AVAILABLE`, true);
+        let children:SourceComponent[] = component.getChildren();
+        for (const child of children) {
+            this.loadComponentsTocache(child);
+        }
+    }
+    
     public reconcileProfileJob(profileComponent: ProfileSourceFile, destFolder: string): Promise<string[]> {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         let reconcilePromise = new Promise<string[]>((resolve, reject) => {
