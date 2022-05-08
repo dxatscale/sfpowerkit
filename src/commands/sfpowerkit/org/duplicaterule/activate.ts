@@ -3,7 +3,7 @@ import * as fs from 'fs-extra';
 import { flags } from '@salesforce/command';
 import SFPowerkitCommand from '../../../../sfpowerkitCommand';
 import * as rimraf from 'rimraf';
-import { AsyncResult, DeployResult, UpsertResult } from 'jsforce';
+import { AsyncResult, DeployResult, MetadataInfo, UpdateMetadataInfo, UpsertResult } from 'jsforce';
 import { Messages, SfdxError } from '@salesforce/core';
 import * as xml2js from 'xml2js';
 import * as util from 'util';
@@ -77,13 +77,22 @@ export default class Activate extends SFPowerkitCommand {
         // const apiversion = await conn.retrieveMaxApiVersion();
 
         try {
-            let duplicateRuleActivate = { fullName:'Account.Standard_Account_Duplicate_Rule' ,  isActive: true };
-            let result: UpsertResult | UpsertResult[] = await conn.metadata.upsert('DuplicateRule', duplicateRuleActivate);
-            console.log(result)
-            if ((result as UpsertResult).success) {
+
+            // let duplicateRuleActivate = { fullName:'Account.Standard_Account_Duplicate_Rule' ,  isActive: true };
+            // let result;
+            let result = await conn.metadata.read('DuplicateRule', this.flags.name);
+            console.log(JSON.stringify(result, null, 4));
+        
+
+            result["isActive"] = true;
+            let readResult: UpsertResult | UpsertResult[] = await conn.metadata.upsert("DuplicateRule", result);
+
+            // result: UpsertResult | UpsertResult[] = await conn.metadata.upsert('DuplicateRule', duplicateRuleActivate, isActive: true);
+            if ((readResult as MetadataInfo)) {
                 Sfpowerkit.log(`Duplicate Rule ${this.flags.name} Activated`, LoggerLevel.INFO);
             }
         } catch(error) {
+            console.log(error);
             Sfpowerkit.log(`Duplicate Rule ${this.flags.name} not found in the Org`, LoggerLevel.INFO);
         }
 
