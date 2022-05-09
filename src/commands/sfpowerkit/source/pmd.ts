@@ -110,6 +110,25 @@ export default class Pmd extends SFPowerkitCommand {
             default: '6.39.0',
             description: messages.getMessage('versionFlagDescription'),
         }),
+        loglevel: flags.enum({
+            description: 'loglevel to execute the command',
+            default: 'info',
+            required: false,
+            options: [
+                'trace',
+                'debug',
+                'info',
+                'warn',
+                'error',
+                'fatal',
+                'TRACE',
+                'DEBUG',
+                'INFO',
+                'WARN',
+                'ERROR',
+                'FATAL',
+            ],
+        }),
     };
 
     // Set this to true if your command requires a project workspace; 'requiresProject' is false by default
