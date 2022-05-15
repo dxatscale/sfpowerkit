@@ -25,7 +25,7 @@ export default class MetadataRetriever {
             return [];
         }
 
-        if (Sfpowerkit.getFromCache(key) == null) {
+        if (!Sfpowerkit.getFromCache(key)) {
             let items;
             if (this._componentType === 'UserLicense') {
                 items = await this.getUserLicense();

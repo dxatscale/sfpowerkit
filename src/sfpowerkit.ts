@@ -46,6 +46,7 @@ export class Sfpowerkit {
     }
 
     public static resetCache() {
+        Sfpowerkit.SFPOWERKIT_SQLITE_CACHE_PATH = FileUtils.getGlobalCachePath('sfpowerkit-cache.db');
         if (fs.existsSync(Sfpowerkit.SFPOWERKIT_SQLITE_CACHE_PATH))
             fs.unlinkSync(Sfpowerkit.SFPOWERKIT_SQLITE_CACHE_PATH);
     }
