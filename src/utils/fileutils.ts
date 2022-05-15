@@ -1,6 +1,6 @@
 import { Sfpowerkit, LoggerLevel } from '../sfpowerkit';
 
-const fs = require('fs');
+import * as fs from 'fs-extra'
 const path = require('path');
 const _ = require('lodash');
 const os = require('os');
@@ -75,6 +75,20 @@ export default class FileUtils {
         if (!fs.existsSync(configDir)) {
             Sfpowerkit.log('Config folder does not exists, Creating Folder', LoggerLevel.INFO);
             fs.mkdirSync(configDir);
+        }
+        return configDir + path.sep + fileName;
+    }
+
+    /**
+     * Get the cache path for local working directory
+     * @param fileName
+     */
+     public static getLocalCachePath(fileName: string) {
+      
+        let configDir = path.join(process.cwd(),'.sfdx','sfpowerkit');
+        if (!fs.existsSync(configDir)) {
+            Sfpowerkit.log('Config folder does not exists, Creating Folder', LoggerLevel.INFO);
+            fs.ensureDirSync(configDir);
         }
         return configDir + path.sep + fileName;
     }

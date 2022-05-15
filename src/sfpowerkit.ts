@@ -35,7 +35,7 @@ export class Sfpowerkit {
     private static ux: UX;
     private static sourceApiVersion: any;
     private static cache;
-    private static SFPOWERKIT_SQLITE_CACHE_PATH;
+
 
     static enableColor() {
         chalk.level = 2;
@@ -46,16 +46,16 @@ export class Sfpowerkit {
     }
 
     public static resetCache() {
-        Sfpowerkit.SFPOWERKIT_SQLITE_CACHE_PATH = FileUtils.getGlobalCachePath('sfpowerkit-cache.db');
-        if (fs.existsSync(Sfpowerkit.SFPOWERKIT_SQLITE_CACHE_PATH))
-            fs.unlinkSync(Sfpowerkit.SFPOWERKIT_SQLITE_CACHE_PATH);
+        let cachePath = FileUtils.getLocalCachePath('sfpowerkit-cache.db');
+        if (fs.existsSync(cachePath))
+            fs.unlinkSync(cachePath);
     }
 
     public static initCache() {
         try {
-            //Set the cache path on init
-            Sfpowerkit.SFPOWERKIT_SQLITE_CACHE_PATH = FileUtils.getGlobalCachePath('sfpowerkit-cache.db');
-            Sfpowerkit.cache = new SQLITEKeyValue(Sfpowerkit.SFPOWERKIT_SQLITE_CACHE_PATH);
+            //Set the cache path on init, 
+            //TODO: Move this to a temporary directory with randomization
+            Sfpowerkit.cache = new SQLITEKeyValue(FileUtils.getLocalCachePath('sfpowerkit-cache.db'));
             Sfpowerkit.cache.init();
         } catch (error) {
             //Fallback to NodeCache, as sqlite cache cant be lazily loaded
