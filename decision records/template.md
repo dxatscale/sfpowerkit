@@ -15,4 +15,4 @@ The what is the problem and in what context does it exist
 
 ## Decision
 
-Has a solution been accepted, if so which option and why? if not, why not and what are the next steps? 
+Has a solution been accepted, if so which option and why? if not, why not and what are the next steps?
