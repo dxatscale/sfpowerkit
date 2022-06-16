@@ -1,0 +1,46 @@
+name: Publish 
+
+on:
+  workflow_dispatch:
+
+jobs:
+
+  alpha_build_deploy:
+    if:  github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/npm-publish-template.yml
+    with:
+        version: alpha
+        
+  alpha_smoke_test:
+    if: github.ref == 'refs/heads/main'
+    uses: ./.github/workflows/review-smoke-test.yml
+    needs: alpha_build_deploy
+
+        
+  beta:
+    uses: ./.github/workflows/npm-publish-template.yml
+    needs: 
+      - alpha_build_deploy
+      - alpha_smoke_test
+    with: 
+        version: beta
+          
+  hotfix_build_deploy:
+    if: github.ref == 'refs/heads/hotfix/'
+    uses: ./.github/workflows/npm-publish-template.yml
+    with: 
+      version: hotfix
+  
+  smoke_test_hotfix:
+    uses: ./.github/workflows/review-smoke-test.yml
+    needs: hotfix_build_deploy
+    if: github.ref == 'refs/heads/hotfix/'
+        
+  prod:
+    uses: ./.github/workflows/npm-publish-template.yml
+    needs: 
+      - beta
+      - hotfix_build_deploy
+    with: 
+      version: latest
+    
