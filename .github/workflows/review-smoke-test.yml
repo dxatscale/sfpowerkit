@@ -32,4 +32,13 @@ jobs:
         - name: Authenitcate to DevHub
           run: sfdx auth:sfdxurl:store -f authfile -a HubOrg
           
+        - name: Smoke Test Org Commands
+          run: | 
+              set -euxo pipefail
+              sfdx sfpowerkit:org:manifest:build -o manifest.xml -u HubOrg 
+              sfdx sfpowerkit:org:manifest:build -o manifest.xml -u HubOrg --json | jq -r .result.result
+              sfdx sfpowerkit:org:orgcoverage -u HubOrg
+              sfdx sfpowerkit:org:orgcoverage -u HubOrg --json | jq -r .result.classCoverage[0].id
+              sfdx sfpowerkit:org:healthcheck -u HubOrg
+          
         
