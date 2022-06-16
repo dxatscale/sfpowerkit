@@ -4,15 +4,11 @@ on:
     branches: 
       - main
       - 'hotfix/*'
-    paths:
-      - '*'
-      - '!docs/*' 
       
 jobs:
   SmokeTest:
       name: Smoke Test PR
       runs-on: 'ubuntu-latest'     
-      
       steps:
         - uses: actions/checkout@v3
         - name: Setup Node.js environment
