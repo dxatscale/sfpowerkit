@@ -19,3 +19,17 @@ jobs:
           with:
             node-version: '14'
             registry-url: 'https://registry.npmjs.org'
+            
+        - name: Install SFDX
+          run: npm install -g  sfdx-cli
+          
+        - name: Install sfpowerkit
+          run: echo y | sfdx plugins:install sfpowerkit
+          
+        - name: Store Auth File
+          run: echo "${{ secrets.DEVHUB_SFDX_AUTH_URL }}" > ./authfile 
+        
+        - name: Authenitcate to DevHub
+          run: sfdx auth:sfdxurl:store -f authfile -a HubOrg
+          
+        
