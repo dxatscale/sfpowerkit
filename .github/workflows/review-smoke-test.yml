@@ -5,6 +5,8 @@ on:
       - main
       - 'hotfix/*'
       
+  workflow_dispatch:
+      
 jobs:
   SmokeTest:
       name: Smoke Test PR
