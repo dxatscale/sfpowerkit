@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: 
       - main
-      - hotfix/*
+      - 'hotfix/*'
     paths-ignore: 
       - 'docs/*' 
       
