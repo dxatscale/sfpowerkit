@@ -1,5 +1,5 @@
 
-name: Review
+name: Review-Smoke-Test
 
 # Controls when the workflow will run
 on:
