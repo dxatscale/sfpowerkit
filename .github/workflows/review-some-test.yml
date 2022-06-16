@@ -1,0 +1,22 @@
+name: Review-Smoke-Test
+on:
+  pull_request:
+    branches: 
+      - main
+      - 'hotfix/*'
+    paths:
+      - '*'
+      - '!docs/*' 
+      
+jobs:
+  SmokeTest:
+      name: Smoke Test PR
+      runs-on: 'ubuntu-latest'     
+      
+      steps:
+        - uses: actions/checkout@v3
+        - name: Setup Node.js environment
+          uses: actions/setup-node@v3.3.0
+          with:
+            node-version: '14'
+            registry-url: 'https://registry.npmjs.org'
