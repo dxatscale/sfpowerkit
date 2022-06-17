@@ -51,3 +51,22 @@ jobs:
               sfdx sfpowerkit:source:profile:reconcile -u HubOrg
           working-directory: testProject
         
+        - name: Smoke Test Package Commands 
+          run: |
+              set -euxo pipefail
+              sfdx sfpowerkit:package:version:info -u HubOrg
+              sfdx sfpowerkit:package:version:info -u HubOrg --json | jq -r .result[0].packageVersionId
+              sfdx sfpowerkit:package:version:codecoverage -i 04t2s000000LOsVAAW -v HubOrg 
+              sfdx sfpowerkit:package:version:codecoverage -i 04t2s000000LOsVAAW -v HubOrg --json | jq -r .result[0].packageVersionId
+          working-directory: testProject 
+          
+        - name: Smoke Test Pool Commands 
+          run: |
+              set -euxo pipefail 
+              sfdx sfpowerkit:pool:delete -t sfpowerkit -v HubOrg -a
+              sfdx sfpowerkit:pool:create -f './schemas/pool/scratchorg-poolconfig.json' -v HubOrg
+              sfdx sfpowerkit:pool:list -a -m -v HubOrg
+              sfdx sfpowerkit:pool:list -a -m -v HubOrg --json | jq -r .result
+              sfdx sfpowerkit:pool:fetch -t sfpowerkit -v HubOrg
+              sfdx sfpowerkit:pool:delete -t sfpowerkit -v HubOrg -a 
+          working-directory: testProject 
