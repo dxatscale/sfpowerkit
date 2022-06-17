@@ -41,4 +41,10 @@ jobs:
               sfdx sfpowerkit:org:orgcoverage -u HubOrg --json | jq -r .result.classCoverage[0].id
               sfdx sfpowerkit:org:healthcheck -u HubOrg
           
+        - name: Smoke Test Profile Commands
+          run: |
+              set -euxo pipefail
+              sfdx sfpowerkit:source:profile:retrieve -u HubOrg
+              sfdx sfpowerkit:source:profile:reconcile -u HubOrg
+          working-directory: 'src_salesforce_packages/profiles'
         
