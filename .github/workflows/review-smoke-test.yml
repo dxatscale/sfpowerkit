@@ -46,5 +46,4 @@ jobs:
               set -euxo pipefail
               sfdx sfpowerkit:source:profile:retrieve -u HubOrg
               sfdx sfpowerkit:source:profile:reconcile -u HubOrg
-          working-directory: 'src_salesforce_packages/profiles'
         
