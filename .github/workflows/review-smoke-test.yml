@@ -32,6 +32,9 @@ jobs:
         - name: Authenitcate to DevHub
           run: sfdx auth:sfdxurl:store -f authfile -a HubOrg
           
+        - name: Scaffold SFDX Project
+          run: sfdx force:project:create --projectname testProject --template standard 
+          
         - name: Smoke Test Org Commands
           run: | 
               set -euxo pipefail
@@ -46,4 +49,5 @@ jobs:
               set -euxo pipefail
               sfdx sfpowerkit:source:profile:retrieve -u HubOrg
               sfdx sfpowerkit:source:profile:reconcile -u HubOrg
+          working-directory: testProject
         
