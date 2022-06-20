@@ -64,7 +64,7 @@ jobs:
           run: |
               set -euxo pipefail 
               sfdx sfpowerkit:pool:delete -t sfpowerkit -v HubOrg -a
-              sfdx sfpowerkit:pool:create -f ./schemas/pool/scratchorg-poolconfig.json -v HubOrg
+              sfdx sfpowerkit:pool:create -f '../schemas/pool/scratchorg-poolconfig.json' -v HubOrg
               sfdx sfpowerkit:pool:list -a -m -v HubOrg
               sfdx sfpowerkit:pool:list -a -m -v HubOrg --json | jq -r .result
               sfdx sfpowerkit:pool:fetch -t sfpowerkit -v HubOrg
