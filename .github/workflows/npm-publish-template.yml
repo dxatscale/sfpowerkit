@@ -25,6 +25,9 @@ jobs:
         with:
           node-version: 16
           registry-url: https://registry.npmjs.org/
+          
+      - name: print version number
+        run: echo ${{ github.event.inputs.package_version }}
       
       - name: npm install
         if:  ${{ github.event.inputs.version }} == alpha || ${{ github.event.inputs.version }} == hotfix || ${{ github.event.inputs.version }} == review
