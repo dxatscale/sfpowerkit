@@ -16,6 +16,9 @@ jobs:
       - name: get version number
         id: getversion
         run: echo "::set-output name=version_number::$(jq -r ".version" package.json)"
+        
+      - name: print version number
+        run: echo ${{ steps.getversion.outputs.version_number }}
     
   alpha_build_deploy:
     uses: ./.github/workflows/npm-publish-template.yml
