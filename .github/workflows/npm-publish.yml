@@ -10,20 +10,12 @@ on:
         description: 'Version of sfpowerkit to build'
         required: true
         default: alpha
+      PKG_VERSION:
+        description: Package version number
+        required: false
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - run: npm ci
-      - run: npm test
-
   publish-npm:
-    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -31,7 +23,26 @@ jobs:
         with:
           node-version: 16
           registry-url: https://registry.npmjs.org/
-      - run: npm ci
-      - run: npm publish
+          
+      - name: update build number
+        if: inputs.version == alpha || inputs.version == hotfix
+        run: |
+            inputs.PKG_VERSION=$(jq -r ".version" package.json)
+            echo "##vso[build.updatebuildnumber]inputs.PKG_VERSION"
+      
+      - name: npm install
+        if: inputs.version == alpha || inputs.version == hotfix || inputs.version == review
+        run: npm install
+      
+      - name: publish sfpowerkit
+        run: npm publish --tag 
         env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          
+      - name: Promote Package
+        if: inputs.version == beta || inputs.version == latest
+        run: |
+            inputs.PKG_VERSION=$(jq -r ".version" package.json)
+            npm dist-tag add sfpowerkit@inputs.PKG_VERSION inputs.version
+      
