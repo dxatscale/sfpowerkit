@@ -47,7 +47,6 @@ jobs:
           version: beta
           package_version: ${{needs.get_version_number.outputs.version_number}}
           
-
   hotfix:
     runs-on: ubuntu-latest
     if: GITHUB_REF == 'refs/heads/hotfix/'
@@ -62,7 +61,7 @@ jobs:
           package_version: ${{needs.get_version_number.outputs.version_number}}
   
       - uses: ./.github/workflows/review-smoke-test.yml
-        name: smoke test alpha
+        name: smoke test hotfix
         
   prod:
     runs-on: ubuntu-latest
