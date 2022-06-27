@@ -28,11 +28,8 @@ jobs:
         
   alpha_smoke_test:
     uses: ./.github/workflows/review-smoke-test.yml
-    needs: get_version_number
+    needs: alpha_build_deploy
     if: ${{ github.ref }} == 'refs/heads/main'
-    with:
-        version: alpha
-        package_version: ${{needs.get_version_number.outputs.version_number}}
         
   beta:
     runs-on: ubuntu-latest
