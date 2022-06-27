@@ -12,7 +12,7 @@ jobs:
       
       - name: get version number
         id: getversion
-        run: echo "::set-output name=version_number::$(jq -r ".version" package.json)
+        run: echo "::set-output name=version_number::$(jq -r ".version" package.json)"
 
       - name: Print VN
         run: echo ${{steps.getversion.outputs.version_number}}
