@@ -25,12 +25,6 @@ jobs:
         with:
           node-version: 16
           registry-url: https://registry.npmjs.org/
-          
-      - name: Update build number
-        if: inputs.version == alpha || inputs.version == hotfix
-        run: |
-            INPUT_PKG_VERSION=$(jq -r ".version" package.json)
-            echo "##vso[build.updatebuildnumber]INPUT_PKG_VERSION"
       
       - name: npm install
         if:  ${{ github.event.inputs.version }} == alpha || ${{ github.event.inputs.version }} == hotfix || ${{ github.event.inputs.version }} == review
@@ -44,7 +38,7 @@ jobs:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           
       - name: Promote Package
-        if: inputs.version == beta || inputs.version == latest
+        if: ${{ github.event.inputs.version }} == beta || ${{ github.event.inputs.version }} == latest
         run: |
             inputs.PKG_VERSION=$(jq -r ".version" package.json)
             npm dist-tag add sfpowerkit@${{ github.event.inputs.package_version }} ${{ github.event.inputs.version }}
