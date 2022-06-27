@@ -20,7 +20,7 @@ jobs:
   alpha:
     runs-on: ubuntu-latest
     needs: get_version_number
-    if: GITHUB_REF == 'refs/heads/main'
+    if: ${{ GITHUB_REF }} == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v3
         
@@ -49,7 +49,7 @@ jobs:
           
   hotfix:
     runs-on: ubuntu-latest
-    if: GITHUB_REF == 'refs/heads/hotfix/'
+    if: ${{ GITHUB_REF }} == 'refs/heads/hotfix/'
     needs: get_version_number
     steps:
       - uses: actions/checkout@v3
