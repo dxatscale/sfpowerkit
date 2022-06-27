@@ -24,7 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         
-      - uses: ./.github/workflows/npm-publish.yml
+      - uses: ./.github/workflows/npm-publish-template.yml
         name: Build and Deploy alpha
         with: 
           version: alpha
@@ -41,7 +41,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         
-      - uses: ./.github/workflows/npm-publish.yml
+      - uses: ./.github/workflows/npm-publish-template.yml
         name: Promote to beta
         with: 
           version: beta
@@ -55,7 +55,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         
-      - uses: ./.github/workflows/npm-publish.yml
+      - uses: ./.github/workflows/npm-publish-template.yml
         name: Promote to Hotfix
         with: 
           version: hotfix
@@ -73,7 +73,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
         
-      - uses: ./.github/workflows/npm-publish.yml
+      - uses: ./.github/workflows/npm-publish-template.yml
         name: Promote to prod
         with: 
           version: latest
