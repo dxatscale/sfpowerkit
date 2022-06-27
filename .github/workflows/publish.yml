@@ -17,27 +17,29 @@ jobs:
         id: getversion
         run: echo "::set-output name=version_number::$(jq -r ".version" package.json)"
     
-  alpha:
-    runs-on: ubuntu-latest
+  alpha_build_deploy:
+    uses: ./.github/workflows/npm-publish-template.yml
     needs: get_version_number
     if: ${{ github.ref }} == 'refs/heads/main'
-    steps:
-      - uses: actions/checkout@v3
+    with:
+        version: alpha
+        package_version: ${{needs.get_version_number.outputs.version_number}}
+      
         
-      - uses: ./.github/workflows/npm-publish-template.yml
-        name: Build and Deploy alpha
-        with: 
-          version: alpha
-          package_version: ${{needs.get_version_number.outputs.version_number}}
-          
-      - uses: ./.github/workflows/review-smoke-test.yml
-        name: smoke test alpha
+  alpha_smoke_test:
+    uses: ./.github/workflows/review-smoke-test.yml
+    needs: get_version_number
+    if: ${{ github.ref }} == 'refs/heads/main'
+    with:
+        version: alpha
+        package_version: ${{needs.get_version_number.outputs.version_number}}
         
   beta:
     runs-on: ubuntu-latest
     needs: 
       - get_version_number
-      - alpha
+      - alpha_build_deploy
+      - alpha_smoke_test
     steps:
       - uses: actions/checkout@v3
         
