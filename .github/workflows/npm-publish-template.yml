@@ -32,7 +32,7 @@ jobs:
       
       - name: publish sfpowerkit
         if: ${{ github.event.inputs.version }} == alpha || ${{ github.event.inputs.version }} == hotfix
-        run: npm publish --tag ${{ github.event.inputs.package_version }}
+        run: npm publish --tag ${{ github.event.inputs.package_version }} --dry-run
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
