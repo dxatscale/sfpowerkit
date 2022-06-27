@@ -4,15 +4,78 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  
+  get_version_number: 
     runs-on: ubuntu-latest
-
-    steps:
+    outputs: 
+      version_number: ${{ steps.getversion.outputs.version_number }}
+    
+    steps: 
       - uses: actions/checkout@v3
       
       - name: get version number
         id: getversion
         run: echo "::set-output name=version_number::$(jq -r ".version" package.json)"
+    
+  alpha:
+    runs-on: ubuntu-latest
+    needs: get_version_number
+    if: GITHUB_REF == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v3
+        
+      - uses: ./.github/workflows/npm-publish.yml
+        name: Build and Deploy alpha
+        with: 
+          version: alpha
+          package_version: ${{needs.get_version_number.outputs.version_number}}
+          
+      - uses: ./.github/workflows/review-smoke-test.yml
+        name: smoke test alpha
+        
+  beta:
+    runs-on: ubuntu-latest
+    needs: 
+      - get_version_number
+      - alpha
+    steps:
+      - uses: actions/checkout@v3
+        
+      - uses: ./.github/workflows/npm-publish.yml
+        name: Promote to beta
+        with: 
+          version: beta
+          package_version: ${{needs.get_version_number.outputs.version_number}}
+          
 
-      - name: Print VN
-        run: echo ${{steps.getversion.outputs.version_number}}
+  hotfix:
+    runs-on: ubuntu-latest
+    if: GITHUB_REF == 'refs/heads/hotfix/'
+    needs: get_version_number
+    steps:
+      - uses: actions/checkout@v3
+        
+      - uses: ./.github/workflows/npm-publish.yml
+        name: Promote to Hotfix
+        with: 
+          version: hotfix
+          package_version: ${{needs.get_version_number.outputs.version_number}}
+  
+      - uses: ./.github/workflows/review-smoke-test.yml
+        name: smoke test alpha
+        
+  prod:
+    runs-on: ubuntu-latest
+    needs: 
+      - get_version_number
+      - beta
+      - hotfix
+    steps:
+      - uses: actions/checkout@v3
+        
+      - uses: ./.github/workflows/npm-publish.yml
+        name: Promote to prod
+        with: 
+          version: latest
+          package_version: ${{needs.get_version_number.outputs.version_number}}
+    
