@@ -16,7 +16,7 @@ export default class ScratchOrgUtils {
 
     public static async checkForNewVersionCompatible(hubOrg: Org) {
         let conn = hubOrg.getConnection();
-        let expectedValues = ['In Progress', 'Available', 'Allocate', 'Assigned'];
+        let expectedValues = ['In Progress', 'Available', 'Allocate', 'Assigned', 'Return'];
         let availableValues: string[] = [];
         if (!this.isVersionCompatibilityChecked) {
             await retry(
@@ -28,7 +28,7 @@ export default class ScratchOrgUtils {
                                 this.sfdxAuthUrlFieldExists = true;
                             }
 
-                            if (field.name === 'Allocation_status__c' && field.picklistValues.length === 4) {
+                            if (field.name === 'Allocation_status__c' && field.picklistValues.length === 5) {
                                 for (let picklistValue of field.picklistValues) {
                                     if (picklistValue.active) {
                                         availableValues.push(picklistValue.value);
