@@ -15,8 +15,8 @@ jobs:
     if: github.ref == 'refs/heads/main'
     uses: ./.github/workflows/review-smoke-test.yml
     needs: alpha_build_deploy
+    secrets: inherit
 
-        
   beta:
     uses: ./.github/workflows/npm-publish-template.yml
     needs: 
@@ -35,6 +35,7 @@ jobs:
     uses: ./.github/workflows/review-smoke-test.yml
     needs: hotfix_build_deploy
     if: github.ref == 'refs/heads/hotfix/'
+    secrets: inherit
         
   prod:
     uses: ./.github/workflows/npm-publish-template.yml
