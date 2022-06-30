@@ -40,5 +40,4 @@ jobs:
       - name: Promote Package
         if: ${{ inputs.version }} == beta || ${{ inputs.version }} == latest
         run: |
-            inputs.PKG_VERSION=$(jq -r ".version" package.json)
             npm dist-tag add sfpowerkit@${{ steps.getversion.outputs.version_number }} ${{ steps.getversion.outputs.version_number }}
