@@ -28,7 +28,7 @@ jobs:
           run: echo y | sfdx plugins:install sfpowerkit
           
         - name: Store Auth File
-          run: echo "${{ secrets.DEVHUB_SFDX_AUTH_URL }}" > ./authfile 
+          run: echo ${{ secrets.DEVHUB_SFDX_AUTH_URL }} > ./authfile 
         
         - name: Authenitcate to DevHub
           run: sfdx auth:sfdxurl:store -f authfile -a HubOrg
