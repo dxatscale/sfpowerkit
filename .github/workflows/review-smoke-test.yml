@@ -4,10 +4,10 @@ on:
     branches: 
       - main
       - 'hotfix/*'
-      
+
   workflow_dispatch:
   workflow_call:
-      
+
 jobs:
   SmokeTest:
       name: Smoke Test PR
@@ -20,7 +20,7 @@ jobs:
           with:
             node-version: '14'
             registry-url: 'https://registry.npmjs.org'
-            
+
         - name: Install SFDX
           run: npm install -g  sfdx-cli
           
