@@ -24,7 +24,10 @@ jobs:
           
       - name: get version number
         id: getversion
-        run: echo "::set-output name=version_number::$(jq -r ".version" package.json)"
+        run: |
+            echo "::set-output name=version_number::$(jq -r ".version" package.json)"
+            echo ${{github.ref}}
+
       
       - name: npm install
         if:  ${{ inputs.version }} == alpha || ${{ inputs.version }} == hotfix || ${{ inputs.version }} == review
