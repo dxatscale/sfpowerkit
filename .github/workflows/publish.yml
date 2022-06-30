@@ -26,6 +26,7 @@ jobs:
           
   hotfix_build_deploy:
     uses: ./.github/workflows/npm-publish-template.yml
+    if: ${{ github.ref }} == 'refs/heads/hotfix/'
     with: 
       version: hotfix
   
