@@ -6,13 +6,13 @@ on:
 jobs:
 
   alpha_build_deploy:
-    if: ${{ github.ref }} == 'refs/heads/main'
+    if:  github.ref == 'refs/heads/main'
     uses: ./.github/workflows/npm-publish-template.yml
     with:
         version: alpha
         
   alpha_smoke_test:
-    if: ${{ github.ref }} == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main'
     uses: ./.github/workflows/review-smoke-test.yml
     needs: alpha_build_deploy
 
@@ -26,7 +26,7 @@ jobs:
         version: beta
           
   hotfix_build_deploy:
-    if: ${{ github.ref }} == 'refs/heads/hotfix/'
+    if: github.ref == 'refs/heads/hotfix/'
     uses: ./.github/workflows/npm-publish-template.yml
     with: 
       version: hotfix
@@ -34,7 +34,7 @@ jobs:
   smoke_test_hotfix:
     uses: ./.github/workflows/review-smoke-test.yml
     needs: hotfix_build_deploy
-    if: ${{ github.ref }} == 'refs/heads/hotfix/'
+    if: github.ref == 'refs/heads/hotfix/'
         
   prod:
     uses: ./.github/workflows/npm-publish-template.yml
