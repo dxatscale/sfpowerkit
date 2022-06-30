@@ -17,42 +17,28 @@ jobs:
     if: ${{ github.ref }} == 'refs/heads/main'
         
   beta:
-    runs-on: ubuntu-latest
+    uses: ./.github/workflows/review-smoke-test.yml
     needs: 
       - alpha_build_deploy
       - alpha_smoke_test
-    steps:
-      - uses: actions/checkout@v3
-        
-      - uses: ./.github/workflows/npm-publish-template.yml
-        name: Promote to beta
-        with: 
-          version: beta
+    with: 
+        version: beta
           
-  hotfix:
-    runs-on: ubuntu-latest
-    if: ${{ github.ref }} == 'refs/heads/hotfix/'
-    steps:
-      - uses: actions/checkout@v3
-        
-      - uses: ./.github/workflows/npm-publish-template.yml
-        name: Promote to Hotfix
-        with: 
-          version: hotfix
+  hotfix_build_deploy:
+    uses: ./.github/workflows/npm-publish-template.yml
+    with: 
+      version: hotfix
   
-      - uses: ./.github/workflows/review-smoke-test.yml
-        name: smoke test hotfix
+  smoke_test_hotfix:
+    uses: ./.github/workflows/review-smoke-test.yml
+    needs: hotfix_build_deploy
+    if: ${{ github.ref }} == 'refs/heads/hotfix/'
         
   prod:
-    runs-on: ubuntu-latest
+    uses: ./.github/workflows/review-smoke-test.yml
     needs: 
       - beta
-      - hotfix
-    steps:
-      - uses: actions/checkout@v3
-        
-      - uses: ./.github/workflows/npm-publish-template.yml
-        name: Promote to prod
-        with: 
-          version: latest
+      - hotfix_build_deploy
+    with: 
+      version: latest
     
