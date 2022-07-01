@@ -4,7 +4,10 @@ on:
     branches: 
       - main
       - 'hotfix/*'
-      
+
+  workflow_dispatch:
+  workflow_call:
+
 jobs:
   SmokeTest:
       name: Smoke Test PR
@@ -17,3 +20,54 @@ jobs:
           with:
             node-version: '14'
             registry-url: 'https://registry.npmjs.org'
+
+        - name: Install SFDX
+          run: npm install -g  sfdx-cli
+          
+        - name: Install sfpowerkit
+          run: echo y | sfdx plugins:install sfpowerkit
+          
+        - name: Store Auth File
+          run: echo ${{ secrets.DEVHUB_SFDX_AUTH_URL }} > ./authfile 
+        
+        - name: Authenitcate to DevHub
+          run: sfdx auth:sfdxurl:store -f authfile -a HubOrg
+          
+        - name: Scaffold SFDX Project
+          run: sfdx force:project:create --projectname testProject --template standard 
+          
+        - name: Smoke Test Org Commands
+          run: | 
+              set -euxo pipefail
+              sfdx sfpowerkit:org:manifest:build -o manifest.xml -u HubOrg 
+              sfdx sfpowerkit:org:manifest:build -o manifest.xml -u HubOrg --json | jq -r .result.result
+              sfdx sfpowerkit:org:orgcoverage -u HubOrg
+              sfdx sfpowerkit:org:orgcoverage -u HubOrg --json | jq -r .result.classCoverage[0].id
+              sfdx sfpowerkit:org:healthcheck -u HubOrg
+          
+        - name: Smoke Test Profile Commands
+          run: |
+              set -euxo pipefail
+              sfdx sfpowerkit:source:profile:retrieve -u HubOrg
+              sfdx sfpowerkit:source:profile:reconcile -u HubOrg
+          working-directory: testProject
+        
+        - name: Smoke Test Package Commands 
+          run: |
+              set -euxo pipefail
+              sfdx sfpowerkit:package:version:info -u HubOrg
+              sfdx sfpowerkit:package:version:info -u HubOrg --json | jq -r .result[0].packageVersionId
+              sfdx sfpowerkit:package:version:codecoverage -i 04t5f000000NrAJAA0 -v HubOrg 
+              sfdx sfpowerkit:package:version:codecoverage -i 04t5f000000NrAJAA0 -v HubOrg --json | jq -r .result[0].packageVersionId
+          working-directory: testProject 
+          
+        - name: Smoke Test Pool Commands 
+          run: |
+              set -euxo pipefail 
+              sfdx sfpowerkit:pool:delete -t sfpowerkit -v HubOrg -a
+              sfdx sfpowerkit:pool:create -f '../schemas/pool/scratchorg-poolconfig.json' -v HubOrg
+              sfdx sfpowerkit:pool:list -a -m -v HubOrg
+              sfdx sfpowerkit:pool:list -a -m -v HubOrg --json | jq -r .result
+              sfdx sfpowerkit:pool:fetch -t sfpowerkit -v HubOrg
+              sfdx sfpowerkit:pool:delete -t sfpowerkit -v HubOrg -a 
+          working-directory: testProject 
