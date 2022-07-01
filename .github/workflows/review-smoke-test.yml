@@ -25,7 +25,7 @@ jobs:
           run: npm install -g  sfdx-cli
           
         - name: Install sfpowerkit
-          run: echo y | sfdx plugins:install sfpowerkit
+          run: echo y | sfdx plugins:link
           
         - name: Store Auth File
           run: echo ${{ secrets.DEVHUB_SFDX_AUTH_URL }} > ./authfile 
