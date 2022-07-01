@@ -24,6 +24,9 @@ jobs:
         - name: Install SFDX
           run: npm install -g  sfdx-cli
           
+        - name: Run NPM Install
+          run: npm install
+          
         - name: Install sfpowerkit
           run: echo y | sfdx plugins:link
           
