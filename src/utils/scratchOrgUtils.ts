@@ -28,7 +28,7 @@ export default class ScratchOrgUtils {
                                 this.sfdxAuthUrlFieldExists = true;
                             }
 
-                            if (field.name === 'Allocation_status__c' && field.picklistValues.length === 5) {
+                            if (field.name === 'Allocation_status__c' && field.picklistValues.length >= 4) {
                                 for (let picklistValue of field.picklistValues) {
                                     if (picklistValue.active) {
                                         availableValues.push(picklistValue.value);
@@ -54,7 +54,7 @@ export default class ScratchOrgUtils {
                 Sfpowerkit.log(
                     `Required Prerequisite values in ScratchOrgInfo.Allocation_status__c field is missing in the DevHub, expected values are : ${expectedValues}\n` +
                         `Switching back to previous version, we request you to update ScratchOrgInfo.Allocation_status__c field in the DevHub \n` +
-                        `For more information Please refer https://github.com/Accenture/sfpowerkit/blob/main/src_saleforce_packages/scratchorgpool/force-app/main/default/objects/ScratchOrgInfo/fields/Allocation_status__c.field-meta.xml \n`,
+                        `For more information refer to https://github.com/dxatscale/sfpower-scratchorg-pool \n`,
                     LoggerLevel.WARN
                 );
             }
