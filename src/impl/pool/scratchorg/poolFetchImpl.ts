@@ -28,14 +28,11 @@ export default class PoolFetchImpl {
     }
 
     public async execute(): Promise<ScratchOrg> {
-        let isNewVersionCompatible = await ScratchOrgUtils.checkForNewVersionCompatible(this.hubOrg);
         const results = (await ScratchOrgUtils.getScratchOrgsByTag(this.tag, this.hubOrg, this.mypool, true)) as any;
 
         let availableSo = [];
         if (results.records.length > 0) {
-            availableSo = !isNewVersionCompatible
-                ? results.records
-                : results.records.filter((soInfo) => soInfo.Allocation_status__c === 'Available');
+            availableSo = results.records.filter((soInfo) => soInfo.Allocation_status__c === 'Available');
         }
 
         let emaiId;

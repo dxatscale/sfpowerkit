@@ -26,7 +26,6 @@ export default class PoolDeleteImpl {
     }
 
     public async execute(): Promise<ScratchOrg[]> {
-        await ScratchOrgUtils.checkForNewVersionCompatible(this.hubOrg);
         const results = (await ScratchOrgUtils.getScratchOrgsByTag(
             this.tag,
             this.hubOrg,

@@ -42,7 +42,6 @@ export default class PoolCreateImpl {
     }
 
     public async poolScratchOrgs(): Promise<boolean> {
-        await ScratchOrgUtils.checkForNewVersionCompatible(this.hubOrg);
         let scriptExecPromises: Array<Promise<ScriptExecutionResult>> = new Array();
         let ipRangeExecPromises: Array<Promise<{
             username: string;
@@ -56,7 +55,7 @@ export default class PoolCreateImpl {
 
         if (!preRequisiteCheck) {
             Sfpowerkit.log(
-                'Required Prerequisite fields are missing in the DevHub, Please look into the wiki to getting the fields deployed in DevHub',
+                'Required Prerequisite fields are missing in the DevHub, Refer to https://github.com/dxatscale/sfpower-scratchorg-pool',
                 LoggerLevel.ERROR
             );
             return false;
@@ -170,7 +169,7 @@ export default class PoolCreateImpl {
                         {
                             Id: scratchOrg.recordId,
                             Pooltag__c: this.poolConfig.pool.tag,
-                            Allocation_status__c: ScratchOrgUtils.isNewVersionCompatible ? 'Available' : '',
+                            Allocation_status__c: 'Available',
                             Password__c: scratchOrg.password,
                             SfdxAuthUrl__c: scratchOrg.sfdxAuthUrl,
                         },
@@ -589,7 +588,7 @@ export default class PoolCreateImpl {
                         {
                             Id: scratchOrg.recordId,
                             Pooltag__c: this.poolConfig.pool.tag,
-                            Allocation_status__c: ScratchOrgUtils.isNewVersionCompatible ? 'Available' : '',
+                            Allocation_status__c: 'Available',
                             Password__c: scratchOrg.password,
                             SfdxAuthUrl__c: scratchOrg.sfdxAuthUrl,
                         },
