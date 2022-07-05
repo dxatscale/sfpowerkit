@@ -333,21 +333,21 @@ export default class PoolCreateImpl {
 
             await ScratchOrgUtils.getScratchOrgRecordId(poolUser.scratchOrgs, this.hubOrg);
 
-            if (ScratchOrgUtils.isNewVersionCompatible) {
-                let scratchOrgInprogress = [];
 
-                poolUser.scratchOrgs.forEach((scratchOrg) => {
-                    scratchOrgInprogress.push({
-                        Id: scratchOrg.recordId,
-                        Pooltag__c: this.poolConfig.pool.tag,
-                        Allocation_status__c: 'In Progress',
-                    });
+            let scratchOrgInprogress = [];
+
+            poolUser.scratchOrgs.forEach((scratchOrg) => {
+                scratchOrgInprogress.push({
+                    Id: scratchOrg.recordId,
+                    Pooltag__c: this.poolConfig.pool.tag,
+                    Allocation_status__c: 'In Progress',
                 });
+            });
 
-                if (scratchOrgInprogress.length > 0) {
-                    //set pool tag
-                    await ScratchOrgUtils.setScratchOrgInfo(scratchOrgInprogress, this.hubOrg);
-                }
+            if (scratchOrgInprogress.length > 0) {
+                //set pool tag
+                await ScratchOrgUtils.setScratchOrgInfo(scratchOrgInprogress, this.hubOrg);
+
             }
         }
     }

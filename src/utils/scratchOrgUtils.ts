@@ -10,7 +10,6 @@ const child_process = require('child_process');
 
 const ORDER_BY_FILTER = ' ORDER BY CreatedDate ASC';
 export default class ScratchOrgUtils {
-    public static isNewVersionCompatible = false;
     private static sfdxAuthUrlFieldExists = false;
 
     public static async getScratchOrgLimits(hubOrg: Org, apiversion: string) {

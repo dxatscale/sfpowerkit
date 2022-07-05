@@ -39,10 +39,7 @@ export default class PoolListImpl {
                 soDetail.expiryDate = element.ExpirationDate;
                 if (element.Allocation_status__c === 'Assigned') {
                     soDetail.status = 'In use';
-                } else if (
-                    (ScratchOrgUtils.isNewVersionCompatible && element.Allocation_status__c === 'Available') ||
-                    (!ScratchOrgUtils.isNewVersionCompatible && !element.Allocation_status__c)
-                ) {
+                } else if (element.Allocation_status__c === 'Available') {
                     soDetail.status = 'Available';
                 } else {
                     soDetail.status = 'Provisioning in progress';
