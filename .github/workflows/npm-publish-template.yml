@@ -30,17 +30,17 @@ jobs:
 
       
       - name: npm install
-        if:  ${{ inputs.version }} == alpha || ${{ inputs.version }} == hotfix || ${{ inputs.version }} == review
+        if:  ${{ inputs.version }} == 'alpha' || ${{ inputs.version }} == 'hotfix' || ${{ inputs.version }} == 'review'
         run: npm install
       
       - name: publish sfpowerkit
-        if: ${{ inputs.version }} == alpha || ${{ inputs.version }} == hotfix
+        if: ${{ inputs.version }} == 'alpha' || ${{ inputs.version }} == 'hotfix'
         run: npm publish --tag ${{ inputs.version }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           
       - name: Promote Package
-        if: ${{ inputs.version }} == beta || ${{ inputs.version }} == latest
+        if: ${{ inputs.version }} == 'beta' || ${{ inputs.version }} == 'latest'
         run: |
             npm dist-tag add sfpowerkit@${{ steps.getversion.outputs.version_number }} ${{ inputs.version }}
