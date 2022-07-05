@@ -5,6 +5,12 @@ name: Publish sfpowerkit to NPM
 
 on: 
   workflow_dispatch:
+    inputs: 
+      version:
+        description: 'Version of sfpowerkit to build'
+        required: true
+        default: alpha
+        type: string
   workflow_call:
     inputs: 
       version:
