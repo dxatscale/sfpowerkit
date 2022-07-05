@@ -40,8 +40,8 @@ export default class PoolListImpl {
                 if (element.Allocation_status__c === 'Assigned') {
                     soDetail.status = 'In use';
                 } else if (
-                    (ScratchOrgUtils.isNewVersionCompatible && element.Allocation_status__c === 'Available') ||
-                    (!ScratchOrgUtils.isNewVersionCompatible && !element.Allocation_status__c)
+                    (element.Allocation_status__c === 'Available') ||
+                    (!element.Allocation_status__c)
                 ) {
                     soDetail.status = 'Available';
                 } else {
