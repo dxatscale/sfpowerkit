@@ -10,6 +10,7 @@ jobs:
     uses: ./.github/workflows/npm-publish-template.yml
     with:
         version: alpha
+    secrets: inherit
         
   alpha_smoke_test:
     if: github.ref == 'refs/heads/main'
@@ -24,12 +25,14 @@ jobs:
       - alpha_smoke_test
     with: 
         version: beta
+    secrets: inherit
           
   hotfix_build_deploy:
     if: github.ref == 'refs/heads/hotfix/'
     uses: ./.github/workflows/npm-publish-template.yml
     with: 
       version: hotfix
+    secrets: inherit
   
   smoke_test_hotfix:
     uses: ./.github/workflows/review-smoke-test.yml
@@ -44,4 +47,5 @@ jobs:
       - hotfix_build_deploy
     with: 
       version: latest
+    secrets: inherit
     
