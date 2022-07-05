@@ -46,7 +46,7 @@ export default class ScratchOrgUtils {
             this.isNewVersionCompatible =
                 expectedValues.filter((item) => {
                     return !availableValues.includes(item);
-                }).length == 0
+                }).length <= 1
                     ? true
                     : false;
 
