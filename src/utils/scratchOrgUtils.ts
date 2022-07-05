@@ -11,57 +11,7 @@ const child_process = require('child_process');
 const ORDER_BY_FILTER = ' ORDER BY CreatedDate ASC';
 export default class ScratchOrgUtils {
     public static isNewVersionCompatible = false;
-    private static isVersionCompatibilityChecked = false;
     private static sfdxAuthUrlFieldExists = false;
-
-    public static async checkForNewVersionCompatible(hubOrg: Org) {
-        let conn = hubOrg.getConnection();
-        let expectedValues = ['In Progress', 'Available', 'Allocate', 'Assigned'];
-        let availableValues: string[] = [];
-        if (!this.isVersionCompatibilityChecked) {
-            await retry(
-                async (bail) => {
-                    const describeResult: any = await conn.sobject('ScratchOrgInfo').describe();
-                    if (describeResult) {
-                        for (const field of describeResult.fields) {
-                            if (field.name === 'SfdxAuthUrl__c') {
-                                this.sfdxAuthUrlFieldExists = true;
-                            }
-
-                            if (field.name === 'Allocation_status__c' && field.picklistValues.length === 4) {
-                                for (let picklistValue of field.picklistValues) {
-                                    if (picklistValue.active) {
-                                        availableValues.push(picklistValue.value);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                },
-                { retries: 3, minTimeout: 30000 }
-            );
-
-            this.isVersionCompatibilityChecked = true;
-            //If there are values returned, its not compatible
-            this.isNewVersionCompatible =
-                expectedValues.filter((item) => {
-                    return !availableValues.includes(item);
-                }).length == 0
-                    ? true
-                    : false;
-
-            if (!this.isNewVersionCompatible) {
-                Sfpowerkit.log(
-                    `Required Prerequisite values in ScratchOrgInfo.Allocation_status__c field is missing in the DevHub, expected values are : ${expectedValues}\n` +
-                        `Switching back to previous version, we request you to update ScratchOrgInfo.Allocation_status__c field in the DevHub \n` +
-                        `For more information Please refer https://github.com/Accenture/sfpowerkit/blob/main/src_saleforce_packages/scratchorgpool/force-app/main/default/objects/ScratchOrgInfo/fields/Allocation_status__c.field-meta.xml \n`,
-                    LoggerLevel.WARN
-                );
-            }
-        }
-
-        return this.isNewVersionCompatible;
-    }
 
     public static async getScratchOrgLimits(hubOrg: Org, apiversion: string) {
         let conn = hubOrg.getConnection();
@@ -280,14 +230,11 @@ export default class ScratchOrgUtils {
                 if (isMyPool) {
                     query = query + ` AND createdby.username = '${hubOrg.getUsername()}' `;
                 }
-                if (unAssigned && this.isNewVersionCompatible) {
+                if (unAssigned) {
                     // if new version compatible get Available / In progress
                     query =
                         query + `AND ( Allocation_status__c ='Available' OR Allocation_status__c = 'In Progress' ) `;
-                } else if (unAssigned && !this.isNewVersionCompatible) {
-                    // if new version not compatible get not Assigned
-                    query = query + `AND Allocation_status__c !='Assigned' `;
-                }
+                } 
                 query = query + ORDER_BY_FILTER;
                 Sfpowerkit.log('QUERY:' + query, LoggerLevel.TRACE);
                 const results = (await hubConn.query(query)) as any;
