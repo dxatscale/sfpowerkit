@@ -83,5 +83,5 @@ jobs:
       environment: sfpowerkit-prod
     secrets:
       npm-token: ${{ secrets.NPM_TOKEN }}
-    if: if: ${{ always() && (github.ref == 'refs/heads/main' && needs.hotfix.result == 'success' || github.ref == 'refs/heads/develop' && needs.beta.result == 'success')  }}
+    if: ${{ always() && (github.ref == 'refs/heads/main' && needs.hotfix.result == 'success' || github.ref == 'refs/heads/develop' && needs.beta.result == 'success')  }}
     needs: [hotfix, beta]
