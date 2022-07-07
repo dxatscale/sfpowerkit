@@ -17,7 +17,7 @@ on:
 jobs: 
   build:
     name: 'build packages'
-    uses: 
+    uses: buildPackage.yml
     with: 
       version: ${{ github.ref }}
       publish: true
@@ -30,13 +30,9 @@ jobs:
   test:
     name: 'smoke test'
     uses: ./.github/workflows/review-smoke-test.yml
-    environment: test
-    runs-on: ubuntu-latest
+    with:
+      environment: test
     needs: [build]
-    steps:
-      - name: test builds
-        run:  |
-          echo "🍏 This job is just a placeholder"
   
   hotfix:
     name: 'sfpowerkit hotfix'
