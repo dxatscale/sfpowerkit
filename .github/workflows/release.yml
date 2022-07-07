@@ -17,7 +17,7 @@ on:
 jobs: 
   build:
     name: 'build packages'
-    uses: buildPackage.yml
+    uses: ./.github/workflows/buildPackage.yml
     with: 
       version: ${{ github.ref }}
       publish: true
