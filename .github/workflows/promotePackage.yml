@@ -1,0 +1,52 @@
+name: 'Promote Package'
+
+on:
+  workflow_call:
+    inputs:
+      version:
+        type: string
+        required: true
+      pathToPackageJson:
+        type: string
+        required: true
+      environment:
+        type: string
+        required: true
+    secrets:
+      npm-token:
+        required: true
+
+
+jobs:
+  promotePackage:
+    name: 'promote package'
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+          registry-url: https://registry.npmjs.org/
+
+      - name: 'Set Git Config'
+        run: |
+          git config --global user.email "ciuser@dxatscale.io"
+          git config --global user.name "ciuser"
+          
+      - name: 'Create .npmrc file in HOME directory'
+        run: |
+           echo "//registry.npmjs.org/:_authToken=${AUTH_TOKEN}" > ~/.npmrc
+        env:
+          AUTH_TOKEN: ${{ secrets.npm-token }}
+
+      - name: 'Promote package'
+        run: |
+          PKG_NAME=$(jq -r ".name" ${{ inputs.pathToPackageJson }})
+          PKG_VERSION=$(jq -r ".version" ${{ inputs.pathToPackageJson }})
+          npm dist-tag add $PKG_NAME@$PKG_VERSION ${{ inputs.version }}
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.npm-token }}

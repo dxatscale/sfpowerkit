@@ -1,0 +1,84 @@
+#This pipeline builds sfpowerkit 
+
+name: 'Release' 
+
+on: 
+  push:
+    branches:
+      - main
+      - develop
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
+      - 'decision records/**'
+  
+  workflow_dispatch:
+
+jobs: 
+  build:
+    name: 'build packages'
+    uses: ./.github/workflows/buildPackage.yml
+    with: 
+      version: ${{ github.ref }}
+      publish: true
+      environment: build
+    secrets: 
+      npm-token: ${{ secrets.NPM_TOKEN }}
+    concurrency: 
+      group: build
+
+  test:
+    name: 'smoke test'
+    uses: ./.github/workflows/review-smoke-test.yml
+    with:
+      environment: test
+    secrets: inherit
+    needs: [build]
+  
+  hotfix:
+    name: 'sfpowerkit hotfix'
+    uses: ./.github/workflows/promotePackage.yml
+    with:
+      version: 'hotfix'
+      pathToPackageJson: 'package.json'
+      environment: sfpowerkit-hotfix
+    secrets:
+      npm-token: ${{ secrets.NPM_TOKEN }}
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: test
+
+  alpha:
+    name: 'sfpowerkit alpha'
+    uses: ./.github/workflows/promotePackage.yml
+    with:
+      version: 'alpha'
+      pathToPackageJson: 'package.json'
+      environment: sfpowerkit-alpha
+    secrets:
+      npm-token: ${{ secrets.NPM_TOKEN }}
+    if: ${{ github.ref == 'refs/heads/develop' }}
+    needs: test
+
+  beta:
+    name: 'sfpowerkit beta'
+    uses: ./.github/workflows/promotePackage.yml
+    with:
+      version: 'beta'
+      pathToPackageJson: 'package.json'
+      environment: sfpowerkit-beta
+    secrets:
+      npm-token: ${{ secrets.NPM_TOKEN }}
+    if: ${{ github.ref == 'refs/heads/develop' }}
+    needs: alpha 
+
+  prod:
+    name: 'sfpowerkit prod'
+    uses: ./.github/workflows/promotePackage.yml
+    with:
+      version: 'latest'
+      pathToPackageJson: 'package.json'
+      environment: sfpowerkit-prod
+    secrets:
+      npm-token: ${{ secrets.NPM_TOKEN }}
+    if: ${{ always() && (github.ref == 'refs/heads/main' && needs.hotfix.result == 'success' || github.ref == 'refs/heads/develop' && needs.beta.result == 'success')  }}
+    needs: [hotfix, beta]
