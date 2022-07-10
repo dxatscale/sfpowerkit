@@ -12,6 +12,23 @@ const ORDER_BY_FILTER = ' ORDER BY CreatedDate ASC';
 export default class ScratchOrgUtils {
     private static sfdxAuthUrlFieldExists = false;
 
+    public static async checkForSFDXAuthURLField(hubOrg: Org) {
+        let conn = hubOrg.getConnection();
+        await retry(
+            async (bail) => {
+                const describeResult: any = await conn.sobject('ScratchOrgInfo').describe();
+                if (describeResult) {
+                    for (const field of describeResult.fields) {
+                        if (field.name === 'SfdxAuthUrl__c') {
+                            this.sfdxAuthUrlFieldExists = true;
+                        }
+                    }
+                }
+            },
+            { retries: 3, minTimeout: 30000 }
+        );
+    }
+
     public static async getScratchOrgLimits(hubOrg: Org, apiversion: string) {
         let conn = hubOrg.getConnection();
 
@@ -313,8 +330,10 @@ export default class ScratchOrgUtils {
         }, {});
 
     public static async checkForPreRequisite(hubOrg: Org) {
-        let hubConn = hubOrg.getConnection();
 
+        await this.checkForSFDXAuthURLField(hubOrg);
+
+        let hubConn = hubOrg.getConnection();
         let query = `SELECT QualifiedApiName FROM FieldDefinition WHERE EntityDefinition.QualifiedApiName = 'ScratchOrgInfo' AND QualifiedApiName = 'Allocation_status__c'`;
         Sfpowerkit.log('QUERY:' + query, LoggerLevel.TRACE);
 

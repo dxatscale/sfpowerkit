@@ -30,6 +30,13 @@ export default class PoolFetchImpl {
     public async execute(): Promise<ScratchOrg> {
         const results = (await ScratchOrgUtils.getScratchOrgsByTag(this.tag, this.hubOrg, this.mypool, true)) as any;
 
+        let preRequisiteCheck = await ScratchOrgUtils.checkForPreRequisite(this.hubOrg);
+        if (!preRequisiteCheck) {
+            throw new Error(
+                'Required Prerequisite fields are missing in the DevHub, Refer to https://github.com/dxatscale/sfpower-scratchorg-pool'
+            );
+        }
+
         let availableSo = [];
         if (results.records.length > 0) {
             availableSo = results.records.filter((soInfo) => soInfo.Allocation_status__c === 'Available');
