@@ -4,6 +4,7 @@ on:
     branches:
       - main
       - 'hotfix/*'
+      - 'develop'
 
   workflow_dispatch:
   workflow_call:
