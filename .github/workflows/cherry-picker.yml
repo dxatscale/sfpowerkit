@@ -1,0 +1,21 @@
+name: PR for release branch
+on:
+  push:
+    branches:
+      - main
+jobs:
+  release_pull_request:
+    runs-on: ubuntu-latest
+    name: release_pull_request
+    steps:
+    - name: checkout
+      uses: actions/checkout@v1
+    - name: Create PR to branch
+      uses: gorillio/github-action-cherry-pick@master
+      with:
+        pr_branch: 'develop'
+        pr_labels: 'autocreated, main'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITBOT_EMAIL: dxatscale@accenture.com
+        DRY_RUN: false
