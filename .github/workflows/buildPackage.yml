@@ -41,10 +41,6 @@ jobs:
         run: |
             npm install
             
-<<<<<<< HEAD
       - run: npm publish --access public --tag ${{ inputs.version }}
-=======
-      - run: npm publish --access public
->>>>>>> 0128705 (parent 928c65c84deeace9279cf3b19f4968f69302508c (#704))
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm-token}}
