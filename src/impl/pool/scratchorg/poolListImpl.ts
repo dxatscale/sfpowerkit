@@ -18,6 +18,9 @@ export default class PoolListImpl {
     }
 
     public async execute(): Promise<ScratchOrg[]> {
+
+        await ScratchOrgUtils.checkForPreRequisite(this.hubOrg);
+
         const results = (await ScratchOrgUtils.getScratchOrgsByTag(
             this.tag,
             this.hubOrg,
