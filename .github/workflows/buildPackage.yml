@@ -1,0 +1,46 @@
+#This workflow is used as a template to build the sfpowerkit plugin
+
+name: 'Build Packages'
+
+on: 
+  workflow_call:
+    inputs:
+      version:
+        type: string
+        default: ''
+      publish:
+        type: boolean
+        default: false
+      environment:
+        type: string
+        required: true
+    secrets:
+      npm-token:
+        required: false
+
+jobs:
+  build:
+    name: 'build packages'
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          registry-url: https://registry.npmjs.org/
+
+      - name: 'Set Git Config'
+        run: |
+          git config --global user.email "ciuser@dxatscale.io"
+          git config --global user.name "ciuser"
+
+      - name: 'Build Package'
+        run: |
+            npm install
+            
+      - run: npm publish --access public --tag ${{ inputs.version }}
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm-token}}
