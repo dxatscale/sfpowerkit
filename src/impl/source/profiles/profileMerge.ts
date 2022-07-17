@@ -728,6 +728,8 @@ export default class ProfileMerge extends ProfileActions {
                 let profileObj: Profile;
                 let indices = _.keys(_.pickBy(localProfiles, { name: profileObjFromServer.fullName }));
                 for (const index of indices) {
+                    Sfpowerkit.log('Reconciling  Tabs on retrieved profiles.', LoggerLevel.DEBUG);
+                    await this.reconcileTabs(profileObjFromServer);
                     let filePath = localProfiles[index].path;
                     if (filePath && fs.existsSync(filePath)) {
                         Sfpowerkit.log('Merging profile ' + profileObjFromServer.fullName, LoggerLevel.DEBUG);
