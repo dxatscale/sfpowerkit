@@ -1,4 +1,5 @@
-import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
+import { Sfpowerkit } from '../../../sfpowerkit';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 import * as path from 'path';
 import FileUtils from '../../../utils/fileutils';
 import { retrieveMetadata } from '../../../utils/retrieveMetadata';
@@ -65,11 +66,11 @@ export default abstract class ProfileActions {
                 }
                 if (!found) {
                     profilesStatus.deleted.push({ name: profileName });
-                    Sfpowerkit.log(`Profile ${profileName} not found in the org`, LoggerLevel.WARN);
+                    SFPLogger.log(`Profile ${profileName} not found in the org`, LoggerLevel.WARN);
                 }
             }
         } else {
-            Sfpowerkit.log('Load new profiles from server into the project directory', LoggerLevel.DEBUG);
+            SFPLogger.log('Load new profiles from server into the project directory', LoggerLevel.DEBUG);
 
             profilesStatus.deleted = localProfiles.filter((profile) => {
                 return !remoteProfiles.includes(profile.name);
@@ -94,14 +95,14 @@ export default abstract class ProfileActions {
                     return !found;
                 });
                 if (newProfiles && newProfiles.length > 0) {
-                    Sfpowerkit.log('New profiles founds', LoggerLevel.DEBUG);
+                    SFPLogger.log('New profiles founds', LoggerLevel.DEBUG);
                     for (let i = 0; i < newProfiles.length; i++) {
-                        Sfpowerkit.log(newProfiles[i], LoggerLevel.DEBUG);
+                        SFPLogger.log(newProfiles[i], LoggerLevel.DEBUG);
                         let newProfilePath = path.join(profilePath, newProfiles[i] + this.profileFileExtension);
                         profilesStatus.added.push({ path: newProfilePath, name: newProfiles[i] });
                     }
                 } else {
-                    Sfpowerkit.log('No new profile found, Updating existing profiles', LoggerLevel.INFO);
+                    SFPLogger.log('No new profile found, Updating existing profiles', LoggerLevel.INFO);
                 }
             }
         }

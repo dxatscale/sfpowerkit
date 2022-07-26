@@ -64,14 +64,14 @@ export default class List extends SfpowerkitCommand {
         let testClassesList = testClasses.map((cls) => cls.name);
 
         if (testClasses.length > 0) {
-            Sfpowerkit.log(`Found ${testClasses.length} apex test classes in ${this.flags.path}`, LoggerLevel.INFO);
+            SFPLogger.log(`Found ${testClasses.length} apex test classes in ${this.flags.path}`, LoggerLevel.INFO);
             if (this.flags.resultasstring) {
                 this.ux.log(testClassesList.join(','));
             } else {
                 this.ux.table(testClasses, ['name', 'filepath']);
             }
         } else {
-            Sfpowerkit.log(`No apex test classes found in ${this.flags.path}`, LoggerLevel.INFO);
+            SFPLogger.log(`No apex test classes found in ${this.flags.path}`, LoggerLevel.INFO);
         }
 
         return this.flags.resultasstring ? testClassesList.join(',') : testClassesList;

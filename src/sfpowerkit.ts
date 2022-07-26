@@ -3,29 +3,10 @@ import { UX } from '@salesforce/command';
 import chalk = require('chalk');
 import * as fs from 'fs-extra';
 import SQLITEKeyValue from './utils/sqlitekv';
-import SFPLogger from './utils/sfpLogger';
 import FileUtils from './utils/fileutils';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 const NodeCache = require('node-cache');
 
-export enum LoggerLevel {
-    TRACE = 10,
-    DEBUG = 20,
-    INFO = 30,
-    WARN = 40,
-    ERROR = 50,
-    FATAL = 60,
-}
-
-export const COLOR_ERROR = chalk.bold.red;
-export const COLOR_WARNING = chalk.keyword('orange');
-export const COLOR_INFO = chalk.white;
-export const COLOR_TRACE = chalk.gray;
-export const COLOR_DEBUG = chalk.blue;
-export const COLOR_HEADER = chalk.yellowBright.bold;
-export const COLOR_SUCCESS = chalk.green.bold;
-export const COLOR_TIME = chalk.magentaBright;
-export const COLOR_KEY_MESSAGE = chalk.magentaBright.bold;
-export const COLOR_KEY_VALUE = chalk.black.bold.bgGreenBright;
 
 export class Sfpowerkit {
     private static defaultFolder: string;

@@ -1,6 +1,6 @@
 import { flags } from '@salesforce/command';
 import { AnyJson } from '@salesforce/ts-types';
-import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 import poolHydrateImpl from '../../../impl/pool/scratchorg/PoolDeleteImpl';
 import SfpowerkitCommand from '../../../sfpowerkitCommand';
 import { Messages } from '@salesforce/core';
@@ -89,7 +89,7 @@ export default class Delete extends SfpowerkitCommand {
                 this.ux.log(`======== Scratch org Deleted ========`);
                 this.ux.table(result, ['orgId', 'username']);
             } else {
-                Sfpowerkit.log(`${this.flags.tag} pool has No Scratch orgs available to delete.`, LoggerLevel.INFO);
+                SFPLogger.log(`${this.flags.tag} pool has No Scratch orgs available to delete.`, LoggerLevel.INFO);
             }
         }
 
