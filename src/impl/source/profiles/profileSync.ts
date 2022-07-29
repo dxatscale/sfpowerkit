@@ -8,7 +8,6 @@ import { ProgressBar } from '../../../ui/progressBar';
 import MetadataRetriever from '../../metadata/retriever/metadataRetriever';
 import { registry } from '@salesforce/source-deploy-retrieve';
 import * as path from 'path';
-import src from 'src';
 
 export default class ProfileSync extends ProfileActions {
     public async sync(srcFolders: string[], profilesToSync?: string[], isdelete?: boolean): Promise<ProfileStatus> {

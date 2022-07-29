@@ -123,7 +123,7 @@ export default class DiffImpl {
 
         SFPLogger.log('Files to be copied', LoggerLevel.DEBUG);
         filesToCopy.forEach((element)=>{
-            SFPLogger.log(element as unknown as string,LoggerLevel.DEBUG)
+            SFPLogger.log(element as any,LoggerLevel.DEBUG)
         });
 
 
