@@ -8,6 +8,7 @@ import { ProgressBar } from '../../../ui/progressBar';
 import MetadataRetriever from '../../metadata/retriever/metadataRetriever';
 import { registry } from '@salesforce/source-deploy-retrieve';
 import * as path from 'path';
+import src from 'src';
 
 export default class ProfileSync extends ProfileActions {
     public async sync(srcFolders: string[], profilesToSync?: string[], isdelete?: boolean): Promise<ProfileStatus> {
@@ -16,14 +17,18 @@ export default class ProfileSync extends ProfileActions {
         //Display provided profiles if any
         if (!_.isNil(profilesToSync) && profilesToSync.length !== 0) {
             SFPLogger.log('Requested  profiles are..', LoggerLevel.DEBUG);
-            SFPLogger.log(profilesToSync, LoggerLevel.DEBUG);
-        }
+            profilesToSync.forEach((element) => {
+                SFPLogger.log(element,LoggerLevel.DEBUG)
+            });
+        } 
 
         //Fetch all profiles if source folders if not provided
         let isToFetchNewProfiles = _.isNil(srcFolders) || srcFolders.length === 0;
 
         SFPLogger.log('Source Folders are', LoggerLevel.DEBUG);
-        SFPLogger.log(srcFolders, LoggerLevel.DEBUG);
+        srcFolders.forEach((element) =>{
+            SFPLogger.log(element, LoggerLevel.DEBUG);
+        });
 
         //get local profiles when profile path is provided
         let profilesInProjectDir = await this.loadProfileFromPackageDirectories(srcFolders);

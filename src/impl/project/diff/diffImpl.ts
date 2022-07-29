@@ -122,7 +122,10 @@ export default class DiffImpl {
         }
 
         SFPLogger.log('Files to be copied', LoggerLevel.DEBUG);
-        SFPLogger.log(filesToCopy, LoggerLevel.DEBUG);
+        filesToCopy.forEach((element)=>{
+            SFPLogger.log(element as unknown as string,LoggerLevel.DEBUG)
+        });
+
 
         if (filesToCopy && filesToCopy.length > 0) {
             for (let i = 0; i < filesToCopy.length; i++) {
