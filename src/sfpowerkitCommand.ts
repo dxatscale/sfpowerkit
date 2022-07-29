@@ -1,5 +1,6 @@
 import { SfdxCommand } from '@salesforce/command';
-import { Sfpowerkit, COLOR_HEADER } from './sfpowerkit';
+import { Sfpowerkit } from './sfpowerkit';
+import SFPLogger, { COLOR_HEADER} from '@dxatscale/sfp-logger';
 
 /**
  * A base class that provides common funtionality for sfpowerscripts commands

@@ -94,7 +94,7 @@ export default class Retrieve extends SfpowerkitCommand {
         if (!_.isNil(argFolder) && argFolder.length !== 0) {
             for (let dir of argFolder) {
                 if (!fs.existsSync(dir)) {
-                    throw new SfdxError(`The profile path ${dir} doesnot exist.`);
+                    throw new SfdxError(`The profile path ${dir} does not exist.`);
                 }
             }
             folders.push(...argFolder);

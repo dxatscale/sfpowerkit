@@ -70,7 +70,7 @@ export default class ProfileReconcile extends ProfileActions {
                         profileChunk: temparray,
                         destFolder: destFolder,
                         targetOrg: this.org?.getUsername(), //Org can be null during source only reconcile
-                        loglevel: SFPLogger.getLogLevelAsString(),
+                        loglevel: SFPLogger.logLevel,
                         isJsonFormatEnabled: Sfpowerkit.isJsonFormatEnabled,
                         path: reconcileWorkerFile,
                     },

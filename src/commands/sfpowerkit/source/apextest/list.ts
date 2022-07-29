@@ -1,10 +1,10 @@
 import { AnyJson } from '@salesforce/ts-types';
 import { existsSync } from 'fs';
 import { flags } from '@salesforce/command';
-import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
 import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 import { Messages, SfdxError } from '@salesforce/core';
 import ApexTypeFetcher, { ApexSortedByType } from '../../../../impl/parser/ApexTypeFetcher';
+import SFPLogger, {LoggerLevel} from '@dxatscale/sfp-logger';
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);

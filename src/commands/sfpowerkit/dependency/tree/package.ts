@@ -6,7 +6,6 @@ import MetadataSummaryInfoFetcher, {
     MetadataSummary,
 } from '../../../../impl/metadata/retriever/metadataSummaryInfoFetcher';
 import * as path from 'path';
-import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
 import * as fs from 'fs-extra';
 import FileUtils from '../../../../utils/fileutils';
 import * as rimraf from 'rimraf';
@@ -15,6 +14,7 @@ import GetDefaults from '../../../../utils/getDefaults';
 import { ProgressBar } from '../../../../ui/progressBar';
 import { PackageDetail } from '../../../../utils/packageUtils';
 import { Connection } from 'jsforce';
+import SFPLogger, {LoggerLevel} from '@dxatscale/sfp-logger';
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);

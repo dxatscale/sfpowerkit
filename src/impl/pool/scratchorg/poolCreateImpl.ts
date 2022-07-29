@@ -431,7 +431,7 @@ export default class PoolCreateImpl {
             totalMinOrgRequired = 0;
 
         poolUsers.forEach((pooluser) => {
-            SFPLogger.log(pooluser, LoggerLevel.TRACE);
+            SFPLogger.log(pooluser as unknown as string, LoggerLevel.TRACE);
             pooluser.to_allocate = 0;
 
             if (scratchOrgsRecordAsMapByUser[pooluser.username]) {

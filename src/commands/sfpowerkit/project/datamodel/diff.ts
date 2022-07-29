@@ -1,5 +1,4 @@
 import { FlagsConfig, flags } from '@salesforce/command';
-import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
 import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 import * as fs from 'fs-extra';
 import simpleGit, { SimpleGit } from 'simple-git';
@@ -9,6 +8,7 @@ import * as path from 'path';
 import FileUtils from '../../../../utils/fileutils';
 import { AnyJson } from '@salesforce/ts-types';
 import { Messages } from '@salesforce/core';
+import SFPLogger, {LoggerLevel} from '@dxatscale/sfp-logger';
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
