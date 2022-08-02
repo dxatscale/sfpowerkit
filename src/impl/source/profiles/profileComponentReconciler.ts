@@ -10,7 +10,7 @@ import Profile, { ProfileFieldLevelSecurity } from '../../metadata/schema';
 export default class ProfileComponentReconciler {
     //rivate profileRetriever;
 
-    public constructor(private conn: Connection) {}
+    public constructor(private conn: Connection, private isSourceOnly: boolean) {}
 
     public async reconcileProfileComponents(profileObj: Profile, profileName: string): Promise<Profile> {
         Sfpowerkit.log(`Reconciling App: ${profileName}`, LoggerLevel.DEBUG);
@@ -89,7 +89,7 @@ export default class ProfileComponentReconciler {
     }
 
     private async cleanupUserLicenses(profileObj: Profile) {
-        if (!MetadataFiles.sourceOnly) {
+        if (!this.isSourceOnly) {
             //Manage licences
             let userLicenseRetriever = new MetadataRetriever(this.conn, 'UserLicense');
             const isSupportedLicence = await userLicenseRetriever.isComponentExistsInTheOrg(profileObj.userLicense);

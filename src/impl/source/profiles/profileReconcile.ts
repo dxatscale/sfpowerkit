@@ -7,6 +7,7 @@ import * as fs from 'fs-extra';
 
 import { Worker } from 'worker_threads';
 import SFPLogger from '../../../utils/sfpLogger';
+import MetadataFiles from '../../../impl/metadata/metadataFiles';
 
 export default class ProfileReconcile extends ProfileActions {
     public async reconcile(srcFolders: string[], profileList: string[], destFolder: string): Promise<string[]> {
@@ -73,6 +74,7 @@ export default class ProfileReconcile extends ProfileActions {
                         targetOrg: this.org?.getUsername(), //Org can be null during source only reconcile
                         loglevel: SFPLogger.getLogLevelAsString(),
                         isJsonFormatEnabled: Sfpowerkit.isJsonFormatEnabled,
+                        isSourceOnly: MetadataFiles.sourceOnly,
                         path: reconcileWorkerFile,
                     },
                 });
