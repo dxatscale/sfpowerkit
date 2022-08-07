@@ -89,7 +89,10 @@ export default class ProfileReconcile extends ProfileActions {
                     result.push(...data);
                 });
 
-                worker.on('error', reject);
+                worker.on('error', (err)=> {
+                    Sfpowerkit.log(`Error while running worker ${err}`, LoggerLevel.ERROR);
+                    reject(err);
+                });
                 worker.on('exit', (code) => {
                     finishedWorkerCount++;
                     if (code !== 0)
