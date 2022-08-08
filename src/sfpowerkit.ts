@@ -54,7 +54,8 @@ export class Sfpowerkit {
     }
 
     public static setLogLevel(logLevel: string, isJsonFormatEnabled: boolean) {
-        SFPLogger.logLevel = LoggerLevel[logLevel.toUpperCase()];
+
+        //TODO: remove JSON format enabling
         this.isJsonFormatEnabled = isJsonFormatEnabled ? true : false;
     }
 

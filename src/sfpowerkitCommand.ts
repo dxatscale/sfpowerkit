@@ -43,18 +43,18 @@ export default abstract class SfpowerkitCommand extends SfdxCommand {
 
     private sfpowerkitHeader() {
         if (!process.env.SFPOWERKIT_NOHEADER) {
-            console.log(
+            SFPLogger.log(
                 COLOR_HEADER(
                     `-------------------------------------------------------------------------------------------`
                 )
             );
-            console.log(
+            SFPLogger.log(
                 COLOR_HEADER(
                     `sfpowerkit  -- The DX@Scale Developer Toolkit - Version:${this.sfpowerkitConfig.version} - Release:${this.sfpowerkitConfig.pjson.release}`
                 )
             );
 
-            console.log(
+            SFPLogger.log(
                 COLOR_HEADER(
                     `-------------------------------------------------------------------------------------------`
                 )
