@@ -36,6 +36,7 @@ export default abstract class SfpowerkitCommand extends SfdxCommand {
 
         if (!this.flags.json) {
             this.sfpowerkitHeader();
+            SFPLogger.disableLogs();
         }
 
         return this.execute();
