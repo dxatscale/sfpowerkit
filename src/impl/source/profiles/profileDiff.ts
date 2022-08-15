@@ -122,7 +122,7 @@ export default class ProfileDiffImpl {
         }
 
         if (!fs.existsSync(this.outputFolder)) {
-            console.log('Creattin output diff ' + this.outputFolder);
+            SFPLogger.log('Creattin output diff ' + this.outputFolder);
             FileUtils.mkDirByPathSync(this.outputFolder);
         }
 
@@ -183,7 +183,7 @@ export default class ProfileDiffImpl {
                     return this.output;
                 })
                 .catch((error) => {
-                    console.log(error.message);
+                    SFPLogger.log(error.message);
                 });
         });
     }

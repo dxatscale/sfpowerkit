@@ -1,9 +1,10 @@
+import SFPLogger from '@dxatscale/sfp-logger';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 
 export function searchFilesInDirectory(dir: string, filter: string, ext: string) {
     if (!fs.existsSync(dir)) {
-        console.log(`Specified directory: ${dir} does not exist`);
+        SFPLogger.log(`Specified directory: ${dir} does not exist`);
         return;
     }
 
@@ -27,7 +28,7 @@ export function searchFilesInDirectory(dir: string, filter: string, ext: string)
 // Using recursion, we find every file with the desired extention, even if its deeply nested in subfolders.
 export function getFilesInDirectory(dir: string, ext: string) {
     if (!fs.existsSync(dir)) {
-        console.log(`Specified directory: ${dir} does not exist`);
+        SFPLogger.log(`Specified directory: ${dir} does not exist`);
         return;
     }
 

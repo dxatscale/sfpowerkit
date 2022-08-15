@@ -177,7 +177,7 @@ Elements supported included in your package testPackage
                         sfdx_package.unsupportedComponents.push({ name: component.name, type: component.type.name });
                     }
                 } else {
-                    console.log(
+                    SFPLogger.log(
                         `Skipped analysis of ${COLOR_KEY_MESSAGE(component.type.name)}: ${
                             component.name
                         } as mdCoverage is inconsistent`

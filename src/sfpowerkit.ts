@@ -54,8 +54,6 @@ export class Sfpowerkit {
     }
 
     public static setLogLevel(logLevel: string, isJsonFormatEnabled: boolean) {
-
-        //TODO: remove JSON format enabling
         this.isJsonFormatEnabled = isJsonFormatEnabled ? true : false;
     }
 
