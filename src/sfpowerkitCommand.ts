@@ -1,5 +1,6 @@
 import { SfdxCommand } from '@salesforce/command';
-import { Sfpowerkit, COLOR_HEADER } from './sfpowerkit';
+import { Sfpowerkit } from './sfpowerkit';
+import SFPLogger, { COLOR_HEADER} from '@dxatscale/sfp-logger';
 
 /**
  * A base class that provides common funtionality for sfpowerscripts commands
@@ -35,6 +36,8 @@ export default abstract class SfpowerkitCommand extends SfdxCommand {
 
         if (!this.flags.json) {
             this.sfpowerkitHeader();
+        }else{
+            SFPLogger.disableLogs();
         }
 
         return this.execute();
@@ -42,18 +45,18 @@ export default abstract class SfpowerkitCommand extends SfdxCommand {
 
     private sfpowerkitHeader() {
         if (!process.env.SFPOWERKIT_NOHEADER) {
-            console.log(
+            SFPLogger.log(
                 COLOR_HEADER(
                     `-------------------------------------------------------------------------------------------`
                 )
             );
-            console.log(
+            SFPLogger.log(
                 COLOR_HEADER(
                     `sfpowerkit  -- The DX@Scale Developer Toolkit - Version:${this.sfpowerkitConfig.version} - Release:${this.sfpowerkitConfig.pjson.release}`
                 )
             );
 
-            console.log(
+            SFPLogger.log(
                 COLOR_HEADER(
                     `-------------------------------------------------------------------------------------------`
                 )

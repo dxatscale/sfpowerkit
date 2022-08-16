@@ -20,7 +20,8 @@ import WorkflowDiff from './workflowDiff';
 import SharingRuleDiff from './sharingRuleDiff';
 import CustomLabelsDiff from './customLabelsDiff';
 import DiffUtil, { DiffFile, DiffFileStatus } from './diffUtil';
-import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
+import { Sfpowerkit } from '../../../sfpowerkit';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 import { DXProjectManifestUtils } from '../../../utils/dxProjectManifestUtils';
 import simplegit from 'simple-git';
 import { Messages } from '@salesforce/core';
@@ -91,10 +92,10 @@ export default class DiffImpl {
         //Make it relative to make the command works from a project created as a subfolder in a repository
         git.addConfig('core.quotepath','false');
         data = await git.diff(["--no-renames", '--raw', this.revisionFrom, this.revisionTo, '--relative']);
-        Sfpowerkit.log(`Input Param: From: ${this.revisionFrom}  To: ${this.revisionTo} `, LoggerLevel.INFO);
-        Sfpowerkit.log(`SHA Found From: ${commitFrom} To:  ${commitTo} `, LoggerLevel.INFO);
+        SFPLogger.log(`Input Param: From: ${this.revisionFrom}  To: ${this.revisionTo} `, LoggerLevel.INFO);
+        SFPLogger.log(`SHA Found From: ${commitFrom} To:  ${commitTo} `, LoggerLevel.INFO);
 
-        Sfpowerkit.log(data, LoggerLevel.TRACE);
+        SFPLogger.log(data, LoggerLevel.TRACE);
 
         let content = data.split(sepRegex);
         let diffFile: DiffFile = await DiffUtil.parseContent(content);
@@ -120,8 +121,11 @@ export default class DiffImpl {
             fs.mkdirSync(outputFolder);
         }
 
-        Sfpowerkit.log('Files to be copied', LoggerLevel.DEBUG);
-        Sfpowerkit.log(filesToCopy, LoggerLevel.DEBUG);
+        SFPLogger.log('Files to be copied', LoggerLevel.DEBUG);
+        filesToCopy.forEach((element)=>{
+            SFPLogger.log(element as any,LoggerLevel.DEBUG)
+        });
+
 
         if (filesToCopy && filesToCopy.length > 0) {
             for (let i = 0; i < filesToCopy.length; i++) {
@@ -142,7 +146,7 @@ export default class DiffImpl {
                         } else {
                             await DiffUtil.copyFile(filePath, outputFolder);
 
-                            Sfpowerkit.log(`Copied file ${filePath} to ${outputFolder}`, LoggerLevel.DEBUG);
+                            SFPLogger.log(`Copied file ${filePath} to ${outputFolder}`, LoggerLevel.DEBUG);
                         }
                     }
                 } catch (ex) {
@@ -158,11 +162,11 @@ export default class DiffImpl {
         }
 
         if (this.isDestructive) {
-            Sfpowerkit.log('Creating Destructive Manifest..', LoggerLevel.INFO);
+            SFPLogger.log('Creating Destructive Manifest..', LoggerLevel.INFO);
             await this.createDestructiveChanges(deletedFiles, outputFolder);
         }
 
-        Sfpowerkit.log(`Generating output summary`, LoggerLevel.INFO);
+        SFPLogger.log(`Generating output summary`, LoggerLevel.INFO);
 
         this.buildOutput(outputFolder);
 
@@ -170,7 +174,7 @@ export default class DiffImpl {
             try {
                 await DiffUtil.copyFile('.forceignore', outputFolder);
             } catch (e) {
-                Sfpowerkit.log(`.forceignore not found, skipping..`, LoggerLevel.INFO);
+                SFPLogger.log(`.forceignore not found, skipping..`, LoggerLevel.INFO);
             }
             try {
                 //check if package path is provided
@@ -198,7 +202,7 @@ export default class DiffImpl {
                 let dxProjectManifestUtils: DXProjectManifestUtils = new DXProjectManifestUtils(outputFolder);
                 dxProjectManifestUtils.removePackagesNotInDirectory();
             } catch (e) {
-                Sfpowerkit.log(`sfdx-project.json not found, skipping..`, LoggerLevel.INFO);
+                SFPLogger.log(`sfdx-project.json not found, skipping..`, LoggerLevel.INFO);
             }
         }
 
@@ -326,7 +330,7 @@ export default class DiffImpl {
             if (content1 === '') {
                 await DiffUtil.copyFile(diffFile.path, outputFolder);
 
-                Sfpowerkit.log(`Copied file ${diffFile.path} to ${outputFolder}`, LoggerLevel.DEBUG);
+                SFPLogger.log(`Copied file ${diffFile.path} to ${outputFolder}`, LoggerLevel.DEBUG);
             } else if (content2 === '') {
                 //The profile is deleted or marked as renamed.
                 //Delete the renamed one
@@ -353,7 +357,7 @@ export default class DiffImpl {
             if (content1 === '') {
                 await DiffUtil.copyFile(diffFile.path, outputFolder);
 
-                Sfpowerkit.log(`Copied file ${diffFile.path} to ${outputFolder}`, LoggerLevel.DEBUG);
+                SFPLogger.log(`Copied file ${diffFile.path} to ${outputFolder}`, LoggerLevel.DEBUG);
             } else if (sourceApiVersion <= 39.0) {
                 // in API 39 and erliar PermissionSet deployment are merged. deploy only what changed
                 if (content2 === '') {
@@ -384,7 +388,7 @@ export default class DiffImpl {
                 //So deploy the whole file
 
                 await DiffUtil.copyFile(diffFile.path, outputFolder);
-                Sfpowerkit.log(`Copied file ${diffFile.path} to ${outputFolder}`, LoggerLevel.DEBUG);
+                SFPLogger.log(`Copied file ${diffFile.path} to ${outputFolder}`, LoggerLevel.DEBUG);
             }
         }
     }
@@ -444,7 +448,7 @@ export default class DiffImpl {
                                 member
                             );
 
-                            Sfpowerkit.log(
+                            SFPLogger.log(
                                 `${filePath} ${MetadataFiles.isCustomMetadata(filePath, name)}`,
                                 LoggerLevel.DEBUG
                             );
@@ -463,7 +467,7 @@ export default class DiffImpl {
                                 member
                             );
                         }
-                        Sfpowerkit.log(
+                        SFPLogger.log(
                             `${filePath} ${MetadataFiles.isCustomMetadata(filePath, name)}`,
                             LoggerLevel.DEBUG
                         );

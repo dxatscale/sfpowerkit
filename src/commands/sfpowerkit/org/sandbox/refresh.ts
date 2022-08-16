@@ -2,8 +2,9 @@ import { flags } from '@salesforce/command';
 import { AnyJson } from '@salesforce/ts-types';
 const request = require('request-promise-native');
 import { Connection, Messages, SfdxError } from '@salesforce/core';
-import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
+import { Sfpowerkit } from '../../../../sfpowerkit';
 import SfpowerkitCommand from '../../../../sfpowerkitCommand';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -93,7 +94,7 @@ export default class Refresh extends SfpowerkitCommand {
             });
         }
 
-        Sfpowerkit.log(`Successfully Enqueued Refresh of Sandbox`, LoggerLevel.INFO);
+        SFPLogger.log(`Successfully Enqueued Refresh of Sandbox`, LoggerLevel.INFO);
 
         return result;
     }
@@ -115,7 +116,7 @@ export default class Refresh extends SfpowerkitCommand {
 
         this.ux.log();
 
-        Sfpowerkit.log(
+        SFPLogger.log(
             `Fetched Sandbox Id for sandbox  ${name}  is ${sandbox_query_result.records[0].Id}`,
             LoggerLevel.INFO
         );

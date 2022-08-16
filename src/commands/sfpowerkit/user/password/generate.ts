@@ -1,6 +1,6 @@
 import { flags } from '@salesforce/command';
 import { AnyJson } from '@salesforce/ts-types';
-import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 import Passwordgenerateimpl from '../../../../impl/user/passwordgenerateimpl';
 import { SfdxError } from '@salesforce/core';
 import SfpowerkitCommand from '../../../../sfpowerkitCommand';
@@ -45,7 +45,7 @@ export default class Generate extends SfpowerkitCommand {
             throw new SfdxError(`Error occured unable to set password at the moment, please try later.`);
         }
 
-        Sfpowerkit.log(`Password successfully set for ${result.username} : ${result.password}`, LoggerLevel.INFO);
+        SFPLogger.log(`Password successfully set for ${result.username} : ${result.password}`, LoggerLevel.INFO);
 
         return result;
     }

@@ -1,9 +1,9 @@
-import { LoggerLevel } from '../../sfpowerkit';
 import queryApi from '../../utils/queryExecutor';
 import { chunkArray } from '../../utils/chunkArray';
 import { MetadataSummary } from '../metadata/retriever/metadataSummaryInfoFetcher';
 import { ProgressBar } from '../../ui/progressBar';
 import { Connection } from 'jsforce';
+import SFPLogger, {LoggerLevel} from '@dxatscale/sfp-logger';
 
 export default class DependencyImpl {
     public static async getDependencyMapById(conn: Connection, refMetadata: string[]) {

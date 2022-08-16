@@ -5,8 +5,7 @@ import * as _ from 'lodash';
 import MetadataFiles from '../../../impl/metadata/metadataFiles';
 import { SOURCE_EXTENSION_REGEX } from '../../../impl/metadata/metadataInfo';
 import { METADATA_INFO } from '../../../impl/metadata/metadataInfo';
-import { Sfpowerkit } from '../../../sfpowerkit';
-import { LoggerLevel } from '@salesforce/core';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 import simplegit, { SimpleGit } from 'simple-git';
 const SEP = /\/|\\/;
 
@@ -36,7 +35,7 @@ export default class DiffUtil {
     }
 
     public static async fetchFileListRevisionTo(revisionTo: string) {
-        Sfpowerkit.log('Fetching file list from target revision ' + revisionTo, LoggerLevel.INFO);
+        SFPLogger.log('Fetching file list from target revision ' + revisionTo, LoggerLevel.INFO);
         DiffUtil.gitTreeRevisionTo = [];
         let revisionTree = await git.raw(['ls-tree', '-r', revisionTo]);
         const sepRegex = /\n|\r/;
@@ -142,9 +141,9 @@ export default class DiffUtil {
     }
 
     public static async copyFile(filePath: string, outputFolder: string) {
-        Sfpowerkit.log(`Copying file ${filePath} from git to ${outputFolder}`, LoggerLevel.INFO);
+        SFPLogger.log(`Copying file ${filePath} from git to ${outputFolder}`, LoggerLevel.INFO);
         if (fs.existsSync(path.join(outputFolder, filePath))) {
-            Sfpowerkit.log(`File ${filePath}  already in output folder. `, LoggerLevel.TRACE);
+            SFPLogger.log(`File ${filePath}  already in output folder. `, LoggerLevel.TRACE);
             return;
         }
 
@@ -154,7 +153,7 @@ export default class DiffUtil {
             outputFolder = copyOutputFolder;
             let gitFile = gitFiles[i];
 
-            Sfpowerkit.log(`Associated file ${i}: ${gitFile.path}  Revision: ${gitFile.revision}`, LoggerLevel.TRACE);
+            SFPLogger.log(`Associated file ${i}: ${gitFile.path}  Revision: ${gitFile.revision}`, LoggerLevel.TRACE);
 
             let outputPath = path.join(outputFolder, gitFile.path);
 

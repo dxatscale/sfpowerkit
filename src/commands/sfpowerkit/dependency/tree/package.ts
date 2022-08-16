@@ -6,7 +6,6 @@ import MetadataSummaryInfoFetcher, {
     MetadataSummary,
 } from '../../../../impl/metadata/retriever/metadataSummaryInfoFetcher';
 import * as path from 'path';
-import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
 import * as fs from 'fs-extra';
 import FileUtils from '../../../../utils/fileutils';
 import * as rimraf from 'rimraf';
@@ -15,6 +14,7 @@ import GetDefaults from '../../../../utils/getDefaults';
 import { ProgressBar } from '../../../../ui/progressBar';
 import { PackageDetail } from '../../../../utils/packageUtils';
 import { Connection } from 'jsforce';
+import SFPLogger, {LoggerLevel} from '@dxatscale/sfp-logger';
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -121,13 +121,13 @@ export default class Tree extends SfpowerkitCommand {
             }
         }
 
-        Sfpowerkit.log('Requested Package Info:' + JSON.stringify(requestPackage), LoggerLevel.TRACE);
+        SFPLogger.log('Requested Package Info:' + JSON.stringify(requestPackage), LoggerLevel.TRACE);
 
         if (!requestPackage) {
             throw new SfdxError(`Unable to find the package ${this.flags.package} in ${this.org.getUsername()} org.`);
         }
 
-        Sfpowerkit.log(
+        SFPLogger.log(
             `Fetching all components details of ${requestPackage.packageName} package from the org`,
             LoggerLevel.INFO
         );
@@ -137,9 +137,9 @@ export default class Tree extends SfpowerkitCommand {
             requestPackage.subcriberPackageId
         );
 
-        Sfpowerkit.log('Package Member Info:' + JSON.stringify(packageMembers), LoggerLevel.TRACE);
+        SFPLogger.log('Package Member Info:' + JSON.stringify(packageMembers), LoggerLevel.TRACE);
 
-        Sfpowerkit.log(
+        SFPLogger.log(
             `Found ${packageMembers.length} components from ${requestPackage.packageName} package`,
             LoggerLevel.INFO
         );
@@ -149,7 +149,7 @@ export default class Tree extends SfpowerkitCommand {
         this.dependencyMap = dependencyResult.dependencyMap;
         this.metadataMap = dependencyResult.dependencyDetailsMap;
 
-        Sfpowerkit.log(`Found ${this.dependencyMap.size} components having dependency`, LoggerLevel.INFO);
+        SFPLogger.log(`Found ${this.dependencyMap.size} components having dependency`, LoggerLevel.INFO);
 
         let result = await MetadataSummaryInfoFetcher.fetchMetadataSummaryFromAnOrg(this.conn);
 
@@ -244,7 +244,7 @@ export default class Tree extends SfpowerkitCommand {
             FileUtils.mkDirByPathSync(dir);
         }
         fs.writeFileSync(outputJsonPath, JSON.stringify(result));
-        Sfpowerkit.log(`Output ${outputDir}/output.json is generated successfully`, LoggerLevel.INFO);
+        SFPLogger.log(`Output ${outputDir}/output.json is generated successfully`, LoggerLevel.INFO);
     }
     public async generateCSVOutput(result: any[], outputDir: string) {
         let outputcsvPath = `${outputDir}/output.csv`;
@@ -273,6 +273,6 @@ export default class Tree extends SfpowerkitCommand {
             }
         });
         fs.writeFileSync(outputcsvPath, output);
-        Sfpowerkit.log(`Output ${outputDir}/output.csv is generated successfully`, LoggerLevel.INFO);
+        SFPLogger.log(`Output ${outputDir}/output.csv is generated successfully`, LoggerLevel.INFO);
     }
 }

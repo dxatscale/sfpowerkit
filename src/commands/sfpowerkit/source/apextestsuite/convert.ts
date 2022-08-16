@@ -3,11 +3,11 @@ import * as fs from 'fs-extra';
 import { flags } from '@salesforce/command';
 import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 import * as rimraf from 'rimraf';
-import { SfdxError, LoggerLevel, Messages } from '@salesforce/core';
+import { SfdxError, Messages } from '@salesforce/core';
 import * as xml2js from 'xml2js';
 import * as util from 'util';
 const fg = require('fast-glob');
-import { Sfpowerkit } from '../../../../sfpowerkit';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 const path = require('path');
 
 // Initialize Messages with the current plugin directory
@@ -67,7 +67,7 @@ export default class Convert extends SfpowerkitCommand {
 
         if (!entries[0]) throw new SfdxError(`Apex Test Suite ${this.flags.name} not found`);
 
-        Sfpowerkit.log(`Apex Test Suite File Path ${entries[0]}`, LoggerLevel.DEBUG);
+        SFPLogger.log(`Apex Test Suite File Path ${entries[0]}`, LoggerLevel.DEBUG);
 
         if (fs.existsSync(path.resolve(entries[0]))) {
             const parser = new xml2js.Parser({ explicitArray: false });

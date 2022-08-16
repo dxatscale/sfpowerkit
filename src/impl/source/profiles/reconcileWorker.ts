@@ -1,5 +1,6 @@
 import { Connection, Org, SfdxProject } from '@salesforce/core';
-import { LoggerLevel, Sfpowerkit } from '../../../sfpowerkit';
+import { Sfpowerkit } from '../../../sfpowerkit';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 import { parentPort, workerData } from 'worker_threads';
 import * as fs from 'fs-extra';
 import * as path from 'path';
@@ -92,7 +93,7 @@ export default class ReconcileWorker {
                     return result;
                 })
                 .catch((error) => {
-                    Sfpowerkit.log(
+                    SFPLogger.log(
                         'Error while processing file ' + profileComponent + '. ERROR Message: ' + error.message,
                         LoggerLevel.ERROR
                     );

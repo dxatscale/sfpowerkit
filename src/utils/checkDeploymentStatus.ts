@@ -1,7 +1,7 @@
 import { Connection, DeployResult } from 'jsforce';
 import { delay } from './delay';
-import { Sfpowerkit } from '../sfpowerkit';
-import { LoggerLevel, SfdxError } from '@salesforce/core';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
+import { SfdxError } from '@salesforce/core';
 
 export async function checkDeploymentStatus(conn: Connection, retrievedId: string): Promise<DeployResult> {
     let metadata_result;
@@ -15,7 +15,7 @@ export async function checkDeploymentStatus(conn: Connection, retrievedId: strin
         });
 
         if (!metadata_result.done) {
-            Sfpowerkit.log('Polling for Deployment Status', LoggerLevel.INFO);
+            SFPLogger.log('Polling for Deployment Status', LoggerLevel.INFO);
             await delay(5000);
         } else {
             break;
