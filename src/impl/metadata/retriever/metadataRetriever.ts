@@ -1,9 +1,10 @@
-import { LoggerLevel, Sfpowerkit } from '../../../sfpowerkit';
+import { Sfpowerkit } from '../../../sfpowerkit';
 import * as _ from 'lodash';
 import { Connection } from 'jsforce';
 import QueryExecutor from '../../../utils/queryExecutor';
 import MetadataOperation from '../../../utils/metadataOperation';
 import { registry } from '@salesforce/source-deploy-retrieve';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 
 export default class MetadataRetriever {
     protected _componentType;
@@ -127,7 +128,7 @@ export default class MetadataRetriever {
         found = await this.isComponentExistsInProjectDirectory(item);
         if (found === false) {
             found = await this.isComponentExistsInTheOrg(item, parent);
-            Sfpowerkit.log(`Found in Org? ${item} ${found}`, LoggerLevel.TRACE);
+            SFPLogger.log(`Found in Org? ${item} ${found}`, LoggerLevel.TRACE);
         }
         return found;
     }
@@ -175,7 +176,7 @@ export default class MetadataRetriever {
     private async getFieldsByObjectName(objectName: string): Promise<any[]> {
         let fields = [];
         try {
-            Sfpowerkit.log(`Fetching Field of Object ${objectName}`, LoggerLevel.TRACE);
+            SFPLogger.log(`Fetching Field of Object ${objectName}`, LoggerLevel.TRACE);
 
             let query = `SELECT Id, QualifiedApiName, EntityDefinitionId, DeveloperName, NameSpacePrefix FROM FieldDefinition WHERE EntityDefinition.QualifiedApiName='${objectName}'`;
             let queryUtil = new QueryExecutor(this._conn);
@@ -185,7 +186,7 @@ export default class MetadataRetriever {
                 return { fullName: `${objectName}.${field.QualifiedApiName}` };
             });
         } catch (error) {
-            Sfpowerkit.log(`Object not found ${objectName}..skipping`, LoggerLevel.TRACE);
+            SFPLogger.log(`Object not found ${objectName}..skipping`, LoggerLevel.TRACE);
         }
         return fields;
     }
@@ -193,7 +194,7 @@ export default class MetadataRetriever {
     private async getRecordTypes(): Promise<any[]> {
         let recordTypes = [];
         try {
-            Sfpowerkit.log(`Fetching RecordTypes`, LoggerLevel.TRACE);
+            SFPLogger.log(`Fetching RecordTypes`, LoggerLevel.TRACE);
 
             let queryUtil = new QueryExecutor(this._conn);
 
@@ -231,14 +232,14 @@ export default class MetadataRetriever {
                 return rtObj;
             });
         } catch (error) {
-            Sfpowerkit.log(`Error fetching record types...`, LoggerLevel.DEBUG);
-            Sfpowerkit.log(error.message, LoggerLevel.DEBUG);
+            SFPLogger.log(`Error fetching record types...`, LoggerLevel.DEBUG);
+            SFPLogger.log(error.message, LoggerLevel.DEBUG);
         }
         return recordTypes;
     }
 
     private async getLayouts(): Promise<any[]> {
-        Sfpowerkit.log(`Fetching Layouts`, LoggerLevel.TRACE);
+        SFPLogger.log(`Fetching Layouts`, LoggerLevel.TRACE);
         let apiversion: string = await Sfpowerkit.getApiVersion();
         let layouts = await this._conn.metadata.list(
             {

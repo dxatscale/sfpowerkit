@@ -4,7 +4,7 @@ import { JsonArray } from '@salesforce/ts-types';
 import { SfdxProject, SfdxError, Messages } from '@salesforce/core';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import { Sfpowerkit, LoggerLevel, COLOR_WARNING, COLOR_SUCCESS, COLOR_KEY_MESSAGE } from '../../../sfpowerkit';
+import SFPLogger, {LoggerLevel, COLOR_WARNING, COLOR_SUCCESS, COLOR_KEY_MESSAGE } from '@dxatscale/sfp-logger';
 import SfpowerkitCommand from '../../../sfpowerkitCommand';
 import { MetadataResolver } from '@salesforce/source-deploy-retrieve';
 
@@ -96,16 +96,16 @@ Elements supported included in your package testPackage
         const result_store: SFDXPackage[] = [];
 
         if (packageToBeScanned != undefined) {
-            Sfpowerkit.log(`Fetching components of ${packageToBeScanned}`, LoggerLevel.INFO);
+            SFPLogger.log(`Fetching components of ${packageToBeScanned}`, LoggerLevel.INFO);
             for (const sf_package of packageDirectories as JsonArray) {
                 if (packageToBeScanned != undefined && packageToBeScanned === sf_package['package']) {
-                    Sfpowerkit.log(`Located ${packageToBeScanned} in project ${sf_package['path']}`, LoggerLevel.DEBUG);
+                    SFPLogger.log(`Located ${packageToBeScanned} in project ${sf_package['path']}`, LoggerLevel.DEBUG);
 
                     try {
                         const result = await this.validate(sf_package);
                         result_store.push(result);
                     } catch (e) {
-                        Sfpowerkit.log(
+                        SFPLogger.log(
                             `Unable to analyze ${sf_package['package']} due to ${e.message}`,
                             LoggerLevel.ERROR
                         );
@@ -115,16 +115,16 @@ Elements supported included in your package testPackage
                 }
             }
         } else {
-            Sfpowerkit.log('All packaging directories are  being analyzed', LoggerLevel.INFO);
+            SFPLogger.log('All packaging directories are  being analyzed', LoggerLevel.INFO);
 
             for (const sf_package of packageDirectories as JsonArray) {
                 if (sf_package['package'] != undefined) {
-                    Sfpowerkit.log(`Analyzing ${sf_package['package']}`, LoggerLevel.DEBUG);
+                    SFPLogger.log(`Analyzing ${sf_package['package']}`, LoggerLevel.DEBUG);
                     try {
                         const result = await this.validate(sf_package);
                         result_store.push(result);
                     } catch (e) {
-                        Sfpowerkit.log(
+                        SFPLogger.log(
                             `Unable to analyze ${sf_package['package']}, Skipping ${sf_package['package']}. try running sfdx force:source:convert -r ${sf_package['path']}`,
                             LoggerLevel.ERROR
                         );
@@ -142,11 +142,11 @@ Elements supported included in your package testPackage
     }
 
     public async validate(packageToBeScanned: AnyJson) {
-        Sfpowerkit.log(
+        SFPLogger.log(
             `Utilizing Version of the metadata coverage ${this.coverageJSON.versions.selected}`,
             LoggerLevel.DEBUG
         );
-        Sfpowerkit.log(`Analyzing package ${packageToBeScanned['package']}`, LoggerLevel.INFO);
+        SFPLogger.log(`Analyzing package ${packageToBeScanned['package']}`, LoggerLevel.INFO);
 
         let sfdx_package = new SFDXPackage();
         sfdx_package.packageName = packageToBeScanned['package'];
@@ -159,13 +159,13 @@ Elements supported included in your package testPackage
             sfdx_package.typesToBypass = this.flags.bypass;
         }
 
-        Sfpowerkit.log(`Component,${JSON.stringify(components)}`, LoggerLevel.TRACE);
+        SFPLogger.log(`Component,${JSON.stringify(components)}`, LoggerLevel.TRACE);
 
         if (Array.isArray(components)) {
             for (const component of components) {
-                Sfpowerkit.log(`Component: ${component.type.name}`, LoggerLevel.TRACE);
+                SFPLogger.log(`Component: ${component.type.name}`, LoggerLevel.TRACE);
 
-                Sfpowerkit.log(
+                SFPLogger.log(
                     `Component Found : ${JSON.stringify(this.coverageJSON.types[component.type.name])}`,
                     LoggerLevel.TRACE
                 );
@@ -177,7 +177,7 @@ Elements supported included in your package testPackage
                         sfdx_package.unsupportedComponents.push({ name: component.name, type: component.type.name });
                     }
                 } else {
-                    console.log(
+                    SFPLogger.log(
                         `Skipped analysis of ${COLOR_KEY_MESSAGE(component.type.name)}: ${
                             component.name
                         } as mdCoverage is inconsistent`

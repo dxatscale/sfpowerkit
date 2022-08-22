@@ -1,5 +1,4 @@
-import { Sfpowerkit } from '../../../sfpowerkit';
-import { LoggerLevel } from '@salesforce/core';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 import { Connection } from 'jsforce';
 
 const QUERY_string = `SELECT SubscriberPackageVersionId,Package2Id, Package2.Name,MajorVersion,MinorVersion,PatchVersion,BuildNumber, CodeCoverage, HasPassedCodeCoverageCheck, Name FROM Package2Version WHERE `;
@@ -36,7 +35,7 @@ export default class PackageVersionCoverage {
                 output.push(packageCoverage);
             });
 
-            Sfpowerkit.log(`Successfully Retrieved the Apex Test Coverage of the package version`, LoggerLevel.INFO);
+            SFPLogger.log(`Successfully Retrieved the Apex Test Coverage of the package version`, LoggerLevel.INFO);
         } else {
             throw new Error(`Package version doesnot exist, Please check the version details`);
         }

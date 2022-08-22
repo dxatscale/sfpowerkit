@@ -1,9 +1,10 @@
 import { Connection, SfdxError } from '@salesforce/core';
 import { AnyJson } from '@salesforce/ts-types';
 import queryApi from '../../../utils/queryExecutor';
-import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
+import { Sfpowerkit} from '../../../sfpowerkit';
 import SfpowerkitCommand from '../../../sfpowerkitCommand';
 import { chunkArray } from '../../../utils/chunkArray';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 
 const CODECOVAGG_QUERY = `SELECT Id FROM ApexCodeCoverageAggregate`;
 const APEXTESTRESULT_QUERY = `SELECT Id FROM ApexTestResult`;
@@ -33,7 +34,7 @@ export default class Cleartestresult extends SfpowerkitCommand {
 
         this.ux.stopSpinner();
 
-        Sfpowerkit.log(`Test results cleared in ${this.org.getUsername()} successfully.`, LoggerLevel.INFO);
+        SFPLogger.log(`Test results cleared in ${this.org.getUsername()} successfully.`, LoggerLevel.INFO);
 
         return true;
     }

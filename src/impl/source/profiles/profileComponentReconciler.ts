@@ -1,6 +1,7 @@
-import { Connection, LoggerLevel } from '@salesforce/core';
+import { Connection } from '@salesforce/core';
 import { registry } from '@salesforce/source-deploy-retrieve';
 import MetadataFiles from '../../../impl/metadata/metadataFiles';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 import { Sfpowerkit } from '../../../sfpowerkit';
 import UserPermissionBuilder from '../../metadata/builder/userPermissionBuilder';
 import MetadataRetriever from '../../metadata/retriever/metadataRetriever';
@@ -13,40 +14,40 @@ export default class ProfileComponentReconciler {
     public constructor(private conn: Connection, private isSourceOnly: boolean) {}
 
     public async reconcileProfileComponents(profileObj: Profile, profileName: string): Promise<Profile> {
-        Sfpowerkit.log(`Reconciling App: ${profileName}`, LoggerLevel.DEBUG);
+        SFPLogger.log(`Reconciling App: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileApp(profileObj);
-        Sfpowerkit.log(`Reconciling Classes: ${profileName}`, LoggerLevel.DEBUG);
+        SFPLogger.log(`Reconciling Classes: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileClasses(profileObj);
-        Sfpowerkit.log(`Reconciling Fields: ${profileName}`, LoggerLevel.DEBUG);
+        SFPLogger.log(`Reconciling Fields: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileFields(profileObj);
-        Sfpowerkit.log(`Reconciling Objects: ${profileName}`, LoggerLevel.DEBUG);
+        SFPLogger.log(`Reconciling Objects: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileObjects(profileObj);
-        Sfpowerkit.log(`Reconciling Pages: ${profileName}`, LoggerLevel.DEBUG);
+        SFPLogger.log(`Reconciling Pages: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcilePages(profileObj);
-        Sfpowerkit.log(`Reconciling Layouts: ${profileName}`, LoggerLevel.DEBUG);
+        SFPLogger.log(`Reconciling Layouts: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileLayouts(profileObj);
-        Sfpowerkit.log(`Reconciling Record Types: ${profileName}`, LoggerLevel.DEBUG);
+        SFPLogger.log(`Reconciling Record Types: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileRecordTypes(profileObj);
-        Sfpowerkit.log(`Reconciling  Tabs: ${profileName}`, LoggerLevel.DEBUG);
+        SFPLogger.log(`Reconciling  Tabs: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileTabs(profileObj);
-        Sfpowerkit.log(`Reconciling  ExternalDataSources: ${profileName}`, LoggerLevel.DEBUG);
+        SFPLogger.log(`Reconciling  ExternalDataSources: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileExternalDataSource(profileObj);
-        Sfpowerkit.log(`Reconciling  CustomPermissions: ${profileName}`, LoggerLevel.DEBUG);
+        SFPLogger.log(`Reconciling  CustomPermissions: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileCustomPermission(profileObj);
-        Sfpowerkit.log(`Reconciling  CustomMetadata: ${profileName}`, LoggerLevel.DEBUG);
+        SFPLogger.log(`Reconciling  CustomMetadata: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileCustomMetadata(profileObj);
-        Sfpowerkit.log(`Reconciling  CustomSettings: ${profileName}`, LoggerLevel.DEBUG);
+        SFPLogger.log(`Reconciling  CustomSettings: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileCustomSettings(profileObj);
-        Sfpowerkit.log(`Reconciling  Flow: ${profileName}`, LoggerLevel.DEBUG);
+        SFPLogger.log(`Reconciling  Flow: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileFlow(profileObj);
-        Sfpowerkit.log(`Reconciling  Login Flows: ${profileName}`, LoggerLevel.DEBUG);
+        SFPLogger.log(`Reconciling  Login Flows: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileLoginFlow(profileObj);
-        Sfpowerkit.log(`Reconciling  User Licenses: ${profileName}`, LoggerLevel.DEBUG);
+        SFPLogger.log(`Reconciling  User Licenses: ${profileName}`, LoggerLevel.DEBUG);
         await this.cleanupUserLicenses(profileObj);
-        Sfpowerkit.log(`Reconciling  User Permissions: ${profileName}`, LoggerLevel.DEBUG);
+        SFPLogger.log(`Reconciling  User Permissions: ${profileName}`, LoggerLevel.DEBUG);
         await this.reconcileUserPermissions(profileObj);
 
-        Sfpowerkit.log(`All Components for ${profileName} reconciled`, LoggerLevel.DEBUG);
+        SFPLogger.log(`All Components for ${profileName} reconciled`, LoggerLevel.DEBUG);
         return profileObj;
     }
 
@@ -110,7 +111,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(cmpObj);
                 }
             }
-            Sfpowerkit.log(
+            SFPLogger.log(
                 `Application Visiblitilties reduced from ${profileObj.applicationVisibilities.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -134,7 +135,7 @@ export default class ProfileComponentReconciler {
                 }
             }
 
-            Sfpowerkit.log(
+            SFPLogger.log(
                 `Class Access reduced from ${profileObj.classAccesses.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -160,7 +161,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(cmpObj);
                 }
             }
-            Sfpowerkit.log(
+            SFPLogger.log(
                 `Fields Level Permissions reduced from ${profileObj.fieldPermissions.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -188,7 +189,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(cmpObj);
                 }
             }
-            Sfpowerkit.log(
+            SFPLogger.log(
                 `Layout Assignnments reduced from ${profileObj.layoutAssignments.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -216,7 +217,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(cmpObj);
                 }
             }
-            Sfpowerkit.log(
+            SFPLogger.log(
                 `Object Permissions reduced from ${profileObj.objectPermissions.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -239,7 +240,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(cmpCM);
                 }
             }
-            Sfpowerkit.log(
+            SFPLogger.log(
                 `CustomMetadata Access reduced from ${profileObj.customMetadataTypeAccesses.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -262,7 +263,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(cmpCS);
                 }
             }
-            Sfpowerkit.log(
+            SFPLogger.log(
                 `CustomSettings Access reduced from ${profileObj.customSettingAccesses.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -287,7 +288,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(dts);
                 }
             }
-            Sfpowerkit.log(
+            SFPLogger.log(
                 `ExternalDataSource Access reduced from ${profileObj.externalDataSourceAccesses.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -310,7 +311,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(flow);
                 }
             }
-            Sfpowerkit.log(
+            SFPLogger.log(
                 `Flow Access reduced from ${profileObj.flowAccesses.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -342,7 +343,7 @@ export default class ProfileComponentReconciler {
                     }
                 }
             }
-            Sfpowerkit.log(
+            SFPLogger.log(
                 `LoginFlows reduced from ${profileObj.loginFlows.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -367,7 +368,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(customPermission);
                 }
             }
-            Sfpowerkit.log(
+            SFPLogger.log(
                 `CustomPermission reduced from ${profileObj.customPermissions.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -390,7 +391,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(cmpObj);
                 }
             }
-            Sfpowerkit.log(
+            SFPLogger.log(
                 `Page Access Permissions reduced from ${profileObj.pageAccesses.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -416,7 +417,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(cmpObj);
                 }
             }
-            Sfpowerkit.log(
+            SFPLogger.log(
                 `Record Type Visibilities reduced from ${profileObj.recordTypeVisibilities.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -439,7 +440,7 @@ export default class ProfileComponentReconciler {
                     validArray.push(cmpObj);
                 }
             }
-            Sfpowerkit.log(
+            SFPLogger.log(
                 `Tab Visibilities reduced from ${profileObj.tabVisibilities.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );
@@ -471,7 +472,7 @@ export default class ProfileComponentReconciler {
         //Remove unsupported userPermission
         this.removeUnsupportedUserPermissions(profileObj);
 
-        Sfpowerkit.log('Removed Unsupported User Pemrmisions ', LoggerLevel.TRACE);
+        SFPLogger.log('Removed Unsupported User Pemrmisions ', LoggerLevel.TRACE);
         let userPermissionBuilder: UserPermissionBuilder = new UserPermissionBuilder();
         //IS sourceonly, use ignorePermission set in sfdxProject.json file
         if (MetadataFiles.sourceOnly) {

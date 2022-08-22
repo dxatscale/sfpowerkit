@@ -5,7 +5,7 @@ import * as fs from 'fs-extra';
 import * as path from 'path';
 import FileUtils from '../../utils/fileutils';
 import { FileProperties } from 'jsforce';
-import { Sfpowerkit, LoggerLevel } from '../../sfpowerkit';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 import { SfdxError } from '@salesforce/core';
 
 if (Symbol['asyncIterator'] === undefined) {
@@ -130,10 +130,10 @@ export class Packagexml {
                 FileUtils.mkDirByPathSync(dir);
             }
             fs.writeFileSync(this.configs.outputFile, packageXml);
-            Sfpowerkit.log(`Mainfest ${this.configs.outputFile} is created successfully `, LoggerLevel.INFO);
+            SFPLogger.log(`Mainfest ${this.configs.outputFile} is created successfully `, LoggerLevel.INFO);
             return packageXml;
         } catch (err) {
-            Sfpowerkit.log(err, LoggerLevel.ERROR);
+            SFPLogger.log(err, LoggerLevel.ERROR);
         }
     }
     private setStandardValueset() {
@@ -221,11 +221,11 @@ export class Packagexml {
                         this.addMember(FolderItemMetadataEntries.type, FolderItemMetadataEntries);
                     });
                 } catch (err) {
-                    Sfpowerkit.log(`Error in processing Type ${object.xmlName} ${err}`, LoggerLevel.ERROR);
+                    SFPLogger.log(`Error in processing Type ${object.xmlName} ${err}`, LoggerLevel.ERROR);
                 }
             });
         } catch (err) {
-            Sfpowerkit.log(`Error in processing Type ${folderType} ${err}`, LoggerLevel.ERROR);
+            SFPLogger.log(`Error in processing Type ${folderType} ${err}`, LoggerLevel.ERROR);
         }
     }
     private async handleNonFolderObject(object) {
@@ -264,12 +264,12 @@ export class Packagexml {
                             this.addMember(metadataEntries.type, metadataEntries);
                         });
                     } catch (err) {
-                        Sfpowerkit.log(`Error in processing Type ${child} ${err}`, LoggerLevel.ERROR);
+                        SFPLogger.log(`Error in processing Type ${child} ${err}`, LoggerLevel.ERROR);
                     }
                 }
             }
         } catch (err) {
-            Sfpowerkit.log(`Error in processing Type ${object.xmlName} ${err}`, LoggerLevel.ERROR);
+            SFPLogger.log(`Error in processing Type ${object.xmlName} ${err}`, LoggerLevel.ERROR);
         }
     }
 
@@ -387,7 +387,7 @@ export class Packagexml {
                     }
                 }
             } catch (ex) {
-                Sfpowerkit.log(`Error in adding Type ${type} ${ex.message}`, LoggerLevel.ERROR);
+                SFPLogger.log(`Error in adding Type ${type} ${ex.message}`, LoggerLevel.ERROR);
             }
         }
     }

@@ -1,5 +1,5 @@
-import { fs, LoggerLevel, Org, SfdxError } from '@salesforce/core';
-import { Sfpowerkit } from '../../../sfpowerkit';
+import { fs, Org, SfdxError } from '@salesforce/core';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 import ScratchOrgUtils, { ScratchOrg } from '../../../utils/scratchOrgUtils';
 import { getUserEmail } from '../../../utils/getUserDetails';
 import child_process = require('child_process');
@@ -28,8 +28,15 @@ export default class PoolFetchImpl {
     }
 
     public async execute(): Promise<ScratchOrg> {
-        const results = (await ScratchOrgUtils.getScratchOrgsByTag(this.tag, this.hubOrg, this.mypool, true)) as any;
 
+        let preRequisiteCheck = await ScratchOrgUtils.checkForPreRequisite(this.hubOrg);
+        if (!preRequisiteCheck) {
+            throw new Error(
+                'Required Prerequisite fields are missing in the DevHub, Refer to https://github.com/dxatscale/sfpower-scratchorg-pool'
+            );
+        }
+
+        const results = (await ScratchOrgUtils.getScratchOrgsByTag(this.tag, this.hubOrg, this.mypool, true)) as any;
         let availableSo = [];
         if (results.records.length > 0) {
             availableSo = results.records.filter((soInfo) => soInfo.Allocation_status__c === 'Available');
@@ -41,7 +48,7 @@ export default class PoolFetchImpl {
             try {
                 emaiId = await getUserEmail(this.sendToUser, this.hubOrg);
             } catch (error) {
-                Sfpowerkit.log(
+                SFPLogger.log(
                     'Unable to fetch details of the specified user, Check whether the user exists in the org ',
                     LoggerLevel.ERROR
                 );
@@ -52,7 +59,7 @@ export default class PoolFetchImpl {
         let soDetail: ScratchOrg;
 
         if (availableSo.length > 0) {
-            Sfpowerkit.log(`${this.tag} pool has ${availableSo.length} Scratch orgs available`, LoggerLevel.TRACE);
+            SFPLogger.log(`${this.tag} pool has ${availableSo.length} Scratch orgs available`, LoggerLevel.TRACE);
 
             for (let element of availableSo) {
                 let allocateSO = await ScratchOrgUtils.setScratchOrgInfo(
@@ -60,7 +67,7 @@ export default class PoolFetchImpl {
                     this.hubOrg
                 );
                 if (allocateSO === true) {
-                    Sfpowerkit.log(
+                    SFPLogger.log(
                         `Scratch org ${element.SignupUsername} is allocated from the pool. Expiry date is ${element.ExpirationDate}`,
                         LoggerLevel.TRACE
                     );
@@ -76,7 +83,7 @@ export default class PoolFetchImpl {
 
                     break;
                 } else {
-                    Sfpowerkit.log(
+                    SFPLogger.log(
                         `Scratch org ${element.SignupUsername} allocation failed. trying to get another Scratch org from ${this.tag} pool`,
                         LoggerLevel.TRACE
                     );
@@ -94,7 +101,7 @@ export default class PoolFetchImpl {
                 //Send an email for username
                 await ScratchOrgUtils.shareScratchOrgThroughEmail(emaiId, soDetail, this.hubOrg);
             } catch (error) {
-                Sfpowerkit.log(
+                SFPLogger.log(
                     'Unable to send the scratchorg details to specified user. Check whether the user exists in the org',
                     LoggerLevel.ERROR
                 );
@@ -114,7 +121,7 @@ export default class PoolFetchImpl {
             soLogin.sfdxAuthUrl = soDetail.sfdxAuthUrl;
             fs.writeFileSync('soAuth.json', JSON.stringify(soLogin));
 
-            Sfpowerkit.log(`Initiating Auto Login for Scratch Org with ${soDetail.username}`, LoggerLevel.INFO);
+            SFPLogger.log(`Initiating Auto Login for Scratch Org with ${soDetail.username}`, LoggerLevel.INFO);
 
             let authURLStoreCommand = `sfdx auth:sfdxurl:store -f soAuth.json`;
 

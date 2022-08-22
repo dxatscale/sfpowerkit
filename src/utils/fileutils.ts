@@ -1,5 +1,4 @@
-import { Sfpowerkit, LoggerLevel } from '../sfpowerkit';
-
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 import * as fs from 'fs-extra'
 const path = require('path');
 const _ = require('lodash');
@@ -35,7 +34,7 @@ export default class FileUtils {
         let pathExists = fs.existsSync(folder);
         let folderName = path.basename(folder);
         if (!pathExists) {
-            Sfpowerkit.log('Folder not exists: ' + folderName, LoggerLevel.ERROR);
+            SFPLogger.log('Folder not exists: ' + folderName, LoggerLevel.ERROR);
             return result;
         }
         let content: string[] = fs.readdirSync(folder);
@@ -58,7 +57,7 @@ export default class FileUtils {
         let homedir = os.homedir();
         let configDir = homedir + path.sep + PLUGIN_CACHE_FOLDER;
         if (!fs.existsSync(configDir)) {
-            Sfpowerkit.log('Config folder does not exists, Creating Folder', LoggerLevel.INFO);
+            SFPLogger.log('Config folder does not exists, Creating Folder', LoggerLevel.INFO);
             fs.mkdirSync(configDir);
         }
 
@@ -73,7 +72,7 @@ export default class FileUtils {
         let homedir = os.homedir();
         let configDir = homedir + path.sep + PLUGIN_CACHE_FOLDER;
         if (!fs.existsSync(configDir)) {
-            Sfpowerkit.log('Config folder does not exists, Creating Folder', LoggerLevel.INFO);
+            SFPLogger.log('Config folder does not exists, Creating Folder', LoggerLevel.INFO);
             fs.mkdirSync(configDir);
         }
         return configDir + path.sep + fileName;
@@ -87,7 +86,7 @@ export default class FileUtils {
       
         let configDir = path.join(process.cwd(),'.sfdx','sfpowerkit');
         if (!fs.existsSync(configDir)) {
-            Sfpowerkit.log('Config folder does not exists, Creating Folder', LoggerLevel.INFO);
+            SFPLogger.log('Config folder does not exists, Creating Folder', LoggerLevel.INFO);
             fs.ensureDirSync(configDir);
         }
         return configDir + path.sep + fileName;

@@ -1,4 +1,4 @@
-import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 import * as fs from 'fs-extra';
 import Profile from '../../../impl/metadata/schema';
 import * as _ from 'lodash';
@@ -11,19 +11,23 @@ import * as path from 'path';
 
 export default class ProfileSync extends ProfileActions {
     public async sync(srcFolders: string[], profilesToSync?: string[], isdelete?: boolean): Promise<ProfileStatus> {
-        Sfpowerkit.log('Retrieving profiles', LoggerLevel.DEBUG);
+        SFPLogger.log('Retrieving profiles', LoggerLevel.DEBUG);
 
         //Display provided profiles if any
         if (!_.isNil(profilesToSync) && profilesToSync.length !== 0) {
-            Sfpowerkit.log('Requested  profiles are..', LoggerLevel.DEBUG);
-            Sfpowerkit.log(profilesToSync, LoggerLevel.DEBUG);
-        }
+            SFPLogger.log('Requested  profiles are..', LoggerLevel.DEBUG);
+            profilesToSync.forEach((element) => {
+                SFPLogger.log(element,LoggerLevel.DEBUG)
+            });
+        } 
 
         //Fetch all profiles if source folders if not provided
         let isToFetchNewProfiles = _.isNil(srcFolders) || srcFolders.length === 0;
 
-        Sfpowerkit.log('Source Folders are', LoggerLevel.DEBUG);
-        Sfpowerkit.log(srcFolders, LoggerLevel.DEBUG);
+        SFPLogger.log('Source Folders are', LoggerLevel.DEBUG);
+        srcFolders.forEach((element) =>{
+            SFPLogger.log(element, LoggerLevel.DEBUG);
+        });
 
         //get local profiles when profile path is provided
         let profilesInProjectDir = await this.loadProfileFromPackageDirectories(srcFolders);
@@ -48,7 +52,7 @@ export default class ProfileSync extends ProfileActions {
             profileStatus.added = [];
         }
         profilesToRetrieve.sort((a, b) => a.name.localeCompare(b.name));
-        Sfpowerkit.log(`Number of profiles to retrieve ${profilesToRetrieve.length}`, LoggerLevel.INFO);
+        SFPLogger.log(`Number of profiles to retrieve ${profilesToRetrieve.length}`, LoggerLevel.INFO);
 
         if (profilesToRetrieve.length > 0) {
             let i: number,
@@ -72,7 +76,7 @@ export default class ProfileSync extends ProfileActions {
                 let profileWriter = new ProfileWriter();
                 for (let count = 0; count < remoteProfiles.length; count++) {
                     let profileObj = remoteProfiles[count] as Profile;
-                    Sfpowerkit.log('Reconciling  Tabs', LoggerLevel.DEBUG);
+                    SFPLogger.log('Reconciling  Tabs', LoggerLevel.DEBUG);
                     await this.reconcileTabs(profileObj);
                     //Find correct profile path, so that remote could be overlaid
                     let indices = _.keys(_.pickBy(profilesToRetrieveChunked, { name: profileObj.fullName }));
@@ -84,7 +88,7 @@ export default class ProfileSync extends ProfileActions {
                                 path.join(process.cwd(), profilesToRetrieveChunked[index].path)
                             );
                         } else {
-                            Sfpowerkit.log('File path not found...', LoggerLevel.DEBUG);
+                            SFPLogger.log('File path not found...', LoggerLevel.DEBUG);
                         }
                     }
                 }
@@ -92,7 +96,7 @@ export default class ProfileSync extends ProfileActions {
             }
             progressBar.stop();
         } else {
-            Sfpowerkit.log(`No Profiles found to retrieve`, LoggerLevel.INFO);
+            SFPLogger.log(`No Profiles found to retrieve`, LoggerLevel.INFO);
         }
 
         if (profileStatus.deleted && isdelete) {
@@ -121,7 +125,7 @@ export default class ProfileSync extends ProfileActions {
                     validArray.push(cmpObj);
                 }
             }
-            Sfpowerkit.log(
+            SFPLogger.log(
                 `Tab Visibilities reduced from ${profileObj.tabVisibilities.length}  to  ${validArray.length}`,
                 LoggerLevel.DEBUG
             );

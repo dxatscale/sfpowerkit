@@ -1,5 +1,4 @@
 import { FlagsConfig, flags } from '@salesforce/command';
-import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
 import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 import * as fs from 'fs-extra';
 import simpleGit, { SimpleGit } from 'simple-git';
@@ -9,6 +8,7 @@ import * as path from 'path';
 import FileUtils from '../../../../utils/fileutils';
 import { AnyJson } from '@salesforce/ts-types';
 import { Messages } from '@salesforce/core';
+import SFPLogger, {LoggerLevel} from '@dxatscale/sfp-logger';
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -107,11 +107,11 @@ export default class Diff extends SfpowerkitCommand {
         let sourceDiffResult = await dataModelSourceDiffImpl.exec();
 
         if (sourceDiffResult.length < 1) {
-            Sfpowerkit.log(`No Datamodel change found between ${revisionFrom} and ${revisionTo}`, LoggerLevel.WARN);
+            SFPLogger.log(`No Datamodel change found between ${revisionFrom} and ${revisionTo}`, LoggerLevel.WARN);
             return sourceDiffResult;
         }
 
-        Sfpowerkit.log(
+        SFPLogger.log(
             `Found ${sourceDiffResult.length} Datamodel change between ${revisionFrom} and ${revisionTo} \n`,
             LoggerLevel.INFO
         );
@@ -161,13 +161,13 @@ export default class Diff extends SfpowerkitCommand {
         ]);
         this.ux.log('\n');
         if (rowsToDisplay.length > 50) {
-            Sfpowerkit.log('Displaying output limited to 50 rows', LoggerLevel.WARN);
+            SFPLogger.log('Displaying output limited to 50 rows', LoggerLevel.WARN);
         }
 
-        Sfpowerkit.log(`JSON output written to ${outputDirectory}/datamodel-diff-output.json`, LoggerLevel.INFO);
+        SFPLogger.log(`JSON output written to ${outputDirectory}/datamodel-diff-output.json`, LoggerLevel.INFO);
 
         if (isOutputCSV) {
-            Sfpowerkit.log(`CSV output written to ${outputDirectory}/datamodel-diff-output.csv`, LoggerLevel.INFO);
+            SFPLogger.log(`CSV output written to ${outputDirectory}/datamodel-diff-output.csv`, LoggerLevel.INFO);
         }
         return sourceDiffResult;
     }
