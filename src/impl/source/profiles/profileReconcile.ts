@@ -5,7 +5,7 @@ import ProfileActions, { ProfileSourceFile } from './profileActions';
 import FileUtils from '../../../utils/fileutils';
 import * as fs from 'fs-extra';
 import { Worker } from 'worker_threads';
-import SFPLogger from '../../../utils/sfpLogger';
+import SFPLogger, {LoggerLevel} from '@dxatscale/sfp-logger';
 import MetadataFiles from '../../../impl/metadata/metadataFiles';
 
 export default class ProfileReconcile extends ProfileActions {
