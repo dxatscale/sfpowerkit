@@ -1,5 +1,6 @@
 import { Connection, Org, SfdxProject } from '@salesforce/core';
-import { LoggerLevel, Sfpowerkit } from '../../../sfpowerkit';
+import { Sfpowerkit } from '../../../sfpowerkit';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 import { parentPort, workerData } from 'worker_threads';
 import * as fs from 'fs-extra';
 import * as path from 'path';
@@ -14,7 +15,7 @@ import { ProfileSourceFile } from './profileActions';
 
 export default class ReconcileWorker {
     private conn: Connection;
-    public constructor(private targetOrg: string) {}
+    public constructor(private targetOrg: string, private isSourceOnly: boolean) {}
 
     public async reconcile(profilesToReconcile: ProfileSourceFile[], destFolder) {
         //Init Cache for each worker thread from file system
@@ -74,7 +75,7 @@ export default class ReconcileWorker {
                     return profileObj;
                 })
                 .then((profileObj) => {
-                    return new ProfileComponentReconciler(this.conn).reconcileProfileComponents(
+                    return new ProfileComponentReconciler(this.conn, this.isSourceOnly).reconcileProfileComponents(
                         profileObj,
                         profileComponent.name
                     );
@@ -92,7 +93,7 @@ export default class ReconcileWorker {
                     return result;
                 })
                 .catch((error) => {
-                    Sfpowerkit.log(
+                    SFPLogger.log(
                         'Error while processing file ' + profileComponent + '. ERROR Message: ' + error.message,
                         LoggerLevel.ERROR
                     );
@@ -104,7 +105,7 @@ export default class ReconcileWorker {
 
 Sfpowerkit.setLogLevel(workerData.loglevel, workerData.isJsonFormatEnabled);
 
-let reconcileWorker = new ReconcileWorker(workerData.targetOrg);
+let reconcileWorker = new ReconcileWorker(workerData.targetOrg, workerData.isSourceOnly);
 reconcileWorker.reconcile(workerData.profileChunk, workerData.destFolder).then((result) => {
     parentPort.postMessage(result);
 });

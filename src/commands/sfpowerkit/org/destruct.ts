@@ -1,6 +1,5 @@
 import { FlagsConfig, flags } from '@salesforce/command';
 import FileUtils from '../../../utils/fileutils';
-import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
 import SfpowerkitCommand from '../../../sfpowerkitCommand';
 import * as xml2js from 'xml2js';
 import * as rimraf from 'rimraf';
@@ -11,6 +10,7 @@ import { checkDeploymentStatus } from '../../..//utils/checkDeploymentStatus';
 import { Connection, Messages, SfdxError } from '@salesforce/core';
 import * as fs from 'fs-extra';
 import { isEmpty } from '@salesforce/kit';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 
 const path = require('path');
 
@@ -113,7 +113,7 @@ export default class Destruct extends SfpowerkitCommand {
             throw new SfdxError('Invalid Destructive Change Definitiion Encountered');
         }
 
-        Sfpowerkit.log(destructiveChanges['Package']['types'], LoggerLevel.TRACE);
+        SFPLogger.log(destructiveChanges['Package']['types'], LoggerLevel.TRACE);
     }
 
     private generateEmptyPackageXml(workingDirectory: string, apiversion: string) {
@@ -129,7 +129,7 @@ export default class Destruct extends SfpowerkitCommand {
         let packageXmlPath = path.join(workingDirectory, 'package.xml');
         fs.outputFileSync(packageXmlPath, packageXml);
 
-        Sfpowerkit.log(`Empty Package.xml with ${apiversion} created at ${workingDirectory}`, LoggerLevel.DEBUG);
+        SFPLogger.log(`Empty Package.xml with ${apiversion} created at ${workingDirectory}`, LoggerLevel.DEBUG);
     }
 
     private async generateDeploymentZipFile(workingDirectory: string) {
@@ -148,12 +148,12 @@ export default class Destruct extends SfpowerkitCommand {
             result: AsyncResult
         ) {
             if (error) {
-                Sfpowerkit.log(error.message, LoggerLevel.ERROR);
+                SFPLogger.log(error.message, LoggerLevel.ERROR);
             }
             deployId = result;
         });
 
-        Sfpowerkit.log(
+        SFPLogger.log(
             `Deploying Destructive Changes with ID ${deployId.id} to ${this.org.getUsername()}`,
             LoggerLevel.INFO
         );
@@ -161,7 +161,7 @@ export default class Destruct extends SfpowerkitCommand {
 
         if (metadata_deploy_result.success) {
             if (metadata_deploy_result.success)
-                Sfpowerkit.log(
+                SFPLogger.log(
                     `Deployed Destructive Changes  in target org ${this.org.getUsername()} succesfully`,
                     LoggerLevel.INFO
                 );

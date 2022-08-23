@@ -1,5 +1,5 @@
 import cli from 'cli-ux';
-import SFPLogger from '../utils/sfpLogger';
+import SFPLogger from '@dxatscale/sfp-logger';
 import { isNullOrUndefined } from 'util';
 import { Sfpowerkit } from '../sfpowerkit';
 

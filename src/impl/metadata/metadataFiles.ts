@@ -6,7 +6,7 @@ import ignore from 'ignore';
 import * as fs from 'fs-extra';
 import * as glob from 'glob';
 import { Sfpowerkit } from '../../sfpowerkit';
-import { LoggerLevel } from '@salesforce/core';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 
 const SEP = /\/|\\/;
 
@@ -212,7 +212,7 @@ export default class MetadataFiles {
      * @param outputFolder
      */
     public static copyFile(filePath: string, outputFolder: string) {
-        Sfpowerkit.log(`Copying file ${filePath} from file system to ${outputFolder}`, LoggerLevel.DEBUG);
+        SFPLogger.log(`Copying file ${filePath} from file system to ${outputFolder}`, LoggerLevel.DEBUG);
         const LWC_IGNORE_FILES = ['jsconfig.json', '.eslintrc.json'];
         const pairStatResources = METADATA_INFO.StaticResource.directoryName;
         const pairStatResourcesRegExp = new RegExp(pairStatResources);

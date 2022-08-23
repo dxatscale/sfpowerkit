@@ -1,7 +1,7 @@
 import * as fs from 'fs-extra';
 const path = require('path');
 const glob = require('glob');
-import { Sfpowerkit, LoggerLevel } from '../../sfpowerkit';
+import SFPLogger, {LoggerLevel} from '@dxatscale/sfp-logger';
 
 import ApexTypeListener from './listeners/ApexTypeListener';
 
@@ -59,7 +59,7 @@ export default class ApexTypeFetcher {
 
                 compilationUnitContext = parser.compilationUnit();
             } catch (err) {
-                Sfpowerkit.log(`Failed to parse ${clsFile}. Error occured ${JSON.stringify(err)} `, LoggerLevel.DEBUG);
+                SFPLogger.log(`Failed to parse ${clsFile}. Error occured ${JSON.stringify(err)} `, LoggerLevel.DEBUG);
 
                 fileDescriptor['error'] = err;
                 apexSortedByType['parseError'].push(fileDescriptor);

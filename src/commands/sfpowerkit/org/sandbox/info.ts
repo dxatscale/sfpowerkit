@@ -2,9 +2,10 @@ import { flags } from '@salesforce/command';
 import { AnyJson } from '@salesforce/ts-types';
 let request = require('request-promise-native');
 import { Messages, SfdxError } from '@salesforce/core';
-import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
+import { Sfpowerkit } from '../../../../sfpowerkit';
 import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 import { Connection } from 'jsforce';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -49,7 +50,7 @@ export default class Info extends SfpowerkitCommand {
 
         let result = await this.getSandboxInfo(conn, this.flags.name);
 
-        Sfpowerkit.log(`Successfully Retrieved Sandbox Details`, LoggerLevel.INFO);
+        SFPLogger.log(`Successfully Retrieved Sandbox Details`, LoggerLevel.INFO);
 
         if (!this.flags.json) this.ux.logJson(result);
 

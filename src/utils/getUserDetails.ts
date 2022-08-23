@@ -1,6 +1,6 @@
 import { Org } from '@salesforce/core';
 import { isNullOrUndefined } from 'util';
-import { Sfpowerkit, LoggerLevel } from '../sfpowerkit';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 let retry = require('async-retry');
 
 export async function getUserEmail(username: string, hubOrg: Org) {
@@ -14,7 +14,7 @@ export async function getUserEmail(username: string, hubOrg: Org) {
             }
             let query = `SELECT email FROM user WHERE username='${username}'`;
 
-            Sfpowerkit.log('QUERY:' + query, LoggerLevel.TRACE);
+            SFPLogger.log('QUERY:' + query, LoggerLevel.TRACE);
             const results = (await hubConn.query(query)) as any;
 
             if (results.records.size < 1) {

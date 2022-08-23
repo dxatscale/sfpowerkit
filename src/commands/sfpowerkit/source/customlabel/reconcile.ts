@@ -7,6 +7,7 @@ import * as rimraf from 'rimraf';
 import * as path from 'path';
 import SFPowerkitCommand from '../../../../sfpowerkitCommand';
 import { Messages } from '@salesforce/core';
+import SFPLogger from '@dxatscale/sfp-logger';
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -70,7 +71,7 @@ export default class Reconcile extends SFPowerkitCommand {
                 return 1;
             }
 
-            console.log(`Package ::: ${packageName}`);
+            SFPLogger.log(`Package ::: ${packageName}`);
 
             if (this.isIterable(retrieved_customlabels.CustomLabels.labels)) {
                 retrieved_customlabels.CustomLabels.labels = retrieved_customlabels.CustomLabels.labels.filter((item) =>
