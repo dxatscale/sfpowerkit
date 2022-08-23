@@ -6,6 +6,7 @@ import FileUtils from '../../../utils/fileutils';
 import * as fs from 'fs-extra';
 import { Worker } from 'worker_threads';
 import SFPLogger, {LoggerLevel} from '@dxatscale/sfp-logger';
+import MetadataFiles from '../../../impl/metadata/metadataFiles';
 
 export default class ProfileReconcile extends ProfileActions {
     public async reconcile(srcFolders: string[], profileList: string[], destFolder: string): Promise<string[]> {
@@ -72,6 +73,7 @@ export default class ProfileReconcile extends ProfileActions {
                         targetOrg: this.org?.getUsername(), //Org can be null during source only reconcile
                         loglevel: SFPLogger.logLevel,
                         isJsonFormatEnabled: Sfpowerkit.isJsonFormatEnabled,
+                        isSourceOnly: MetadataFiles.sourceOnly,
                         path: reconcileWorkerFile,
                     },
                 });
@@ -86,7 +88,10 @@ export default class ProfileReconcile extends ProfileActions {
                     result.push(...data);
                 });
 
-                worker.on('error', reject);
+                worker.on('error', (err)=> {
+                    Sfpowerkit.log(`Error while running worker ${err}`, LoggerLevel.ERROR);
+                    reject(err);
+                });
                 worker.on('exit', (code) => {
                     finishedWorkerCount++;
                     if (code !== 0)
