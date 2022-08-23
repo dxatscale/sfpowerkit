@@ -7,6 +7,8 @@ import { Connection, Org, SfdxProject } from '@salesforce/core';
 import ProfileRetriever from '../../metadata/retriever/profileRetriever';
 import { ComponentSet, MetadataResolver, registry, SourceComponent } from '@salesforce/source-deploy-retrieve';
 import { META_XML_SUFFIX } from '@salesforce/source-deploy-retrieve/lib/src/common';
+import Profile from '../../metadata/schema';
+import MetadataRetriever from '../../metadata/retriever/metadataRetriever';
 
 export default abstract class ProfileActions {
     protected conn: Connection;
@@ -136,6 +138,29 @@ export default abstract class ProfileActions {
             return { path: elem.xml, name: elem.name };
         });
         return profileSourceFile;
+    }
+
+    protected async reconcileTabs(profileObj: Profile): Promise<void> {
+        let tabRetriever = new MetadataRetriever(this.org.getConnection(), registry.types.customtab.name);
+
+        if (profileObj.tabVisibilities !== undefined) {
+            if (!Array.isArray(profileObj.tabVisibilities)) {
+                profileObj.tabVisibilities = [profileObj.tabVisibilities];
+            }
+            let validArray = [];
+            for (let i = 0; i < profileObj.tabVisibilities.length; i++) {
+                let cmpObj = profileObj.tabVisibilities[i];
+                let exist = await tabRetriever.isComponentExistsInProjectDirectoryOrInOrg(cmpObj.tab);
+                if (exist) {
+                    validArray.push(cmpObj);
+                }
+            }
+            Sfpowerkit.log(
+                `Tab Visibilities reduced from ${profileObj.tabVisibilities.length}  to  ${validArray.length}`,
+                LoggerLevel.DEBUG
+            );
+            profileObj.tabVisibilities = validArray;
+        }
     }
 }
 
