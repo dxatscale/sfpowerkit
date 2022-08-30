@@ -100,7 +100,7 @@ export default class ScratchOrgUtils {
         SFPLogger.log(JSON.stringify(result), LoggerLevel.TRACE);
 
         let scratchOrg: ScratchOrg = {
-            alias: resultObject.result.alias,
+            alias: alias_prefix ? `${alias_prefix}${id}` : `SO${id}`,
             orgId: resultObject.result.orgId,
             username: resultObject.result.username,
             signupEmail: adminEmail ? adminEmail : '',
