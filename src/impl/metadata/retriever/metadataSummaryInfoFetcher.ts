@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { SfdxError } from '@salesforce/core';
 import getDefaults from '../../../utils/getDefaults';
-import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 import { Connection, DescribeMetadataResult, FileProperties } from 'jsforce';
 import { chunkArray } from '../../../utils/chunkArray';
 import { ProgressBar } from '../../../ui/progressBar';
@@ -145,7 +145,7 @@ export default class MetadataSummaryInfoFetcher {
                 progressBar.increment(typesInChunk.length);
             } catch (error) {
                 if (error.message == 'Undefinded Metadata Type') {
-                    Sfpowerkit.log(
+                    SFPLogger.log(
                         `Unknown Types ${JSON.stringify(
                             typesInChunk
                         )} Encountered while retrieving types from the org, Please raise an issue!`,

@@ -1,4 +1,4 @@
-import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
+import { Sfpowerkit } from '../../../sfpowerkit';
 import MetadataFiles from '../../metadata/metadataFiles';
 import * as fs from 'fs-extra';
 import * as path from 'path';
@@ -24,6 +24,7 @@ import Profile, {
 import * as util from 'util';
 import ProfileActions, { ProfileStatus } from './profileActions';
 import ProfileWriter from '../../../impl/metadata/writer/profileWriter';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 
 const unsupportedprofiles = [];
 
@@ -668,7 +669,7 @@ export default class ProfileMerge extends ProfileActions {
         metadatas: any,
         isdelete?: boolean
     ): Promise<ProfileStatus> {
-        Sfpowerkit.log('Merging profiles...', LoggerLevel.DEBUG);
+        SFPLogger.log('Merging profiles...', LoggerLevel.DEBUG);
 
         let fetchNewProfiles = _.isNil(srcFolders) || srcFolders.length === 0;
         if (fetchNewProfiles) {
@@ -704,13 +705,13 @@ export default class ProfileMerge extends ProfileActions {
             j: number,
             chunk = 10;
         let temparray;
-        Sfpowerkit.log(`${profileNames.length}  profiles found in the directory `, LoggerLevel.DEBUG);
+        SFPLogger.log(`${profileNames.length}  profiles found in the directory `, LoggerLevel.DEBUG);
         for (i = 0, j = profileNames.length; i < j; i += chunk) {
             temparray = profileNames.slice(i, i + chunk);
             //SfPowerKit.ux.log(temparray.length);
             let start = i + 1;
             let end = i + chunk;
-            Sfpowerkit.log('Loading a chunk of profiles ' + start + ' to ' + end, LoggerLevel.INFO);
+            SFPLogger.log('Loading a chunk of profiles ' + start + ' to ' + end, LoggerLevel.INFO);
             let profileList: string[] = [];
             let metadataList = await this.profileRetriever.loadProfiles(temparray);
 
@@ -728,9 +729,11 @@ export default class ProfileMerge extends ProfileActions {
                 let profileObj: Profile;
                 let indices = _.keys(_.pickBy(localProfiles, { name: profileObjFromServer.fullName }));
                 for (const index of indices) {
+                    Sfpowerkit.log('Reconciling  Tabs on retrieved profiles.', LoggerLevel.DEBUG);
+                    await this.reconcileTabs(profileObjFromServer);
                     let filePath = localProfiles[index].path;
                     if (filePath && fs.existsSync(filePath)) {
-                        Sfpowerkit.log('Merging profile ' + profileObjFromServer.fullName, LoggerLevel.DEBUG);
+                        SFPLogger.log('Merging profile ' + profileObjFromServer.fullName, LoggerLevel.DEBUG);
                         let profileXml = fs.readFileSync(filePath);
 
                         const parser = new xml2js.Parser({ explicitArray: false });
@@ -740,14 +743,14 @@ export default class ProfileMerge extends ProfileActions {
                         profileObj = profileWriter.toProfile(parseResult.Profile);
                         profileObj = await this.mergeProfile(profileObj, profileObjFromServer);
                     } else {
-                        Sfpowerkit.log(
+                        SFPLogger.log(
                             'New Profile found in server ' + profileObjFromServer.fullName,
                             LoggerLevel.DEBUG
                         );
                     }
                     profileObj.fullName = profileObjFromServer.fullName;
                     profileWriter.writeProfile(profileObj, filePath);
-                    Sfpowerkit.log('Profile ' + profileObj.fullName + ' merged', LoggerLevel.DEBUG);
+                    SFPLogger.log('Profile ' + profileObj.fullName + ' merged', LoggerLevel.DEBUG);
                     profileList.push(profileObj.fullName);
                 }
             }
@@ -765,33 +768,41 @@ export default class ProfileMerge extends ProfileActions {
     }
 
     private removeUnwantedPermissions(profileObjFromServer: Profile, metadatas: any) {
-        profileObjFromServer.applicationVisibilities = profileObjFromServer.applicationVisibilities ? profileObjFromServer.applicationVisibilities.filter((elem) => {
-            return (
-                metadatas['CustomApplication'].includes(elem.application) ||
-                metadatas['CustomApplication'].includes('*')
-            );
-        }) : [];
-        profileObjFromServer.classAccesses = profileObjFromServer.classAccesses ? profileObjFromServer.classAccesses.filter((elem) => {
+        const  getPermissionsArray = (permissions: any) => {
+            if(permissions == null || permissions == undefined) {
+                permissions = [];
+            } else if(!Array.isArray(permissions)) {
+                permissions = [permissions];
+            }
+            return permissions;
+        }
+
+        profileObjFromServer.applicationVisibilities = getPermissionsArray(profileObjFromServer.applicationVisibilities)?.filter((elem) => {
+            return (metadatas['CustomApplication'].includes(elem.application) ||
+                metadatas['CustomApplication'].includes('*'));
+        });
+
+        profileObjFromServer.classAccesses = getPermissionsArray(profileObjFromServer.classAccesses)?.filter((elem) => {
             return metadatas['ApexClass'].includes(elem.apexClass) || metadatas['ApexClass'].includes('*');
-        }) : [];
-        profileObjFromServer.layoutAssignments = profileObjFromServer.layoutAssignments ? profileObjFromServer.layoutAssignments.filter((elem) => {
+        });
+        profileObjFromServer.layoutAssignments = getPermissionsArray(profileObjFromServer.layoutAssignments)?.filter((elem) => {
             return metadatas['Layout'].includes(elem.layout) || metadatas['Layout'].includes('*');
-        }) : [];
-        profileObjFromServer.objectPermissions = profileObjFromServer.objectPermissions ? profileObjFromServer.objectPermissions.filter((elem) => {
+        });
+        profileObjFromServer.objectPermissions = getPermissionsArray(profileObjFromServer.objectPermissions)?.filter((elem) => {
             return metadatas['CustomObject'].includes(elem.object) || metadatas['CustomObject'].includes('*');
-        }) : [];
-        profileObjFromServer.pageAccesses = profileObjFromServer.pageAccesses ? profileObjFromServer.pageAccesses.filter((elem) => {
+        });
+        profileObjFromServer.pageAccesses = getPermissionsArray(profileObjFromServer.pageAccesses)?.filter((elem) => {
             return metadatas['ApexPage'].includes(elem.apexPage) || metadatas['ApexPage'].includes('*');
-        }) : [];
-        profileObjFromServer.fieldPermissions = profileObjFromServer.fieldPermissions ? profileObjFromServer.fieldPermissions.filter((elem) => {
+        });
+        profileObjFromServer.fieldPermissions = getPermissionsArray(profileObjFromServer.fieldPermissions)?.filter((elem) => {
             return metadatas['CustomField'].includes(elem.field);
-        }) : [];
-        profileObjFromServer.recordTypeVisibilities = profileObjFromServer.recordTypeVisibilities ? profileObjFromServer.recordTypeVisibilities.filter((elem) => {
+        });
+        profileObjFromServer.recordTypeVisibilities = getPermissionsArray(profileObjFromServer.recordTypeVisibilities)?.filter((elem) => {
             return metadatas['RecordType'].includes(elem.recordType);
-        }) : [];
-        profileObjFromServer.tabVisibilities = profileObjFromServer.tabVisibilities ? profileObjFromServer.tabVisibilities.filter((elem) => {
+        });
+        profileObjFromServer.tabVisibilities = getPermissionsArray(profileObjFromServer.tabVisibilities)?.filter((elem) => {
             return metadatas['CustomTab'].includes(elem.tab) || metadatas['CustomTab'].includes('*');
-        }) : [];
+        });
         if (metadatas['SystemPermissions'].length == 0) {
             delete profileObjFromServer.userPermissions;
         }

@@ -1,4 +1,5 @@
-import { Sfpowerkit, LoggerLevel } from '../../../sfpowerkit';
+import { Sfpowerkit } from '../../../sfpowerkit';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 import * as path from 'path';
 import FileUtils from '../../../utils/fileutils';
 import { retrieveMetadata } from '../../../utils/retrieveMetadata';
@@ -6,6 +7,8 @@ import { Connection, Org, SfdxProject } from '@salesforce/core';
 import ProfileRetriever from '../../metadata/retriever/profileRetriever';
 import { ComponentSet, MetadataResolver, registry, SourceComponent } from '@salesforce/source-deploy-retrieve';
 import { META_XML_SUFFIX } from '@salesforce/source-deploy-retrieve/lib/src/common';
+import Profile from '../../metadata/schema';
+import MetadataRetriever from '../../metadata/retriever/metadataRetriever';
 
 export default abstract class ProfileActions {
     protected conn: Connection;
@@ -65,11 +68,11 @@ export default abstract class ProfileActions {
                 }
                 if (!found) {
                     profilesStatus.deleted.push({ name: profileName });
-                    Sfpowerkit.log(`Profile ${profileName} not found in the org`, LoggerLevel.WARN);
+                    SFPLogger.log(`Profile ${profileName} not found in the org`, LoggerLevel.WARN);
                 }
             }
         } else {
-            Sfpowerkit.log('Load new profiles from server into the project directory', LoggerLevel.DEBUG);
+            SFPLogger.log('Load new profiles from server into the project directory', LoggerLevel.DEBUG);
 
             profilesStatus.deleted = localProfiles.filter((profile) => {
                 return !remoteProfiles.includes(profile.name);
@@ -94,14 +97,14 @@ export default abstract class ProfileActions {
                     return !found;
                 });
                 if (newProfiles && newProfiles.length > 0) {
-                    Sfpowerkit.log('New profiles founds', LoggerLevel.DEBUG);
+                    SFPLogger.log('New profiles founds', LoggerLevel.DEBUG);
                     for (let i = 0; i < newProfiles.length; i++) {
-                        Sfpowerkit.log(newProfiles[i], LoggerLevel.DEBUG);
+                        SFPLogger.log(newProfiles[i], LoggerLevel.DEBUG);
                         let newProfilePath = path.join(profilePath, newProfiles[i] + this.profileFileExtension);
                         profilesStatus.added.push({ path: newProfilePath, name: newProfiles[i] });
                     }
                 } else {
-                    Sfpowerkit.log('No new profile found, Updating existing profiles', LoggerLevel.INFO);
+                    SFPLogger.log('No new profile found, Updating existing profiles', LoggerLevel.INFO);
                 }
             }
         }
@@ -135,6 +138,29 @@ export default abstract class ProfileActions {
             return { path: elem.xml, name: elem.name };
         });
         return profileSourceFile;
+    }
+
+    protected async reconcileTabs(profileObj: Profile): Promise<void> {
+        let tabRetriever = new MetadataRetriever(this.org.getConnection(), registry.types.customtab.name);
+
+        if (profileObj.tabVisibilities !== undefined) {
+            if (!Array.isArray(profileObj.tabVisibilities)) {
+                profileObj.tabVisibilities = [profileObj.tabVisibilities];
+            }
+            let validArray = [];
+            for (let i = 0; i < profileObj.tabVisibilities.length; i++) {
+                let cmpObj = profileObj.tabVisibilities[i];
+                let exist = await tabRetriever.isComponentExistsInProjectDirectoryOrInOrg(cmpObj.tab);
+                if (exist) {
+                    validArray.push(cmpObj);
+                }
+            }
+            Sfpowerkit.log(
+                `Tab Visibilities reduced from ${profileObj.tabVisibilities.length}  to  ${validArray.length}`,
+                LoggerLevel.DEBUG
+            );
+            profileObj.tabVisibilities = validArray;
+        }
     }
 }
 

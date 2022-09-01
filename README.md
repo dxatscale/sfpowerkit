@@ -80,7 +80,6 @@ $ sfdx plugins:link
     - [`sfpowerkit:org:trigger:deactivate`](#sfpowerkitorgtriggerdeactivate)
     - [`sfpowerkit:org:trigger:activate`](#sfpowerkitorgtriggeractivate)
     - [`sfpowerkit:org:healthcheck`](#sfpowerkitorghealthcheck)
-    - [`sfpowerkit:org:manifest:build`](#sfpowerkitorgmanifestbuild)
     - [`sfpowerkit:org:cleartestresult`](#sfpowerkitorgcleartestresult)
     - [`sfpowerkit:org:orgcoverage`](#sfpowerkitorgorgcoverage)
     - [`sfpowerkit:org:profile:diff`](#sfpowerkitorgprofilediff)
@@ -481,7 +480,7 @@ EXAMPLES
 
 ### `sfpowerkit:project:manifest:diff`
 
-Generate a diff between two manifest files. This command is used to useful to generate a report on what is the difference between two org's. Use sfpowerkit org: manifest:build or similar to generate manifests
+Generate a diff between two manifest files. This command is used to useful to generate a report on what is the difference between two org's.
 
 ```
 USAGE
@@ -1040,47 +1039,6 @@ EXAMPLE
 ```
 
 _See code: [src\commands\sfpowerkit\org\healthcheck.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/healthcheck.ts)_
-
-### `sfpowerkit:org:manifest:build`
-
-Generate a complete manifest of all the metadata from the specified org. Once the manifest is generated use source:retrieve or mdapi:retrieve to retrieve the metadata.
-
-```
-USAGE
-  $ sfdx sfpowerkit:org:manifest:build [-q <string>] [-e <string>] [-i <string>] [-x] [-c] [-o <filepath>] [-u <string>] [--apiversion <string>] [--json] [--loglevel
-  trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL]
-
-OPTIONS
-  -c, --includechilds                                                               Set to true to include child Metadata in the generated package.xml.
-
-  -e, --excludefilter=excludefilter                                                 comma separated values of metadata type, member or file names to be excluded while building
-                                                                                    the manifest
-
-  -i, --includefilter=includefilter                                                 comma separated values of metadata type, member or file names to be included while building
-                                                                                    the manifest
-
-  -o, --outputfile=outputfile                                                       The output path where the manifest file will be created
-
-  -q, --quickfilter=quickfilter                                                     [deprecated] comma separated values of metadata type, member or file names to be excluded
-                                                                                    while building the manifest
-
-  -u, --targetusername=targetusername                                               username or alias for the target org; overrides default target org
-
-  -x, --excludemanaged                                                              exclude managed packages components from the manifest
-
-  --apiversion=apiversion                                                           override the api version used for api requests made by this command
-
-  --json                                                                            format output as json
-
-  --loglevel=(trace|debug|info|warn|error|fatal|TRACE|DEBUG|INFO|WARN|ERROR|FATAL)  [default: warn] logging level for this command invocation
-
-EXAMPLES
-  $ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml
-  $ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml -q 'ApexClass,CustomObject,Report'
-  $ sfdx sfpowerkit:org:manifest:build --targetusername myOrg@example.com -o package.xml -q 'ApexClass:sampleclass,CustomObject:Account'
-```
-
-_See code: [src\commands\sfpowerkit\org\manifest\build.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/manifest/build.ts)_
 
 ### `sfpowerkit:org:cleartestresult`
 

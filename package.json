@@ -1,13 +1,14 @@
 {
     "name": "sfpowerkit",
-    "version": "4.2.13",
-    "release": "May 22",
+    "version": "5.0.0",
+    "release": "August 22",
     "author": {
         "name": "DXatScale",
         "email": "dxatscale@accenture.com"
     },
     "bugs": "https://github.com/accenture/sfpowerkit/issues",
     "dependencies": {
+        "@dxatscale/sfp-logger": "^1.0.2",
         "@salesforce/command": "4.2.2",
         "@salesforce/core": "2.35.0",
         "@salesforce/plugin-user": "1.6.0",

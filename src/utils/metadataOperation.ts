@@ -1,5 +1,6 @@
 import { Connection } from 'jsforce/connection';
-import { LoggerLevel, Sfpowerkit } from '../sfpowerkit';
+import { Sfpowerkit } from '../sfpowerkit';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 const retry = require('async-retry');
 
 export default class MetadataOperation {
@@ -35,7 +36,7 @@ export default class MetadataOperation {
                 retries: 5,
                 minTimeout: 2000,
                 onRetry: (error) => {
-                    Sfpowerkit.log(`Retrying Network call due to ${error.message}`, LoggerLevel.INFO);
+                    SFPLogger.log(`Retrying Network call due to ${error.message}`, LoggerLevel.INFO);
                 },
             }
         );
@@ -54,7 +55,7 @@ export default class MetadataOperation {
                 retries: 5,
                 minTimeout: 2000,
                 onRetry: (error) => {
-                    Sfpowerkit.log(`Retrying Network call due to ${error.message}`, LoggerLevel.INFO);
+                    SFPLogger.log(`Retrying Network call due to ${error.message}`, LoggerLevel.INFO);
                 },
             }
         );

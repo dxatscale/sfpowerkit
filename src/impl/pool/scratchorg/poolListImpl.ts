@@ -1,5 +1,5 @@
-import { LoggerLevel, Org } from '@salesforce/core';
-import { Sfpowerkit } from '../../../sfpowerkit';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
+import { Org } from '@salesforce/core';
 import ScratchOrgUtils, { ScratchOrg } from '../../../utils/scratchOrgUtils';
 
 export default class PoolListImpl {
@@ -30,7 +30,7 @@ export default class PoolListImpl {
 
         let scratchOrgList: ScratchOrg[] = new Array<ScratchOrg>();
         if (results.records.length > 0) {
-            Sfpowerkit.log(`${this.tag} pool has ${results.records.length} Scratch orgs available`, LoggerLevel.TRACE);
+            SFPLogger.log(`${this.tag} pool has ${results.records.length} Scratch orgs available`, LoggerLevel.TRACE);
 
             for (let element of results.records) {
                 let soDetail: ScratchOrg = {};

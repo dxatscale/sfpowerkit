@@ -2,9 +2,10 @@ import { flags } from '@salesforce/command';
 import { AnyJson } from '@salesforce/ts-types';
 let request = require('request-promise-native');
 import { Messages, SfdxError } from '@salesforce/core';
-import { Sfpowerkit, LoggerLevel } from '../../../../sfpowerkit';
+import { Sfpowerkit } from '../../../../sfpowerkit';
 import SfpowerkitCommand from '../../../../sfpowerkitCommand';
 import { Connection } from 'jsforce';
+import SFPLogger, {LoggerLevel } from '@dxatscale/sfp-logger';
 
 // Initialize Messages with the current plugin directory
 Messages.importMessagesDirectory(__dirname);
@@ -111,7 +112,7 @@ export default class Create extends SfpowerkitCommand {
         }
 
         if (result.success) {
-            Sfpowerkit.log(`Successfully Enqueued Creation of Sandbox`, LoggerLevel.INFO);
+            SFPLogger.log(`Successfully Enqueued Creation of Sandbox`, LoggerLevel.INFO);
 
             if (!this.flags.json) this.ux.logJson(result);
         } else {
@@ -136,7 +137,7 @@ export default class Create extends SfpowerkitCommand {
         if (sandbox_query_result.records[0] == undefined)
             throw new SfdxError(`Unable to continue, Please check your sandbox name: ${name}`);
 
-        Sfpowerkit.log(
+        SFPLogger.log(
             `Fetched Sandbox Id for sandbox  ${name}  is ${sandbox_query_result.records[0].Id}`,
             LoggerLevel.INFO
         );
