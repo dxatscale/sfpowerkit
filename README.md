@@ -255,7 +255,7 @@ OPTIONS
 
 EXAMPLES
   $ sfdx sfpowerkit:source:profile:merge -u sandbox
-  $ sfdx sfpowerkit:source:profile:merge -f force-app -n "My Profile" -r -u sandbox
+  $ sfdx sfpowerkit:source:profile:merge -f force-app -n "My Profile" -u sandbox
   $ sfdx sfpowerkit:source:profile:merge -f "module1, module2, module3" -n "My Profile1, My profile2"  -u sandbox
 ```
 
