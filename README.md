@@ -70,7 +70,6 @@ $ sfdx plugins:link
     - [`sfpowerkit:package:valid`](#sfpowerkitpackagevalid)
     - [`sfpowerkit:package:applypatch`](#sfpowerkitpackageapplypatch)
   - [Org Related Functionalities](#org-related-functionalities)
-    - [`sfpowerkit:org:destruct`](#sfpowerkitorgdestruct)
     - [`sfpowerkit:org:connectedapp:create`](#sfpowerkitorgconnectedappcreate)
     - [`sfpowerkit:org:connectedapp:retrieve`](#sfpowerkitorgconnectedappretrieve)
     - [`sfpowerkit:org:duplicaterule:deactivate`](#sfpowerkitorgduplicateruledeactivate)
@@ -256,7 +255,7 @@ OPTIONS
 
 EXAMPLES
   $ sfdx sfpowerkit:source:profile:merge -u sandbox
-  $ sfdx sfpowerkit:source:profile:merge -f force-app -n "My Profile" -r -u sandbox
+  $ sfdx sfpowerkit:source:profile:merge -f force-app -n "My Profile" -u sandbox
   $ sfdx sfpowerkit:source:profile:merge -f "module1, module2, module3" -n "My Profile1, My profile2"  -u sandbox
 ```
 
@@ -746,33 +745,6 @@ EXAMPLE
 ## Org Related Functionalities
 
 These commands are helpful in managing functionalities are related to a Salesforce Org
-
-### `sfpowerkit:org:destruct`
-
-This is a helper command to ease the deployment of destructiveChanges.xml. The command will create the empty package.xml and package the passed destructive manifest and deploy it to the org
-
-```
-USAGE
-  $ sfdx sfpowerkit:org:destruct -m <filepath>  [-u <string>] [--apiversion  <string>] [--json] [--loglevel trace|debug|info|warn|error|fatal]
-
-OPTIONS
-  -m, --manifest                                 (required) The path to xml containing the members that need to be destroyed. Instructions 
-                                                 [here](https://developer.salesforce.com/docs/atlas.en-us.daas.meta/daas/daas_destructive_changes.htm)
-
-  -u, --targetusername=targetusername             username or alias for the target org; overrides default target org
-
-  --apiversion=apiversion                         override the api version used for api requests made by this command
-
-  --json                                          format output as json
-
-  --loglevel=(trace|debug|info|warn|error|fatal)  [default: info] logging level for this command invocation
-
-EXAMPLE
-  $ sfdx sfpowerkit:org:destruct -u myOrg@example.com -m destructiveChanges.xml
-
-```
-
-_See code: [src\commands\sfpowerkit\org\destruct.ts](https://github.com/Accenture/sfpowerkit/blob/main/src/commands/sfpowerkit/org/destruct.ts)_
 
 ### `sfpowerkit:org:connectedapp:create`
 
