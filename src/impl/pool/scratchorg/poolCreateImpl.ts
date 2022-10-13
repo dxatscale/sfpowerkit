@@ -302,10 +302,10 @@ export default class PoolCreateImpl {
             let userCount = 1;
             poolUser.scratchOrgs = new Array<ScratchOrg>();
             for (let i = 0; i < poolUser.to_allocate; i++) {
-                SFPLogger.log(`Creating Scratch  Org ${soCount}/${this.totalToBeAllocated}`, LoggerLevel.INFO);
+                SFPLogger.log(`Creating Scratch Org ${soCount}/${this.totalToBeAllocated}`, LoggerLevel.INFO);
                 if (this.poolConfig.pool.user_mode) {
                     SFPLogger.log(
-                        `Scratch  Org allocation:${poolUser.username}  alias:${soCount} count:${userCount}/${poolUser.to_allocate}`,
+                        `Scratch Org allocation:${poolUser.username} alias:${soCount} count:${userCount}/${poolUser.to_allocate}`,
                         LoggerLevel.INFO
                     );
                 }
@@ -323,7 +323,7 @@ export default class PoolCreateImpl {
                     this.totalAllocated++;
                 } catch (error) {
                     SFPLogger.log(
-                        `Unable to provision scratch org  ${soCount} . Due to following Error: ${error.message}`,
+                        `Unable to provision scratch org ${soCount} . Due to following Error: ${error.message}`,
                         LoggerLevel.INFO
                     );
                 }
@@ -382,7 +382,7 @@ export default class PoolCreateImpl {
                     );
 
                     await ScratchOrgUtils.deleteScratchOrg(this.hubOrg, [activeScratchOrgRecordId]);
-                    SFPLogger.log(`Succesfully deleted scratchorg  ${scratchOrg.username}`, LoggerLevel.TRACE);
+                    SFPLogger.log(`Succesfully deleted scratchorg ${scratchOrg.username}`, LoggerLevel.TRACE);
                 } catch (error) {
                     SFPLogger.log(`Unable to delete the scratchorg ${scratchOrg.username}..`, LoggerLevel.WARN);
                 }
@@ -550,7 +550,7 @@ export default class PoolCreateImpl {
         );
 
         SFPLogger.log(
-            `Script Execution result is being written to script_exec_outputs/${scratchOrg.alias}.log, Please note this will take a significant time depending on the  script being executed`,
+            `Script Execution result is being written to script_exec_outputs/${scratchOrg.alias}.log, Please note this will take a significant time depending on the script being executed`,
             LoggerLevel.INFO
         );
 

@@ -141,7 +141,7 @@ export default class ScratchOrgUtils {
    The Login url for this org is : ${scratchOrg.loginURL}\n
    Username: ${scratchOrg.username}\n
    Password: ${scratchOrg.password}\n
-   Please use sfdx force:auth:web:login -r ${scratchOrg.loginURL} -a <alias>  command to authenticate against this Scratch org</p>
+   Please use sfdx force:auth:web:login -r ${scratchOrg.loginURL} -a <alias> command to authenticate against this Scratch org</p>
    Thank you for using sfpowerkit!`;
 
         const options = {
@@ -234,14 +234,14 @@ export default class ScratchOrgUtils {
 
                 if (this.sfdxAuthUrlFieldExists) {
                     if (!isNullOrUndefined(tag))
-                        query = `SELECT Pooltag__c, Id,  CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl,SfdxAuthUrl__c FROM ScratchOrgInfo WHERE Pooltag__c = '${tag}'  AND Status = 'Active' `;
+                        query = `SELECT Pooltag__c, Id, CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c, LoginUrl, SfdxAuthUrl__c FROM ScratchOrgInfo WHERE Pooltag__c = '${tag}' AND Status = 'Active' `;
                     else
-                        query = `SELECT Pooltag__c, Id,  CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl,SfdxAuthUrl__c FROM ScratchOrgInfo WHERE Pooltag__c != null  AND Status = 'Active' `;
+                        query = `SELECT Pooltag__c, Id, CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c, LoginUrl, SfdxAuthUrl__c FROM ScratchOrgInfo WHERE Pooltag__c != null  AND Status = 'Active' `;
                 } else {
                     if (!isNullOrUndefined(tag))
-                        query = `SELECT Pooltag__c, Id,  CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE Pooltag__c = '${tag}'  AND Status = 'Active' `;
+                        query = `SELECT Pooltag__c, Id, CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c, LoginUrl FROM ScratchOrgInfo WHERE Pooltag__c = '${tag}' AND Status = 'Active' `;
                     else
-                        query = `SELECT Pooltag__c, Id,  CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c,LoginUrl FROM ScratchOrgInfo WHERE Pooltag__c != null  AND Status = 'Active' `;
+                        query = `SELECT Pooltag__c, Id, CreatedDate, ScratchOrg, ExpirationDate, SignupUsername, SignupEmail, Password__c, Allocation_status__c, LoginUrl FROM ScratchOrgInfo WHERE Pooltag__c != null AND Status = 'Active' `;
                 }
                 if (isMyPool) {
                     query = query + ` AND createdby.username = '${hubOrg.getUsername()}' `;
@@ -250,7 +250,7 @@ export default class ScratchOrgUtils {
                     // if new version compatible get Available / In progress
                     query =
                         query + `AND ( Allocation_status__c ='Available' OR Allocation_status__c = 'In Progress' ) `;
-                } 
+                }
                 query = query + ORDER_BY_FILTER;
                 SFPLogger.log('QUERY:' + query, LoggerLevel.TRACE);
                 const results = (await hubConn.query(query)) as any;
