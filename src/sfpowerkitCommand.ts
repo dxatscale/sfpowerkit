@@ -22,6 +22,9 @@ export default abstract class SfpowerkitCommand extends SfdxCommand {
      */
     async run(): Promise<any> {
         Sfpowerkit.setLogLevel(this.flags.loglevel, this.flags.json);
+        if(this.flags.json) {
+            SFPLogger.disableLogs();
+        }
         Sfpowerkit.resetCache();
 
         // Always enable color by default
@@ -36,8 +39,6 @@ export default abstract class SfpowerkitCommand extends SfdxCommand {
 
         if (!this.flags.json) {
             this.sfpowerkitHeader();
-        }else{
-            SFPLogger.disableLogs();
         }
 
         return this.execute();
