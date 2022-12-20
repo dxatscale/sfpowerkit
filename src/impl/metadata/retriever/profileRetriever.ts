@@ -6,8 +6,9 @@ import * as _ from 'lodash';
 import MetadataRetriever from './metadataRetriever';
 import QueryExecutor from '../../../utils/queryExecutor';
 import MetadataOperation from '../../../utils/metadataOperation';
+import SFPLogger from '@dxatscale/sfp-logger';
 
-const unsuportedObjects = ['PersonAccount'];
+const unsupportedObjects = ['PersonAccount'];
 /**
  *
  * Used to track Unsupported Userpermission per Licence
@@ -166,7 +167,7 @@ export default class ProfileRetriever {
 
         objectPermissions.forEach((obj) => {
             let name = obj.fullName;
-            if (unsuportedObjects.includes(name)) {
+            if (unsupportedObjects.includes(name)) {
                 return;
             }
             let objectIsPresent = false;
@@ -316,8 +317,9 @@ export default class ProfileRetriever {
             }
         });
         let permissionStr = permissions.join(', ');
+
         let query = `SELECT Name, ${permissionStr} FROM Profile WHERE Name IN ('${profileNames.join("','")}')`;
-        query = decodeURIComponent(query);
+
         let executor = new QueryExecutor(this.conn);
         let profiles = await executor.executeQuery(query, false);
         return profiles;

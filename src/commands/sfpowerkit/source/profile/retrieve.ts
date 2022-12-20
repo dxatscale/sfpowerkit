@@ -36,7 +36,7 @@ export default class Retrieve extends SfpowerkitCommand {
             char: 'n',
             description: messages.getMessage('profileListFlagDescription'),
             required: false,
-            map: (p: string) => p.trim(),
+            map: (p: string) => p.trim().replace("'", "%27"), // resolves error with single quotes in profile name
         }),
         delete: flags.boolean({
             char: 'd',
