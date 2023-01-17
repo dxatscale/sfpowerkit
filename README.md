@@ -1,3 +1,14 @@
+# :warning:  Deprecation Notice 
+
+This project is currently being deprecated. Some of the existing functionality are already migrated to sfpowerscripts or  will be available as standalone libraries in a short span. Stay tuned! 
+
+Check issues for details and timeline. Thanks everyone for the support!
+
+
+
+
+
+
 # sfpowerkit
 A Salesforce DX Plugin with multiple functionalities aimed at improving development and operational workflows
 
