@@ -1,6 +1,6 @@
 # :warning:  Deprecation Notice 
 
-This project is currently being deprecated. Some of the existing functionality is already migrated to sfpowerscripts (https://github.com/dxatscale/sfpowerscripts) and rest of them  will be available as standalone libraries / sfp-cli in a short span. Stay tuned! 
+This project is currently being deprecated. Some of the existing functionality is already migrated to [sfpowerscripts](https://github.com/dxatscale/sfpowerscripts) and rest of them  will be available as standalone libraries / sfp-cli in a short span. Stay tuned! 
 
 Check issues for details and timeline. Thanks everyone for the support!
 
