@@ -102,6 +102,13 @@ export default class Diff extends SFPowerkitCommand {
     protected static requiresProject = true;
 
     public async execute(): Promise<any> {
+
+        this.ux.log(
+            'This command is deprecated, There will be no further updates to this command, Please use alternate solutions going forward'
+        );
+        
+
+
         const outputFolder: string = this.flags.output;
         const revisionfrom: string = this.flags.revisionfrom;
         const revisionto: string = this.flags.revisionto;
