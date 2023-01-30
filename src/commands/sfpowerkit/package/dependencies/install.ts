@@ -118,6 +118,15 @@ export default class Install extends SfpowerkitCommand {
     private branchMap: Map<string, string>;
 
     public async execute(): Promise<any> {
+
+        this.ux.log(
+            'This command is deprecated, There will be no further updates to this command, Please use sfpowerscripts:dependency:install going forward'
+        );
+        this.ux.log(
+            'To install sfpowerscripts use sfdx plugins:install @dxatscale/sfpowerscripts'
+        );
+
+
         const result = { installedPackages: {} };
 
         // this.org is guaranteed because requiresUsername=true, as opposed to supportsUsername
