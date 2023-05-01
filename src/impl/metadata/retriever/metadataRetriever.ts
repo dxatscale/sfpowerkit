@@ -80,7 +80,7 @@ export default class MetadataRetriever {
         let query = `SELECT Id,  Name, SobjectName, DurableId, IsCustom, Label FROM TabDefinition`;
 
         let queryUtil = new QueryExecutor(this._conn);
-        let items = await queryUtil.executeQuery(query, false);
+        let items = await queryUtil.executeQuery(query, true);
 
         if (items === undefined || items === null) {
             items = [];
